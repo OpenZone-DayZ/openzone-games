@@ -5,3 +5,22 @@ STR_OZG_NO_OVER,Партію завершено,The game is over
 STR_OZG_NO_SEAT,Це місце не в грі,This seat is not in the game
 STR_OZG_NO_MOVE,Незрозумілий хід,The move is not understood
 STR_OZG_NO_CARD,У вас немає цієї карти,You do not hold this card
+STR_OZG_GAME_DURAK,Дурень,Durak
+STR_OZG_DURAK_VARIANT,Варіант,Variant
+STR_OZG_DURAK_THROW,Підкидний,Podkidnoy (throw-in)
+STR_OZG_DURAK_TRANSFER,Перевідний,Perevodnoy (passing on)
+STR_OZG_DURAK_NO_TURN,Зараз не ваш хід,It is not your turn to lead
+STR_OZG_DURAK_NO_DEFENDER,Ви відбиваєтеся: підкидати не можна,You are defending: you cannot add cards
+STR_OZG_DURAK_NO_RANK,"Підкинути можна лише карту рангу, який уже є на столі",Only a card of a rank already on the table can be added
+STR_OZG_DURAK_NO_LIMIT,Більше карт підкинути не можна,No more cards can be added
+STR_OZG_DURAK_NO_NOT_DEFENDER,Відбиваєтеся не ви,You are not the one defending
+STR_OZG_DURAK_NO_TARGET,Такої непобитої карти на столі немає,There is no such unbeaten card on the table
+STR_OZG_DURAK_NO_BEAT,Ця карта її не б'є,This card does not beat it
+STR_OZG_DURAK_NO_TAKING,Ви вже берете,You are already taking
+STR_OZG_DURAK_NO_TAKE,Брати нічого: усе побито,There is nothing to take: everything is beaten
+STR_OZG_DURAK_NO_EMPTY,На столі ще нічого немає,Nothing is on the table yet
+STR_OZG_DURAK_NO_PASS,Вам нічого підкидати,You have nothing to add
+STR_OZG_DURAK_NO_TRANSFER_OFF,У цьому варіанті переводити не можна,This variant does not allow passing the attack on
+STR_OZG_DURAK_NO_TRANSFER_LATE,Переводити пізно: карту вже побито або ви берете,Too late to pass the attack on: a card is beaten or you are taking
+STR_OZG_DURAK_NO_TRANSFER_RANK,Перевести можна лише картою того самого рангу,The attack is passed on only with a card of the same rank
+STR_OZG_DURAK_NO_TRANSFER_FEW,У наступного гравця замало карт,The next player holds too few cards

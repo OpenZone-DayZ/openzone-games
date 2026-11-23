@@ -25,6 +25,8 @@ class OZG_Module : CF_ModuleWorld
         // The games are known on both sides: the server plays them, a client
         // words their names and variants. Nothing is reset here: another mod's
         // module may have registered its game before this one ran.
+        if (!OZG_Games.Sample(OZG_DurakConst.GAME_ID))
+            OZG_Games.Register(new OZG_Durak());
         // -- games register above this line --
 
         if (!GetGame().IsServer())

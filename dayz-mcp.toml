@@ -34,5 +34,5 @@ noise        = ["Bridge.Url is not https", "bridge: "]
 
 # Read from the ready line.
 [expect.counters]
-games    = 0
+games    = 1
 problems = 0
