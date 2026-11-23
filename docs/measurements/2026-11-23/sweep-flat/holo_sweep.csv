@@ -1,0 +1,216 @@
+label;class;ax;ay;az;rise;cells;places;r;line
+0;StaticObj_Furniture_matress_white;;;;;2;;;no top
+1;StaticObj_Furniture_postel_panelak1;4690.5;339.41;10190.6;0.41;13;16;1.34;holo: at=4690.5 339.42 10190.6 refused=0 why: on=StaticObj_Furniture_postel_panelak1/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0.08 box=0.5x0.03x0.35 touched=0
+2;StaticObj_Furniture_matress_white_bent;;;;;0;;;no top
+3;StaticObj_Furniture_almara;;;;;2;;;no top
+4;StaticObj_Furniture_almara_open;4690.02;339.89;10190;0.89;105;2;1.08;holo: at=4690.02 339.89 10190 refused=0 why: on=StaticObj_Furniture_almara_open/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+5;StaticObj_Furniture_case_a;;;;;0;;;no top
+6;StaticObj_Furniture_case_a_open;;;;;0;;;no top
+7;StaticObj_Furniture_case_bedroom_b;4689.82;340.16;10190.1;1.16;30;16;0.9;holo: at=4689.81 340.16 10190.1 refused=1 why: base on=StaticObj_Furniture_case_bedroom_b/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=1.16 box=0.5x0.03x0.35 touched=0
+8;StaticObj_Furniture_case_cans_b;;;;;0;;;no top
+9;StaticObj_Furniture_case_d;;;;;0;;;no top
+10;StaticObj_Furniture_Dhangar_brownskrin;;;;;0;;;no top
+11;StaticObj_Furniture_Dhangar_brownskrin_old;;;;;0;;;no top
+12;StaticObj_Furniture_library_a;;;;;8;;;no top
+13;StaticObj_Furniture_library_a_open;;;;;8;;;no top
+14;StaticObj_Furniture_lobby_case;;;;;0;;;no top
+15;StaticObj_Furniture_locker_closed_blue_v1;;;;;0;;;no top
+16;StaticObj_Furniture_locker_closed_blue_v2;;;;;0;;;no top
+17;StaticObj_Furniture_locker_closed_blue_v3;;;;;0;;;no top
+18;StaticObj_Furniture_locker_closed_v1;;;;;0;;;no top
+19;StaticObj_Furniture_locker_closed_v2;;;;;0;;;no top
+20;StaticObj_Furniture_locker_closed_v3;;;;;0;;;no top
+21;StaticObj_Furniture_locker_open_blue_v1;;;;;0;;;no top
+22;StaticObj_Furniture_locker_open_blue_v2;;;;;0;;;no top
+23;StaticObj_Furniture_locker_open_blue_v3;;;;;0;;;no top
+24;StaticObj_Furniture_locker_open_v1;;;;;0;;;no top
+25;StaticObj_Furniture_locker_open_v2;;;;;0;;;no top
+26;StaticObj_Furniture_locker_open_v3;;;;;0;;;no top
+27;StaticObj_Furniture_metalcase_01;;;;;0;;;no top
+28;StaticObj_Furniture_metalcase_02;;;;;0;;;no top
+29;StaticObj_Furniture_metalcrate;;;;;2;;;no top
+30;StaticObj_Furniture_metalcrate_02;;;;;1;;;no top
+31;StaticObj_Furniture_sarcophagus;4689.98;339.43;10190.7;0.43;98;4;1.33;holo: at=4689.98 339.44 10190.7 refused=1 why: bbox proxy base on=StaticObj_Furniture_sarcophagus/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f0 drop=1 box=0.5x0.03x0.35 touched=1:StaticObj_Furniture_sarcophagus
+32;StaticObj_Furniture_skrin_bar;4690.07;339.91;10189.6;0.91;52;8;1.06;holo: at=4690.07 339.91 10189.6 refused=1 why: bbox proxy base on=StaticObj_Furniture_skrin_bar/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=0.91 box=0.5x0.03x0.35 touched=1:StaticObj_Furniture_skrin_bar
+33;StaticObj_Furniture_ch_mod_c;;;;;9;;;no top
+34;StaticObj_Furniture_ch_mod_h;4690.07;339.4;10189.9;0.4;12;16;1.34;holo: at=4690.07 339.41 10189.9 refused=1 why: bbox proxy base on=StaticObj_Furniture_ch_mod_h/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=0.41 box=0.5x0.03x0.35 touched=1:StaticObj_Furniture_ch_mod_h
+35;StaticObj_Furniture_ch_office_B;;;;;10;;;no top
+36;StaticObj_Furniture_hospital_bench;4690;339.46;10189.8;0.46;22;16;1.32;holo: at=4690 339.47 10189.8 refused=1 why: base on=StaticObj_Furniture_hospital_bench/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=0.47 box=0.5x0.03x0.35 touched=0
+37;StaticObj_Furniture_kitchen_chair_a;4690.03;339.48;10190;0.48;15;16;1.32;holo: at=4690.03 339.48 10190 refused=1 why: bbox base on=StaticObj_Furniture_kitchen_chair_a/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=0.48 box=0.5x0.03x0.35 touched=1:StaticObj_Furniture_kitchen_chair_a
+38;StaticObj_Furniture_lobby_chair;4689.97;339.43;10189.9;0.43;30;16;1.33;holo: at=4689.97 339.43 10189.9 refused=1 why: bbox proxy on=StaticObj_Furniture_lobby_chair/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0.07 box=0.5x0.03x0.35 touched=1:StaticObj_Furniture_lobby_chair
+39;StaticObj_Furniture_office_chair;4689.97;339.44;10190;0.44;12;16;1.33;holo: at=4689.97 339.44 10190 refused=1 why: bbox base on=StaticObj_Furniture_office_chair/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=0.44 box=0.5x0.03x0.35 touched=1:StaticObj_Furniture_office_chair
+40;StaticObj_Furniture_postel_manz_kov;4691.03;339.52;10190.8;0.52;264;6;1.3;holo: at=4691.03 339.52 10190.8 refused=0 why: on=StaticObj_Furniture_postel_manz_kov/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+41;StaticObj_Furniture_sofa_leather_new;4690;339.41;10190.1;0.41;88;16;1.34;holo: at=4690 339.41 10190.1 refused=0 why: on=StaticObj_Furniture_sofa_leather_new/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+42;StaticObj_Furniture_sofa_leather_old;4690;339.87;10190.1;0.41;88;11;;no place or no player
+43;StaticObj_Furniture_SofaCorner;4690.46;339.5;10189.8;0.5;183;13;1.31;holo: at=4690.46 339.5 10189.7 refused=1 why: base on=StaticObj_Furniture_SofaCorner/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=0.5 box=0.5x0.03x0.35 touched=0
+44;StaticObj_Furniture_Vojenska_palanda;4689.97;340.23;10189.7;1.23;220;16;0.9;holo: at=4689.97 340.23 10189.7 refused=0 why: on=StaticObj_Furniture_Vojenska_palanda/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+45;StaticObj_Furniture_box_c;4689.96;339.61;10190;0.61;45;16;1.26;holo: at=4689.96 339.61 10190 refused=0 why: on=StaticObj_Furniture_box_c/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+46;StaticObj_Furniture_box_c_multi;4690.21;340.17;10190.7;1.17;134;10;1.1;holo: at=4690.21 340.17 10190.7 refused=0 why: on=StaticObj_Furniture_box_c_multi/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+47;StaticObj_Furniture_bucket;;;;;0;;;no top
+48;StaticObj_Furniture_carpet_big;;;;;0;;;no top
+49;StaticObj_Furniture_flowers_01;;;;;2;;;no top
+50;StaticObj_Furniture_flowers_02;;;;;5;;;no top
+51;StaticObj_Furniture_lekarnicka;4689.68;339.75;10189.5;0.75;12;16;1.18;holo: at=4689.68 339.75 10189.5 refused=1 why: base on=StaticObj_Furniture_lekarnicka/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f0 drop=0.75 box=0.5x0.03x0.35 touched=0
+52;StaticObj_Furniture_piano;4689.86;339.92;10190.3;0.92;269;12;1.06;holo: at=4689.86 339.92 10190.3 refused=0 why: on=StaticObj_Furniture_piano/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+53;StaticObj_Furniture_picture_a;;;;;0;;;no top
+54;StaticObj_Furniture_picture_a_02;;;;;0;;;no top
+55;StaticObj_Furniture_picture_a_03;;;;;0;;;no top
+56;StaticObj_Furniture_picture_a_04;;;;;0;;;no top
+57;StaticObj_Furniture_picture_a_05;;;;;0;;;no top
+58;StaticObj_Furniture_picture_b;;;;;0;;;no top
+59;StaticObj_Furniture_picture_b_02;;;;;0;;;no top
+60;StaticObj_Furniture_picture_c;;;;;0;;;no top
+61;StaticObj_Furniture_picture_c_02;;;;;0;;;no top
+62;StaticObj_Furniture_picture_d;;;;;0;;;no top
+63;StaticObj_Furniture_picture_d_02;;;;;0;;;no top
+64;StaticObj_Furniture_picture_e;;;;;0;;;no top
+65;StaticObj_Furniture_picture_e_02;;;;;0;;;no top
+66;StaticObj_Furniture_picture_f;;;;;0;;;no top
+67;StaticObj_Furniture_picture_f_02;;;;;0;;;no top
+68;StaticObj_Furniture_picture_g;;;;;0;;;no top
+69;StaticObj_Furniture_picture_g_02;;;;;0;;;no top
+70;StaticObj_Furniture_wall_board;;;;;0;;;no top
+71;StaticObj_Furniture_wall_board_02;;;;;0;;;no top
+72;StaticObj_Furniture_wall_board_03;;;;;0;;;no top
+73;StaticObj_Furniture_PaperBox_01_small_closed;4689.96;339.41;10190;0.41;28;16;1.34;holo: at=4689.96 339.41 10190 refused=0 why: on=StaticObj_Furniture_PaperBox_01_small_closed/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+74;StaticObj_Furniture_PaperBox_01_small_destroyed;4690.03;339.36;10190;0.36;17;16;1.35;holo: at=4690.03 339.36 10190 refused=0 why: on=StaticObj_Furniture_PaperBox_01_small_destroyed/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0.02 box=0.5x0.03x0.35 touched=0
+75;StaticObj_Furniture_PaperBox_01_small_open;;;;;11;;;no top
+76;StaticObj_Furniture_PaperBox_01_small_ransacked;;;;;11;;;no top
+77;StaticObj_Furniture_PlasticBucket;;;;;0;;;no top
+78;StaticObj_Furniture_pc;;;;;4;;;no top
+79;StaticObj_Furniture_phonebox;;;;;6;;;no top
+80;StaticObj_Furniture_pokladna;;;;;3;;;no top
+81;StaticObj_Furniture_radio_b;;;;;0;;;no top
+82;StaticObj_Furniture_tv_a;4690.02;339.53;10190;0.53;21;16;1.29;holo: at=4690.02 339.53 10190 refused=1 why: base on=StaticObj_Furniture_tv_a/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=0.53 box=0.5x0.03x0.35 touched=0
+83;StaticObj_Furniture_vending_machine;;;;;0;;;no top
+84;StaticObj_Furniture_washing_machine;4690;340.17;10190.1;1.17;41;16;0.9;holo: at=4690 340.17 10190.1 refused=0 why: on=StaticObj_Furniture_washing_machine/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0.06 box=0.5x0.03x0.35 touched=0
+85;StaticObj_Furniture_foldingbed_matress;;;;;1;;;no top
+86;StaticObj_Furniture_foldingbed_open;4690.01;339.38;10190;0.38;133;12;1.35;holo: at=4690.01 339.38 10190 refused=0 why: on=StaticObj_Furniture_foldingbed_open/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+87;StaticObj_Furniture_cashier;;;;;0;;;no top
+88;StaticObj_Furniture_icebox;4689.93;339.59;10190;0.59;144;16;1.27;holo: at=4689.93 339.96 10190.5 refused=1 why: bbox proxy base on=nothing slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=0.96 box=0.5x0.03x0.35 touched=1:StaticObj_Furniture_icebox
+89;StaticObj_Furniture_pult;4689.98;340;10189.9;1;128;16;0.98;holo: at=4689.98 340 10189.9 refused=0 why: on=StaticObj_Furniture_pult/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+90;StaticObj_Furniture_pultskasou;4689.88;340.02;10189.9;1.02;107;14;0.96;holo: at=4689.88 340.02 10189.9 refused=1 why: bbox proxy on=StaticObj_Furniture_pultskasou/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0.17 box=0.5x0.03x0.35 touched=1:StaticObj_Furniture_pultskasou
+91;StaticObj_Furniture_scale;;;;;3;;;no top
+92;StaticObj_Furniture_shelf;;;;;0;;;no top
+93;StaticObj_Furniture_shelf_1side;;;;;0;;;no top
+94;StaticObj_Furniture_hospital_transport_bed;4690.04;339.72;10189.8;0.72;75;13;1.2;holo: at=4690.04 339.72 10189.8 refused=1 why: base on=StaticObj_Furniture_hospital_transport_bed/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=0.72 box=0.5x0.03x0.35 touched=0
+95;StaticObj_Furniture_case_sink_a;4690.1;339.83;10190.2;0.83;45;11;1.13;holo: at=4690.1 339.83 10190.2 refused=1 why: bbox proxy base on=StaticObj_Furniture_case_sink_a/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=0.83 box=0.5x0.03x0.35 touched=1:StaticObj_Furniture_case_sink_a
+96;StaticObj_Furniture_Dkamna_uhli;4689.84;339.91;10190.1;0.91;12;15;1.06;holo: at=4689.84 339.91 10190.1 refused=1 why: base on=StaticObj_Furniture_Dkamna_uhli/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=0.91 box=0.5x0.03x0.35 touched=0
+97;StaticObj_Furniture_Dkamna_bila;4690.65;339.98;10190.3;0.98;30;16;1;holo: at=4690.65 340.32 10190.9 refused=1 why: bbox player base on=nothing slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=1.2 box=0.5x0.03x0.35 touched=1:StaticObj_Furniture_Dkamna_bila
+98;StaticObj_Furniture_fireplace_grill;;;;;0;;;no top
+99;StaticObj_Furniture_fridge;;;;;0;;;no top
+100;StaticObj_Furniture_Kitchen_desk_A;4690.08;339.99;10190;0.99;38;16;0.99;holo: at=4690.08 339.99 10190 refused=1 why: bbox base on=StaticObj_Furniture_Kitchen_desk_A/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=1 box=0.5x0.03x0.35 touched=1:StaticObj_Furniture_Kitchen_desk_A
+101;StaticObj_Furniture_Kitchen_desk_B;4690.04;339.99;10190;0.99;20;16;0.99;holo: at=4690.04 339.99 10190 refused=1 why: base on=StaticObj_Furniture_Kitchen_desk_B/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=1 box=0.5x0.03x0.35 touched=0
+102;StaticObj_Furniture_Kitchenstove_Elec;4690.05;339.85;10190.1;0.85;30;16;1.11;holo: at=4690.05 339.85 10190.1 refused=1 why: base on=StaticObj_Furniture_Kitchenstove_Elec/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=0.85 box=0.5x0.03x0.35 touched=0
+103;StaticObj_Furniture_fluor_lamp;;;;;0;;;no top
+104;StaticObj_Furniture_hangar_lamp;;;;;4;;;no top
+105;StaticObj_Furniture_Light_BathRoom;;;;;0;;;no top
+106;StaticObj_Furniture_light_kitchen_03;;;;;6;;;no top
+107;StaticObj_Furniture_luxury_lamp;;;;;0;;;no top
+108;StaticObj_Furniture_Luxury_light;;;;;0;;;no top
+109;StaticObj_Furniture_medical_table;4690.05;340.02;10190;1.02;50;16;0.96;holo: at=4690.05 340.02 10190 refused=0 why: on=StaticObj_Furniture_medical_table/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+110;StaticObj_Furniture_patient_monitor;;;;;0;;;no top
+111;StaticObj_Furniture_MedicalGarbage_Bandage;;;;;0;;;no top
+112;StaticObj_Furniture_prison_sink;;;;;8;;;no top
+113;StaticObj_Furniture_prison_toilet;4689.99;339.41;10190;0.41;16;16;1.34;holo: at=4689.99 339.41 10190 refused=1 why: base on=StaticObj_Furniture_prison_toilet/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f0 drop=0.41 box=0.5x0.03x0.35 touched=0
+114;StaticObj_Furniture_toilet_b_02_V2;;;;;0;;;no top
+115;StaticObj_Furniture_radar_electronics;;;;;0;;;no top
+116;StaticObj_Furniture_radar_panel;4690.04;339.96;10189.2;0.96;44;9;1.02;holo: at=4690.04 339.96 10189.2 refused=1 why: proxy base on=StaticObj_Furniture_radar_panel/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=0.96 box=0.5x0.03x0.35 touched=0
+117;StaticObj_Furniture_radar_panel_flat;4689.94;339.96;10189.7;0.96;60;16;1.02;holo: at=4689.94 340.26 10190.2 refused=1 why: base on=StaticObj_Furniture_radar_panel_flat/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=1.2 box=0.5x0.03x0.35 touched=0
+118;StaticObj_Furniture_radar_rack;;;;;0;;;no top
+119;StaticObj_Furniture_radar_rack_quad;;;;;2;;;no top
+120;StaticObj_Furniture_anatomy_poster_1;;;;;0;;;no top
+121;StaticObj_Furniture_anatomy_poster_2;;;;;0;;;no top
+122;StaticObj_Furniture_basketball_korb;;;;;4;;;no top
+123;StaticObj_Furniture_blackboard;;;;;10;;;no top
+124;StaticObj_Furniture_class_case_a_closed;4690.04;340.19;10190.1;1.19;50;16;0.9;holo: at=4690.04 340.19 10190.1 refused=0 why: on=StaticObj_Furniture_class_case_a_closed/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+125;StaticObj_Furniture_class_case_a_open;4690.04;340.18;10190.1;1.18;50;0;0.9;holo: at=4690.04 340.18 10190.1 refused=0 why: on=StaticObj_Furniture_class_case_a_open/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+126;StaticObj_Furniture_class_case_b_closed;4690;340.83;10189.9;0.65;24;5;;no place or no player
+127;StaticObj_Furniture_class_case_b_open;4690;339.65;10189.8;0.65;36;9;1.24;holo: at=4690 339.65 10189.8 refused=1 why: bbox proxy base on=StaticObj_Furniture_class_case_b_open/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=0.96 box=0.5x0.03x0.35 touched=1:StaticObj_Furniture_class_case_b_open
+128;StaticObj_Furniture_Desk_Globe;;;;;2;;;no top
+129;StaticObj_Furniture_flag_chernarus_pole;;;;;0;;;no top
+130;StaticObj_Furniture_flag_chernarus_wall;;;;;0;;;no top
+131;StaticObj_Furniture_gym_ladder;;;;;0;;;no top
+132;StaticObj_Furniture_intercom_speaker;;;;;0;;;no top
+133;StaticObj_Furniture_lab_beaker;;;;;0;;;no top
+134;StaticObj_Furniture_lab_bench;4689.95;339.94;10190;0.94;128;6;1.03;holo: at=4689.95 339.94 10190 refused=0 why: on=StaticObj_Furniture_lab_bench/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+135;StaticObj_Furniture_lab_bunsen;;;;;0;;;no top
+136;StaticObj_Furniture_lab_cylinder_beaker;;;;;0;;;no top
+137;StaticObj_Furniture_lab_dropper;;;;;0;;;no top
+138;StaticObj_Furniture_lab_erlenmeyer_flask;;;;;0;;;no top
+139;StaticObj_Furniture_lab_microscope;;;;;1;;;no top
+140;StaticObj_Furniture_lab_petri_dish;;;;;0;;;no top
+141;StaticObj_Furniture_lab_sink;4689.88;339.94;10189.6;0.94;52;16;1.03;holo: at=4689.88 339.94 10189.6 refused=1 why: bbox base on=StaticObj_Furniture_lab_sink/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=0.94 box=0.5x0.03x0.35 touched=1:StaticObj_Furniture_lab_sink
+142;StaticObj_Furniture_lab_teacher_bench;4690.06;340.04;10190.1;1.04;180;13;0.94;holo: at=4690.06 340.04 10190.1 refused=0 why: on=StaticObj_Furniture_lab_teacher_bench/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+143;StaticObj_Furniture_lab_triplebeam;;;;;0;;;no top
+144;StaticObj_Furniture_lab_vial;;;;;0;;;no top
+145;StaticObj_Furniture_lab_volume_beaker;;;;;0;;;no top
+146;StaticObj_Furniture_long_bench;4690.07;339.5;10190;0.5;112;4;1.31;holo: at=4690.07 339.5 10190 refused=0 why: on=StaticObj_Furniture_long_bench/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+147;StaticObj_Furniture_periodic_table;;;;;0;;;no top
+148;StaticObj_Furniture_radiator;;;;;0;;;no top
+149;StaticObj_Furniture_school_cage;;;;;0;;;no top
+150;StaticObj_Furniture_school_clock;;;;;0;;;no top
+151;StaticObj_Furniture_school_map;4689.91;340.2;10190;1.2;18;16;0.9;holo: at=4689.91 340.21 10190 refused=1 why: proxy base on=StaticObj_Furniture_school_map/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f0 drop=1.2 box=0.5x0.03x0.35 touched=0
+152;StaticObj_Furniture_school_ringbell;;;;;0;;;no top
+153;StaticObj_Furniture_student_chair;4690.04;339.48;10190;0.48;17;15;1.31;holo: at=4690.04 339.48 10190 refused=1 why: bbox proxy base on=StaticObj_Furniture_student_chair/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=0.48 box=0.5x0.03x0.35 touched=1:StaticObj_Furniture_student_chair
+154;StaticObj_Furniture_student_desk;4690.07;339.84;10189.8;0.84;96;16;1.12;holo: at=4690.07 339.84 10189.8 refused=0 why: on=StaticObj_Furniture_student_desk/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+155;StaticObj_Furniture_tac_board;;;;;1;;;no top
+156;StaticObj_Furniture_tac_board_posters_level1;;;;;0;;;no top
+157;StaticObj_Furniture_tac_board_posters_level2;;;;;0;;;no top
+158;StaticObj_Furniture_teacher_desk;4690.01;339.92;10189.9;0.92;153;16;1.05;holo: at=4690.01 339.92 10189.9 refused=0 why: on=StaticObj_Furniture_teacher_desk/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+159;StaticObj_Furniture_vaulting_box_large;4689.9;340.09;10189.9;1.09;48;16;0.9;holo: at=4689.9 340.09 10189.9 refused=1 why: base on=StaticObj_Furniture_vaulting_box_large/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=1.09 box=0.5x0.03x0.35 touched=0
+160;StaticObj_Furniture_vaulting_box_small;4690.01;339.52;10190.1;0.52;30;16;1.3;holo: at=4690.01 339.52 10190.1 refused=1 why: base on=StaticObj_Furniture_vaulting_box_small/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f0 drop=0.52 box=0.5x0.03x0.35 touched=0
+161;StaticObj_Furniture_vaulting_goat;4690.02;340.24;10190;1.24;27;16;0.9;holo: at=4690.02 340.24 10190 refused=1 why: base on=StaticObj_Furniture_vaulting_goat/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f0 drop=0.5 box=0.5x0.03x0.35 touched=0
+162;StaticObj_Furniture_wall_hanger;;;;;4;;;no top
+163;StaticObj_Furniture_yellow_star;;;;;0;;;no top
+164;StaticObj_Furniture_conference_table_a;4690.02;339.71;10190;0.71;104;16;1.21;holo: at=4690.02 339.71 10190 refused=0 why: on=StaticObj_Furniture_conference_table_a/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+165;StaticObj_Furniture_kitchen_table_a;4690.01;339.77;10190;0.77;126;2;1.17;holo: at=4690.01 339.77 10190 refused=0 why: on=StaticObj_Furniture_kitchen_table_a/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+166;StaticObj_Furniture_lobby_counter;4690.28;340.77;10190;1;328;6;;no place or no player
+167;StaticObj_Furniture_lobby_table;4690.05;339.48;10190;0.48;112;5;1.32;holo: at=4690.05 339.48 10190 refused=0 why: on=StaticObj_Furniture_lobby_table/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+168;StaticObj_Furniture_office_desk;4690;340.33;10190;0.84;136;6;;no place or no player
+169;StaticObj_Furniture_office_table_a;4690.04;339.69;10190;0.69;105;16;1.22;holo: at=4690.04 339.69 10190 refused=0 why: on=StaticObj_Furniture_office_table_a/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+170;StaticObj_Furniture_stul_kuch_1;4690.44;339.98;10190.7;0.98;100;6;1;holo: at=4690.44 339.98 10190.6 refused=0 why: on=StaticObj_Furniture_stul_kuch_1/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+171;StaticObj_Furniture_table_drawer;4689.94;340.67;10190;0.69;56;16;;no place or no player
+172;StaticObj_Furniture_table_umakart;4690.08;339.93;10190;0.93;250;8;1.05;holo: at=4690.08 339.93 10190 refused=0 why: on=StaticObj_Furniture_table_umakart/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+173;StaticObj_Furniture_Anvil;;;;;0;;;no top
+174;StaticObj_Furniture_bag_DZ;4690;339.7;10189.9;0.7;12;16;1.21;holo: at=4690 339.84 10190.1 refused=1 why: base on=StaticObj_Furniture_bag_DZ/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=0.84 box=0.5x0.03x0.35 touched=0
+175;StaticObj_Furniture_bar_shelves_DZ;;;;;0;;;no top
+176;StaticObj_Furniture_bar_tap_DZ;4689.99;339.85;10190.1;0.85;286;11;1.11;holo: at=4689.99 339.85 10190.1 refused=1 why: base on=StaticObj_Furniture_bar_tap_DZ/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f0 drop=0.3 box=0.5x0.03x0.35 touched=0
+177;StaticObj_Furniture_boots_DZ;;;;;0;;;no top
+178;StaticObj_Furniture_canister_DZ;4690.07;339.68;10190.1;0.68;16;16;1.22;holo: at=4690.07 339.68 10190.1 refused=1 why: bbox base on=StaticObj_Furniture_canister_DZ/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=0.68 box=0.5x0.03x0.35 touched=1:StaticObj_Furniture_canister_DZ
+179;StaticObj_Furniture_carpet_2_DZ;;;;;0;;;no top
+180;StaticObj_Furniture_chest_DZ;4690;339.9;10190;0.9;105;16;1.07;holo: at=4690 339.9 10190 refused=0 why: on=StaticObj_Furniture_chest_DZ/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+181;StaticObj_Furniture_Couch_Beige84x213x75_DZ;4689.96;339.45;10189.8;0.45;102;16;1.33;holo: at=4689.96 339.45 10189.8 refused=1 why: bbox proxy base on=StaticObj_Furniture_Couch_Beige84x213x75_DZ/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=0.45 box=0.5x0.03x0.35 touched=1:StaticObj_Furniture_Couch_Beige84x213x75_DZ
+182;StaticObj_Furniture_couch_DZ;4690.03;339.43;10189.9;0.43;81;16;1.33;holo: at=4690.03 339.43 10189.9 refused=1 why: bbox proxy on=StaticObj_Furniture_couch_DZ/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0.01 box=0.5x0.03x0.35 touched=1:StaticObj_Furniture_couch_DZ
+183;StaticObj_Furniture_debris_small_house;;;;;1;;;no top
+184;StaticObj_Furniture_dirtpile_small_house;;;;;2;;;no top
+185;StaticObj_Furniture_drapes;;;;;0;;;no top
+186;StaticObj_Furniture_drapes_long;;;;;0;;;no top
+187;StaticObj_Furniture_Drill;4690.02;339.67;10190.1;0.67;14;16;1.23;holo: at=4690.02 339.67 10190.1 refused=1 why: base on=StaticObj_Furniture_Drill/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=0.67 box=0.5x0.03x0.35 touched=0
+188;StaticObj_Furniture_FlagHolder;;;;;1;;;no top
+189;StaticObj_Furniture_FuseBox;;;;;0;;;no top
+190;StaticObj_Furniture_grinder;;;;;0;;;no top
+191;StaticObj_Furniture_kitchen_unit_a_DZ;4690;339.89;10190;0.89;63;16;1.08;holo: at=4690 339.89 10190 refused=0 why: on=StaticObj_Furniture_kitchen_unit_a_DZ/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+192;StaticObj_Furniture_ladder_A_wood;;;;;2;;;no top
+193;StaticObj_Furniture_Metal_cutting_saw;;;;;3;;;no top
+194;StaticObj_Furniture_rack_DZ;;;;;0;;;no top
+195;StaticObj_Furniture_sawhorse_DZ;4690;339.54;10189.8;0.54;30;16;1.29;holo: at=4690 339.54 10189.8 refused=1 why: bbox proxy base on=StaticObj_Furniture_sawhorse_DZ/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=0.54 box=0.5x0.03x0.35 touched=1:StaticObj_Furniture_sawhorse_DZ
+196;StaticObj_Furniture_shelf_DZ;4690.04;339.97;10190;0.97;45;0;1.01;holo: at=4690.04 339.97 10190 refused=1 why: base on=StaticObj_Furniture_shelf_DZ/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=0.97 box=0.5x0.03x0.35 touched=0
+197;StaticObj_Furniture_soustruh_proxy;4689.96;340.82;10190;0.85;102;4;;no place or no player
+198;StaticObj_Furniture_table_DZ;4690.02;339.9;10190;0.9;154;9;1.07;holo: at=4690.02 339.9 10190 refused=0 why: on=StaticObj_Furniture_table_DZ/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+199;StaticObj_Furniture_tools_racking_DZ;;;;;0;;;no top
+200;StaticObj_Furniture_Vise;;;;;0;;;no top
+201;StaticObj_Furniture_wheel_cart_DZ;4689.99;339.43;10190.4;0.43;24;0;;no place or no player
+202;StaticObj_Furniture_Workbench;4689.95;339.78;10190;0.78;384;8;1.16;holo: at=4689.95 339.78 10190 refused=0 why: on=StaticObj_Furniture_Workbench/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+203;StaticObj_Furniture_workbench_DZ;4689.95;340.74;10190;0.95;216;6;;no place or no player
+204;StaticObj_Furniture_PlasticBucket_DE;;;;;0;;;no top
+205;StaticObj_Furniture_shelfs_small;4690.04;339.97;10190;0.97;45;0;1.01;holo: at=4690.04 339.97 10190 refused=1 why: base on=StaticObj_Furniture_shelfs_small/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i0s1f0 drop=0.97 box=0.5x0.03x0.35 touched=0
+206;StaticObj_Furniture_shelfs_small_broken;4689.97;340.96;10190.2;0.98;29;0;;no place or no player
+207;StaticObj_Furniture_shelfs_small_crushed;;;;;2;;;no top
+208;StaticObj_Furniture_table;4690.02;339.9;10190;0.9;154;9;1.07;holo: at=4690.02 339.9 10190 refused=0 why: on=StaticObj_Furniture_table/b1p0i0 slopeTol=0.2 pitch=0 roll=0 base:i1s1f1 drop=0 box=0.5x0.03x0.35 touched=0
+209;StaticObj_Furniture_table_broken;;;;;11;;;no top
+210;StaticObj_Furniture_table_crushed;;;;;7;;;no top
+211;StaticObj_Furniture_tools_racking;;;;;0;;;no top
+212;StaticObj_Furniture_wardrobe_a;;;;;0;;;no top
+213;StaticObj_Furniture_wardrobe_b;;;;;0;;;no top
+214;StaticObj_Furniture_Tandoor;;;;;0;;;no top

@@ -1,0 +1,216 @@
+class;verdict;rise;cells;places;r;why;drop;box;landed_off
+StaticObj_Furniture_matress_white;no top;;0;;;;;;
+StaticObj_Furniture_postel_panelak1;no top;;0;;;;;;
+StaticObj_Furniture_matress_white_bent;no top;;0;;;;;;
+StaticObj_Furniture_almara;no top;;2;;;;;;
+StaticObj_Furniture_almara_open;accepted;0.89;105;2;0.8;;0;0.43x0.56x0.1;0.00
+StaticObj_Furniture_case_a;no top;;0;;;;;;
+StaticObj_Furniture_case_a_open;no top;;1;;;;;;
+StaticObj_Furniture_case_bedroom_b;no top;;0;;;;;;
+StaticObj_Furniture_case_cans_b;no top;;0;;;;;;
+StaticObj_Furniture_case_d;no top;;0;;;;;;
+StaticObj_Furniture_Dhangar_brownskrin;no top;;0;;;;;;
+StaticObj_Furniture_Dhangar_brownskrin_old;no top;;0;;;;;;
+StaticObj_Furniture_library_a;no top;;8;;;;;;
+StaticObj_Furniture_library_a_open;no top;;8;;;;;;
+StaticObj_Furniture_lobby_case;no top;;0;;;;;;
+StaticObj_Furniture_locker_closed_blue_v1;no top;;0;;;;;;
+StaticObj_Furniture_locker_closed_blue_v2;no top;;0;;;;;;
+StaticObj_Furniture_locker_closed_blue_v3;no top;;0;;;;;;
+StaticObj_Furniture_locker_closed_v1;no top;;0;;;;;;
+StaticObj_Furniture_locker_closed_v2;no top;;0;;;;;;
+StaticObj_Furniture_locker_closed_v3;no top;;0;;;;;;
+StaticObj_Furniture_locker_open_blue_v1;no top;;0;;;;;;
+StaticObj_Furniture_locker_open_blue_v2;no top;;0;;;;;;
+StaticObj_Furniture_locker_open_blue_v3;no top;;0;;;;;;
+StaticObj_Furniture_locker_open_v1;no top;;0;;;;;;
+StaticObj_Furniture_locker_open_v2;no top;;0;;;;;;
+StaticObj_Furniture_locker_open_v3;no top;;0;;;;;;
+StaticObj_Furniture_metalcase_01;no top;;0;;;;;;
+StaticObj_Furniture_metalcase_02;no top;;0;;;;;;
+StaticObj_Furniture_metalcrate;no top;;0;;;;;;
+StaticObj_Furniture_metalcrate_02;no top;;0;;;;;;
+StaticObj_Furniture_sarcophagus;refused;0.43;98;5;1;bbox base;0.7;0.43x0.56x0.1;0.02
+StaticObj_Furniture_skrin_bar;refused;0.91;52;8;1.2;bbox proxy base;0.5;0.43x0.56x0.1;0.00
+StaticObj_Furniture_ch_mod_c;no top;;9;;;;;;
+StaticObj_Furniture_ch_mod_h;refused;0.4;12;16;0.7;floating bbox proxy base;0.4;0.43x0.56x0.1;0.12
+StaticObj_Furniture_ch_office_B;no top;;10;;;;;;
+StaticObj_Furniture_hospital_bench;refused;0.46;22;15;1;base;0.47;0.43x0.56x0.1;0.01
+StaticObj_Furniture_kitchen_chair_a;refused;0.48;15;16;0.6;floating base;0.48;0.43x0.56x0.1;0.22
+StaticObj_Furniture_lobby_chair;refused;0.43;30;15;0.9;bbox proxy;0.18;0.43x0.56x0.1;0.00
+StaticObj_Furniture_office_chair;refused;0.44;12;16;0.6;floating base;0.43;0.43x0.56x0.1;0.22
+StaticObj_Furniture_postel_manz_kov;refused;0.52;265;5;0.7;floating;0;0.43x0.56x0.1;0.30
+StaticObj_Furniture_sofa_leather_new;accepted;0.41;88;16;1.3;;0;0.43x0.56x0.1;0.00
+StaticObj_Furniture_sofa_leather_old;accepted;0.41;88;10;1.3;;0;0.43x0.56x0.1;0.00
+StaticObj_Furniture_SofaCorner;refused;0.5;179;5;0.9;base;1.42;0.43x0.56x0.1;0.10
+StaticObj_Furniture_Vojenska_palanda;accepted;1.23;220;16;0.7;;0;0.43x0.56x0.1;0.00
+StaticObj_Furniture_box_c;no top;;0;;;;;;
+StaticObj_Furniture_box_c_multi;refused;1.17;134;10;0.8;floating bbox proxy;0.04;0.43x0.56x0.1;0.18
+StaticObj_Furniture_bucket;no top;;0;;;;;;
+StaticObj_Furniture_carpet_big;no top;;0;;;;;;
+StaticObj_Furniture_flowers_01;no top;;2;;;;;;
+StaticObj_Furniture_flowers_02;no top;;5;;;;;;
+StaticObj_Furniture_lekarnicka;no top;;0;;;;;;
+StaticObj_Furniture_piano;no place or no player;0.49;38;0;;;;;
+StaticObj_Furniture_picture_a;no top;;0;;;;;;
+StaticObj_Furniture_picture_a_02;no top;;0;;;;;;
+StaticObj_Furniture_picture_a_03;no top;;0;;;;;;
+StaticObj_Furniture_picture_a_04;no top;;0;;;;;;
+StaticObj_Furniture_picture_a_05;no top;;0;;;;;;
+StaticObj_Furniture_picture_b;no top;;0;;;;;;
+StaticObj_Furniture_picture_b_02;no top;;0;;;;;;
+StaticObj_Furniture_picture_c;no top;;0;;;;;;
+StaticObj_Furniture_picture_c_02;no top;;0;;;;;;
+StaticObj_Furniture_picture_d;no top;;0;;;;;;
+StaticObj_Furniture_picture_d_02;no top;;0;;;;;;
+StaticObj_Furniture_picture_e;no top;;0;;;;;;
+StaticObj_Furniture_picture_e_02;no top;;0;;;;;;
+StaticObj_Furniture_picture_f;no top;;0;;;;;;
+StaticObj_Furniture_picture_f_02;no top;;0;;;;;;
+StaticObj_Furniture_picture_g;no top;;0;;;;;;
+StaticObj_Furniture_picture_g_02;no top;;0;;;;;;
+StaticObj_Furniture_wall_board;no top;;0;;;;;;
+StaticObj_Furniture_wall_board_02;no top;;0;;;;;;
+StaticObj_Furniture_wall_board_03;no top;;0;;;;;;
+StaticObj_Furniture_PaperBox_01_small_closed;no top;;0;;;;;;
+StaticObj_Furniture_PaperBox_01_small_destroyed;no top;;0;;;;;;
+StaticObj_Furniture_PaperBox_01_small_open;no top;;0;;;;;;
+StaticObj_Furniture_PaperBox_01_small_ransacked;no top;;0;;;;;;
+StaticObj_Furniture_PlasticBucket;no top;;0;;;;;;
+StaticObj_Furniture_pc;no top;;0;;;;;;
+StaticObj_Furniture_phonebox;no top;;0;;;;;;
+StaticObj_Furniture_pokladna;no top;;0;;;;;;
+StaticObj_Furniture_radio_b;no top;;0;;;;;;
+StaticObj_Furniture_tv_a;no top;;3;;;;;;
+StaticObj_Furniture_vending_machine;no top;;0;;;;;;
+StaticObj_Furniture_washing_machine;no top;;0;;;;;;
+StaticObj_Furniture_foldingbed_matress;no top;;0;;;;;;
+StaticObj_Furniture_foldingbed_open;no top;;0;;;;;;
+StaticObj_Furniture_cashier;no top;;0;;;;;;
+StaticObj_Furniture_icebox;refused;0.59;144;16;1.3;bbox proxy;0;0.43x0.56x0.1;0.00
+StaticObj_Furniture_pult;no top;;0;;;;;;
+StaticObj_Furniture_pultskasou;refused;1.02;107;14;1;bbox proxy;0.12;0.43x0.56x0.1;0.20
+StaticObj_Furniture_scale;no top;;0;;;;;;
+StaticObj_Furniture_shelf;no top;;0;;;;;;
+StaticObj_Furniture_shelf_1side;no top;;0;;;;;;
+StaticObj_Furniture_hospital_transport_bed;refused;0.72;75;12;1.2;bbox proxy base;0.72;0.43x0.56x0.1;0.00
+StaticObj_Furniture_case_sink_a;refused;0.83;45;11;1.1;bbox proxy;0;0.43x0.56x0.1;0.00
+StaticObj_Furniture_Dkamna_uhli;refused;0.91;12;15;0.8;base;0.91;0.43x0.56x0.1;0.00
+StaticObj_Furniture_Dkamna_bila;refused;0.98;30;16;0.8;base;0.95;0.43x0.56x0.1;0.00
+StaticObj_Furniture_fireplace_grill;no top;;0;;;;;;
+StaticObj_Furniture_fridge;no top;;0;;;;;;
+StaticObj_Furniture_Kitchen_desk_A;refused;0.99;38;16;1.1;bbox proxy base;0.7;0.43x0.56x0.1;0.00
+StaticObj_Furniture_Kitchen_desk_B;refused;0.99;20;16;0.9;bbox proxy base;0.99;0.43x0.56x0.1;0.00
+StaticObj_Furniture_Kitchenstove_Elec;no top;;0;;;;;;
+StaticObj_Furniture_fluor_lamp;no top;;0;;;;;;
+StaticObj_Furniture_hangar_lamp;no top;;4;;;;;;
+StaticObj_Furniture_Light_BathRoom;no top;;0;;;;;;
+StaticObj_Furniture_light_kitchen_03;no top;;6;;;;;;
+StaticObj_Furniture_luxury_lamp;no top;;0;;;;;;
+StaticObj_Furniture_Luxury_light;no top;;0;;;;;;
+StaticObj_Furniture_medical_table;no top;;0;;;;;;
+StaticObj_Furniture_patient_monitor;no top;;1;;;;;;
+StaticObj_Furniture_MedicalGarbage_Bandage;no top;;0;;;;;;
+StaticObj_Furniture_prison_sink;no top;;8;;;;;;
+StaticObj_Furniture_prison_toilet;refused;0.41;16;16;0.5;floating bbox proxy base;0.41;0.43x0.56x0.1;0.21
+StaticObj_Furniture_toilet_b_02_V2;no top;;0;;;;;;
+StaticObj_Furniture_radar_electronics;no top;;0;;;;;;
+StaticObj_Furniture_radar_panel;accepted;0.96;44;9;0.9;;0;0.43x0.56x0.1;0.00
+StaticObj_Furniture_radar_panel_flat;accepted;0.96;60;16;1;;0;0.43x0.56x0.1;0.53
+StaticObj_Furniture_radar_rack;no top;;0;;;;;;
+StaticObj_Furniture_radar_rack_quad;no top;;2;;;;;;
+StaticObj_Furniture_anatomy_poster_1;no top;;0;;;;;;
+StaticObj_Furniture_anatomy_poster_2;no top;;0;;;;;;
+StaticObj_Furniture_basketball_korb;no top;;4;;;;;;
+StaticObj_Furniture_blackboard;no top;;10;;;;;;
+StaticObj_Furniture_class_case_a_closed;no top;;0;;;;;;
+StaticObj_Furniture_class_case_a_open;no top;;0;;;;;;
+StaticObj_Furniture_class_case_b_closed;refused;0.65;24;9;0.9;bbox proxy;0;0.43x0.56x0.1;0.00
+StaticObj_Furniture_class_case_b_open;accepted;0.65;36;9;1.1;;0;0.43x0.56x0.1;0.00
+StaticObj_Furniture_Desk_Globe;no top;;0;;;;;;
+StaticObj_Furniture_flag_chernarus_pole;no top;;0;;;;;;
+StaticObj_Furniture_flag_chernarus_wall;no top;;0;;;;;;
+StaticObj_Furniture_gym_ladder;no top;;0;;;;;;
+StaticObj_Furniture_intercom_speaker;no top;;0;;;;;;
+StaticObj_Furniture_lab_beaker;no top;;0;;;;;;
+StaticObj_Furniture_lab_bench;no top;;0;;;;;;
+StaticObj_Furniture_lab_bunsen;no top;;0;;;;;;
+StaticObj_Furniture_lab_cylinder_beaker;no top;;0;;;;;;
+StaticObj_Furniture_lab_dropper;no top;;0;;;;;;
+StaticObj_Furniture_lab_erlenmeyer_flask;no top;;0;;;;;;
+StaticObj_Furniture_lab_microscope;no top;;0;;;;;;
+StaticObj_Furniture_lab_petri_dish;no top;;0;;;;;;
+StaticObj_Furniture_lab_sink;refused;0.94;52;16;1;bbox base;0.94;0.43x0.56x0.1;0.00
+StaticObj_Furniture_lab_teacher_bench;accepted;1.04;180;13;0.9;;0;0.43x0.56x0.1;0.00
+StaticObj_Furniture_lab_triplebeam;no top;;0;;;;;;
+StaticObj_Furniture_lab_vial;no top;;0;;;;;;
+StaticObj_Furniture_lab_volume_beaker;no top;;0;;;;;;
+StaticObj_Furniture_long_bench;no top;;0;;;;;;
+StaticObj_Furniture_periodic_table;no top;;0;;;;;;
+StaticObj_Furniture_radiator;no top;;0;;;;;;
+StaticObj_Furniture_school_cage;no top;;0;;;;;;
+StaticObj_Furniture_school_clock;no top;;0;;;;;;
+StaticObj_Furniture_school_map;refused;1.2;18;16;0.5;bbox proxy base;1.22;0.43x0.56x0.1;0.02
+StaticObj_Furniture_school_ringbell;no top;;0;;;;;;
+StaticObj_Furniture_student_chair;refused;0.48;17;14;1;bbox proxy base;0.48;0.43x0.56x0.1;0.00
+StaticObj_Furniture_student_desk;no top;;1;;;;;;
+StaticObj_Furniture_tac_board;no top;;0;;;;;;
+StaticObj_Furniture_tac_board_posters_level1;no top;;0;;;;;;
+StaticObj_Furniture_tac_board_posters_level2;no top;;0;;;;;;
+StaticObj_Furniture_teacher_desk;no top;;0;;;;;;
+StaticObj_Furniture_vaulting_box_large;no top;;0;;;;;;
+StaticObj_Furniture_vaulting_box_small;no top;;0;;;;;;
+StaticObj_Furniture_vaulting_goat;no top;;4;;;;;;
+StaticObj_Furniture_wall_hanger;no top;;0;;;;;;
+StaticObj_Furniture_yellow_star;no top;;0;;;;;;
+StaticObj_Furniture_conference_table_a;no top;;0;;;;;;
+StaticObj_Furniture_kitchen_table_a;no top;;0;;;;;;
+StaticObj_Furniture_lobby_counter;accepted;1;328;12;1;;0;0.43x0.56x0.1;0.00
+StaticObj_Furniture_lobby_table;no top;;0;;;;;;
+StaticObj_Furniture_office_desk;no top;;0;;;;;;
+StaticObj_Furniture_office_table_a;no top;;0;;;;;;
+StaticObj_Furniture_stul_kuch_1;no top;;9;;;;;;
+StaticObj_Furniture_table_drawer;no top;;0;;;;;;
+StaticObj_Furniture_table_umakart;no top;;0;;;;;;
+StaticObj_Furniture_Anvil;no top;;0;;;;;;
+StaticObj_Furniture_bag_DZ;refused;0.7;12;16;0.9;base;0.69;0.43x0.56x0.1;0.01
+StaticObj_Furniture_bar_shelves_DZ;no top;;0;;;;;;
+StaticObj_Furniture_bar_tap_DZ;refused;0.85;287;12;1;base;0.3;0.43x0.56x0.1;0.00
+StaticObj_Furniture_boots_DZ;no top;;0;;;;;;
+StaticObj_Furniture_canister_DZ;no top;;0;;;;;;
+StaticObj_Furniture_carpet_2_DZ;no top;;0;;;;;;
+StaticObj_Furniture_chest_DZ;no top;;0;;;;;;
+StaticObj_Furniture_Couch_Beige84x213x75_DZ;refused;0.45;102;16;1.3;bbox proxy;0;0.43x0.56x0.1;0.00
+StaticObj_Furniture_couch_DZ;refused;0.43;81;16;1.2;bbox proxy;0;0.43x0.56x0.1;0.00
+StaticObj_Furniture_debris_small_house;no top;;0;;;;;;
+StaticObj_Furniture_dirtpile_small_house;no top;;0;;;;;;
+StaticObj_Furniture_drapes;no top;;0;;;;;;
+StaticObj_Furniture_drapes_long;no top;;0;;;;;;
+StaticObj_Furniture_Drill;refused;0.67;14;16;0.8;base;0.54;0.43x0.56x0.1;0.00
+StaticObj_Furniture_FlagHolder;no top;;1;;;;;;
+StaticObj_Furniture_FuseBox;no top;;0;;;;;;
+StaticObj_Furniture_grinder;no top;;0;;;;;;
+StaticObj_Furniture_kitchen_unit_a_DZ;no top;;0;;;;;;
+StaticObj_Furniture_ladder_A_wood;no top;;2;;;;;;
+StaticObj_Furniture_Metal_cutting_saw;no top;;3;;;;;;
+StaticObj_Furniture_rack_DZ;no top;;0;;;;;;
+StaticObj_Furniture_sawhorse_DZ;refused;0.54;30;15;1.2;bbox proxy base;0.81;0.43x0.56x0.1;0.40
+StaticObj_Furniture_shelf_DZ;no place or no player;0.97;45;0;;;;;
+StaticObj_Furniture_soustruh_proxy;refused;0.85;102;9;1;bbox proxy base;0.66;0.43x0.56x0.1;0.01
+StaticObj_Furniture_table_DZ;no top;;0;;;;;;
+StaticObj_Furniture_tools_racking_DZ;no top;;0;;;;;;
+StaticObj_Furniture_Vise;no top;;0;;;;;;
+StaticObj_Furniture_wheel_cart_DZ;no place or no player;0.43;24;0;;;;;
+StaticObj_Furniture_Workbench;no top;;6;;;;;;
+StaticObj_Furniture_workbench_DZ;no top;;0;;;;;;
+StaticObj_Furniture_PlasticBucket_DE;no top;;0;;;;;;
+StaticObj_Furniture_shelfs_small;no place or no player;0.97;45;0;;;;;
+StaticObj_Furniture_shelfs_small_broken;refused;0.98;22;2;0.7;floating base zero height water terrain;0.7;0.43x0.56x0.1;11222.91
+StaticObj_Furniture_shelfs_small_crushed;no top;;0;;;;;;
+StaticObj_Furniture_table;no top;;0;;;;;;
+StaticObj_Furniture_table_broken;no top;;11;;;;;;
+StaticObj_Furniture_table_crushed;no top;;7;;;;;;
+StaticObj_Furniture_tools_racking;no top;;0;;;;;;
+StaticObj_Furniture_wardrobe_a;no top;;0;;;;;;
+StaticObj_Furniture_wardrobe_b;no top;;0;;;;;;
+StaticObj_Furniture_Tandoor;no top;;0;;;;;;

@@ -1,0 +1,2 @@
+# tally: {'no top': 171, 'accepted': 9, 'refused': 31, 'no place or no player': 4}
+# refusals by check: {'bbox': 20, 'base': 22, 'proxy': 18, 'floating': 7, 'zero': 1, 'height': 1, 'water': 1, 'terrain': 1}

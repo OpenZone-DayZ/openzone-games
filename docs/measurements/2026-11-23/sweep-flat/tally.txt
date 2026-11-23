@@ -1,0 +1,2 @@
+# tally: {'no top': 135, 'accepted': 32, 'refused': 39, 'no place or no player': 9}
+# refusals by check: {'base': 36, 'bbox': 18, 'proxy': 14, 'player': 1}

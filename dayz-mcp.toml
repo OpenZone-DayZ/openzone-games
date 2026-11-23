@@ -1,0 +1,26 @@
+# Portable half of the profile for dayz-agentic-modding-mcp.
+# Machine paths live in dayz-mcp.local.toml, which is not committed.
+
+[project]
+name = "openzone-games"
+
+[build]
+# Phase 1, Task 1: only the probe of 2026-11-23 is here. The mod itself,
+# OpenZone_Games, joins this list in Task 2.
+#
+# TableGamesProbe        -- client + server stand tool: the rays, the ring of
+#                           places, the live hologram's report, a stand-in deck.
+# TableGamesProbe_Bridge -- server only: the `tgp` verb for the MCP bridge.
+mods = ["TableGamesProbe", "TableGamesProbe_Bridge"]
+
+[expect]
+# Printed by TGP_Verb.Pump on the first server frame.
+ready_line   = "probe loaded"
+max_warnings = 0
+forbid       = ["Bad type", "Can't compile", "NULL pointer to instance"]
+error_regex  = ["SCRIPT\\s+\\(E\\).*TGP_"]
+# The probe needs neither CF nor the core, but this stand loads both on every
+# boot (dayz-mcp.local.toml says why), and the core speaks: the stand's shared
+# profile has its Discord bridge switched on, and no bridge process runs for
+# this project. A state of this stand, not an event.
+noise        = ["Bridge.Url is not https", "bridge: "]
