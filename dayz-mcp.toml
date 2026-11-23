@@ -17,7 +17,7 @@ name = "openzone-games"
 # TableGamesProbe        -- client + server stand tool of 2026-11-23: the rays,
 #                           the ring of places, the live hologram's report.
 # TableGamesProbe_Bridge -- server only: the `tgp` verb.
-mods = ["OpenZone_Games", "TableGamesProbe", "TableGamesProbe_Bridge"]
+mods = ["OpenZone_Games", "OpenZone_Games_Bridge", "TableGamesProbe", "TableGamesProbe_Bridge"]
 
 [expect]
 # Printed by OZG_Module one tick after the mission starts.
