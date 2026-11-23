@@ -16,7 +16,8 @@ class OZG_Fuzz
     protected static int s_NoLoser;
 
     // fuzz game=<id> games=<n> players=<n; 0: by chance> opt=<id=value;..>
-    //      seed=<n> drop=<per mille of moves> away=<per mille of moves>
+    //      seed=<n; 0: the real chance> drop=<per mille of moves>
+    //      away=<per mille of moves>
     static bool Run(map<string, string> args, out string detail)
     {
         string id = OZG_VerbOps.Arg(args, "game", "durak");
@@ -44,7 +45,13 @@ class OZG_Fuzz
         s_WithLoser = 0;
         s_NoLoser = 0;
 
-        OZG_BenchSeeded chance = new OZG_BenchSeeded(seed);
+        // seed=0 is the real chance, the one the server hands to a game: its
+        // numbers differ every time. Any other seed repeats itself.
+        OZG_Random chance;
+        if (seed == 0)
+            chance = new OZG_Random();
+        else
+            chance = new OZG_BenchSeeded(seed);
         int started = TickCount(0);
         for (int g = 0; g < games; g++)
         {
@@ -66,7 +73,7 @@ class OZG_Fuzz
     }
 
     // One game from its deal to its end. Returns "" or what went wrong.
-    protected static string PlayOne(string id, int players, map<string, string> options, OZG_BenchSeeded chance, int dropRate, int awayRate)
+    protected static string PlayOne(string id, int players, map<string, string> options, OZG_Random chance, int dropRate, int awayRate)
     {
         OZG_Game game = OZG_Games.Create(id);
         int n = players;

@@ -666,3 +666,66 @@ One line for each check of design §15 item 1, with the rows that show it:
 | what a client is told and what is saved | 6.3, 6.4, 6.6 to 6.8, 9.2 |
 
 Nothing differed from the plan: all 100 answers came as it prints them, to the letter. The comparison was made by a script, between the plan's text and the server's log of the boot.
+
+## Games played by chance
+
+Task 6 of the plan, run on 2026-11-24 on the code of the commit that carries this section,
+from the server's log `script_2026-11-24_01-28-56.log`. Each row is the op `fuzz` of `oz_games`: whole games
+played by moves the game itself offers, with the state checked after every move and a save
+loaded back every tenth. The last number of an answer is milliseconds.
+
+**1** `{"op": "fuzz", "games": "300", "seed": "11"}` — podkidnoy, two to six seats by chance: as expected
+
+```text
+fuzz: 300 games, 52915 moves, longest 411, drops 0, skipped 0, with a loser 300, without 0, 0 defects, 11351 ms
+```
+
+**2** `{"op": "fuzz", "games": "300", "seed": "12", "opt": "variant=perevodnoy"}` — perevodnoy: as expected
+
+```text
+fuzz: 300 games, 54181 moves, longest 537, drops 0, skipped 0, with a loser 300, without 0, 0 defects, 11865 ms
+```
+
+**3** `{"op": "fuzz", "games": "300", "seed": "13", "opt": "variant=perevodnoy", "drop": "5", "away": "50"}` — seats dropped and players away: as expected
+
+```text
+fuzz: 300 games, 41866 moves, longest 346, drops 181, skipped 1485, with a loser 254, without 46, 0 defects, 8535 ms
+```
+
+**4** `{"op": "fuzz", "games": "300", "seed": "14", "players": "2", "opt": "variant=perevodnoy"}` — two seats: as expected
+
+```text
+fuzz: 300 games, 30524 moves, longest 180, drops 0, skipped 0, with a loser 300, without 0, 0 defects, 4150 ms
+```
+
+**5** `{"op": "fuzz", "games": "200", "seed": "15", "players": "6", "away": "100"}` — six seats and no stock: as expected
+
+```text
+fuzz: 200 games, 37703 moves, longest 396, drops 0, skipped 1212, with a loser 197, without 3, 0 defects, 8658 ms
+```
+
+**6** `{"op": "fuzz", "games": "200", "seed": "0", "drop": "20", "away": "30"}` — the real chance, asked twice: no defect either time, and the numbers differ, as they must
+
+```text
+fuzz: 200 games, 17540 moves, longest 232, drops 363, skipped 549, with a loser 132, without 68, 0 defects, 3441 ms
+fuzz: 200 games, 19277 moves, longest 264, drops 357, skipped 607, with a loser 133, without 67, 0 defects, 3700 ms
+```
+
+**7** `{"op": "fuzz", "games": "300", "seed": "11"}` — row 1 again: the same numbers: as expected
+
+```text
+fuzz: 300 games, 52915 moves, longest 411, drops 0, skipped 0, with a loser 300, without 0, 0 defects, 10762 ms
+```
+
+2 100 games in all (the seven rows, with row 6 asked twice), no defect in any.
+
+**A finding.** Row 6 asks for the real chance (`seed=0`). On the first run of this task it
+answered the very numbers the plan had printed, `17728 moves, longest 252, drops 384`: the
+fuzz built its repeating chance for every seed, and 0 was one more seed. The plan's
+expectation was right and the code was not. `OZG_Fuzz.Run` now hands `OZG_Random` itself
+to the games when the seed is 0. After the change the seeded rows gave the same numbers as
+before, and row 6, asked twice, the two different answers above.
+
+`log_verdict(source="server")` after the rows: **pass**, no warning and no error.
+
+`client_compile_check(wait_seconds=120)`: **client compiles**.
