@@ -6,15 +6,13 @@ or stand around it, and the game is played in a window while the characters sit 
 first game is durak, podkidnoy and perevodnoy. Class prefix `OZG_`; runs with
 `OpenZone_Core` alone.
 
-## Status: phase 1, nothing to play yet
+## Status: phase 1 done, nothing to play yet
 
-The repository holds the plan of the first phase
-([docs/2026-11-24-phase-1-plan.md](docs/2026-11-24-phase-1-plan.md)) and the stand probe
-that measured which surfaces take a laid-out game and what working out the seats costs
-([docs/probe.md](docs/probe.md),
-[docs/measurements/2026-11-23](docs/measurements/2026-11-23)). Phase 1 builds the rules
-alone: cards, what a game is, durak, played on the test stand by script. The design note
-lives beside the repositories of the series, in
+The rules work: cards, what a game is, and durak in both variants with save and load,
+played on the test stand by script and by chance
+([docs/measurements](docs/measurements)). Nothing of it is in the world yet: the deck, the
+place and the seats around it are phase 2, the window is phase 4. The plans are in
+[docs](docs); the design note lives beside the repositories of the series, in
 `docs/specs/2026-11-23-openzone-games-design.md`.
 
 `TableGamesProbe`, `TableGamesProbe_Bridge` and `OpenZone_Games_Bridge` are stand tools.
@@ -27,7 +25,9 @@ They are never published and no server should load them.
 а гра йде у вікні, поки персонажі сидять за нею. Перша гра — дурень, підкидний і
 перевідний.
 
-Стан: фаза 1. У репозиторії план першої фази та стендовий зонд; грати ще нема в що.
+Стан: фазу 1 завершено. Правила працюють: карти, контракт гри та дурень в обох варіантах
+зі збереженням; на стенді їх перевірено сценарними партіями й партіями навмання. У світі
+ще нічого немає, тож грати ще нема в що.
 
 ## Licence
 
