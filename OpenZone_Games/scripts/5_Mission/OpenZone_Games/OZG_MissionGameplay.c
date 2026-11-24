@@ -24,6 +24,7 @@ modded class MissionGameplay
         OZ_ClientState.SyncWatch().Insert(OZG_Sync);
         OZ_Notice.OnAnswer.Insert(OZG_Notice);
         OZG_PlaceWatch.OnMoved.Insert(OZG_PlaceMoved);
+        OZG_PlaceWatch.OnGone.Insert(OZG_PlaceGone);
         OZG_PlaceWatch.OnHit.Insert(OZG_Hit);
         if (OZ_ClientState.Ready())
         {
@@ -207,6 +208,16 @@ modded class MissionGameplay
             menu.PulseOf(place);
     }
 
+    // A place is gone from this client's world: the marks of its seats go
+    // with it. Until 2026-11-24 only their clock took them away, so a player
+    // who asked for the seats and then gathered the deck stood among the marks
+    // of a game that was no longer there.
+    void OZG_PlaceGone(string placeId)
+    {
+        if (m_OZG_Marks && placeId == OZG_Mine.s_MarkPlace)
+            m_OZG_Marks.Clear();
+    }
+
     override void OnUpdate(float timeslice)
     {
         super.OnUpdate(timeslice);
@@ -257,6 +268,7 @@ modded class MissionGameplay
         OZ_ClientState.SyncWatch().Remove(OZG_Sync);
         OZ_Notice.OnAnswer.Remove(OZG_Notice);
         OZG_PlaceWatch.OnMoved.Remove(OZG_PlaceMoved);
+        OZG_PlaceWatch.OnGone.Remove(OZG_PlaceGone);
         OZG_PlaceWatch.OnHit.Remove(OZG_Hit);
         GetGame().GetCallQueue(CALL_CATEGORY_GUI).Remove(OZG_OpenGame);
         if (m_OZG_Marks)

@@ -278,6 +278,10 @@ class OZG_Place extends ItemBase
         s_All.RemoveItem(this);
         if (GetGame() && GetGame().IsServer())
             OZG_Sessions.PlaceGone(this);
+        // A client's marks of this place's seats are things of that client
+        // alone: nobody else can take them away when the place goes.
+        if (GetGame())
+            OZG_PlaceWatch.Gone(this);
         super.EEDelete(parent);
     }
 
@@ -403,6 +407,9 @@ class OZG_Place extends ItemBase
 class OZG_PlaceWatch
 {
     static ref ScriptInvoker OnMoved = new ScriptInvoker();
+    // A place left this client's world (gathered, folded, deleted, or out of
+    // the client's bubble): its id.
+    static ref ScriptInvoker OnGone = new ScriptInvoker();
     // This client's own player was hit.
     static ref ScriptInvoker OnHit = new ScriptInvoker();
 
@@ -411,6 +418,17 @@ class OZG_PlaceWatch
         if (GetGame().IsDedicatedServer())
             return;
         OnMoved.Invoke(place);
+    }
+
+    static void Gone(OZG_Place place)
+    {
+        if (GetGame().IsDedicatedServer())
+            return;
+        if (!place)
+            return;
+        string id = place.OZG_Id();
+        if (id != "")
+            OnGone.Invoke(id);
     }
 
     static void Hit(PlayerBase player)
