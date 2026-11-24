@@ -331,7 +331,30 @@ class TGP_Verb
             return true;
         }
 
-        detail = "tgp knows the ops: status, catalog, area, col, seat, sweep, ask, told, cancel";
+        // The slot probe: slots (what the engine knows), slotfill pos="x y z"
+        // (two boxes of fifty-two cards there), slotclear pos="x y z".
+        if (op == "slots")
+        {
+            detail = TGP_Slots.Count();
+            return true;
+        }
+
+        if (op == "slotfill" || op == "slotclear")
+        {
+            if (!Numbers(Arg(args, "pos", ""), nums) || nums.Count() != 3)
+            {
+                detail = op + ": pos must be 'x y z'";
+                return false;
+            }
+            vector spot = Vector(nums.Get(0), nums.Get(1), nums.Get(2));
+            if (op == "slotfill")
+                detail = TGP_Slots.Fill(spot);
+            else
+                detail = TGP_Slots.Clear(spot);
+            return true;
+        }
+
+        detail = "tgp knows the ops: status, catalog, area, col, seat, sweep, ask, told, slots, slotfill, slotclear, cancel";
         return false;
     }
 }
