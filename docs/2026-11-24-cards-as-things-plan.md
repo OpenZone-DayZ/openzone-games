@@ -3218,7 +3218,7 @@ On a fresh boot with the client, at the runway: `oz_games {"op":"chat","text":"!
 
 Then the same once on the other stand's terrain when that stand is free (NHChernobyl, the wall in Rostok: `docs/test-commands.md`, "The stand on the NHChernobyl terrain"): the deck must reach a place that lies on a step, not only on a runway.
 
-- [ ] **Step 2: The slot table of a heavy pack**
+- [x] **Step 2: The slot table of a heavy pack** (withdrawn, not done: the note under this task)
 
 Sixty-three slots more against the slot table of a server with many mods (spec §12). **Ask the owner first**: which stand carries such a pack and whether it may be booted with this mod added (`E:\dayzmod\testserver\mirage1114` held the Mirage pack on 2026-11-14; that stand, its world and its profile are not this project's, and what was added is taken out again afterwards). On it: `oz_games {"op":"give","who":"me","deck":"OZG_Deck_Classic_Sharp"}`, a second later `{"op":"cards","who":"me"}`. Expected: `slots=62 cards=52 free=10 faces=52`. If the cards do not all go in, stop and report: the spec says a failure here comes back to the owner.
 
@@ -3254,12 +3254,12 @@ git commit -m "Cards as things: the record, and how one person tries it
 Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 ```
 
-**Done 2026-11-24, all but Step 2.**
+**Done 2026-11-24; Step 2 withdrawn.**
 
 - **Step 1**, on the build without the count (`ec20992`). World 83, the runway, a kitchen table from `!ozg table`: the hologram on the table's top said "Seats: 8 — standing, guessed"; after the hold `held: deck OZG_Deck_Classic slots=52 cards=52 free=0 faces=52 looks=0:52 beside=0` and the window open on the lobby with "Variant", "Deal", "Stand up", "Fold the game" and no count (`ui_find` for `OZG_BtnCount`: 0 of 170; `ask count`: `refused STR_OZG_SAY_CANNOT`). Two bots, "Deal" pressed: `trump=Td stock=18 ... hands=0:6,3:6,5:6`. Three moves by clicks: `7c` (`table=7c/Jc`), `9c` thrown in (`9c/Ac`), "Pass" (`dis=12 stock=6`). "Fold the game" and its "yes": `sessions=0 places=0`, the deck in the hands `cards=52 free=0`. World 84, the wall in Rostok, the mat on the wall's top (the top is 0.87 m over the step: `level` read 108.41 against 107.54) and the placer on the step at 6081.7 107.58 6030.21: "Seats: 3 — standing, guessed", `held: ... cards=52 ... beside=0`, three seats on the step at 107.55, `trump=7c stock=18`, a card thrown in by a click (`6s/Ts`), folded by the button, `cards=52` in the hands.
 - **Not asked by this plan and done on the way.** A client in Ukrainian (the engine's "Russian" slot): the aiming panel, the deck's name, the window and the refusal "У колоді замало карт для цієї гри" from a deck holding eleven cards of the game's set for two players. The inventory by hand, with the real mouse: a card dragged out of its slot into the shirt (`cards=27` to `26`) and back onto an empty slot (`27`); a card dropped on the deck's picture swaps the hands; a double click takes nothing out; the cursor names a card in its slot. And a defect of the stand's tool that stood in the way: a bot whose game was folded kept its body (`OZG_Bots.Clear` walked the sessions only), three of them blocked the next hologram on the wall's step; the tool now remembers its bots and its tick sends away those that sit at no session (after a fold `world_entities` for `SurvivorBase` said 0 within four seconds).
 - **A deck from before this build is empty**, as the plan said it would be: world 84's character carried one, `slots=52 cards=0 free=52`. It was replaced with a new one.
-- **Step 2 is open.** Which stand carries a heavy pack and whether it may be booted with this mod added is the owner's to say; nothing was booted for it. The record and the spec say so, and neither calls phase 1 done.
+- **Step 2 is withdrawn**, not done. The owner asked where the limit it measures came from: "Where did this come from at all, that slots on a server are limited by the modpack?" From this plan's author, and from nothing read or measured: the list of slot names is one for all mods, and that it has a ceiling was a guess written down as a condition. Counted instead, in PBOs, nothing booted: the game declares 470 slots, the seventy mods of a live server's pack 1535 more, this mod sixty-three. The record has the account ("A condition that had nothing behind it"), the spec's §12 too.
 - **Step 3**: `docs/2026-11-24-cards-as-things-record.md`. **Step 4**: `docs/test-commands.md` and `README.md`.
 - **Step 5**: the spec's status line and §3.5, §6.8, §7, §9 to §12. The skills: `dayz-modding` `a38c2fe` (two new sections; `check-generic.py` printed nothing), `openzone` `065a404`; in both only this work's lines were staged, and nothing was pushed.
 
@@ -3271,7 +3271,7 @@ Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 |---|---|
 | §3.1 a card: a class a face, 1 by 1, fits every slot, a back of its deck's look | 3 |
 | §3.2 two kinds of deck, 52 and 62 slots; fills itself once; takes cards only | 3 |
-| §3.2 to be measured: sixty-two names on a card, the first free slot; a heavy pack | 3 (Step 7), 9 (Step 2) |
+| §3.2 to be measured: sixty-two names on a card, the first free slot; a heavy pack | 3 (Step 7); the heavy pack: withdrawn (Task 9's note) |
 | §3.3 the place holds the deck; nobody opens it; the deck and its cards survive the move and a restart | 1, 4 |
 | §3.3 more cards than slots: random ones stay where the place lay | 8 |
 | §3.4 a deal from what the deck holds; any number of cards of a face; "not enough cards"; `Sound` | 2, 5 |

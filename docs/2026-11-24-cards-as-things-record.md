@@ -6,9 +6,9 @@ Date: 2026-11-24. The design is
 [2026-11-24-cards-as-things-plan.md](2026-11-24-cards-as-things-plan.md). Everything is on
 `main`; nothing was pushed.
 
-**Phase 1 is built and checked on the stand, and it is not called done**: one measurement
-the spec asks for before that word (§12, a heavy modpack's slot table) waits for the
-owner's word on which stand may be booted for it.
+**Phase 1 is built and checked on the stand.** The spec's first draft made one more
+measurement a condition of calling it done, "a heavy modpack's slot table"; that
+condition is withdrawn ("A condition that had nothing behind it", below).
 
 How to try it alone: [test-commands.md](test-commands.md).
 
@@ -177,10 +177,31 @@ are too far". A line each:
   back from the world's storage.
 - An item in the hands shows its attachment slots in the inventory, eight to a row.
 
+## A condition that had nothing behind it
+
+The spec's first draft, the plan (Task 9, Step 2) and the first version of this record
+said that phase 1 was not done until sixty-three more slots had been measured "against
+the slot table of a server with a heavy modpack". The owner asked: "Where did this come
+from at all, that slots on a server are limited by the modpack?"
+
+From the draft's author and from nowhere else. When the stand's probe found every one of
+fifty-two new slots answered by the engine, he noted that a server with many mods had not
+been tried, since the list of slot names is one for all mods; in the spec that note
+became a condition. No script of the game, no documentation and nobody's report says
+that the list has a ceiling.
+
+Counted then, in the PBOs on this machine, nothing booted (the `Slot_*` class names of
+every `config.bin`): the game's own configs declare 470 slots; the seventy mod folders
+of a live server's pack (the list its stand of 2026-11-14 was booted with) 1535 more,
+two thousand in all, on a server that runs every day; this mod adds sixty-three. On the
+stand `InventorySlots.GetSlotIdFromString("Body")` reads 5119774: a slot's id is no
+small index, and the engine's own script (`inventoryslots.c`) names a count of 32
+"pre-populated" slots and no maximum.
+
+The condition is withdrawn; nothing was booted for it.
+
 ## What is not done, and what was not measured
 
-- **A heavy modpack's slot table** (§12): sixty-three slots more against a server with
-  many mods. Not measured. It is the one thing between this record and "phase 1 is done".
 - **Marks, noticing, sleights**: phases 2 to 4. Nothing of them is built.
 - **A card's own model and picture.** In the world a loose card is the deck's model, a
   white bar from most sides; in the inventory all cards look alike (above).
