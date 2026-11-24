@@ -96,8 +96,7 @@ class OZG_Card_Base extends ItemBase
         if (m_OZG_Readers.Find(uid) >= 0)
             return;
         m_OZG_Readers.Insert(uid);
-        // MarkKnowers of the design; Task 2 makes it a setting.
-        int most = 16;
+        int most = OZG_Cfg.Get().MarkKnowers;
         while (m_OZG_Readers.Count() > most)
         {
             int gone = 0;

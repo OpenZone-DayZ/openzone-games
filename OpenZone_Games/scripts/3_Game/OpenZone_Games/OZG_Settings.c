@@ -50,6 +50,13 @@ class OZG_Settings : OZ_ConfigBase
     int   MaxSeats;
     ref array<string> GameIds;
     int   DebugLog;
+    // Marks and the loupe (card sharp's design §7). Cheating 0: nothing can
+    // be marked, studied or read.
+    int   Cheating;
+    int   MarkUses;
+    int   MarkSeconds2;
+    int   LoupeSeconds;
+    int   MarkKnowers;
 
     void OZG_Settings()
     {
@@ -58,7 +65,7 @@ class OZG_Settings : OZ_ConfigBase
 
     override int LatestVersion()
     {
-        return 1;
+        return 2;
     }
 
     protected void DefaultPoses()
@@ -87,10 +94,24 @@ class OZG_Settings : OZ_ConfigBase
         GameIds = new array<string>();
         GameIds.Insert("durak");
         DebugLog = 0;
+        Cheating = 1;
+        MarkUses = 20;
+        MarkSeconds2 = 8;
+        LoupeSeconds = 5;
+        MarkKnowers = 16;
     }
 
     override bool Migrate(int from)
     {
+        // Version 1 had no marks: their defaults.
+        if (from < 2)
+        {
+            Cheating = 1;
+            MarkUses = 20;
+            MarkSeconds2 = 8;
+            LoupeSeconds = 5;
+            MarkKnowers = 16;
+        }
         Version = LatestVersion();
         return true;
     }
@@ -185,6 +206,28 @@ class OZG_Settings : OZ_ConfigBase
             MaxSeats = 8;
             warnings++;
         }
+        if (Cheating != 0)
+            Cheating = 1;
+        if (MarkUses < 1)
+        {
+            MarkUses = 20;
+            warnings++;
+        }
+        if (MarkSeconds2 < 1)
+        {
+            MarkSeconds2 = 8;
+            warnings++;
+        }
+        if (LoupeSeconds < 1)
+        {
+            LoupeSeconds = 5;
+            warnings++;
+        }
+        if (MarkKnowers < 2)
+        {
+            MarkKnowers = 16;
+            warnings++;
+        }
         if (DebugLog != 0)
             DebugLog = 1;
     }
@@ -216,6 +259,9 @@ class OZG_ClientCfg
     float SeatReach;
     int   MarkSeconds;
     int   PoseCount;
+    int   Cheating;
+    int   MarkSeconds2;
+    int   LoupeSeconds;
 }
 
 // The settings in force on this machine.
@@ -278,6 +324,9 @@ class OZG_Cfg
         c.SeatReach = now.SeatReach;
         c.MarkSeconds = now.MarkSeconds;
         c.PoseCount = now.PoseList.Count();
+        c.Cheating = now.Cheating;
+        c.MarkSeconds2 = now.MarkSeconds2;
+        c.LoupeSeconds = now.LoupeSeconds;
         string text;
         string err;
         JsonFileLoader<OZG_ClientCfg>.MakeData(c, text, err, false);
@@ -319,6 +368,9 @@ class OZG_Cfg
         fresh.WatchRadius = c.WatchRadius;
         fresh.SeatReach = c.SeatReach;
         fresh.MarkSeconds = c.MarkSeconds;
+        fresh.Cheating = c.Cheating;
+        fresh.MarkSeconds2 = c.MarkSeconds2;
+        fresh.LoupeSeconds = c.LoupeSeconds;
         array<ref OZG_Pose> poses = new array<ref OZG_Pose>();
         for (int i = 0; i < poseTexts.Count(); i++)
         {
