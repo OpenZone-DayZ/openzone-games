@@ -173,10 +173,11 @@ deal of two boots in a row differed (trump K of hearts, then Q of spades).
   beside its RPT; the verdict on a client reads the RPT alone, so it said nothing.
 - **No action while a gesture plays**: `ActionPossibilityCheck` refuses every action of a
   player whose emote is playing, the place's own included.
-- **A character logged in on a stand for hours starves**: the stand's bots stood at a
-  table until hunger took them, and the tester's own character lost a twentieth of a
-  health point a second. Bots are made with `SetAllowDamage(false)`; the tester has
-  `!ozg feed`.
+- **A character logged in on a stand for hours starves**: with water and energy at
+  nothing the tester's own character lost 0.055 of a health point a second (4.48 in 81 s),
+  half an hour from full health to none. `!ozg feed` ended it: health read 100 for the
+  seven minutes it was watched after. The bots are made with `SetAllowDamage(false)`, so
+  that hours at a table cost them nothing (a precaution: no bot was seen to die).
 
 ## What is not done
 
