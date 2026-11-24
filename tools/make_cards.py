@@ -834,9 +834,10 @@ def face_layers(style, rank, suit):
 
 
 def back_classic(ink, style):
-    """Deep burgundy under a white lattice, a border, and in the middle a medallion with the
-    mark of the series (the owner's word, 2026-11-24: the logo of OpenZone on the classic back).
-    The mark leans up and right, so the back no longer reads the same either way up."""
+    """Deep burgundy under a white lattice, a border, and in the middle the mark of the series
+    lying on the lattice (the owner's words, 2026-11-24: the logo of OpenZone on the classic
+    back, and no separate circle round it). The mark leans up and right, so the back no
+    longer reads the same either way up."""
     ground, line = style.back, style.line
     ink.rrect(9, 9, W - 9, H - 9, 8, fill=ground)
     step, slope = 14.0, math.tan(math.radians(55))
@@ -853,11 +854,14 @@ def back_classic(ink, style):
     ink.add(net)
     ink.rrect(12.5, 12.5, W - 12.5, H - 12.5, 5.5, outline=line, width=1.4)
 
-    ink.disc(CX, CY, 40.0, line)
-    ink.disc(CX, CY, 38.0, style.back_deep)
-    ink.circle(CX, CY, 34.5, line, 0.8)
-    r = 18.0                                       # the mark leans up and right; this centres it
-    oz_mark(ink, CX - 0.25 * r, CY + 0.25 * r, r, style.mark, style.accent)
+    # The mark lies on the lattice itself, with no ring of its own round it (the owner's word):
+    # the lattice is only cut back from each of its strokes by a margin of the ground's colour.
+    r = 22.0                                       # the mark leans up and right; this centres it
+    mx, my, w, gap = CX - 0.25 * r, CY + 0.25 * r, r * 0.30, 3.0
+    band(ink, mx, my, r + gap, -12, 282, w + 2 * gap, ground)
+    ink.disc(mx, my, r * 0.34 + gap, ground)
+    band(ink, mx, my, r * 1.62 + gap, 292, 338, w * 0.85 + 2 * gap, ground)
+    oz_mark(ink, mx, my, r, style.mark, style.accent)
 
 
 def back_zone(ink, style):

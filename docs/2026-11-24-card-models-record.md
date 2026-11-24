@@ -32,9 +32,11 @@ the mod (its palette stays as the ground the stalkers' deck is drawn on).
   version. `OZG_Deck_Zone`, its sharp version, its string, its imageset, sheet and art are
   gone.
 - **The classic back** carries the mark of the series, the OZ-COM mark the radios carry:
-  a pale ring, the dot and the wave in 4FB5E8, in a medallion where the lozenge was. It is
-  one picture for the whole deck, in the window and on the 3D things alike. The mark leans
-  up and right, so this back no longer reads the same either way up.
+  a pale ring, the dot and the wave in 4FB5E8, where the lozenge was. It lies on the
+  lattice itself, which only stands back a little from its strokes: first it sat in a
+  medallion, and the owner said "no separate circle round the logo". It is one picture for
+  the whole deck, in the window and on the 3D things alike. The mark leans up and right,
+  so this back no longer reads the same either way up.
 
 ## A bug and what caused it
 
