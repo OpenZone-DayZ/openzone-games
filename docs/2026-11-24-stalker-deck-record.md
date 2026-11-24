@@ -22,8 +22,8 @@ mutants too, and every card is worn its own way ("all cards are worn alike, rand
 
 | | spades | hearts | diamonds | clubs |
 |---|---|---|---|---|
-| Ace | Стрілець | Дегтярьов | Шрам | Доктор |
-| King | Привид | Сидорович | Лісник | Вовк |
+| Ace | Стрілець | Дегтярьов | Шрам | Скіф |
+| King | Привид | Сидорович | Доктор | Вовк |
 | Queen | Химера | Полтергейст | Контролер | Псевдогігант |
 | Jack | Бюрер | Снорк | Кровосос | Псевдособака |
 | Ten | Тушкан | Сліпий пес | Плоть | Кабан |
@@ -57,8 +57,11 @@ deck, so a face's wear tells nothing from behind.
 ## Whose the pictures are
 
 Not ours. The twenty pictures are cut from the files of the S.T.A.L.K.E.R. games and are
-GSC Game World's: eight portraits from the trilogy (Enhanced Edition), twelve mutants from
-S.T.A.L.K.E.R. 2. `art/cards/stalker/src/SOURCES.md` names the game, the file and the cell
+GSC Game World's: seven portraits from the trilogy (Enhanced Edition), and from
+S.T.A.L.K.E.R. 2 the twelve mutants and Skif. The files of S.T.A.L.K.E.R. 2 name no picture
+after Skif: his card carries the hooded stalker of the difficulty screen, the first of its
+five pictures (the owner asked for Skif on that ace the same evening, and for the Doctor on
+the king of diamonds in the Forester's place). `art/cards/stalker/src/SOURCES.md` names the game, the file and the cell
 of each. `NOTICE` and `README.md` carry the statement GSC's terms ask for (the mod is
 unofficial, the assets are GSC's, where the games are sold) and keep the pictures outside
 the mod's licence. The owner decided on 2026-11-24 to take GSC's textures on those terms.

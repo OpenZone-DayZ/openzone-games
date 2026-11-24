@@ -16,7 +16,7 @@ and the kings, the mutants on the queens, the jacks and the tens.
 | `doktor.png` | Доктор | S.T.A.L.K.E.R.: Shadow of Chornobyl | `textures\ui\ui_iconstotal.dds`, cell `ui_npc_u_izgoy` at 859,216 | 165 x 108 |
 | `pryvyd.png` | Привид | S.T.A.L.K.E.R.: Shadow of Chornobyl | `textures\ui\ui_npc_unique.dds`, cell `ui_npc_u_stalker_prizrak` at 495,1836 | 165 x 108 |
 | `sydorovych.png` | Сидорович | S.T.A.L.K.E.R.: Shadow of Chornobyl | `textures\ui\ui_npc_unique.dds`, cell `ui_npc_u_trader` at 165,324 | 165 x 108 |
-| `lisnyk.png` | Лісник | S.T.A.L.K.E.R.: Clear Sky | `textures\ui\ui_npc_unique.dds`, cell `ui_npc_u_lesnik_1` at 660,216 | 165 x 108 |
+| `skif.png` | Скіф | S.T.A.L.K.E.R. 2: Heart of Chornobyl | `UITextures/Difficulty/T_difficulty_image_1`, the first picture of the difficulty screen (the game's files name no picture after Skif) | 550 x 450 |
 | `vovk.png` | Вовк | S.T.A.L.K.E.R.: Shadow of Chornobyl | `textures\ui\ui_npc_unique.dds`, cell `ui_npc_u_stalker_neytral_balon_1` at 330,324 | 165 x 108 |
 | `khymera.png` | Химера | S.T.A.L.K.E.R. 2: Heart of Chornobyl | `UITextures/PDA/Stats/Mutants/Big/T_Chimera_statisticbig` (1220 x 772), cut to the figure | 640 x 461 |
 | `polterheist.png` | Полтергейст | S.T.A.L.K.E.R. 2: Heart of Chornobyl | `UITextures/PDA/Stats/Mutants/Big/T_Poltergeist_statisticbig` (1220 x 772), cut to the figure | 640 x 499 |
