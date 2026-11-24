@@ -139,6 +139,11 @@ his seat went from taken to kept, the game waited (`waits=0`), the bots stood wh
 were. The client started again: the seat taken, the fan back in his hands, the panel "You
 are at the game", and **J** opened the window on the same hand and the same card to beat.
 
+**The window in three sizes.** Windows of 1920 by 1080, 2400 by 1000 (the proportion of
+a 3840 by 1600 screen) and 1280 by 720, Ukrainian, a game in mid-bout: the same picture,
+scaled by the height and centred, nothing cut, every text inside its box. The smallest
+labels are small at 720 rows.
+
 **The last boots** of the night (the mod as committed, the stand's mod with `!ozg feed`
 and `!ozg day`): the verdict `games loaded: games=1 places=0 problems=0`, no error and no
 warning in the server's log; the live client's script log held one stack trace, the diag
@@ -183,8 +188,8 @@ deal of two boots in a row differed (trump K of hearts, then Q of spades).
 
 - **Signing, `mod.cpp`, a Workshop item.** Nothing is published and no key was made for
   this repository; the owner's word comes first.
-- **The window in other sizes.** Seen at 1920 by 1080 only. The layout is in units of a
-  1080-row screen and should follow; "should" is not "seen".
+- **The window full-screen on an ultrawide screen.** Its proportion was seen in a window
+  (above); 3840 by 1600 itself was not.
 - **Watching, seen by a second person.** The window opens for a watcher and the server
   drops a watcher who walks off; no second client was there to see it beside a player.
 - **Two real players at one place.** Every other player so far was a character the script
