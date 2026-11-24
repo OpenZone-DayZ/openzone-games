@@ -403,6 +403,10 @@ class OZG_Bots
             string deck = "OZG_Deck_Classic";
             if (arg == "zone")
                 deck = "OZG_Deck_Zone";
+            if (arg == "sharp")
+                deck = "OZG_Deck_Classic_Sharp";
+            if (arg == "zonesharp")
+                deck = "OZG_Deck_Zone_Sharp";
             EntityAI made = player.GetHumanInventory().CreateInHands(deck);
             if (!made)
                 made = player.GetInventory().CreateInInventory(deck);
@@ -498,7 +502,7 @@ class OZG_Bots
             return;
         }
 
-        Reply(player, "!ozg deck [zone] | table | bots [n] | pause | clear | noon | day | feed");
+        Reply(player, "!ozg deck [zone|sharp|zonesharp] | table | bots [n] | pause | clear | noon | day | feed");
     }
 }
 

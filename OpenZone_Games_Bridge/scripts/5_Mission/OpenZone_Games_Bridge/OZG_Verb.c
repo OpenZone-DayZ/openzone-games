@@ -86,6 +86,12 @@ class OZG_VerbOps
             return OZG_WorldOps.OpAuto(args, detail);
         if (op == "face")
             return OZG_WorldOps.OpFace(args, detail);
+        if (op == "cards")
+            return OZG_WorldOps.OpCards(args, detail);
+        if (op == "pull")
+            return OZG_WorldOps.OpPull(args, detail);
+        if (op == "undeck")
+            return OZG_WorldOps.OpUndeck(args, detail);
         // -- ops of the later phases go above this line --
         detail = "unknown op '" + op + "'; known: " + KnownOps();
         return false;
@@ -94,7 +100,7 @@ class OZG_VerbOps
     static string KnownOps()
     {
         string known = "status, deck, names, games, begin, act, play, outcome, brief, all, can, drop, away, view, save, load, fuzz";
-        known = known + ", ring, lay, places, sess, seats, puppet, move, ask, sit, ticks, gather, hand, give, chat, bots, auto, face";
+        known = known + ", ring, level, cards, pull, undeck, lay, places, sess, seats, puppet, move, ask, sit, ticks, gather, hand, give, chat, bots, auto, face";
         return known;
     }
 

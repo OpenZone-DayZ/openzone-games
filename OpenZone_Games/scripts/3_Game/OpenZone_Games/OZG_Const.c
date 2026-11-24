@@ -82,6 +82,12 @@ class OZG_Const
     static const int SAVE_VERSION = 1;
 
     // Long enough never to matter beside the idle rule: the engine's ceiling.
+    // A card's class is this and its face: OZG_Card_As.
+    static const string CARD_PREFIX = "OZG_Card_";
+    // The place's slot for the deck of its game.
+    static const string SLOT_HOLD   = "OZG_DeckHold";
+    // The block of a card in the world's storage.
+    static const int CARD_SAVE = 1;
     static const float PLACE_LIFETIME = 3888000.0;
 
     // Lines of the log a view carries.

@@ -8,10 +8,17 @@
 class OZG_Decks
 {
     protected static ref array<string> s_Classes;
+    // The looks there are: every style a deck names, in the config's order,
+    // and the sheet of the first deck of each. A look's number is what a card
+    // tells the clients; both sides read the same config in the same order.
+    protected static ref array<string> s_Styles;
+    protected static ref array<string> s_Sheets;
 
     protected static void Load()
     {
         s_Classes = new array<string>();
+        s_Styles = new array<string>();
+        s_Sheets = new array<string>();
         int n = GetGame().ConfigGetChildrenCount("CfgVehicles");
         string name;
         for (int i = 0; i < n; i++)
@@ -22,6 +29,12 @@ class OZG_Decks
             if (GetGame().ConfigGetInt("CfgVehicles " + name + " scope") != 2)
                 continue;
             s_Classes.Insert(name);
+            string style = StyleOf(name);
+            if (s_Styles.Find(style) < 0)
+            {
+                s_Styles.Insert(style);
+                s_Sheets.Insert(GetGame().ConfigGetTextOut("CfgVehicles " + name + " ozgSheet"));
+            }
         }
         OZG_Log.Dbg("decks: " + s_Classes.Count().ToString() + " in config");
     }
@@ -66,19 +79,72 @@ class OZG_Decks
         return GetGame().ConfigGetTextOut("CfgVehicles " + deckClass + " ozgSheet");
     }
 
+    // The number of a look; 0 for a style no deck names.
+    static int LookOfStyle(string style)
+    {
+        if (!s_Classes)
+            Load();
+        int at = s_Styles.Find(style);
+        if (at < 0)
+            return 0;
+        return at;
+    }
+
+    // The look of a deck's own cards.
+    static int LookOfDeck(string deckClass)
+    {
+        return LookOfStyle(StyleOf(deckClass));
+    }
+
+    static string StyleAt(int look)
+    {
+        if (!s_Classes)
+            Load();
+        if (look < 0 || look >= s_Styles.Count())
+            return "classic";
+        return s_Styles[look];
+    }
+
+    static string SheetAt(int look)
+    {
+        if (!s_Classes)
+            Load();
+        if (look < 0 || look >= s_Sheets.Count())
+            return "";
+        return s_Sheets[look];
+    }
+
     static void Reset()
     {
         s_Classes = null;
+        s_Styles = null;
+        s_Sheets = null;
     }
 }
 
 // The deck. A kit in the game's sense: "choose placement", the hologram,
-// "deploy" held; the action deletes the kit when the place is made.
+// "deploy" held. A container of its cards as well: slots that take any card.
 class OZG_Deck_Base extends ItemBase
 {
+    // Server: true only while the game's own action ends this deck's placing.
+    // A kit that was placed is deleted there (actiondeployobject.c:230); a
+    // deck is not spent by being laid out (OZG_ActionLayOut.OnEndServer).
+    protected bool m_OZG_Spared;
+    // Came back from the world's storage, or from a character's: what it held
+    // then is what it holds, and it is never filled again. Nothing of the
+    // deck's own is stored; that it WAS stored is what tells an old deck from
+    // a new one.
+    protected bool m_OZG_Stored;
+    protected bool m_OZG_Filled;
+
     override bool IsBasebuildingKit()
     {
-        return true;
+        return !m_OZG_Spared;
+    }
+
+    void OZG_Spare(bool on)
+    {
+        m_OZG_Spared = on;
     }
 
     override bool IsDeployable()
@@ -92,6 +158,75 @@ class OZG_Deck_Base extends ItemBase
     override float GetDeployTime()
     {
         return 1.0;
+    }
+
+    override void EEInit()
+    {
+        super.EEInit();
+        // Not at once: a deck that comes back from storage learns only after
+        // this that it was stored.
+        if (GetGame() && GetGame().IsServer())
+            GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(OZG_FillIfNew, 200, false);
+    }
+
+    override bool OnStoreLoad(ParamsReadContext ctx, int version)
+    {
+        m_OZG_Stored = true;
+        return super.OnStoreLoad(ctx, version);
+    }
+
+    void OZG_FillIfNew()
+    {
+        if (!m_OZG_Stored)
+            OZG_FillNow();
+    }
+
+    // Server: the fifty-two cards of this deck's own look, once.
+    void OZG_FillNow()
+    {
+        if (m_OZG_Filled)
+            return;
+        m_OZG_Filled = true;
+        if (!GetGame().IsServer())
+            return;
+        if (GetInventory().AttachmentCount() > 0)
+            return;
+        string style = OZG_Decks.StyleOf(GetType());
+        array<string> faces = new array<string>();
+        OZG_Cards.Whole(faces);
+        int made = 0;
+        for (int i = 0; i < faces.Count(); i++)
+        {
+            OZG_Card_Base card = OZG_Card_Base.Cast(GetInventory().CreateAttachment(OZG_Const.CARD_PREFIX + faces[i]));
+            if (card)
+            {
+                card.OZG_SetStyle(style);
+                made++;
+            }
+        }
+        if (made != faces.Count())
+            OZG_Log.Warn("a deck " + GetType() + " took " + made.ToString() + " of its cards");
+    }
+
+    // How many cards it has room for: the slots its class names.
+    int OZG_Slots()
+    {
+        TStringArray names = new TStringArray;
+        GetGame().ConfigGetTextArray("CfgVehicles " + GetType() + " attachments", names);
+        return names.Count();
+    }
+
+    int OZG_Free()
+    {
+        return OZG_Slots() - GetInventory().AttachmentCount();
+    }
+
+    // A deck takes cards and nothing else.
+    override bool CanReceiveAttachment(EntityAI attachment, int slotId)
+    {
+        if (!attachment || !attachment.IsInherited(OZG_Card_Base))
+            return false;
+        return super.CanReceiveAttachment(attachment, slotId);
     }
 
     override void SetActions()

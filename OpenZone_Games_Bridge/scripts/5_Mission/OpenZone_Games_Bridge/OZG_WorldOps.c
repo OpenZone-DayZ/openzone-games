@@ -535,6 +535,146 @@ class OZG_WorldOps
         return true;
     }
 
+    // The deck a player holds in his hands, or the first deck in his
+    // inventory; null when he has none.
+    static OZG_Deck_Base DeckOf(PlayerBase p)
+    {
+        if (!p)
+            return null;
+        OZG_Deck_Base deck = OZG_Deck_Base.Cast(p.GetHumanInventory().GetEntityInHands());
+        if (deck)
+            return deck;
+        array<EntityAI> items = new array<EntityAI>();
+        p.GetInventory().EnumerateInventory(InventoryTraversalType.PREORDER, items);
+        for (int i = 0; i < items.Count(); i++)
+        {
+            deck = OZG_Deck_Base.Cast(items[i]);
+            if (deck)
+                return deck;
+        }
+        return null;
+    }
+
+    // `deck <class> slots= cards= free= faces=<different faces> looks=<look>:<how many>,..`
+    static string DeckLine(OZG_Deck_Base deck)
+    {
+        int held = deck.GetInventory().AttachmentCount();
+        string s = "deck " + deck.GetType() + " slots=" + deck.OZG_Slots().ToString();
+        s = s + " cards=" + held.ToString() + " free=" + deck.OZG_Free().ToString();
+        array<string> faces = new array<string>();
+        array<int> looks = new array<int>();
+        array<int> counts = new array<int>();
+        for (int i = 0; i < held; i++)
+        {
+            OZG_Card_Base card = OZG_Card_Base.Cast(deck.GetInventory().GetAttachmentFromIndex(i));
+            if (!card)
+                continue;
+            if (faces.Find(card.OZG_Face()) < 0)
+                faces.Insert(card.OZG_Face());
+            int at = looks.Find(card.OZG_Look());
+            if (at < 0)
+            {
+                looks.Insert(card.OZG_Look());
+                counts.Insert(1);
+            }
+            else
+            {
+                counts[at] = counts[at] + 1;
+            }
+        }
+        s = s + " faces=" + faces.Count().ToString() + " looks=";
+        for (int k = 0; k < looks.Count(); k++)
+        {
+            if (k > 0)
+                s = s + ",";
+            s = s + looks[k].ToString() + ":" + counts[k].ToString();
+        }
+        return s;
+    }
+
+    // A card out of a deck for each face named, and gone; a face named twice
+    // takes two cards. Returns how many were found.
+    static int PullFrom(OZG_Deck_Base deck, string faces)
+    {
+        array<string> wanted = new array<string>();
+        OZG_Cards.Parse(faces, wanted);
+        int gone = 0;
+        int held = deck.GetInventory().AttachmentCount();
+        for (int i = 0; i < held; i++)
+        {
+            OZG_Card_Base card = OZG_Card_Base.Cast(deck.GetInventory().GetAttachmentFromIndex(i));
+            if (!card)
+                continue;
+            int at = wanted.Find(card.OZG_Face());
+            if (at < 0)
+                continue;
+            wanted.Remove(at);
+            GetGame().ObjectDelete(card);
+            gone++;
+        }
+        return gone;
+    }
+
+    // cards who=: the deck a player carries, counted.
+    static bool OpCards(map<string, string> args, out string detail)
+    {
+        string uid;
+        PlayerBase p = Who(args, uid);
+        OZG_Deck_Base deck = DeckOf(p);
+        if (!deck)
+        {
+            detail = "cards: '" + uid + "' carries no deck";
+            return true;
+        }
+        detail = DeckLine(deck);
+        return true;
+    }
+
+    // pull who= face="<face> [<face> ..]": a card of each face out of the deck
+    // a player carries, and gone.
+    static bool OpPull(map<string, string> args, out string detail)
+    {
+        string faces = OZG_VerbOps.Arg(args, "face", "As");
+        string uid;
+        PlayerBase p = Who(args, uid);
+        OZG_Deck_Base deck = DeckOf(p);
+        if (!deck)
+        {
+            detail = "pull: '" + uid + "' carries no deck";
+            return true;
+        }
+        detail = "pulled " + PullFrom(deck, faces).ToString() + " of '" + faces + "'; a tick later: cards";
+        return true;
+    }
+
+    // undeck who=: every deck a player carries is deleted, with its cards.
+    static bool OpUndeck(map<string, string> args, out string detail)
+    {
+        string uid;
+        PlayerBase p = Who(args, uid);
+        if (!p)
+        {
+            detail = "undeck: nobody is '" + uid + "'";
+            return false;
+        }
+        array<EntityAI> items = new array<EntityAI>();
+        p.GetInventory().EnumerateInventory(InventoryTraversalType.PREORDER, items);
+        EntityAI held = p.GetHumanInventory().GetEntityInHands();
+        if (held && items.Find(held) < 0)
+            items.Insert(held);
+        int gone = 0;
+        for (int i = 0; i < items.Count(); i++)
+        {
+            if (items[i] && items[i].IsInherited(OZG_Deck_Base))
+            {
+                GetGame().ObjectDelete(items[i]);
+                gone++;
+            }
+        }
+        detail = "undeck: " + gone.ToString() + " deck(s) of " + uid + " deleted";
+        return true;
+    }
+
     // give who= [deck=class]: a deck into a player's hands.
     static bool OpGive(map<string, string> args, out string detail)
     {

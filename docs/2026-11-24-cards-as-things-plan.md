@@ -1036,7 +1036,7 @@ Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 - Consumes: `OZG_Cards.Whole`, `OZG_Cards.Parse` (exist).
 - Produces: slots `OZG_Card01`..`OZG_Card62` and `OZG_DeckHold`; config classes `OZG_Card_Base`, `OZG_Card_<face>` (`OZG_Card_As`), `OZG_Deck_Classic_Sharp`, `OZG_Deck_Zone_Sharp`; script `OZG_Card_Base.OZG_Face() : string`, `.OZG_Look() : int`, `.OZG_SetStyle(string style)`; `OZG_Decks.LookOfDeck(string deckClass) : int`, `.LookOfStyle(string style) : int`, `.StyleAt(int look) : string`, `.SheetAt(int look) : string`; `OZG_Deck_Base.OZG_FillNow()`, `.OZG_Spare(bool on)`, `.OZG_Slots() : int`, `.OZG_Free() : int`; `OZG_Const.CARD_PREFIX = "OZG_Card_"`, `.SLOT_HOLD = "OZG_DeckHold"`; in the bridge `OZG_WorldOps.DeckOf(PlayerBase) : OZG_Deck_Base`, `.DeckLine(OZG_Deck_Base) : string`, `.PullFrom(OZG_Deck_Base, string faces) : int`.
 
-- [ ] **Step 1: The generator**
+- [x] **Step 1: The generator**
 
 Write `tools/make_card_items.py` with the Write tool:
 
@@ -1196,7 +1196,7 @@ def types():
 print("slots %d, names %d, types %d" % (config(), strings(), types()))
 ```
 
-- [ ] **Step 2: The markers and the hand-written part of the config**
+- [x] **Step 2: The markers and the hand-written part of the config**
 
 In `OpenZone_Games/config.cpp`:
 
@@ -1291,7 +1291,7 @@ Run `python -I tools/stringtable.py OpenZone_Games`. Expected: `stringtable.csv:
 Run `grep -c "class OZG_Card_" OpenZone_Games/config.cpp`. Expected: `53`.
 Run the tool a second time, then `git diff --stat` before and after: the second run changes nothing.
 
-- [ ] **Step 3: The looks of decks**
+- [x] **Step 3: The looks of decks**
 
 In `OZG_Items.c`, `class OZG_Decks`: add beside `s_Classes`:
 
@@ -1362,7 +1362,7 @@ After `SheetOf`, add:
 
 and in `Reset()` add `s_Styles = null;` and `s_Sheets = null;`.
 
-- [ ] **Step 4: The card item**
+- [x] **Step 4: The card item**
 
 In `OZG_Const.c`, before the line `static const float PLACE_LIFETIME = 3888000.0;`, add:
 
@@ -1476,7 +1476,7 @@ class OZG_Card_Base extends ItemBase
 }
 ```
 
-- [ ] **Step 5: The deck fills itself, takes cards only, and can be spared**
+- [x] **Step 5: The deck fills itself, takes cards only, and can be spared**
 
 In `OZG_Items.c`, replace the comment above `class OZG_Deck_Base`, the class's opening and its `IsBasebuildingKit` (down to that method's closing brace) with:
 
@@ -1582,7 +1582,7 @@ and, in the same class after `GetDeployTime`, add:
 
 A deck made by a build before this one has no cards and was stored: it stays empty. That is accepted (nothing is published); the record says so, and `!ozg deck` gives a new one.
 
-- [ ] **Step 6: Ops to look at a deck and to take cards out of it; the chat's words for a sharp's deck**
+- [x] **Step 6: Ops to look at a deck and to take cards out of it; the chat's words for a sharp's deck**
 
 In `OZG_WorldOps.c`, before `// give who= [deck=class]`, add:
 
@@ -1753,7 +1753,7 @@ In `OZG_Bots.c`, after the two lines `if (arg == "zone")` / `deck = "OZG_Deck_Zo
 
 and in the help line `"!ozg deck [zone] | table | ..."` make it `"!ozg deck [zone|sharp|zonesharp] | table | ..."`.
 
-- [ ] **Step 7: Lint, a stand cycle with a client, the checks**
+- [x] **Step 7: Lint, a stand cycle with a client, the checks**
 
 `mod_lint`, the stand cycle, the client, `world_teleport "4699.56 339.02 10192.5"`, `oz_games {"op":"undeck","who":"me"}` (a deck of an older build is empty and would mislead every check).
 
@@ -1791,7 +1791,7 @@ oz_games {"op":"cards","who":"me"}
 ```
 Expected: `... cards=51 free=11 faces=51 looks=1:51` (kept through the restart, the looks with it, and not filled again).
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add tools OpenZone_Games OpenZone_Games_Bridge docs/examples
@@ -1805,6 +1805,8 @@ tools/make_card_items.py.
 
 Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 ```
+
+**Done 2026-11-24.** The generator: `slots 62, names 52, types 52`, 212 strings, 53 card classes, a second run changes nothing. On the stand: `deck OZG_Deck_Classic slots=52 cards=52 free=0 faces=52 looks=0:52` (fifty-two cards into slots that every card names: the first free slot works); `deck OZG_Deck_Zone_Sharp slots=62 cards=52 free=10 faces=52 looks=1:52`; after `pull As` `cards=51 free=11 faces=51 looks=1:51`; a classic sharp's deck short of two cards read `slots=62 cards=50 free=12 faces=50 looks=0:50` before a restart and after it. In the inventory a deck in the hands shows its slots as a grid of icons under it, eight to a row, an empty slot as the ghost icon; a card's icon is the deck's model seen from its edge, a white bar (art for later). Not checked here: a card of look 1 through a restart (Task 8's restart check does it).
 
 ---
 

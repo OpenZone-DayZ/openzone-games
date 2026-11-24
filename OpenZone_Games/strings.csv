@@ -168,3 +168,60 @@ STR_OZG_HAND_DESC,Ваші карти в грі.,Your cards in the game.
 STR_OZG_SAY_NO_SEATS,"Партія триває: місця звільняться після неї. Можна спостерігати.","A game is in progress: seats open when it ends. You may watch."
 STR_OZG_SEATED,Ви за грою,You are at the game
 STR_OZG_SEATED_KEY,%1 — відкрити вікно гри,%1 — open the game window
+# -- cards as things
+STR_OZG_CARD_SLOT,Карта,Card
+STR_OZG_CARD_DESC,Гральна карта. Її місце в колоді.,A playing card. It belongs in a deck.
+# >>> generated: cards
+STR_OZG_CARD_2S,Двійка пік,Two of spades
+STR_OZG_CARD_3S,Трійка пік,Three of spades
+STR_OZG_CARD_4S,Четвірка пік,Four of spades
+STR_OZG_CARD_5S,П'ятірка пік,Five of spades
+STR_OZG_CARD_6S,Шістка пік,Six of spades
+STR_OZG_CARD_7S,Сімка пік,Seven of spades
+STR_OZG_CARD_8S,Вісімка пік,Eight of spades
+STR_OZG_CARD_9S,Дев'ятка пік,Nine of spades
+STR_OZG_CARD_TS,Десятка пік,Ten of spades
+STR_OZG_CARD_JS,Валет пік,Jack of spades
+STR_OZG_CARD_QS,Дама пік,Queen of spades
+STR_OZG_CARD_KS,Король пік,King of spades
+STR_OZG_CARD_AS,Туз пік,Ace of spades
+STR_OZG_CARD_2H,Двійка чирв,Two of hearts
+STR_OZG_CARD_3H,Трійка чирв,Three of hearts
+STR_OZG_CARD_4H,Четвірка чирв,Four of hearts
+STR_OZG_CARD_5H,П'ятірка чирв,Five of hearts
+STR_OZG_CARD_6H,Шістка чирв,Six of hearts
+STR_OZG_CARD_7H,Сімка чирв,Seven of hearts
+STR_OZG_CARD_8H,Вісімка чирв,Eight of hearts
+STR_OZG_CARD_9H,Дев'ятка чирв,Nine of hearts
+STR_OZG_CARD_TH,Десятка чирв,Ten of hearts
+STR_OZG_CARD_JH,Валет чирв,Jack of hearts
+STR_OZG_CARD_QH,Дама чирв,Queen of hearts
+STR_OZG_CARD_KH,Король чирв,King of hearts
+STR_OZG_CARD_AH,Туз чирв,Ace of hearts
+STR_OZG_CARD_2D,Двійка бубн,Two of diamonds
+STR_OZG_CARD_3D,Трійка бубн,Three of diamonds
+STR_OZG_CARD_4D,Четвірка бубн,Four of diamonds
+STR_OZG_CARD_5D,П'ятірка бубн,Five of diamonds
+STR_OZG_CARD_6D,Шістка бубн,Six of diamonds
+STR_OZG_CARD_7D,Сімка бубн,Seven of diamonds
+STR_OZG_CARD_8D,Вісімка бубн,Eight of diamonds
+STR_OZG_CARD_9D,Дев'ятка бубн,Nine of diamonds
+STR_OZG_CARD_TD,Десятка бубн,Ten of diamonds
+STR_OZG_CARD_JD,Валет бубн,Jack of diamonds
+STR_OZG_CARD_QD,Дама бубн,Queen of diamonds
+STR_OZG_CARD_KD,Король бубн,King of diamonds
+STR_OZG_CARD_AD,Туз бубн,Ace of diamonds
+STR_OZG_CARD_2C,Двійка треф,Two of clubs
+STR_OZG_CARD_3C,Трійка треф,Three of clubs
+STR_OZG_CARD_4C,Четвірка треф,Four of clubs
+STR_OZG_CARD_5C,П'ятірка треф,Five of clubs
+STR_OZG_CARD_6C,Шістка треф,Six of clubs
+STR_OZG_CARD_7C,Сімка треф,Seven of clubs
+STR_OZG_CARD_8C,Вісімка треф,Eight of clubs
+STR_OZG_CARD_9C,Дев'ятка треф,Nine of clubs
+STR_OZG_CARD_TC,Десятка треф,Ten of clubs
+STR_OZG_CARD_JC,Валет треф,Jack of clubs
+STR_OZG_CARD_QC,Дама треф,Queen of clubs
+STR_OZG_CARD_KC,Король треф,King of clubs
+STR_OZG_CARD_AC,Туз треф,Ace of clubs
+# <<< generated: cards
