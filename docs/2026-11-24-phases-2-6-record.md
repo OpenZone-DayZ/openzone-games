@@ -197,9 +197,11 @@ the ring as it was found no lower floor at all: "standing" gave no seat, and the
 took the wall's top for a floor. With the ring as it is now, at the same spot and from
 where he stood: the guess and "standing" give four seats on the step, "sitting" gives
 three on the step, "on the floor" gives two on the wall's top and none on the brink. A
-ring there costs 9 ms with a ray at every read of the floor (2 to 3 ms before); the
-reader now spends a ray only where no road surface is right under its start, which has
-not been measured yet. The marks: a place laid by script in front of his character, the
+ring there costs 9 ms with a ray at every read of the floor (2 to 3 ms before). The
+reader was then made to spend a ray only where no road surface is right under its start:
+7.7 ms for the guess and 5.7 ms on the floor at that wall, the same seats, thirty rings
+each. The wall is the worst case, with no road surface under most points around its top;
+beside a table on a floor no ray is cast. The marks: a place laid by script in front of his character, the
 seats asked for, the deck gathered four seconds later: the two marks were on the first
 picture and gone on the second.
 
@@ -282,3 +284,8 @@ picture and gone on the second.
   script at the owner's spot; the key's round, the panel's words and a game laid out in
   each layout are the owner's to see. Nothing but that one wall was tried.
 - **Chairs and benches, other games, stakes**: later specs (§16).
+- **Cards as things, and cheating at them** (the owner, 2026-11-24): a deck that is a
+  container of card items, marks and a loupe, noticing over the deals, sleights. Its own
+  design, a draft for his review: `docs/specs/2026-11-24-openzone-games-cardsharp-design.md`
+  of the series' notes. Measured for it with the stand's probe: fifty-two new slots are
+  taken by the engine, and a thing with fifty-two attachments is filled in 14 ms.
