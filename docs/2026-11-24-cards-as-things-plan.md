@@ -2694,7 +2694,7 @@ Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 - Consumes: `OZG_DeckRead.CardsOf` (Task 5); `OZG_Session.m_DeckDue` (Task 4).
 - Produces: `OZG_Const.OP_COUNT = "count"`, `OZG_Const.OP_COUNTED = "counted"`; `class OZG_WCount { string PlaceId; int Total; int Missing; int Copies; ref array<string> Names; }`; settings `CountSeconds` (6), `CountNamesCards` (0); `OZG_GameMenu.Counted(OZG_WCount c)`.
 
-- [ ] **Step 1: Names, the answer's shape, the settings**
+- [x] **Step 1: Names, the answer's shape, the settings**
 
 `OZG_Const.c`: after `static const string OP_MINE    = "mine";` add
 
@@ -2773,7 +2773,7 @@ and in `Validate`, after the block that puts `IdleMinutes` right:
         }
 ```
 
-- [ ] **Step 2: The session counts**
+- [x] **Step 2: The session counts**
 
 `OZG_Session.c`: beside `m_DeckDue` add
 
@@ -2864,7 +2864,7 @@ and, before the comment `// ---- the clock` above `Tick`, the method:
 
 ```
 
-- [ ] **Step 3: The button, the log's line, the answer**
+- [x] **Step 3: The button, the log's line, the answer**
 
 `tools/make_layouts.py`: in the list `stacked`, after `("OZG_BtnDeal", "#STR_OZG_WIN_DEAL"),` add `("OZG_BtnCount", "#STR_OZG_WIN_COUNT"),`. Run `python -I tools/make_layouts.py`, then Grep for `OZG_BtnCount` under `OpenZone_Games`: the button and its children are in `ozg_game.layout`.
 
@@ -2959,7 +2959,7 @@ Run `python -I tools/stringtable.py OpenZone_Games`. Expected: `stringtable.csv:
 
 ```
 
-- [ ] **Step 4: Lint, a stand cycle with a client, the checks**
+- [x] **Step 4: Lint, a stand cycle with a client, the checks**
 
 `mod_lint`, the stand cycle, the client, `world_teleport "4699.56 339.02 10192.5"`.
 
@@ -2984,7 +2984,7 @@ Press the button itself once (`ui_find` for `OZG_BtnCount`, `ui_click` by the pa
 
 With `CountNamesCards` 1: stop the server, set `"CountNamesCards": 1` in the stand's `profiles\OpenZone\OZ_Games_Settings.json` (the file gains the two settings at the first boot with this build; `log_tail(pattern="settings", n=600)` after that boot shows no warning about them), start, repeat the first block. The shot says `... Missing: Ace of spades` after the three numbers. Set it back to 0.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add tools OpenZone_Games
@@ -2997,6 +2997,8 @@ CountNamesCards says so.
 
 Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 ```
+
+**Done 2026-11-24.** `count` answered `ok`, asked again at once `refused STR_OZG_SAY_NOT_NOW`; after `ticks n=7` the window's line read `Cards in the deck: 52. Missing for this game: 1. Copies: 1.` and the log `Survivor counts the deck`; the button "Count the deck" stands under "Deal" with nothing over it, and pressing it counts again; in a running game `refused STR_OZG_SAY_PLAYING`. The stand's settings file came out of the boot as `"Version": 2` with `"CountSeconds": 6` and `"CountNamesCards": 0`. One anchor of this plan was not unique (`MaxSeats = 8;` is also inside `Validate`); the defaults went in after the line in `LoadDefaults`. The check with `CountNamesCards` 1 was run at the next boot, with Task 8's build: its result is in Task 8's note.
 
 ---
 

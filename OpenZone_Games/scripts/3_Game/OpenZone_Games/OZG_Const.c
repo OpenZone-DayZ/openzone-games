@@ -116,11 +116,13 @@ class OZG_Const
     static const string OP_FOLD    = "fold";
     static const string OP_HOST    = "host";
     static const string OP_MINE    = "mine";
+    static const string OP_COUNT   = "count";
 
     // To a client.
     static const string OP_VIEW   = "view";    // the table as it stands
     static const string OP_SEATS  = "seats";   // the seats to mark in the world
     static const string OP_CLOSED = "closed";  // this place is no longer yours to look at
+    static const string OP_COUNTED = "counted"; // what counting the deck found, to the one who counted
 
     // The server's word to open the window (OZ_Rpc.Show), followed by the
     // place's id.

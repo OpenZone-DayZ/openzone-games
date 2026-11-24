@@ -48,6 +48,8 @@ class OZG_Settings : OZ_ConfigBase
     float PlaceSpacing;
     int   MarkSeconds;
     int   MaxSeats;
+    int   CountSeconds;     // counting the deck
+    int   CountNamesCards;  // 1: a count also says which faces are missing
     ref array<string> GameIds;
     int   DebugLog;
 
@@ -58,7 +60,7 @@ class OZG_Settings : OZ_ConfigBase
 
     override int LatestVersion()
     {
-        return 1;
+        return 2;
     }
 
     protected void DefaultPoses()
@@ -84,6 +86,8 @@ class OZG_Settings : OZ_ConfigBase
         PlaceSpacing = 2.0;
         MarkSeconds = 20;
         MaxSeats = 8;
+        CountSeconds = 6;
+        CountNamesCards = 0;
         GameIds = new array<string>();
         GameIds.Insert("durak");
         DebugLog = 0;
@@ -91,6 +95,12 @@ class OZG_Settings : OZ_ConfigBase
 
     override bool Migrate(int from)
     {
+        // 2: counting the deck.
+        if (from < 2)
+        {
+            CountSeconds = 6;
+            CountNamesCards = 0;
+        }
         Version = LatestVersion();
         return true;
     }
@@ -143,6 +153,16 @@ class OZG_Settings : OZ_ConfigBase
         if (IdleMinutes < 0)
         {
             IdleMinutes = 0;
+            warnings++;
+        }
+        if (CountSeconds < 1)
+        {
+            CountSeconds = 6;
+            warnings++;
+        }
+        if (CountNamesCards != 0 && CountNamesCards != 1)
+        {
+            CountNamesCards = 0;
             warnings++;
         }
         if (HostAwayMinutes < 1)

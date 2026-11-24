@@ -79,6 +79,9 @@ class OZG_Session
     // placed it.
     protected int m_DeckDue;
     protected string m_DeckUid;
+    // Who counts the deck, and the second of the mod's clock he is done.
+    protected string m_CountUid;
+    protected int m_CountAt;
 
     void OZG_Session(OZG_Place place)
     {
@@ -860,6 +863,23 @@ class OZG_Session
             return "";
         }
 
+        // Counting the deck: any seated player, between deals. Everybody's log
+        // says who counts; what he finds is his alone.
+        if (op == OZG_Const.OP_COUNT)
+        {
+            if (mine < 0 || !Present(player))
+                return OZG_Const.SAY_NOT_SEATED;
+            if (m_R.St == OZG_Const.ST_PLAYING)
+                return OZG_Const.SAY_PLAYING;
+            if (m_CountUid != "" || m_DeckDue > 0)
+                return OZG_Const.SAY_NOT_NOW;
+            m_CountUid = uid;
+            m_CountAt = OZG_Sessions.Now() + OZG_Cfg.Get().CountSeconds;
+            AddLog("count " + mine.ToString());
+            Changed();
+            return "";
+        }
+
         // The rest is the host's.
         if (!IsHost(uid))
             return OZG_Const.SAY_NOT_HOST;
@@ -948,6 +968,7 @@ class OZG_Session
             return OZG_Const.SAY_PLAYING;
         if (m_DeckDue > 0)
             return OZG_Const.SAY_NOT_NOW;
+        m_CountUid = "";
         if (!OZG_Cfg.Get().GameOn(m_R.GameId))
             return OZG_Const.NO_GAME;
         OZG_Game game = OZG_Games.Create(m_R.GameId);
@@ -1128,6 +1149,51 @@ class OZG_Session
         }
     }
 
+    // The count is done: its answer goes to the one who counted.
+    protected void CountDone()
+    {
+        string uid = m_CountUid;
+        m_CountUid = "";
+        PlayerBase p = OZG_Sessions.PlayerOf(uid);
+        if (!p || SeatOf(uid) < 0)
+            return;
+
+        OZG_WCount c = new OZG_WCount();
+        c.PlaceId = m_R.PlaceId;
+        array<ref OZG_DealCard> cards = new array<ref OZG_DealCard>();
+        c.Total = OZG_DeckRead.CardsOf(m_Place, cards);
+
+        // The faces that are there, each once.
+        array<string> faces = new array<string>();
+        int i;
+        for (i = 0; i < cards.Count(); i++)
+        {
+            string face = OZG_Cards.FaceOf(cards[i].Name);
+            if (faces.Find(face) < 0)
+                faces.Insert(face);
+        }
+        c.Copies = c.Total - faces.Count();
+
+        array<string> ofGame = new array<string>();
+        OZG_Game sample = OZG_Games.Sample(m_R.GameId);
+        if (sample)
+            sample.CardsUsed(ofGame);
+        bool named = OZG_Cfg.Get().CountNamesCards == 1;
+        for (i = 0; i < ofGame.Count(); i++)
+        {
+            if (faces.Find(ofGame[i]) >= 0)
+                continue;
+            c.Missing = c.Missing + 1;
+            if (named && c.Names.Count() < 40)
+                c.Names.Insert(ofGame[i]);
+        }
+
+        string body;
+        string err;
+        JsonFileLoader<OZG_WCount>.MakeData(c, body, err, false);
+        SendTo(p, OZG_Const.OP_COUNTED, body);
+    }
+
     // ------------------------------------------------------------ the clock
 
     // Once a second.
@@ -1148,6 +1214,8 @@ class OZG_Session
                 return;
             }
         }
+        if (m_CountUid != "" && OZG_Sessions.Now() >= m_CountAt)
+            CountDone();
         OZG_Settings cfg = OZG_Cfg.Get();
         bool changed = false;
         bool anyone = false;

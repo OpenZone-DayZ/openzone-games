@@ -69,6 +69,7 @@ class OZG_GameMenu : UIScriptedMenu
     protected Widget m_BtnMove;
     protected Widget m_BtnVariant;
     protected Widget m_BtnDeal;
+    protected Widget m_BtnCount;
     protected Widget m_BtnTakeHost;
     protected Widget m_BtnKickDiscard;
     protected Widget m_BtnKickLeave;
@@ -180,6 +181,7 @@ class OZG_GameMenu : UIScriptedMenu
         m_BtnMove = Find("OZG_BtnMove");
         m_BtnVariant = Find("OZG_BtnVariant");
         m_BtnDeal = Find("OZG_BtnDeal");
+        m_BtnCount = Find("OZG_BtnCount");
         m_BtnTakeHost = Find("OZG_BtnTakeHost");
         m_BtnKickDiscard = Find("OZG_BtnKickDiscard");
         m_BtnKickLeave = Find("OZG_BtnKickLeave");
@@ -291,6 +293,29 @@ class OZG_GameMenu : UIScriptedMenu
             return;
         m_Said.SetText(text);
         m_SaidLeft = 6.0;
+    }
+
+    // What a count of the deck found, for this client alone.
+    void Counted(OZG_WCount c)
+    {
+        if (!c)
+            return;
+        string line = Tr("STR_OZG_COUNTED");
+        line.Replace("%1", c.Total.ToString());
+        line.Replace("%2", c.Missing.ToString());
+        line.Replace("%3", c.Copies.ToString());
+        if (c.Names && c.Names.Count() > 0)
+        {
+            string faces = "";
+            for (int i = 0; i < c.Names.Count(); i++)
+            {
+                if (i > 0)
+                    faces = faces + ", ";
+                faces = faces + CardWord(c.Names[i]);
+            }
+            line = line + " " + Tr1("STR_OZG_COUNTED_NAMES", faces);
+        }
+        Said(line);
     }
 
     override void Update(float timeslice)
@@ -1013,6 +1038,8 @@ class OZG_GameMenu : UIScriptedMenu
             return Tr1("STR_OZG_LOG_LEFT", shownNo.ToString());
         if (head == "host")
             return Tr1("STR_OZG_LOG_HOST", SeatName(rest.ToInt()));
+        if (head == "count")
+            return Tr1("STR_OZG_LOG_COUNT", SeatName(rest.ToInt()));
         if (head == "opt")
             return Tr1("STR_OZG_WIN_VARIANT", VariantLabel());
         if (head == "end")
@@ -1096,6 +1123,8 @@ class OZG_GameMenu : UIScriptedMenu
             shown.Insert(m_BtnVariant);
             shown.Insert(m_BtnDeal);
         }
+        if (seated && !playing)
+            shown.Insert(m_BtnCount);
         if (!host && seated && m_V.HostFree == 1)
             shown.Insert(m_BtnTakeHost);
         if (pickTaken)
@@ -1135,6 +1164,7 @@ class OZG_GameMenu : UIScriptedMenu
         array<Widget> all = new array<Widget>();
         all.Insert(m_BtnVariant);
         all.Insert(m_BtnDeal);
+        all.Insert(m_BtnCount);
         all.Insert(m_BtnTakeHost);
         all.Insert(m_BtnKickDiscard);
         all.Insert(m_BtnKickLeave);
@@ -1235,6 +1265,11 @@ class OZG_GameMenu : UIScriptedMenu
         if (w == m_BtnDeal)
         {
             Send(OZG_Const.OP_DEAL, "", -1, "", "", "", 0);
+            return true;
+        }
+        if (w == m_BtnCount)
+        {
+            Send(OZG_Const.OP_COUNT, "", -1, "", "", "", 0);
             return true;
         }
         if (w == m_BtnTakeHost)

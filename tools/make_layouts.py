@@ -159,6 +159,7 @@ def window():
     stacked = [
         ("OZG_BtnVariant", ""),
         ("OZG_BtnDeal", "#STR_OZG_WIN_DEAL"),
+        ("OZG_BtnCount", "#STR_OZG_WIN_COUNT"),
         ("OZG_BtnTakeHost", "#STR_OZG_WIN_TAKE_HOST"),
         ("OZG_BtnKickDiscard", "#STR_OZG_WIN_KICK_DISCARD"),
         ("OZG_BtnKickLeave", "#STR_OZG_WIN_KICK_LEAVE"),

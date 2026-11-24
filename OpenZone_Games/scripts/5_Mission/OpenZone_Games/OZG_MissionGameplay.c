@@ -134,6 +134,17 @@ modded class MissionGameplay
             return;
         }
 
+        if (op == OZG_Const.OP_COUNTED)
+        {
+            OZG_WCount tally;
+            string tallyErr;
+            if (!JsonFileLoader<OZG_WCount>.LoadData(json, tally, tallyErr) || !tally)
+                return;
+            if (menu && menu.PlaceId() == tally.PlaceId)
+                menu.Counted(tally);
+            return;
+        }
+
         if (op == OZG_Const.OP_CLOSED)
         {
             OZG_WClosed closed;
