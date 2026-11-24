@@ -88,3 +88,75 @@ STR_OZG_POSE_CROSSLEGGED,По-турецьки,Cross-legged
 STR_OZG_POSE_LEGSOUT,Витягнувши ноги,Legs out
 STR_OZG_POSE_CAMPFIRE,Як біля вогнища,By the fire
 STR_OZG_POSE_SQUATTING,Навпочіпки,Squatting
+# -- the window
+STR_OZG_WIN_TRUMP,Козир,Trump
+STR_OZG_WIN_PASS,Пас (бито),Pass (done)
+STR_OZG_WIN_TAKE,Беру,Take
+STR_OZG_WIN_MOVE_ON,Перевести,Move on
+STR_OZG_WIN_LOG,Журнал,Log
+STR_OZG_WIN_DEAL,Роздати,Deal
+STR_OZG_WIN_TAKE_HOST,Стати господарем,Take the host's role
+STR_OZG_WIN_KICK_DISCARD,Прибрати гравця: карти скинути,Remove the player: discard the cards
+STR_OZG_WIN_KICK_LEAVE,Прибрати гравця: карти лишити,Remove the player: leave the cards
+STR_OZG_WIN_DROP_LEFT,Скинути залишені карти,Discard the cards left here
+STR_OZG_WIN_STAND,Встати,Stand up
+STR_OZG_WIN_STAND_DISCARD,Встати: мої карти скинути,Stand up: discard my cards
+STR_OZG_WIN_STAND_LEAVE,Встати: лишити місце з картами,Stand up: leave the seat with the cards
+STR_OZG_WIN_FOLD,Згорнути гру,Fold the game
+STR_OZG_WIN_FOLD_YES,"Так, згорнути: партія пропаде","Yes, fold: the game will be lost"
+STR_OZG_WIN_VARIANT,Варіант: %1,Variant: %1
+STR_OZG_WIN_POSE,Поза: %1,Pose: %1
+STR_OZG_WIN_HOST,Господар: %1,Host: %1
+STR_OZG_WIN_NO_HOST,Господаря немає,No host
+STR_OZG_WIN_SEAT_FREE,вільне,free
+STR_OZG_WIN_SEAT_LEFT,карти чекають,cards waiting
+STR_OZG_WIN_SEAT_NO,місце %1,seat %1
+STR_OZG_WIN_YOU,ви,you
+STR_OZG_WIN_AWAY,відійшов,away
+STR_OZG_WIN_HOST_MARK,господар,host
+STR_OZG_WIN_ROLE_ATTACK,ходить,attacks
+STR_OZG_WIN_ROLE_DEFEND,відбивається,defends
+STR_OZG_WIN_ROLE_TAKES,бере,takes
+STR_OZG_WIN_ROLE_PASSED,пас,passed
+STR_OZG_WIN_ROLE_OUT,вийшов,out
+STR_OZG_WIN_ROLE_DROPPED,вибув,dropped out
+STR_OZG_WIN_ROLE_WATCH,не в партії,not in this game
+STR_OZG_WIN_ROLE_DURAK,дурень,the durak
+STR_OZG_WIN_DISCARDS,Відбій: %1,Discards: %1
+STR_OZG_WIN_LIMIT,Карт в атаці: до %1,Attack cards: up to %1
+STR_OZG_WIN_FOOT,"Esc — закрити вікно, місце лишається за вами","Esc closes the window, the seat stays yours"
+# -- whose move
+STR_OZG_ST_LOBBY_HOST,Оберіть варіант і роздавайте,Choose the variant and deal
+STR_OZG_ST_LOBBY,"Чекаємо, поки господар роздасть",Waiting for the host to deal
+STR_OZG_ST_NEED_TWO,Потрібно щонайменше двоє гравців,At least two players are needed
+STR_OZG_ST_ATTACK,Ваш хід: ходіть,Your move: attack
+STR_OZG_ST_DEFEND,Ваш хід: бийте карти або беріть,Your move: beat the cards or take
+STR_OZG_ST_THROW,Можна підкинути або сказати пас,You may throw in or pass
+STR_OZG_ST_WAIT,Хід гравця: %1,Waiting for: %1
+STR_OZG_ST_OVER_DURAK,Партію завершено. Дурень: %1,Game over. The durak: %1
+STR_OZG_ST_OVER_TIE,Партію завершено: нічия,Game over: a draw
+STR_OZG_ST_OVER_NONE,Партію завершено без дурня,Game over with no durak
+STR_OZG_ST_WATCHER,Ви спостерігаєте,You are watching
+STR_OZG_ST_PICK,"Оберіть на столі карту, яку б'єте, або «Перевести»","Choose the card on the table to beat, or Move on"
+# -- the log
+STR_OZG_LOG_DEAL,Роздано,Dealt
+STR_OZG_LOG_SIT,%1 сідає,%1 sits down
+STR_OZG_LOG_OVER,%1 сідає на місце з картами,%1 takes over a seat with cards
+STR_OZG_LOG_STAND,Місце %1 звільнилось,Seat %1 is free
+STR_OZG_LOG_DROP,Карти місця %1 скинуто,The cards of seat %1 are discarded
+STR_OZG_LOG_LEFT,Місце %1 лишено з картами,Seat %1 is left with its cards
+STR_OZG_LOG_HOST,Господар тепер %1,The host is now %1
+STR_OZG_LOG_ATTACK,%1: хід %2,%1: plays %2
+STR_OZG_LOG_BEAT,%1: б'є %2,%1: beats with %2
+STR_OZG_LOG_TRANSFER,%1: переводить %2,%1: moves on with %2
+STR_OZG_LOG_TAKE,%1: бере,%1: takes
+STR_OZG_LOG_PASS,%1: пас,%1: passes
+# -- cards in words
+STR_OZG_RANK_J,В,J
+STR_OZG_RANK_Q,Д,Q
+STR_OZG_RANK_K,К,K
+STR_OZG_RANK_A,Т,A
+STR_OZG_SUIT_S,пік,of spades
+STR_OZG_SUIT_H,чирв,of hearts
+STR_OZG_SUIT_D,бубн,of diamonds
+STR_OZG_SUIT_C,треф,of clubs

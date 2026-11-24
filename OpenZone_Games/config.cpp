@@ -51,6 +51,18 @@ class CfgMods
             class gameScriptModule    { value = ""; files[] = {"OpenZone_Games/scripts/3_Game"}; };
             class worldScriptModule   { value = ""; files[] = {"OpenZone_Games/scripts/4_World"}; };
             class missionScriptModule { value = ""; files[] = {"OpenZone_Games/scripts/5_Mission"}; };
+
+            // One imageset a deck style: 52 faces, the back and the four
+            // suits. A set that is not listed here loads as blank pictures,
+            // with no error at all.
+            class imageSets
+            {
+                files[] =
+                {
+                    "OpenZone_Games/gui/imagesets/ozg_cards_classic.imageset",
+                    "OpenZone_Games/gui/imagesets/ozg_cards_zone.imageset"
+                };
+            };
         };
     };
 };

@@ -147,8 +147,15 @@ modded class MissionGameplay
             // A view says where this client sits.
             if (view.HeadPart.Mine >= 0)
             {
+                // Newly seated here: the first pose of the seat's kind.
+                bool fresh = OZG_Mine.s_Seat != view.HeadPart.Mine || OZG_Mine.s_PlaceId != view.HeadPart.PlaceId;
                 OZG_Mine.s_PlaceId = view.HeadPart.PlaceId;
                 OZG_Mine.s_Seat = view.HeadPart.Mine;
+                if (fresh)
+                {
+                    m_OZG_Marks.Clear();
+                    OZG_PoseDriver.SitDown(view.HeadPart);
+                }
             }
             else if (OZG_Mine.s_PlaceId == view.HeadPart.PlaceId)
             {
