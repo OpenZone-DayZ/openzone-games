@@ -13,7 +13,8 @@
 	string table, so the tab has its title whichever of them is loaded; a key
 	says in its own label which mod it belongs to.
 
-	UAOZGMode steps through the seat modes (auto, standing, on the ground)
+	UAOZGMode steps through the seat modes (the mod's guess, standing, sitting,
+	on the floor)
 	while a deck's hologram is out. It defaults to J: unbound in the game, and
 	not a key of the other OpenZone mods.
 -->

@@ -134,7 +134,10 @@ class OZG_Sessions
             return;
         }
 
-        OZG_Session s = Make(deckClass, mode, position, orientation, ring);
+        // The place keeps what was decided, never "guess again": a ring worked
+        // out anew later has no placer to read the guess from.
+        int laid = ring.LayMode;
+        OZG_Session s = Make(deckClass, laid, position, orientation, ring);
         if (!s)
         {
             GiveDeck(null, deckClass, player.GetPosition());
@@ -158,7 +161,8 @@ class OZG_Sessions
 
         string line = "place " + s.Id() + " laid out by " + OZG_Who.Uid(player);
         line = line + " at " + position.ToString(false) + " seats=" + ring.Count().ToString();
-        line = line + " kind=" + ring.Kind.ToString() + " mode=" + mode.ToString();
+        line = line + " kind=" + ring.Kind.ToString() + " asked=" + mode.ToString();
+        line = line + " laid=" + laid.ToString();
         OZG_Log.Info(line);
     }
 

@@ -104,16 +104,24 @@ class OZG_Aim
     static bool   s_Refused;
     static string s_Why;        // a string table key
     static int    s_Seats;
-    static int    s_Kind;
+    static int    s_Layout;     // OZG_Const.MODE_STANDING, _SITTING or _FLOOR
     static bool   s_Guessed;
 
     // Server.
     protected static ref map<string, int> s_ServerMode = new map<string, int>();
 
+    // The key's round: the mod's guess, standing, sitting, on the floor. Not
+    // the order of the numbers: those are what was saved before there were
+    // three.
     static void NextMode()
     {
-        s_Mode = s_Mode + 1;
-        if (s_Mode > OZG_Const.MODE_GROUND)
+        if (s_Mode == OZG_Const.MODE_AUTO)
+            s_Mode = OZG_Const.MODE_STANDING;
+        else if (s_Mode == OZG_Const.MODE_STANDING)
+            s_Mode = OZG_Const.MODE_SITTING;
+        else if (s_Mode == OZG_Const.MODE_SITTING)
+            s_Mode = OZG_Const.MODE_FLOOR;
+        else
             s_Mode = OZG_Const.MODE_AUTO;
     }
 
@@ -130,7 +138,7 @@ class OZG_Aim
         string uid = OZG_Who.Uid(player);
         if (uid == "")
             return;
-        if (mode < OZG_Const.MODE_AUTO || mode > OZG_Const.MODE_GROUND)
+        if (mode < OZG_Const.MODE_AUTO || mode > OZG_Const.MODE_LAST)
             mode = OZG_Const.MODE_AUTO;
         s_ServerMode.Set(uid, mode);
     }

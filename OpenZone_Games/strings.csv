@@ -53,7 +53,8 @@ STR_OZG_LAY_NO_PERMIT,Тут розкладати не можна,Laying out is 
 # -- while aiming
 STR_OZG_AIM_SEATS,Місць: %1,Seats: %1
 STR_OZG_AIM_STANDING,стоячи,standing
-STR_OZG_AIM_GROUND,на землі,on the ground
+STR_OZG_AIM_SITTING,сидячи,sitting
+STR_OZG_AIM_FLOOR,на підлозі,on the floor
 STR_OZG_AIM_GUESSED,визначено автоматично,guessed
 STR_OZG_AIM_CHOSEN,обрано вручну,chosen
 STR_OZG_AIM_KEY,%1 — змінити режим місць,%1 — change the seat mode

@@ -12,7 +12,7 @@ class OZG_Pose
 {
     string PoseId;
     string LabelKey;
-    int    Kind;      // OZG_Const.KIND_STANDING or KIND_GROUND
+    int    Kind;      // OZG_Const.KIND_STANDING or KIND_SITTING
     string Stance;    // "erect", "crouch", or "" when the pose is a gesture
     int    Gesture;   // the number of a gesture, 0 when the pose is a stance
 
@@ -65,10 +65,10 @@ class OZG_Settings : OZ_ConfigBase
     {
         PoseList = new array<ref OZG_Pose>();
         PoseList.Insert(OZG_Pose.Make("standing", "STR_OZG_POSE_STANDING", OZG_Const.KIND_STANDING, "erect", 0));
-        PoseList.Insert(OZG_Pose.Make("crosslegged", "STR_OZG_POSE_CROSSLEGGED", OZG_Const.KIND_GROUND, "", 14));
-        PoseList.Insert(OZG_Pose.Make("legsout", "STR_OZG_POSE_LEGSOUT", OZG_Const.KIND_GROUND, "", 15));
-        PoseList.Insert(OZG_Pose.Make("campfire", "STR_OZG_POSE_CAMPFIRE", OZG_Const.KIND_GROUND, "", 13));
-        PoseList.Insert(OZG_Pose.Make("squatting", "STR_OZG_POSE_SQUATTING", OZG_Const.KIND_GROUND, "crouch", 0));
+        PoseList.Insert(OZG_Pose.Make("crosslegged", "STR_OZG_POSE_CROSSLEGGED", OZG_Const.KIND_SITTING, "", 14));
+        PoseList.Insert(OZG_Pose.Make("legsout", "STR_OZG_POSE_LEGSOUT", OZG_Const.KIND_SITTING, "", 15));
+        PoseList.Insert(OZG_Pose.Make("campfire", "STR_OZG_POSE_CAMPFIRE", OZG_Const.KIND_SITTING, "", 13));
+        PoseList.Insert(OZG_Pose.Make("squatting", "STR_OZG_POSE_SQUATTING", OZG_Const.KIND_SITTING, "crouch", 0));
     }
 
     override void LoadDefaults()
@@ -111,7 +111,7 @@ class OZG_Settings : OZ_ConfigBase
                 if (!p)
                     continue;
                 OZG_Pose made = p.Copy();
-                bool known = made.Kind == OZG_Const.KIND_STANDING || made.Kind == OZG_Const.KIND_GROUND;
+                bool known = made.Kind == OZG_Const.KIND_STANDING || made.Kind == OZG_Const.KIND_SITTING;
                 if (made.PoseId == "" || !known)
                 {
                     warnings++;

@@ -67,9 +67,11 @@ class OZG_AimHud
         if (OZG_Aim.s_Refused && OZG_Aim.s_Why != OZG_Const.LAY_NO_ROOM)
             return "#" + OZG_Aim.s_Why;
 
-        string kind = "#STR_OZG_AIM_GROUND";
-        if (OZG_Aim.s_Kind == OZG_Const.KIND_STANDING)
+        string kind = "#STR_OZG_AIM_FLOOR";
+        if (OZG_Aim.s_Layout == OZG_Const.MODE_STANDING)
             kind = "#STR_OZG_AIM_STANDING";
+        else if (OZG_Aim.s_Layout == OZG_Const.MODE_SITTING)
+            kind = "#STR_OZG_AIM_SITTING";
         string how = "#STR_OZG_AIM_CHOSEN";
         if (OZG_Aim.s_Guessed)
             how = "#STR_OZG_AIM_GUESSED";

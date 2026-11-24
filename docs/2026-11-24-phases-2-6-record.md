@@ -76,6 +76,21 @@ The stand's mod gained the world's ops, bots and chat commands (`OZG_WorldOps.c`
     `openzone`, the group the radio declares, titled by `oz_input_group` ("OpenZone"), which
     every mod with keys carries in its own string table; the mod's own group and its title
     are gone. The key's label already says "Games: ...".
+16. **Three layouts of seats** (the owner, 2026-11-24, on a wall of the second terrain:
+    "redefine 'on the ground' as 'sitting'; three modes: standing, sitting, on the
+    floor"). Standing and sitting put the seats on the floor BELOW the mat, around the
+    raised thing it lies on, and differ in what the players do; "on the floor" puts them
+    on the level of the mat. The key's round is the mod's guess, standing, sitting, on the
+    floor. A seat's kind is now standing or sitting (the number that was "ground", and its
+    poses); the mode that was "ground" keeps its number and is "on the floor". The place
+    keeps the layout that was decided, never the guess. The mod's guess: a raised top with
+    the mat 0.6 m or more over the lower floor is standing, under that sitting, anything
+    else on the floor.
+17. **A seat's marks go with their place.** Until 2026-11-24 only their clock (20 s) took
+    them away: a player who asked for the seats and then gathered the deck stood among the
+    marks of a game that was no longer there (the owner's report). The place tells the
+    client's mission when it leaves that client's world (`OZG_PlaceWatch.OnGone`, from
+    `EEDelete`), and the marks of that place are cleared.
 
 ## Where the build differs from the design
 
@@ -172,6 +187,22 @@ its start, and VPP greeted the owner as an admin.
 Nothing was laid out there by script: the owner took the stand over at once. How to
 start it is in `docs/test-commands.md`.
 
+**The wall, the same day.** The owner laid the game on the top of a concrete wall
+(`Land_wall_indcnc_10`, the top about a metre wide, the mat near one edge) and sent a
+picture: four seats on the top, two of them on the brink of a 2.5 m drop, and "there
+should be three sitting seats here", which he then placed on the wall's own step, 0.86 m
+below the top, where he stood. Read from the server with him standing there: the step is
+geometry and no road surface (the road surface under it is the ground, 1.36 m lower), so
+the ring as it was found no lower floor at all: "standing" gave no seat, and the guess
+took the wall's top for a floor. With the ring as it is now, at the same spot and from
+where he stood: the guess and "standing" give four seats on the step, "sitting" gives
+three on the step, "on the floor" gives two on the wall's top and none on the brink. A
+ring there costs 9 ms with a ray at every read of the floor (2 to 3 ms before); the
+reader now spends a ray only where no road surface is right under its start, which has
+not been measured yet. The marks: a place laid by script in front of his character, the
+seats asked for, the deck gathered four seconds later: the two marks were on the first
+picture and gone on the second.
+
 ## Engine facts found (written into the skill)
 
 - **A class of scope 1 is never written to the world's storage.** Three things made by
@@ -210,6 +241,15 @@ start it is in `docs/test-commands.md`.
 - **A group of keys gets a tab only while it holds a key**: the game's keybinding menu
   adds a tab for a sorting group whose list of inputs is not empty
   (`keybindingsmenu.c:91`).
+- **A dedicated server holds the map's objects only where a player is.** Straight after
+  a start, with nobody connected, `SurfaceRoadY3D` and a ray down along that wall
+  answered the bare ground everywhere, 2.4 m under the wall's top: no road surface, no
+  geometry, no object in the ray's set. With the owner's character standing there the
+  same calls answered the wall. A ring worked out where no player stands sees a world
+  without buildings and furniture.
+- **A walkable step need not be a road surface.** The wall's step carried the player and
+  answered a ray of the Geometry kind (and of the Fire and View kinds), and
+  `SurfaceRoadY3D` from above it answered the ground below.
 
 ## What is not done
 
@@ -233,4 +273,12 @@ start it is in `docs/test-commands.md`.
   in the client: the owner had the stand. And whether the engine joins two groups of one
   name from two mods into one tab was not measured: the radio, the other mod that names
   `openzone`, was not loaded beside this one.
+- **A ring worked out with no player near.** A place whose session file is lost or
+  broken gets its seats worked out anew when the world is read, before anybody is
+  connected, and the server then holds no map objects there (above): such a ring is
+  worked out against bare ground. Not met yet; the seats should wait for the first
+  player who comes near.
+- **The three layouts, seen by a player.** The seats above are the server's, asked by
+  script at the owner's spot; the key's round, the panel's words and a game laid out in
+  each layout are the owner's to see. Nothing but that one wall was tried.
 - **Chairs and benches, other games, stakes**: later specs (§16).

@@ -11,9 +11,12 @@ first game is durak, podkidnoy and perevodnoy. Class prefix `OZG_`; runs with
 - **A deck** is an item, in two looks. With it in hands a player takes "Choose placement":
   a hologram of a mat follows the aim, a panel says how many seats the spot has and of
   what kind, or why the spot is refused. A key steps through the seat modes (guessed,
-  standing, on the ground). "Lay out the game", held, puts the mat with the deck there.
-- **Seats** are worked out around the mat, standing at a table or on the ground. A player
-  turns to the mat, is shown the free seats for a few seconds, stands on one and sits.
+  standing, sitting, on the floor). "Lay out the game", held, puts the mat with the deck
+  there.
+- **Seats** are worked out around the mat in one of three layouts: standing or sitting on
+  the floor below a raised thing the mat lies on (a table, a wall's top, a crate), or
+  sitting on the level of the mat itself. A player turns to the mat, is shown the free
+  seats for a few seconds, stands on one and sits.
 - **The game** is held by the server and shown in a window: the table, the other seats,
   the hand with the playable cards lit, the log, the host's tools. Durak in both variants,
   two to six players. Others may watch.

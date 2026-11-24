@@ -50,6 +50,8 @@ class OZG_VerbOps
             return OZG_Fuzz.Run(args, detail);
         if (op == "ring")
             return OZG_WorldOps.OpRing(args, detail);
+        if (op == "level")
+            return OZG_WorldOps.OpLevel(args, detail);
         if (op == "lay")
             return OZG_WorldOps.OpLay(args, detail);
         if (op == "places")

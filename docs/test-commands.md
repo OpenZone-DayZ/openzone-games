@@ -69,8 +69,10 @@ a trump, and now and then takes instead of spending a dear trump.
 3. With the deck in hands take "Choose placement" (the item's own action). The mat's
    hologram follows your aim. The panel at the bottom says how many seats the spot has
    and of what kind ("Seats: 8 — standing, guessed"), or why the spot is refused.
-   **J** steps through the seat modes: guessed, standing, on the ground. The key is in
-   Settings, Controls, under OpenZone Games.
+   **J** steps through the seat modes: guessed, standing, sitting, on the floor.
+   "Standing" and "sitting" put the seats on the floor below the thing the mat lies on,
+   "on the floor" on the level of the mat itself. The key is in Settings, Controls, under
+   OpenZone.
 4. Hold "Lay out the game" for about five seconds. The mat with the deck lies on the
    table, you are the host and, when a seat is within a metre, you are seated and the
    window opens.

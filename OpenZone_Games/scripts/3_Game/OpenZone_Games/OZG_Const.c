@@ -22,13 +22,23 @@ class OZG_Const
 
     // How the seats of a place are chosen: the mod's guess, or the placer's
     // word. Chosen while aiming and at no other time.
+    //
+    // Three layouts (the owner, 2026-11-24): STANDING and SITTING put the
+    // seats on the floor BELOW the mat, around the raised thing it lies on,
+    // and differ in what the players do there; FLOOR puts them on the level
+    // of the mat itself. The numbers are written to the world's storage and to
+    // the session files: 2 was "on the ground" until that day and meant what
+    // FLOOR means, so nothing saved changes its meaning.
     static const int MODE_AUTO     = 0;
     static const int MODE_STANDING = 1;
-    static const int MODE_GROUND   = 2;
+    static const int MODE_FLOOR    = 2;
+    static const int MODE_SITTING  = 3;
+    static const int MODE_LAST     = 3;
 
-    // What a seat is.
+    // What a player does at a seat: the family of poses. 1 was "ground" until
+    // 2026-11-24; the poses are the same ones.
     static const int KIND_STANDING = 0;
-    static const int KIND_GROUND   = 1;
+    static const int KIND_SITTING  = 1;
 
     // The mat's collision box, the one the measurements of 2026-11-23 used.
     static const float MAT_HALF_X = 0.25;

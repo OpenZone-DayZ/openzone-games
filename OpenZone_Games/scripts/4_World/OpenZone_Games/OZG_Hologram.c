@@ -176,13 +176,13 @@ modded class Hologram
         OZG_Aim.s_Refused = refused;
         OZG_Aim.s_Why = why;
         OZG_Aim.s_Seats = 0;
-        OZG_Aim.s_Kind = OZG_Const.KIND_GROUND;
+        OZG_Aim.s_Layout = OZG_Const.MODE_FLOOR;
         OZG_Aim.s_Guessed = guessed;
         bool counted = why == "" || why == OZG_Const.LAY_NO_ROOM;
         if (counted && m_OZG_Ring)
         {
             OZG_Aim.s_Seats = m_OZG_Ring.Count();
-            OZG_Aim.s_Kind = m_OZG_Ring.Kind;
+            OZG_Aim.s_Layout = m_OZG_Ring.LayMode;
         }
     }
 }

@@ -75,7 +75,10 @@ class OZG_WorldOps
         return s;
     }
 
-    // ring at="x y z" [mode=0|1|2] [from="x y z"] [repeat=n]
+    // ring at="x y z" [mode=0|1|2|3] [from="x y z"] [repeat=n]
+    // The modes are OZG_Const.MODE_*: 0 the mod's guess, 1 standing, 2 on the
+    // level of the mat, 3 sitting below it. A seat is said as
+    // heading@distance/height over the mat.
     static bool OpRing(map<string, string> args, out string detail)
     {
         vector at = At(args, "at");
@@ -106,12 +109,82 @@ class OZG_WorldOps
         ms = ms / repeat;
 
         detail = "ring at " + P3(at) + " mode=" + mode.ToString() + " kind=" + ring.Kind.ToString();
+        detail = detail + " lay=" + ring.LayMode.ToString();
         detail = detail + " raised=" + B(ring.Raised) + " floor=" + F2(ring.FloorY);
         detail = detail + " seats=" + ring.Count().ToString() + " ms=" + F2(ms) + " :";
+        vector flat;
         for (int k = 0; k < ring.Seats.Count(); k++)
         {
             OZG_SeatSpot s = ring.Seats[k];
-            detail = detail + " " + s.Heading.ToString() + "@" + F2(vector.Distance(s.Xyz, at));
+            flat = Vector(s.Xyz[0], at[1], s.Xyz[2]);
+            detail = detail + " " + s.Heading.ToString() + "@" + F2(vector.Distance(flat, at));
+            detail = detail + "/" + F2(s.Xyz[1] - at[1]);
+        }
+        return true;
+    }
+
+    // level at="x y z" to="x y z" [n=8] [up=0.3]: what the ring's floor reader
+    // says along a line, n points from `at` towards `to`, each read from `up`
+    // over at's height. A point is said as distance:road/ray/level, where road
+    // is the game's road surface under the start, ray the first thing a ray
+    // down meets (its height and class, "-" for nothing) and level what
+    // OZG_Ring.LevelUnder answers.
+    static bool OpLevel(map<string, string> args, out string detail)
+    {
+        vector at = At(args, "at");
+        vector to = At(args, "to");
+        if (at == vector.Zero || to == vector.Zero)
+        {
+            detail = "level: give at=\"x y z\" and to=\"x y z\"";
+            return false;
+        }
+        int n = OZG_VerbOps.Arg(args, "n", "8").ToInt();
+        if (n < 1)
+            n = 1;
+        if (n > 24)
+            n = 24;
+        float up = OZG_VerbOps.Arg(args, "up", "0.3").ToFloat();
+        float top = at[1] + up;
+
+        set<Object> seen = new set<Object>();
+        vector cpos;
+        vector cdir;
+        int comp;
+        vector from;
+        vector down;
+        float x;
+        float z;
+        float f;
+        float road;
+        float lvl;
+        string ray;
+        Object hit;
+        detail = "level from " + F2(top) + ":";
+        for (int i = 0; i < n; i++)
+        {
+            f = i;
+            f = f / n;
+            x = at[0] + (to[0] - at[0]) * f;
+            z = at[2] + (to[2] - at[2]) * f;
+            road = GetGame().SurfaceRoadY3D(x, top, z, RoadSurfaceDetection.UNDER);
+            lvl = OZG_Ring.LevelUnder(x, top, z, null);
+
+            from = Vector(x, top, z);
+            down = Vector(x, top - 3.0, z);
+            seen.Clear();
+            ray = "-";
+            if (DayZPhysics.RaycastRV(from, down, cpos, cdir, comp, seen, null, null, false, false, ObjIntersectGeom))
+            {
+                ray = F2(cpos[1]);
+                if (seen.Count() > 0)
+                {
+                    hit = seen.Get(0);
+                    if (hit)
+                        ray = ray + "=" + hit.GetType();
+                }
+            }
+            detail = detail + " " + F2(vector.Distance(Vector(x, at[1], z), at)) + ":" + F2(road);
+            detail = detail + "/" + ray + "/" + F2(lvl);
         }
         return true;
     }
@@ -143,7 +216,7 @@ class OZG_WorldOps
             detail = "lay refused: " + OZG_Const.LAY_NO_ROOM + " seats=" + ring.Count().ToString();
             return true;
         }
-        OZG_Session s = OZG_Sessions.Make(deck, mode, at, Vector(yaw, 0, 0), ring);
+        OZG_Session s = OZG_Sessions.Make(deck, ring.LayMode, at, Vector(yaw, 0, 0), ring);
         if (!s)
         {
             detail = "lay: no place was made";
