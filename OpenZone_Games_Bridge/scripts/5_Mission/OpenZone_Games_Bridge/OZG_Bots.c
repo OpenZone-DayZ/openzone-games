@@ -194,6 +194,8 @@ class OZG_Bots
             if (!body)
                 return "";
             body.SetPosition(at);
+            // A bot stands at a table for hours: hunger and cold are not for it.
+            body.SetAllowDamage(false);
             s_Made++;
             string uid = PREFIX + s_Made.ToString();
             string name = names[(s_Made - 1) % names.Count()];

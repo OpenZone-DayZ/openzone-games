@@ -213,6 +213,7 @@ class OZG_WorldOps
             return false;
         }
         body.SetPosition(at);
+        body.SetAllowDamage(false);
         s_Puppets++;
         string uid = "puppet" + s_Puppets.ToString();
         string name = OZG_VerbOps.Arg(args, "name", "Puppet " + s_Puppets.ToString());
