@@ -461,6 +461,10 @@ class OZG_Bots
                 deck = "OZG_Deck_Classic_Sharp";
             if (arg == "zonesharp")
                 deck = "OZG_Deck_Zone_Sharp";
+            if (arg == "stalker")
+                deck = "OZG_Deck_Stalker";
+            if (arg == "stalkersharp")
+                deck = "OZG_Deck_Stalker_Sharp";
             EntityAI made = player.GetHumanInventory().CreateInHands(deck);
             if (!made)
                 made = player.GetInventory().CreateInInventory(deck);
@@ -556,7 +560,7 @@ class OZG_Bots
             return;
         }
 
-        Reply(player, "!ozg deck [zone|sharp|zonesharp] | table | bots [n] | pause | clear | noon | day | feed");
+        Reply(player, "!ozg deck [zone|stalker|sharp|zonesharp|stalkersharp] | table | bots [n] | pause | clear | noon | day | feed");
     }
 }
 

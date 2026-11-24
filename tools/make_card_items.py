@@ -110,7 +110,8 @@ def config():
                         ("cards", cards),
                         ("deck slots", slot_list(names[:PLAIN])),
                         ("sharp slots, classic", slot_list(names)),
-                        ("sharp slots, zone", slot_list(names))):
+                        ("sharp slots, zone", slot_list(names)),
+                        ("sharp slots, stalker", slot_list(names))):
         text = between(text, "// >>> generated: " + name, "// <<< generated: " + name, lines)
     write(path, text, bom, crlf)
     return len(names)

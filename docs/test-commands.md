@@ -49,8 +49,10 @@ when exactly one connected player bears it.
 |---|---|
 | `!ozg deck` | a deck of cards (classic) into your hands, or your inventory when they are full |
 | `!ozg deck zone` | the worn deck |
+| `!ozg deck stalker` | the stalkers' deck: stalkers on the aces and kings, mutants on the queens, jacks and tens |
 | `!ozg deck sharp` | a card sharp's deck (classic): the same fifty-two cards and ten empty slots more |
 | `!ozg deck zonesharp` | a card sharp's deck in the worn look |
+| `!ozg deck stalkersharp` | a card sharp's deck in the stalkers' look |
 | `!ozg table` | a kitchen table two metres in front of you |
 | `!ozg bots` | two bots sit down at the nearest laid-out game (within 30 m) and start playing |
 | `!ozg bots 4` | four of them (as many as there are free seats) |

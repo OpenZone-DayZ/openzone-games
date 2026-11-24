@@ -6,9 +6,19 @@ or stand around it, and the game is played in a window while the characters sit 
 first game is durak, podkidnoy and perevodnoy. Class prefix `OZG_`; runs with
 `OpenZone_Core` alone.
 
+> **The stalkers' deck uses pictures from the S.T.A.L.K.E.R. games.** They are created and
+> fully owned by GSC Game World and are not covered by this mod's licence. OpenZone Games is
+> a fan-made mod, not official, with no affiliation with GSC Game World. The original games:
+> <https://store.steampowered.com/franchise/stalker>. Details in [NOTICE](NOTICE).
+>
+> **Сталкерська колода містить зображення з ігор S.T.A.L.K.E.R.** Їх створила і повністю
+> ними володіє GSC Game World; ліцензія моду на них не поширюється. OpenZone Games --
+> фанатський неофіційний мод, не пов'язаний із GSC Game World. Оригінальні ігри:
+> <https://store.steampowered.com/franchise/stalker>. Подробиці в [NOTICE](NOTICE).
+
 ## Status: a game can be played (2026-11-24); nothing is published
 
-- **A deck** is a container of its cards, fifty-two items in fifty-two slots, in two
+- **A deck** is a container of its cards, fifty-two items in fifty-two slots, in three
   looks; a card sharp's deck of either look has ten empty slots more. A game is dealt
   from the cards the deck really holds: fewer, or with further cards of a face. Gathering
   the game gives the very deck back. With it in hands a player takes "Choose placement":
@@ -48,7 +58,7 @@ No key, no `mod.cpp`, no Workshop item: nothing is published without the owner's
 | `OpenZone_Games/` | the mod: scripts, config, layouts, card imagesets, models |
 | `OpenZone_Games_Bridge/` | stand tool, server only: the `oz_games` verb, bots, the `!ozg` chat commands |
 | `TableGamesProbe/`, `TableGamesProbe_Bridge/` | stand tool of the first measurements ([docs/probe.md](docs/probe.md)) |
-| `tools/` | `make_cards.py` (the two decks' art), `make_card_items.py` (the card items, their slots and names), `make_layouts.py` (the window), `stringtable.py`, `analyze.py` |
+| `tools/` | `make_cards.py` (the three decks' art), `make_card_items.py` (the card items, their slots and names), `make_layouts.py` (the window), `stringtable.py`, `analyze.py` |
 | `art/` | sources of the cards and the font of their letters (Oswald, SIL Open Font License) |
 | `models/` | sources of the four models and how they are built ([models/README.md](models/README.md)) |
 | `docs/` | plans, records, measurements, an example for a server's economy |
@@ -73,7 +83,7 @@ the lines for `types.xml`, with a nominal of 0 for an admin to raise.
 перевідний.
 
 Стан на 2026-11-24: у гру можна грати. Колода — вмістище своїх карт: п'ятдесят дві
-карти-предмети у п'ятдесяти двох слотах (два вигляди; шулерська колода має ще десять
+карти-предмети у п'ятдесяти двох слотах (три вигляди; шулерська колода має ще десять
 порожніх слотів). Роздають з того, що в колоді справді є, а зібравши гру, гравець
 отримує назад ту саму колоду. З нею в руках
 гравець обирає місце, голограма килимка показує, скільки там місць і яких, або чому місце

@@ -1,12 +1,16 @@
 # openzone-games/tools/make_cards.py
-"""Draw the playing cards of OpenZone Games: two decks, their atlases, the sheets for the models.
+"""Draw the playing cards of OpenZone Games: three decks, their atlases, the sheets for the models.
 
-Every picture is drawn here, from polygons, circles and curves: no image is read, nothing
-is traced from another deck. The suits are shapes of this script; only the rank letters come
-from a font. The same run always gives the same pictures: all chance is seeded from the
-style and the picture's name.
+Every picture of `classic` and `zone` is drawn here, from polygons, circles and curves: no
+image is read, nothing is traced from another deck. The suits are shapes of this script; only
+the rank letters come from a font. The `stalker` deck is drawn the same way, and then twenty
+of its cards carry a picture read from art/cards/stalker/src: stalkers and mutants cut from
+the files of the S.T.A.L.K.E.R. games, which are GSC Game World's and not ours (NOTICE says
+on what terms they are here; SOURCES.md in that folder says where each one comes from). The
+same run always gives the same pictures: all chance is seeded from the style and the
+picture's name.
 
-    python -I tools/make_cards.py                # both styles, everything
+    python -I tools/make_cards.py                # every style, everything
     python -I tools/make_cards.py --style zone   # one style
     python -I tools/make_cards.py --no-paa       # stop at the PNG files and the .imageset
 
@@ -14,7 +18,9 @@ Needs Python 3.9+ and Pillow 10.1+ (written against 3.13 and 12.3); the .paa fil
 DayZ Tools (ImageToPAA). The pictures are committed: should another Pillow or FreeType
 move a pixel, the diff shows it.
 
-Two styles: `classic`, a clean deck, and `zone`, a worn one. For each the run writes
+Three styles: `classic`, a clean deck; `zone`, a worn one; `stalker`, a worn one whose every
+card is worn its own way and whose aces, kings, queens, jacks and tens carry pictures. Who
+is on which card is the table PICTURES below: a line a card. For each style the run writes
 
     art/cards/<style>/<name>.png       57 pictures, 200 x 280, RGBA, round corners: the sources
     art/cards/<style>/deck_sheet.png   512 x 512, opaque, for the 3D deck: the back on the left
@@ -49,11 +55,11 @@ import re
 import subprocess
 import sys
 import zlib
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import lru_cache
 from pathlib import Path
 
-from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont
+from PIL import Image, ImageChops, ImageDraw, ImageEnhance, ImageFilter, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
 MOD = "OpenZone_Games"
@@ -113,6 +119,7 @@ class Style:
     light: tuple[int, int, int] = (0, 0, 0)     # stock scuffed pale,
     grime: tuple[int, int, int] = (0, 0, 0)     # dirt,
     stain: tuple[int, int, int] = (0, 0, 0)     # and what was spilt
+    uneven: bool = False               # a worn deck whose every card draws its own lot of wear
 
     def ink(self, suit: str) -> tuple[int, int, int]:
         return self.red if suit in "hd" else self.black
@@ -138,7 +145,16 @@ ZONE = Style(
     shade=(152, 124, 74), light=(238, 226, 190), grime=(72, 58, 36), stain=(126, 90, 42),
 )
 
-STYLES = {s.name: s for s in (CLASSIC, ZONE)}
+# The stalker deck: the stock and the inks of `zone`, a red back, a fourth tint for the tens,
+# which carry a picture as the court cards do.
+STALKER = replace(
+    ZONE, name="stalker", uneven=True,
+    tints=dict(ZONE.tints, T=(186, 196, 198)),
+    back=(146, 50, 38), back_deep=(118, 38, 30), line=(226, 212, 176), back_light=(166, 68, 52),
+    mark=(232, 220, 184), accent=(232, 220, 184),
+)
+
+STYLES = {s.name: s for s in (CLASSIC, ZONE, STALKER)}
 
 
 # ----------------------------------------------------------------------------- geometry
@@ -655,11 +671,139 @@ def court(ink, style, rank, suit):
     middle(ink, style, suit, colour)
 
 
+# --- the picture cards of a deck that has them. A picture is read from art/cards/<style>/src:
+# a photograph, which fills its frame, or a figure cut out of its ground, which stands on a
+# panel tinted by rank. An ace carries one picture, between its two indices; any other card
+# carries it twice, the lower one turned, as a court card carries its figure, and the name
+# between the two. The names are the Ukrainian ones of the games' own texts.
+#
+# Who is on which card. The higher the card, the more dangerous: the stalkers stand over
+# the mutants. To change a card, change its line; a picture is <name>.png in the src folder.
+
+PICTURES = {
+    "stalker": {
+        "As": ("photo", "СТРІЛЕЦЬ", "strilets"),
+        "Ah": ("photo", "ДЕГТЯРЬОВ", "dehtiarov"),
+        "Ad": ("photo", "ШРАМ", "shram"),
+        "Ac": ("photo", "ДОКТОР", "doktor"),
+        "Ks": ("photo", "ПРИВИД", "pryvyd"),
+        "Kh": ("photo", "СИДОРОВИЧ", "sydorovych"),
+        "Kd": ("photo", "ЛІСНИК", "lisnyk"),
+        "Kc": ("photo", "ВОВК", "vovk"),
+        "Qs": ("figure", "ХИМЕРА", "khymera"),
+        "Qh": ("figure", "ПОЛТЕРГЕЙСТ", "polterheist"),
+        "Qd": ("figure", "КОНТРОЛЕР", "kontroler"),
+        "Qc": ("figure", "ПСЕВДОГІГАНТ", "psevdohihant"),
+        "Js": ("figure", "БЮРЕР", "biurer"),
+        "Jh": ("figure", "СНОРК", "snork"),
+        "Jd": ("figure", "КРОВОСОС", "krovosos"),
+        "Jc": ("figure", "ПСЕВДОСОБАКА", "psevdosobaka"),
+        "Ts": ("figure", "ТУШКАН", "tushkan"),
+        "Th": ("figure", "СЛІПИЙ ПЕС", "slipyi_pes"),
+        "Td": ("figure", "ПЛОТЬ", "plot"),
+        "Tc": ("figure", "КАБАН", "kaban"),
+    },
+}
+
+FRAME_TOP = (52.0, 13.0, 189.0, 103.0)           # the upper picture of a card that carries two
+FRAME_LOW = (11.0, 177.0, 148.0, 267.0)          # the lower, turned: the upper one's half turn
+FRAME_ACE = (31.0, 96.0, 169.0, 186.0)           # the one picture of an ace
+
+
+@lru_cache(maxsize=None)
+def source(style_name, slug):
+    path = ART / style_name / "src" / f"{slug}.png"
+    if not path.is_file():
+        raise SystemExit(f"error: the picture is missing: {path}")
+    with Image.open(path) as im:
+        return im.convert("RGBA")
+
+
+def as_printed(im):
+    """A picture as a press would give it on this stock: a little less colour, a little warmer."""
+    rgb = ImageEnhance.Color(im.convert("RGB")).enhance(0.82)
+    rgb = ImageChops.multiply(rgb, Image.new("RGB", rgb.size, (255, 246, 228)))
+    out = rgb.convert("RGBA")
+    out.putalpha(im.getchannel("A"))
+    return out
+
+
+def filled(im, w, h):
+    """The picture scaled and cut to fill w x h; what is cut goes more from below than above."""
+    k = max(w / im.width, h / im.height)
+    im = im.resize((max(1, round(im.width * k)), max(1, round(im.height * k))), LANCZOS)
+    x, y = (im.width - w) // 2, (im.height - h) // 3
+    return im.crop((x, y, x + w, y + h))
+
+
+def stood(im, w, h):
+    """The figure scaled to fit w x h and stood on the bottom of a clear sheet of that size."""
+    k = min(w / im.width, h / im.height)
+    im = im.resize((max(1, round(im.width * k)), max(1, round(im.height * k))), LANCZOS)
+    sheet = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    sheet.alpha_composite(im, ((w - im.width) // 2, h - im.height))
+    return sheet
+
+
+def framed(ink, style, im, box, kind, colour, ground, turned=False):
+    """A picture in a frame of card coordinates: the suit's colour outside, a gold line inside."""
+    x0, y0, x1, y1 = box
+    w, h = px(x1) - px(x0), px(y1) - px(y0)
+    if kind == "figure":
+        tile = Image.new("RGBA", (w, h), ground + (255,))
+        fade = Image.linear_gradient("L").resize((w, h)).point(lambda v: v * 150 // 255)
+        tile.paste(Image.new("RGBA", (w, h), style.shade + (255,)), (0, 0), fade)
+        tile.alpha_composite(stood(as_printed(im), w - 6 * S, h - 4 * S), (3 * S, 4 * S))
+    else:
+        tile = filled(as_printed(im), w, h)
+    if turned:
+        tile = tile.transpose(Image.Transpose.ROTATE_180)
+    mask = Image.new("L", (w, h), 0)
+    ImageDraw.Draw(mask).rounded_rectangle((0, 0, w - 1, h - 1), radius=3 * S, fill=255)
+    tile.putalpha(ImageChops.multiply(tile.getchannel("A"), mask))
+    ink.im.alpha_composite(tile, (px(x0), px(y0)))
+    ink.rrect(x0, y0, x1, y1, 3, outline=colour, width=1.5)
+    ink.rrect(x0 + 2.6, y0 + 2.6, x1 - 2.6, y1 - 2.6, 1.6, outline=style.gold, width=0.7)
+
+
+def caption(ink, text, cx, cy, cap, colour, room):
+    """A name in capitals `cap` high, centred on (cx, cy), narrowed if it is wider than `room`."""
+    mask, base = glyphs(text, cap, track=0.06)
+    if mask.width / S > room:
+        mask = mask.resize((round(room * S), mask.height), LANCZOS)
+    ink.stamp(mask, cx - mask.width / S / 2, cy + cap / 2 - base / S, colour)
+    return mask.width / S
+
+
+def picture_card(ink, style, rank, suit, spec):
+    kind, name, slug = spec
+    colour = style.ink(suit)
+    ground = style.tints.get(rank, style.tints["Q"])
+    im = source(style.name, slug)
+    if rank == "A":
+        suit_at(ink, suit, CX + 14, 42, 40, colour)
+        framed(ink, style, im, FRAME_ACE, kind, colour, ground)
+        mid = 88.0                                 # the name keeps clear of the turned index
+        ink.line([(mid - 60, 198), (mid + 60, 198)], style.gold, 0.9)
+        caption(ink, name, mid, 212.0, 13.0, colour, 118)
+        return
+    framed(ink, style, im, FRAME_TOP, kind, colour, ground)
+    framed(ink, style, im, FRAME_LOW, kind, colour, ground, turned=True)
+    width = caption(ink, name, CX, CY, 15.0, colour, 128)
+    for side in (-1, 1):
+        suit_at(ink, suit, CX + side * (width / 2 + 13), CY, 13.0, colour)
+    for y in (CY - 17, CY + 17):
+        ink.line([(26, y), (W - 26, y)], style.gold, 0.9)
+
+
 def face_layers(style, rank, suit):
     """A face as the stock (RGB) and what is printed on it (a Layer), both on the S canvas."""
     ink = Layer()
     colour = style.ink(suit)
-    if rank in COURT:
+    spec = PICTURES.get(style.name, {}).get(rank + suit)
+    if spec:
+        picture_card(ink, style, rank, suit, spec)
+    elif rank in COURT:
         court(ink, style, rank, suit)
     elif rank == "A":
         ace(ink, style, suit)
@@ -736,7 +880,32 @@ def back_zone(ink, style):
     oz_mark(ink, CX - 0.25 * r, CY + 0.25 * r, r, style.mark, style.accent)
 
 
-BACKS = {"classic": back_classic, "zone": back_zone}
+def back_stalker(ink, style):
+    """Red under a pale diagonal lattice, a border, and the trefoil of the Zone in a disc.
+
+    The pattern is the one of the playing cards GSC drew for S.T.A.L.K.E.R. 2; it is drawn
+    here, not copied from them.
+    """
+    ground, line = style.back, style.line
+    ink.rrect(8, 8, W - 8, H - 8, 8, fill=ground)
+    net = Layer()
+    step, slope = 9.0, math.tan(math.radians(52))
+    for n in range(-50, 51):
+        x = CX + n * step
+        for sign in (1, -1):
+            net.line([(x - sign * 220, CY - 220 * slope), (x + sign * 220, CY + 220 * slope)], line + (214,), 1.5)
+    net.clip(window(14, 14, W - 14, H - 14, 4))
+    ink.add(net)
+    ink.rrect(11.5, 11.5, W - 11.5, H - 11.5, 5.5, outline=line, width=1.6)
+    ink.disc(CX, CY, 44.0, ground)
+    ink.disc(CX, CY, 41.0, line)
+    ink.circle(CX, CY, 37.5, ground, 1.0)
+    for a in (-90, 30, 150):                       # three blades, a sixth of the circle each
+        ink.poly(arc(CX, CY, 32.0, a - 30, a + 30) + list(reversed(arc(CX, CY, 10.0, a - 30, a + 30))), ground)
+    ink.disc(CX, CY, 6.0, ground)
+
+
+BACKS = {"classic": back_classic, "zone": back_zone, "stalker": back_stalker}
 
 
 def back_layers(style, square=False):
@@ -872,11 +1041,141 @@ def age_card(style, name, card, k, rubbed):
     tint(card, style.grime, ramp(scratch_mask(rng, size, k, 4, 46), 0, 255, 120))
 
 
+# --- a lot of wear for every card. The recipe above ages every card of a deck alike: the
+# stains, specks and scratches differ, the strength, the dark edges and the tone of the stock
+# do not, and a deck laid out looks printed worn. An uneven deck has every card draw a lot
+# first, seeded by its name: how hard it was used, which way its stock has turned, which
+# side took the dirt, whether it was folded, dog-eared, rubbed, or left in the sun.
+
+
+def toward(a, b, t):
+    """From colour a towards b by t; past 1 it goes further than b."""
+    return tuple(max(0, min(255, round(x + (y - x) * t))) for x, y in zip(a, b))
+
+
+def side_mask(size, angle):
+    """0..255 rising across the card in the direction `angle`, degrees."""
+    g = Image.linear_gradient("L").rotate(angle, resample=BICUBIC)
+    return g.crop((38, 38, 218, 218)).resize(size, BICUBIC)
+
+
+def blot_at(rng, size, r):
+    """A soft uneven patch about r px across somewhere on the card, 0..255."""
+    x, y = rng.uniform(0.1, 0.9) * size[0], rng.uniform(0.1, 0.9) * size[1]
+    spot = Image.new("L", size, 0)
+    ImageDraw.Draw(spot).ellipse((x - r, y - r * rng.uniform(0.5, 1.0), x + r, y + r * rng.uniform(0.5, 1.0)), fill=255)
+    spot = spot.filter(ImageFilter.GaussianBlur(r * 0.35))
+    return ImageChops.multiply(spot, ramp(cloud(rng, size, (r * 0.7, r * 0.25), (3, 2)), 70, 190))
+
+
+def fold_masks(rng, size, k, corner):
+    """A fold as two hairlines side by side: its shadow and its lit edge.
+
+    With `corner` the fold cuts a corner off, and the triangle it bent comes as a third mask.
+    """
+    q = 3
+    w, h = size
+    dark = Image.new("L", (w * q, h * q), 0)
+    light = Image.new("L", (w * q, h * q), 0)
+    bent = None
+    if corner:
+        cx, cy = rng.choice([(0, 0), (w, 0), (0, h), (w, h)])
+        a, b = rng.uniform(13, 34) * k, rng.uniform(13, 34) * k
+        p0 = (cx + (a if cx == 0 else -a), cy)
+        p1 = (cx, cy + (b if cy == 0 else -b))
+        bent = Image.new("L", (w * q, h * q), 0)
+        ImageDraw.Draw(bent).polygon([(cx * q, cy * q), (p0[0] * q, p0[1] * q), (p1[0] * q, p1[1] * q)], fill=255)
+        bent = bent.resize(size, BOX)
+    else:
+        turn = math.radians(rng.choice([0, 0, 90, 90, 45, -45, rng.uniform(0, 180)]) + rng.uniform(-9, 9))
+        x, y = rng.uniform(0.2, 0.8) * w, rng.uniform(0.2, 0.8) * h
+        dx, dy, far = math.cos(turn), math.sin(turn), w + h
+        p0, p1 = (x - dx * far, y - dy * far), (x + dx * far, y + dy * far)
+    nx, ny = p1[1] - p0[1], p0[0] - p1[0]
+    n = math.hypot(nx, ny) or 1.0
+    nx, ny, off, width = nx / n, ny / n, 0.85 * k, max(1, round(0.67 * k * q))
+    ImageDraw.Draw(dark).line([(p0[0] * q, p0[1] * q), (p1[0] * q, p1[1] * q)], fill=rng.randint(150, 235), width=width)
+    ImageDraw.Draw(light).line([((p0[0] + nx * off) * q, (p0[1] + ny * off) * q),
+                                ((p1[0] + nx * off) * q, (p1[1] + ny * off) * q)], fill=rng.randint(140, 225), width=width)
+    return dark.resize(size, BOX), light.resize(size, BOX), bent
+
+
+def finish_uneven(style, name, paper, ink, k, rubbed):
+    """finish() for a deck whose every card is worn its own way."""
+    size = (W * k, H * k)
+    lot = rng_for(style.name, name, "lot")
+    wear = lot.triangular(0.3, 1.95, 0.8)              # how hard the card was used
+    tone = lot.uniform(-1.0, 1.0)                      # its stock: darker and browner, or paler
+    side = lot.uniform(0.0, 360.0)                     # where the dirt sat
+    stains = min(4, int(lot.uniform(0.0, 1.6) * wear + lot.random() * 0.9))
+    folds = (1 if lot.random() < 0.16 + 0.14 * wear else 0) + (1 if lot.random() < 0.05 * wear else 0)
+    ears = 1 if lot.random() < 0.10 + 0.12 * wear else 0
+    faded = 1.0 - lot.uniform(0.0, 0.2) * min(1.0, wear) if lot.random() < 0.45 else 1.0
+    scuffs = int(lot.random() < 0.18 + 0.2 * wear) + int(lot.random() < 0.12 * wear)
+
+    st = replace(style,
+                 shade=toward(style.paper, style.shade, 0.55 + 0.55 * wear),
+                 light=toward(style.paper, style.light, 0.6 + 0.4 * wear),
+                 grime=toward(style.paper, style.grime, 0.45 + 0.6 * wear),
+                 stain=toward(style.paper, style.stain, 0.55 + 0.5 * wear))
+
+    card = paper.resize(size, LANCZOS)
+    printed = ink.im.resize(size, LANCZOS)
+    printed.putalpha(flat(printed.getchannel("A")))
+
+    # the stock: its own tone, then the uneven ageing
+    card.paste(st.shade if tone > 0 else st.light, (0, 0),
+               Image.new("L", size, round(abs(tone) * (46 if tone > 0 else 60))))
+    age_stock(st, name, card, k)
+
+    # the print: thin and chipped; for some cards paler all over, or rubbed off in a patch
+    age_print(st, name, printed, k, rubbed or wear > 1.45)
+    alpha = printed.getchannel("A")
+    if faded < 1.0:
+        alpha = alpha.point([round(v * faded) for v in range(256)])
+    rng = rng_for(style.name, name, "scuffs")
+    for _ in range(scuffs):
+        patch = ramp(blot_at(rng, size, rng.uniform(16, 44) * k), 60, 200, rng.randint(70, 150))
+        alpha = ImageChops.multiply(alpha, ImageChops.invert(patch))
+    printed.putalpha(alpha)
+    card.paste(printed, (0, 0), printed)
+
+    # handling: dirt along the edges, heavier on one side; stains; specks; scratches
+    rng = rng_for(style.name, name, "grime")
+    lean = ramp(side_mask(size, side), 96, 255)
+    edge = ImageChops.multiply(edge_mask(size, round((10 + 7 * wear) * k)),
+                               ramp(cloud(rng, size, (30 * k, 11 * k), (3, 2)), 70, 190))
+    edge = ImageChops.multiply(edge, lean.point([70 + v * 185 // 255 for v in range(256)]))
+    tint(card, st.grime, ramp(edge, 0, 255, round(38 + 50 * wear)))
+    smear = ImageChops.multiply(lean, ramp(cloud(rng, size, (46 * k, 17 * k, 6 * k), (4, 3, 2)), 96, 200))
+    tint(card, st.grime, ramp(smear, 40, 255, round(24 * wear)))
+    rng = rng_for(style.name, name, "stains")
+    for _ in range(stains):
+        spill(card, st, rng, k)
+    rng = rng_for(style.name, name, "specks")
+    tint(card, st.stain, ramp(speck_mask(rng, size, k, round(4 + 22 * wear * rng.uniform(0.5, 1.3))), 0, 255, 150))
+    rng = rng_for(style.name, name, "scratches")
+    tint(card, st.light, ramp(scratch_mask(rng, size, k, round(1 + 7 * wear * rng.uniform(0.4, 1.4)), 70), 0, 255, 120))
+    tint(card, st.grime, ramp(scratch_mask(rng, size, k, round(5 * wear * rng.uniform(0.2, 1.2)), 46), 0, 255, 120))
+
+    # folds and bent corners
+    rng = rng_for(style.name, name, "folds")
+    for corner in [False] * folds + [True] * ears:
+        dark, light, bent = fold_masks(rng, size, k, corner)
+        if bent is not None:
+            tint(card, st.shade, bent.point([v * 70 // 255 for v in range(256)]))
+        tint(card, st.grime, ramp(dark, 0, 255, 150))
+        tint(card, st.light, ramp(light, 0, 255, 170))
+    return card
+
+
 def finish(style, name, paper, ink, k=1, rubbed=False):
     """Stock and print brought down from the S canvas to k times a card and put together.
 
     A worn style ages them on the way. `name` seeds the wear.
     """
+    if style.worn and style.uneven:
+        return finish_uneven(style, name, paper, ink, k, rubbed)
     size = (W * k, H * k)
     card = paper.resize(size, LANCZOS)
     printed = ink.im.resize(size, LANCZOS)

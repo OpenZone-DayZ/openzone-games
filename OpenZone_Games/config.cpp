@@ -12,7 +12,7 @@ class CfgPatches
 {
     class OpenZone_Games
     {
-        units[] = {"OZG_Deck_Classic", "OZG_Deck_Zone", "OZG_Deck_Classic_Sharp", "OZG_Deck_Zone_Sharp"};
+        units[] = {"OZG_Deck_Classic", "OZG_Deck_Zone", "OZG_Deck_Stalker", "OZG_Deck_Classic_Sharp", "OZG_Deck_Zone_Sharp", "OZG_Deck_Stalker_Sharp"};
         weapons[] = {};
         requiredVersion = 0.1;
         // Hard dependencies: a blocking window before the game loads rather
@@ -58,7 +58,8 @@ class CfgMods
                 files[] =
                 {
                     "OpenZone_Games/gui/imagesets/ozg_cards_classic.imageset",
-                    "OpenZone_Games/gui/imagesets/ozg_cards_zone.imageset"
+                    "OpenZone_Games/gui/imagesets/ozg_cards_zone.imageset",
+                    "OpenZone_Games/gui/imagesets/ozg_cards_stalker.imageset"
                 };
             };
         };
@@ -199,6 +200,18 @@ class CfgVehicles
         ozgSheet = "OpenZone_Games\data\cards\ozg_deck_zone_co.paa";
     };
 
+    // The stalkers' deck: a worn one whose aces and kings carry stalkers and
+    // whose queens, jacks and tens carry mutants. The pictures on those twenty
+    // cards are GSC Game World's, from the S.T.A.L.K.E.R. games (see NOTICE).
+    class OZG_Deck_Stalker: OZG_Deck_Base
+    {
+        scope = 2;
+        displayName = "$STR_OZG_DECK_STALKER";
+        hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\ozg_deck_stalker_co.paa"};
+        ozgStyle = "stalker";
+        ozgSheet = "OpenZone_Games\data\cards\ozg_deck_stalker_co.paa";
+    };
+
     // A card sharp's deck: the same deck outside, ten empty slots more
     // inside, for the cards mixed in.
     class OZG_Deck_Classic_Sharp: OZG_Deck_Classic
@@ -231,6 +244,22 @@ class CfgVehicles
             "OZG_Card61", "OZG_Card62"
         };
 // <<< generated: sharp slots, zone
+    };
+
+    class OZG_Deck_Stalker_Sharp: OZG_Deck_Stalker
+    {
+// >>> generated: sharp slots, stalker
+        attachments[] =
+        {
+            "OZG_Card01", "OZG_Card02", "OZG_Card03", "OZG_Card04", "OZG_Card05", "OZG_Card06", "OZG_Card07", "OZG_Card08", "OZG_Card09", "OZG_Card10",
+            "OZG_Card11", "OZG_Card12", "OZG_Card13", "OZG_Card14", "OZG_Card15", "OZG_Card16", "OZG_Card17", "OZG_Card18", "OZG_Card19", "OZG_Card20",
+            "OZG_Card21", "OZG_Card22", "OZG_Card23", "OZG_Card24", "OZG_Card25", "OZG_Card26", "OZG_Card27", "OZG_Card28", "OZG_Card29", "OZG_Card30",
+            "OZG_Card31", "OZG_Card32", "OZG_Card33", "OZG_Card34", "OZG_Card35", "OZG_Card36", "OZG_Card37", "OZG_Card38", "OZG_Card39", "OZG_Card40",
+            "OZG_Card41", "OZG_Card42", "OZG_Card43", "OZG_Card44", "OZG_Card45", "OZG_Card46", "OZG_Card47", "OZG_Card48", "OZG_Card49", "OZG_Card50",
+            "OZG_Card51", "OZG_Card52", "OZG_Card53", "OZG_Card54", "OZG_Card55", "OZG_Card56", "OZG_Card57", "OZG_Card58", "OZG_Card59", "OZG_Card60",
+            "OZG_Card61", "OZG_Card62"
+        };
+// <<< generated: sharp slots, stalker
     };
 
     // ------------------------------------------------------------ cards
