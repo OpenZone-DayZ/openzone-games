@@ -12,6 +12,9 @@ keys/*.biprivatekey
 
 # local
 .dayz-mcp/
+build/
+__pycache__/
+*.blend1
 Thumbs.db
 desktop.ini
 

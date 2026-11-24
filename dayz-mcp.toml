@@ -18,6 +18,13 @@ name = "openzone-games"
 #                           the ring of places, the live hologram's report.
 # TableGamesProbe_Bridge -- server only: the `tgp` verb.
 mods = ["OpenZone_Games", "OpenZone_Games_Bridge", "TableGamesProbe", "TableGamesProbe_Bridge"]
+# The mod's own models (OpenZone_Games/models/<model>): the binarized .p3d, its
+# model.cfg and data/ are committed there; their MLOD sources are in models/<model>/.
+# binarize has no root switch: the root is its working directory, and every path
+# baked into a model resolves against it. models/prepare_model_root.py stages the
+# sources under build/model-root; one model is then built and put into the mod by
+# asset_build(mod="OpenZone_Games", source="models/<model>").
+project_root = "build/model-root"
 
 [expect]
 # Printed by OZG_Module one tick after the mission starts.

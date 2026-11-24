@@ -48,6 +48,32 @@ class OZG_VerbOps
             return OZG_Bench.OpLoad(args, detail);
         if (op == "fuzz")
             return OZG_Fuzz.Run(args, detail);
+        if (op == "ring")
+            return OZG_WorldOps.OpRing(args, detail);
+        if (op == "lay")
+            return OZG_WorldOps.OpLay(args, detail);
+        if (op == "places")
+            return OZG_WorldOps.OpPlaces(detail);
+        if (op == "sess")
+            return OZG_WorldOps.OpSess(args, detail);
+        if (op == "seats")
+            return OZG_WorldOps.OpSeats(args, detail);
+        if (op == "puppet")
+            return OZG_WorldOps.OpPuppet(args, detail);
+        if (op == "move")
+            return OZG_WorldOps.OpMove(args, detail);
+        if (op == "ask")
+            return OZG_WorldOps.OpAsk(args, detail);
+        if (op == "sit")
+            return OZG_WorldOps.OpSit(args, detail);
+        if (op == "ticks")
+            return OZG_WorldOps.OpTicks(args, detail);
+        if (op == "gather")
+            return OZG_WorldOps.OpGather(args, detail);
+        if (op == "hand")
+            return OZG_WorldOps.OpHand(args, detail);
+        if (op == "give")
+            return OZG_WorldOps.OpGive(args, detail);
         // -- ops of the later phases go above this line --
         detail = "unknown op '" + op + "'; known: " + KnownOps();
         return false;
@@ -55,7 +81,9 @@ class OZG_VerbOps
 
     static string KnownOps()
     {
-        return "status, deck, games, begin, act, play, outcome, brief, all, can, drop, away, view, save, load, fuzz";
+        string known = "status, deck, games, begin, act, play, outcome, brief, all, can, drop, away, view, save, load, fuzz";
+        known = known + ", ring, lay, places, sess, seats, puppet, move, ask, sit, ticks, gather, hand, give";
+        return known;
     }
 
     // ---- what the ops share ---------------------------------------------------

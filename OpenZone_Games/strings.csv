@@ -24,3 +24,67 @@ STR_OZG_DURAK_NO_TRANSFER_OFF,У цьому варіанті переводит�
 STR_OZG_DURAK_NO_TRANSFER_LATE,Переводити пізно: карту вже побито або ви берете,Too late to pass the attack on: a card is beaten or you are taking
 STR_OZG_DURAK_NO_TRANSFER_RANK,Перевести можна лише картою того самого рангу,The attack is passed on only with a card of the same rank
 STR_OZG_DURAK_NO_TRANSFER_FEW,У наступного гравця замало карт,The next player holds too few cards
+# -- the things
+STR_OZG_MODNAME,OpenZone Games,OpenZone Games
+STR_OZG_DECK_NAME,Колода карт,Deck of cards
+STR_OZG_DECK_DESC,"Колода з 52 карт. Розкладіть її на столі чи на землі, щоб почати гру.","A deck of 52 cards. Lay it out on a table or on the ground to start a game."
+STR_OZG_DECK_CLASSIC,Колода карт (класична),Deck of cards (classic)
+STR_OZG_DECK_ZONE,Колода карт (потерта),Deck of cards (worn)
+STR_OZG_PLACE_NAME,Розкладена гра,Laid-out game
+STR_OZG_PLACE_DESC,Килимок із колодою: місце гри.,A mat with a deck on it: a place to play.
+STR_OZG_MARK_NAME,Місце за грою,A seat at the game
+# -- the actions
+STR_OZG_ACTION_LAY_OUT,Розкласти гру,Lay out the game
+STR_OZG_ACTION_SIT,Сісти до гри,Sit down to the game
+STR_OZG_ACTION_SIT_HERE,Сісти тут,Sit here
+STR_OZG_ACTION_TO_GAME,До гри,To the game
+STR_OZG_ACTION_WATCH,Спостерігати,Watch
+STR_OZG_ACTION_GATHER,Зібрати колоду,Gather the deck
+# -- why a spot is refused
+STR_OZG_LAY_NO_PLAYER,Зараз розкласти не можна,Cannot lay out right now
+STR_OZG_LAY_NO_REACH,Надто далеко або надто близько,Too far or too near
+STR_OZG_LAY_NO_WAY,Щось заважає,Something is in the way
+STR_OZG_LAY_NO_BASE,Потрібна рівна нерухома поверхня під усім килимком,Needs one flat immovable surface under the whole mat
+STR_OZG_LAY_NO_HEIGHT,Надто високо або надто низько,Too high or too low
+STR_OZG_LAY_NO_WATER,Тут вода,Water here
+STR_OZG_LAY_NO_SPACING,Поруч уже розкладено іншу гру,Another game is laid out too close
+STR_OZG_LAY_NO_ROOM,Немає місця для двох гравців,No room for two players
+STR_OZG_LAY_NO_PERMIT,Тут розкладати не можна,Laying out is not allowed here
+# -- while aiming
+STR_OZG_AIM_SEATS,Місць: %1,Seats: %1
+STR_OZG_AIM_STANDING,стоячи,standing
+STR_OZG_AIM_GROUND,на землі,on the ground
+STR_OZG_AIM_GUESSED,визначено автоматично,guessed
+STR_OZG_AIM_CHOSEN,обрано вручну,chosen
+STR_OZG_AIM_KEY,%1 — змінити режим місць,%1 — change the seat mode
+STR_OZG_INPUT_MODE,Режим місць під час розкладання,Seat mode while laying out
+STR_OZG_INPUT_GROUP,OpenZone Games,OpenZone Games
+# -- what the server says
+STR_OZG_SAY_OTHER_SEAT,Ви вже маєте місце за іншою грою,You already hold a seat at another game
+STR_OZG_SAY_NOT_NOW,Це місце зараз зайняти не можна,This seat cannot be taken now
+STR_OZG_SAY_SEAT_TAKEN,Це місце вже зайняте,This seat is already taken
+STR_OZG_SAY_TOO_FAR,Ви надто далеко,You are too far away
+STR_OZG_SAY_NOT_HOST,Це може лише господар гри,Only the host can do that
+STR_OZG_SAY_NO_PLACE,Цієї гри вже немає,This game is no longer there
+STR_OZG_SAY_NOT_SEATED,Ви не сидите за цією грою,You have no seat at this game
+STR_OZG_SAY_PLAYING,Партія триває,A game is in progress
+STR_OZG_SAY_BAD_OPTION,Такого варіанта немає,There is no such variant
+STR_OZG_SAY_BUSY,За грою ще є гравці або карти,There are still players or cards at the game
+STR_OZG_SAY_HOST_HERE,Господар на місці,The host is present
+STR_OZG_SAY_HOW,"Оберіть: скинути карти чи залишити місце з картами","Choose: discard the cards or leave the seat with them"
+STR_OZG_SAY_CANNOT,Зараз це неможливо,This cannot be done now
+STR_OZG_SAY_FOLDED,Гру згорнуто,The game was folded
+STR_OZG_SAY_IDLE,Гру згорнуто: за нею довго нікого не було,The game folded: nobody was at it for a long time
+STR_OZG_SAY_GONE,Гру прибрано,The game was removed
+STR_OZG_SAY_STOOD,Ви встали з-за гри,You stood up from the game
+STR_OZG_SAY_KICKED,Господар прибрав вас із-за гри,The host removed you from the game
+STR_OZG_SAY_BROKEN,Запис партії пошкоджено: гра почнеться заново,The saved game was damaged: the game starts anew
+STR_OZG_SAY_SLOW,Надто швидко,Too fast
+STR_OZG_SAY_SAT,Ви сіли до гри,You sat down to the game
+STR_OZG_SAY_LAID,Гру розкладено,The game is laid out
+# -- the poses
+STR_OZG_POSE_STANDING,Стоячи,Standing
+STR_OZG_POSE_CROSSLEGGED,По-турецьки,Cross-legged
+STR_OZG_POSE_LEGSOUT,Витягнувши ноги,Legs out
+STR_OZG_POSE_CAMPFIRE,Як біля вогнища,By the fire
+STR_OZG_POSE_SQUATTING,Навпочіпки,Squatting

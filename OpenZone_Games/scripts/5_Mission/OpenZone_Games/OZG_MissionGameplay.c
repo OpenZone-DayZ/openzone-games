@@ -1,0 +1,224 @@
+// The client's entry of OpenZone Games: the aiming panel, the seats' marks,
+// what the server says, and the window.
+//
+// A dedicated server makes no MissionGameplay, so none of this runs there.
+modded class MissionGameplay
+{
+    protected ref OZG_AimHud m_OZG_Aim;
+    protected ref OZG_Marks m_OZG_Marks;
+    protected string m_OZG_OpenId;
+    protected bool m_OZG_Asked;
+
+    override void OnInit()
+    {
+        super.OnInit();
+
+        m_OZG_Aim = new OZG_AimHud();
+        m_OZG_Aim.Init();
+        m_OZG_Marks = new OZG_Marks();
+        OZG_Mine.Forget();
+        OZG_Table.Reset();
+
+        OZ_Show.OnShow.Insert(OZG_Show);
+        OZ_ClientState.ServiceWatch().Insert(OZG_SvcRes);
+        OZ_ClientState.SyncWatch().Insert(OZG_Sync);
+        OZ_Notice.OnAnswer.Insert(OZG_Notice);
+        OZG_PlaceWatch.OnMoved.Insert(OZG_PlaceMoved);
+        if (OZ_ClientState.Ready())
+            OZG_AskMine();
+    }
+
+    // The core's packet has come: the server knows this client, and can say
+    // whether it holds a seat somewhere from before it connected.
+    void OZG_Sync(OZ_SyncPayload p)
+    {
+        OZG_AskMine();
+    }
+
+    protected void OZG_AskMine()
+    {
+        if (m_OZG_Asked)
+            return;
+        m_OZG_Asked = true;
+        OZ_Rpc.ServiceRequest(OZG_Const.SERVICE, OZG_Const.OP_MINE, "");
+    }
+
+    // A refusal out in the world, where no window is open to show it.
+    void OZG_Notice(string op, bool ok, string why)
+    {
+        if (op.IndexOf(OZG_Const.NOTICE) != 0)
+            return;
+        OZG_GameMenu menu = OZG_GameMenu.Current();
+        if (menu)
+        {
+            menu.Said(OZ_Notice.Text());
+            return;
+        }
+        NotificationSystem.AddNotificationExtended(4, "#STR_OZG_MODNAME", OZ_Notice.Text(), "");
+    }
+
+    void OZG_Show(string what)
+    {
+        if (what.IndexOf(OZG_Const.SHOW_OPEN) != 0)
+            return;
+        string prefix = OZG_Const.SHOW_OPEN;
+        int skip = prefix.Length();
+        m_OZG_OpenId = what.Substring(skip, what.Length() - skip);
+        m_OZG_Marks.Clear();
+        // Not in this frame: at the moment of an action the menu stack is
+        // still busy (the way the series opens its screens).
+        GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(OZG_OpenGame, 100, false);
+    }
+
+    void OZG_OpenGame()
+    {
+        UIManager ui = GetGame().GetUIManager();
+        if (OZG_GameMenu.Current())
+            return;
+        // Never over a player who is not there to play (a menu open at the
+        // moment of a death takes the client down).
+        PlayerBase player = PlayerBase.Cast(GetGame().GetPlayer());
+        if (!player || !player.IsAlive() || player.IsUnconscious())
+            return;
+        OZG_GameMenu.For(m_OZG_OpenId);
+        ui.EnterScriptedMenu(OZG_Const.MENU_GAME, null);
+    }
+
+    void OZG_SvcRes(string serviceId, string op, bool ok, string json, string error)
+    {
+        if (serviceId != OZG_Const.SERVICE)
+            return;
+
+        OZG_GameMenu menu = OZG_GameMenu.Current();
+
+        if (!ok)
+        {
+            string text = error;
+            if (error.IndexOf("STR_") == 0)
+                text = "#" + error;
+            if (menu)
+                menu.Said(text);
+            else
+                NotificationSystem.AddNotificationExtended(4, "#STR_OZG_MODNAME", text, "");
+            return;
+        }
+
+        if (op == OZG_Const.OP_MINE)
+        {
+            OZG_WMine mine;
+            string bad;
+            if (JsonFileLoader<OZG_WMine>.LoadData(json, mine, bad) && mine)
+            {
+                OZG_Mine.s_PlaceId = mine.PlaceId;
+                OZG_Mine.s_Seat = mine.SeatNo;
+            }
+            return;
+        }
+
+        if (op == OZG_Const.OP_CLOSED)
+        {
+            OZG_WClosed closed;
+            string err;
+            if (!JsonFileLoader<OZG_WClosed>.LoadData(json, closed, err) || !closed)
+                return;
+            if (closed.PlaceId == OZG_Mine.s_PlaceId)
+            {
+                OZG_Mine.s_PlaceId = "";
+                OZG_Mine.s_Seat = -1;
+            }
+            OZG_Table.Forget(closed.PlaceId);
+            if (menu && menu.PlaceId() == closed.PlaceId)
+                menu.CloseBecause(closed.Why);
+            else if (closed.Why != "")
+                NotificationSystem.AddNotificationExtended(4, "#STR_OZG_MODNAME", "#" + closed.Why, "");
+            return;
+        }
+
+        if (op == OZG_Const.OP_SEATS || op == OZG_Const.OP_VIEW)
+        {
+            OZG_TableView view = OZG_Table.Take(json);
+            if (!view)
+                return;
+            if (op == OZG_Const.OP_SEATS)
+            {
+                m_OZG_Marks.Show(view.HeadPart);
+                return;
+            }
+            // A view says where this client sits.
+            if (view.HeadPart.Mine >= 0)
+            {
+                OZG_Mine.s_PlaceId = view.HeadPart.PlaceId;
+                OZG_Mine.s_Seat = view.HeadPart.Mine;
+            }
+            else if (OZG_Mine.s_PlaceId == view.HeadPart.PlaceId)
+            {
+                OZG_Mine.s_PlaceId = "";
+                OZG_Mine.s_Seat = -1;
+            }
+            if (menu && menu.PlaceId() == view.HeadPart.PlaceId)
+                menu.Redraw();
+        }
+    }
+
+    // A place's pulse moved: a window open on an older revision asks again,
+    // which covers a lost message.
+    void OZG_PlaceMoved(OZG_Place place)
+    {
+        OZG_GameMenu menu = OZG_GameMenu.Current();
+        if (menu && place)
+            menu.PulseOf(place);
+    }
+
+    override void OnUpdate(float timeslice)
+    {
+        super.OnUpdate(timeslice);
+        if (m_OZG_Aim)
+            m_OZG_Aim.Update();
+        if (m_OZG_Marks)
+            m_OZG_Marks.Update();
+    }
+
+    override void OnKeyPress(int key)
+    {
+        super.OnKeyPress(key);
+        OZG_GameMenu menu = OZG_GameMenu.Current();
+        if (menu)
+            menu.KeyPressed(key);
+    }
+
+    override UIScriptedMenu CreateScriptedMenu(int id)
+    {
+        // super first, and out at once when it made something: that is how
+        // other mods that touch this class live beside us.
+        UIScriptedMenu menu = super.CreateScriptedMenu(id);
+        if (menu)
+            return menu;
+        if (id == OZG_Const.MENU_GAME)
+        {
+            menu = new OZG_GameMenu();
+            menu.SetID(id);
+            return menu;
+        }
+        return null;
+    }
+
+    override void OnMissionFinish()
+    {
+        // The mirror of OnInit: the core's invokers are static and outlive
+        // the mission.
+        OZ_Show.OnShow.Remove(OZG_Show);
+        OZ_ClientState.ServiceWatch().Remove(OZG_SvcRes);
+        OZ_ClientState.SyncWatch().Remove(OZG_Sync);
+        OZ_Notice.OnAnswer.Remove(OZG_Notice);
+        OZG_PlaceWatch.OnMoved.Remove(OZG_PlaceMoved);
+        GetGame().GetCallQueue(CALL_CATEGORY_GUI).Remove(OZG_OpenGame);
+        if (m_OZG_Marks)
+            m_OZG_Marks.Clear();
+        if (m_OZG_Aim)
+            m_OZG_Aim.Destroy();
+        m_OZG_Aim = null;
+        m_OZG_Marks = null;
+        OZG_Table.Reset();
+        super.OnMissionFinish();
+    }
+}

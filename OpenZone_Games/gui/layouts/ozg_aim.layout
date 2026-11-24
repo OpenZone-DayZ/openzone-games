@@ -1,0 +1,63 @@
+// The small panel a placer sees while a deck's hologram is out: the seat count
+// with the mode, or why the spot is refused, and the key that changes the mode.
+// Not a menu: it never touches the menu stack and never takes a click.
+// All four exact flags are 1: the numbers are layout units, 1 px at 1080 rows.
+FrameWidgetClass OZG_AimRoot {
+ visible 0
+ ignorepointer 1
+ clipchildren 0
+ position 0 250
+ size 760 64
+ halign center_ref
+ valign bottom_ref
+ hexactpos 1
+ vexactpos 1
+ hexactsize 1
+ vexactsize 1
+ priority 1
+ {
+  PanelWidgetClass OZG_AimBack {
+   ignorepointer 1
+   color 0.05 0.06 0.05 0.72
+   position 0 0
+   size 1 1
+   hexactpos 1
+   vexactpos 1
+   hexactsize 0
+   vexactsize 0
+   style rover_sim_colorable
+  }
+  TextWidgetClass OZG_AimLine {
+   ignorepointer 1
+   color 1 1 1 1
+   position 0 6
+   size 1 28
+   hexactpos 1
+   vexactpos 1
+   hexactsize 0
+   vexactsize 1
+   text ""
+   font "gui/fonts/etelkatextpro22"
+   "exact text" 1
+   "exact text size" 20
+   "text halign" center
+   "text valign" center
+  }
+  TextWidgetClass OZG_AimKey {
+   ignorepointer 1
+   color 0.78 0.8 0.74 1
+   position 0 34
+   size 1 24
+   hexactpos 1
+   vexactpos 1
+   hexactsize 0
+   vexactsize 1
+   text ""
+   font "gui/fonts/etelkatextpro16"
+   "exact text" 1
+   "exact text size" 15
+   "text halign" center
+   "text valign" center
+  }
+ }
+}
