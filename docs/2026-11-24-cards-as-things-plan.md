@@ -4,7 +4,7 @@
 
 **Goal:** A deck becomes a container of fifty-two card items, a laid-out game keeps the deck inside its place, a deal is dealt from the cards the deck really holds (fewer, or with copies), and a player can count the deck.
 
-**Architecture:** A card in a game stays a two-character string; the letter its suit is written with says which copy of the face it is (thirteen letters a suit), so every fixed-width parser of moves and logs keeps working. The look of a card's back is a thing apart from its name and is kept beside it: two cards of one face may wear one back or two. The session reads the deck's card items at each deal and hands the game their names and the looks of their backs (`OZG_Game.TakeCards`); the game keeps what it was dealt from in its own state. Card items live in sixty-two universal slots (fifty-two on an ordinary deck, all sixty-two on a sharp's deck). The place holds the deck in one slot and overflow cards in a small cargo; the deck leaves the placer's hands the way the game's own indoor fireplace takes its first stick, and comes back by the ground.
+**Architecture:** A deck may hold any number of cards of one face (the owner: "even a deck of aces alone"), so in a deal the first card of a face is named by the face (`As`) and every further one by the face and its number (`As.1`, `As.2`, with no end to it), and nothing cuts a card's name by position. A card of a deal is a record (`OZG_DealCard`): the name that tells it apart, the look of its back, and from the next phase its mark and who sees it. The session reads the deck's card items at each deal and hands the game those records (`OZG_Game.TakeCards`); the game keeps what it was dealt from in its own state. Card items live in sixty-two universal slots (fifty-two on an ordinary deck, all sixty-two on a sharp's deck). The place holds the deck in one slot and overflow cards in a small cargo; the deck leaves the placer's hands the way the game's own indoor fireplace takes its first stick, and comes back by the ground.
 
 **Tech Stack:** Enforce Script (DayZ 1.30.164289, diag build), `config.cpp` written in part by a Python tool, the `dayz` MCP server (`mod_lint`, `mod_build`, `server_start`, `log_verdict`, `world_exec`, `client_*`), the stand's own verbs `oz_games` and `tgp`.
 
@@ -17,6 +17,7 @@
 - Commit author is the repository's own config (`Alexandru Covalschi`). Every commit message ends with `Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>`.
 - **No DayZ API is invented.** Every engine call in this plan was read in the game's scripts (`.dayz-mcp/corpus/scripts`, section "What the game's own scripts say" below). A call that does not compile is looked up with `knowledge_find`, never guessed at.
 - **Enforce Script rules that bite here**: no ternary; a compound boolean is worked out in a local before it goes into a field; a local is never named `out`, `owned`, `local` or like a type (`set`, `map`, `array`); a field or a method is never named like a class of the game or of another mod (`Count`, `Step`, `Slot`, `Hud`, `Debug` are taken): before the first build of a task, ask `knowledge_find(kind="class", name=<the new name>)` for every new field and method name that is one plain word; one expression holds about ten parts at most; `Length()` and `Substring()` count bytes.
+- **A card's name has no fixed width** (`As`, `As.1`, `As.12`): nothing takes a card apart by position. `OZG_Cards.RankOf`, `SuitOf`, `FaceOf` and `OfMove` do.
 - **Files are LF** (`git ls-files --eol` says `i/lf w/lf`). Edit with the Edit tool or Python; a Python script that carries a backslash is written with the Write tool, not a Bash heredoc (the shell eats `\\`).
 - **The stand.** A stand cycle is `client_stop` (when a client runs), `server_stop`, `mod_build`, `job_wait`, `server_start(timeout=600)`, `job_wait`, `log_verdict(since=...)` which must say `pass`, `world_ready`. A client, when a step needs one: `client_start(language="English")`, `job_wait`. End every working session with `client_stop` (it unplugs the virtual pad). After any edit of a `.toml`, `project_open` again.
 - **The stand may be in the owner's hands.** Ask before the first cycle of a working session which stand is free; never restart a stand he is playing on without his word.
@@ -399,34 +400,68 @@ Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 
 ---
 
-### Task 2: A card may be a copy; a game is dealt from the cards it is handed
+### Task 2: Any number of cards of one face; a game is dealt from the cards it is handed
 
 Rules only, on the stand's bench: nothing of the world is touched, and no client is needed.
 
+The owner's words this task answers (2026-11-24): "There may be as many copies as you like: you can put together any deck, even of aces alone", and "a card must have the property of the mark: whether it is seen by particular players, how it is seen". So a card's name in a game has no limit to its copies and no fixed width, and a card of a deal is a record: its name, the look of its back, and from the next phase its mark.
+
 **Files:**
-- Modify: `OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Cards.c:1-37`
+- Modify: `OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Cards.c` (lines 1-37 replaced; a class appended)
 - Modify: `OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Game.c:63-68`
 - Modify: `OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Durak.c` (`Begin`, `PublicView`, `SeatView`, `LoadState`, `Sound`), `OZG_DurakState.c`
 - Modify: `OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Const.c:19`
 - Modify: `OpenZone_Games/strings.csv` (then `python -I tools/stringtable.py OpenZone_Games`)
-- Modify: `OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_Bench.c` (`OpDeck`, `OpBegin`), `OZG_Bots.c:54-55`
+- Modify: `OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_Bench.c` (`OpBegin`, new `OpNames`), `OZG_Verb.c`, `OZG_Bots.c:32-38,54-55`
 
 **Interfaces:**
-- Produces: `OZG_Cards.SuitOf(card) : string` (the suit itself, whichever copy), `OZG_Cards.CopyOf(card) : int`, `OZG_Cards.FaceOf(card) : string`, `OZG_Cards.CopyNamed(face, copy) : string`, `OZG_Cards.COPIES = 13`; `OZG_Game.TakeCards(array<string> cards, array<int> looks)`; `OZG_Const.NO_CARDS`; in durak's views `OZG_DurakSeatPublic.Backs`, `OZG_DurakPublic.TrumpLook`, `.StockTop`, `.AttackLooks`, `.DefenceLooks`, `OZG_DurakPrivate.HeldLooks`.
+- Produces: `OZG_Cards.RankOf(card) : int`, `.SuitOf(card) : string`, `.IsCard(card) : bool` for a name of any length; `OZG_Cards.FaceOf(card) : string`, `.CopyOf(card) : int`, `.CopyNamed(face, copy) : string`, `.OfMove(move) : string`; `class OZG_DealCard { string Name; int Look; static OZG_DealCard Make(string name, int look); }`; `OZG_Game.TakeCards(array<ref OZG_DealCard> cards)`; `OZG_Const.NO_CARDS`; `OZG_DurakState.Dealt`; in durak's views `OZG_DurakSeatPublic.Backs`, `OZG_DurakPublic.TrumpLook`, `.StockTop`, `.AttackLooks`, `.DefenceLooks`, `OZG_DurakPrivate.HeldLooks`.
 
 - [ ] **Step 1: The checks on the bench, written first**
 
-In `OZG_Bench.c`, `OpDeck`: the third of the five things that are no cards is `6x`, and every letter becomes a suit's letter of some copy. Replace `if (!OZG_Cards.IsCard("6x"))` with `if (!OZG_Cards.IsCard("6?"))`. After the line `detail = detail + " suit(Th)=" + OZG_Cards.SuitOf("Th");` add:
+In `OZG_Bench.c`, after `OpDeck` (before the comment of the next op), add:
 
 ```c
-        detail = detail + " suit(AS)=" + OZG_Cards.SuitOf("AS");
-        detail = detail + " copy(As)=" + OZG_Cards.CopyOf("As").ToString();
-        detail = detail + " copy(AS)=" + OZG_Cards.CopyOf("AS").ToString();
-        detail = detail + " face(Aw)=" + OZG_Cards.FaceOf("Aw");
+    // names: what a card's name says, the names of further cards of one face
+    // with it.
+    static bool OpNames(out string detail)
+    {
+        int wrong = 0;
+        if (OZG_Cards.IsCard("As.0"))
+            wrong++;
+        if (OZG_Cards.IsCard("As.01"))
+            wrong++;
+        if (OZG_Cards.IsCard("As1"))
+            wrong++;
+        if (OZG_Cards.IsCard("As.x"))
+            wrong++;
+        if (OZG_Cards.IsCard("As."))
+            wrong++;
+
+        detail = "names: copy(As)=" + OZG_Cards.CopyOf("As").ToString();
+        detail = detail + " copy(As.7)=" + OZG_Cards.CopyOf("As.7").ToString();
+        detail = detail + " face(As.61)=" + OZG_Cards.FaceOf("As.61");
+        detail = detail + " rank(As.61)=" + OZG_Cards.RankOf("As.61").ToString();
+        detail = detail + " suit(As.61)=" + OZG_Cards.SuitOf("As.61");
+        detail = detail + " named(As,0)=" + OZG_Cards.CopyNamed("As", 0);
         detail = detail + " named(As,3)=" + OZG_Cards.CopyNamed("As", 3);
-        detail = detail + " copy(AV)=" + OZG_Cards.CopyOf("AV").ToString();
-        detail = detail + " named(As,13)=[" + OZG_Cards.CopyNamed("As", 13) + "]";
+        detail = detail + " move(a:As)=" + OZG_Cards.OfMove("a:As");
+        detail = detail + " move(d:As.3:2)=" + OZG_Cards.OfMove("d:As.3:2");
+        detail = detail + " move(take)=[" + OZG_Cards.OfMove("take") + "]";
+        detail = detail + " wrong=" + wrong.ToString() + "/5";
+        return true;
+    }
+
 ```
+
+In `OZG_Verb.c`, after the two lines of `if (op == "deck")`, add:
+
+```c
+        if (op == "names")
+            return OZG_Bench.OpNames(detail);
+```
+
+and add `names` to `KnownOps()` after `deck`.
 
 In `OpBegin`, after `OZG_VerbOps.Pairs(OZG_VerbOps.Arg(args, "opt", ""), options);`:
 
@@ -436,13 +471,21 @@ In `OpBegin`, after `OZG_VerbOps.Pairs(OZG_VerbOps.Arg(args, "opt", ""), options
         string given = OZG_VerbOps.Arg(args, "cards", "");
         if (given != "")
         {
-            array<string> handed = new array<string>();
-            OZG_Cards.Parse(given, handed);
-            array<int> handedLooks = new array<int>();
+            array<string> givenNames = new array<string>();
+            OZG_Cards.Parse(given, givenNames);
+            array<int> givenBacks = new array<int>();
             string lookText = OZG_VerbOps.Arg(args, "looks", "");
             if (lookText != "")
-                OZG_VerbOps.Numbers(lookText, handedLooks);
-            game.TakeCards(handed, handedLooks);
+                OZG_VerbOps.Numbers(lookText, givenBacks);
+            array<ref OZG_DealCard> handed = new array<ref OZG_DealCard>();
+            for (int h = 0; h < givenNames.Count(); h++)
+            {
+                int back = 0;
+                if (h < givenBacks.Count())
+                    back = givenBacks[h];
+                handed.Insert(OZG_DealCard.Make(givenNames[h], back));
+            }
+            game.TakeCards(handed);
         }
 ```
 
@@ -450,116 +493,159 @@ and add the line `//       cards=<cards> looks=<n,..>  what the deal is dealt fr
 
 Nothing is run yet: the build would stop on `CopyOf`.
 
-- [ ] **Step 2: Copies in `OZG_Cards`**
+- [ ] **Step 2: A card's name, of any length**
 
 Replace `OZG_Cards.c` from its first line down to the end of `IsCard` (everything above the comment of `Whole`) with:
 
 ```c
-// Cards. A card is two characters, a rank of RANKS and a suit: `6s` is the six
-// of spades, `Th` the ten of hearts (design §8).
+// Cards. A card is a rank of RANKS and a suit of SUITS: `6s` is the six of
+// spades, `Th` the ten of hearts (design §8).
 //
-// A COPY IS TOLD BY THE LETTER OF ITS SUIT. Since cards are things, a game
-// may hold several cards of one face. The second character is the suit and,
-// by which of a suit's letters it is, which copy this is: `As`, `AS`, `Aw`,
-// `AW` are four aces of spades, and there are thirteen letters for each suit.
-// A card stays two characters, so every move and every log line keeps its
-// width; the rules ask SuitOf, which answers the suit itself, and whoever
-// needs the face for a picture or a name asks FaceOf.
+// A DECK MAY HOLD ANY NUMBER OF ONE FACE. Cards are things, and a deck can be
+// put together of aces alone. In a deal the first card of a face is named by
+// the face, `As`, and every further one by the face, a dot and its number:
+// `As.1`, `As.2`, with no end to it. So A CARD'S NAME HAS NO FIXED WIDTH:
+// nothing may cut it by position. The rules ask RankOf and SuitOf; whoever
+// needs the face for a picture or a word asks FaceOf; whoever takes a card
+// out of a move asks OfMove.
 //
-// A COPY'S NUMBER SAYS NOTHING OF THE CARD'S BACK. The look of a back is kept
-// beside the card's name wherever cards are kept: two aces of spades may wear
-// one back or two, and both ways they are two cards.
+// THE NAME ONLY TELLS CARDS APART. What a card is besides its face (the look
+// of its back, and from the next phase its mark and who sees it) is kept
+// beside the name, a record a card (OZG_DealCard below): two aces of spades
+// may wear one back or two, be marked or clean, and both ways they are two
+// cards.
 class OZG_Cards
 {
     static const string RANKS = "23456789TJQKA";
     static const string SUITS = "shdc";
-    // Every letter a suit is written with: four a copy, in the order of
-    // SUITS, the suits themselves first. Fifty-two letters, thirteen copies.
-    static const string SUIT_LETTERS = "shdcSHDCwxyzWXYZabefgijklmnopqrtuvABEFGIJKLMNOPQRTUV";
-    // The most cards of one face a game can tell apart. No rule asks for it:
-    // it is where the letters end. A place holds ninety-two cards at the most
-    // (sixty-two in a sharp's deck, thirty beside it), so a fourteenth card of
-    // one face takes somebody who wants to see what happens: it is left out
-    // of the deal, and a count still counts it.
-    static const int COPIES = 13;
+    // Between a face and the number of a further card of that face.
+    static const string COPY_MARK = ".";
+
+    // Whether a text is a card's name, and which card of its face it names:
+    // 0 for the first, 1 and up for the others.
+    protected static bool WellMade(string card, out int copy)
+    {
+        copy = 0;
+        int n = card.Length();
+        if (n < 2)
+            return false;
+        string ranks = RANKS;
+        if (ranks.IndexOf(card.Substring(0, 1)) < 0)
+            return false;
+        string suits = SUITS;
+        if (suits.IndexOf(card.Substring(1, 1)) < 0)
+            return false;
+        if (n == 2)
+            return true;
+        // A further card: the mark and a number from 1 up, and nothing else.
+        if (n < 4 || card.Substring(2, 1) != COPY_MARK)
+            return false;
+        string digits = card.Substring(3, n - 3);
+        int number = digits.ToInt();
+        if (number < 1 || number.ToString() != digits)
+            return false;
+        copy = number;
+        return true;
+    }
 
     // 0 for a two .. 12 for an ace; -1 for what is not a card.
     static int RankOf(string card)
     {
-        if (card.Length() != 2)
+        int copy;
+        if (!WellMade(card, copy))
             return -1;
         string ranks = RANKS;
         return ranks.IndexOf(card.Substring(0, 1));
     }
 
-    // Which suit (0..3) the second character says, and which copy; -1 for
-    // what is no suit.
-    protected static int SuitAt(string card, out int copy)
-    {
-        copy = 0;
-        if (card.Length() != 2)
-            return -1;
-        string letters = SUIT_LETTERS;
-        int at = letters.IndexOf(card.Substring(1, 1));
-        if (at < 0)
-            return -1;
-        copy = at / 4;
-        return at % 4;
-    }
-
-    // "s", "h", "d" or "c", whichever copy the card is; "" for what is not a
-    // card.
+    // "s", "h", "d" or "c"; "" for what is not a card.
     static string SuitOf(string card)
     {
         int copy;
-        int at = SuitAt(card, copy);
-        if (at < 0)
+        if (!WellMade(card, copy))
             return "";
-        string suits = SUITS;
-        return suits.Substring(at, 1);
+        return card.Substring(1, 1);
     }
 
-    // 0 for the first card of a face, 1..12 for its copies; -1 for no card.
+    // 0 for the first card of a face, 1 and up for the others; -1 for what is
+    // not a card.
     static int CopyOf(string card)
     {
         int copy;
-        if (SuitAt(card, copy) < 0)
+        if (!WellMade(card, copy))
             return -1;
         return copy;
     }
 
-    // The face: the card as its first copy is written. `AW` is `As`.
+    // The face: the name of the first card of its kind. `As.3` is `As`.
     static string FaceOf(string card)
     {
-        string suit = SuitOf(card);
-        if (suit == "" || RankOf(card) < 0)
+        int copy;
+        if (!WellMade(card, copy))
             return "";
-        return card.Substring(0, 1) + suit;
+        return card.Substring(0, 2);
     }
 
-    // The n-th copy of a face; "" when there is no such copy.
+    // The name of the n-th card of a face; the face itself for 0.
     static string CopyNamed(string face, int copy)
     {
-        int had;
-        int at = SuitAt(face, had);
-        if (at < 0 || RankOf(face) < 0)
+        string plain = FaceOf(face);
+        if (plain == "" || copy < 0)
             return "";
-        if (copy < 0 || copy >= COPIES)
-            return "";
-        string letters = SUIT_LETTERS;
-        return face.Substring(0, 1) + letters.Substring(copy * 4 + at, 1);
+        if (copy == 0)
+            return plain;
+        return plain + COPY_MARK + copy.ToString();
     }
 
     static bool IsCard(string card)
     {
-        if (RankOf(card) < 0)
-            return false;
-        return SuitOf(card) != "";
+        int copy;
+        return WellMade(card, copy);
+    }
+
+    // The card a move names: `a:<card>`, `d:<card>:<n>`, `t:<card>`. "" for a
+    // move that names none (`take`, `pass`).
+    static string OfMove(string move)
+    {
+        int first = move.IndexOf(":");
+        if (first < 0)
+            return "";
+        string named = move.Substring(first + 1, move.Length() - first - 1);
+        int second = named.IndexOf(":");
+        if (second >= 0)
+            named = named.Substring(0, second);
+        if (!IsCard(named))
+            return "";
+        return named;
     }
 
 ```
 
-Everything from `Whole` down stays as it is (`Whole`, `FromRank`, `Line`, `Parse`).
+Everything from `Whole` down stays as it is (`Whole`, `FromRank`, `Line`, `Parse`). At the end of the file, after the closing brace of `OZG_Cards`, add:
+
+```c
+
+// One card of a deal, as a game is handed it. The name tells it apart from
+// every other card of the deal; the rest is what the card is like. The next
+// phases add what else a card carries into a game: the sign of its mark, and
+// which seats read it and which notice it (design §4).
+class OZG_DealCard
+{
+    // A face, or for a further card of that face the face, a dot and its
+    // number: `As`, `As.1`, `As.2` (OZG_Cards.CopyNamed).
+    string Name;
+    // The look of its back (OZG_Decks.StyleAt).
+    int Look;
+
+    static OZG_DealCard Make(string name, int look)
+    {
+        OZG_DealCard c = new OZG_DealCard();
+        c.Name = name;
+        c.Look = look;
+        return c;
+    }
+}
+```
 
 - [ ] **Step 3: `TakeCards` in the contract**
 
@@ -568,24 +654,20 @@ In `OZG_Game.c`, after the method `Fresh()` and before the comment `// ---- a ga
 ```c
     // ---- the cards of a deal -------------------------------------------------
 
-    // What the next deal is dealt from, when there is a deck to read: every
-    // card a face or a copy of one (OZG_Cards.CopyOf), and beside each the
-    // look of its back. A game nobody hands cards to deals its own whole set,
-    // every back of look 0: what the stand's bench and a check rely on.
-    protected ref array<string> m_Given;
-    protected ref array<int> m_GivenLooks;
+    // What the next deal is dealt from, when there is a deck to read: a
+    // record a card, every name of the deal its own. A game nobody hands
+    // cards to deals its own whole set, every back of look 0: what the
+    // stand's bench and a check rely on.
+    protected ref array<ref OZG_DealCard> m_Given;
 
-    void TakeCards(array<string> cards, array<int> looks)
+    void TakeCards(array<ref OZG_DealCard> cards)
     {
-        m_Given = new array<string>();
-        m_GivenLooks = new array<int>();
+        m_Given = new array<ref OZG_DealCard>();
         for (int i = 0; i < cards.Count(); i++)
         {
-            int look = 0;
-            if (looks && i < looks.Count())
-                look = looks[i];
-            m_Given.Insert(cards[i]);
-            m_GivenLooks.Insert(look);
+            OZG_DealCard c = cards[i];
+            if (c && OZG_Cards.IsCard(c.Name))
+                m_Given.Insert(OZG_DealCard.Make(c.Name, c.Look));
         }
     }
 
@@ -615,17 +697,15 @@ In `OZG_DurakState.c`:
 2. In `class OZG_DurakState`, after `int Tie;`:
 
 ```c
-    // Every card this deal began with, in the order it was handed over, and
-    // beside each the look of its back. Sound counts against it.
-    ref array<string> DealtCards;
-    ref array<int> CardLooks;
+    // Every card this deal began with, in the order it was handed over: its
+    // name and what it is like. Sound counts against it.
+    ref array<ref OZG_DealCard> Dealt;
 ```
 
    and in its constructor, after `DefenceCards = new array<string>();`:
 
 ```c
-        DealtCards = new array<string>();
-        CardLooks = new array<int>();
+        Dealt = new array<ref OZG_DealCard>();
 ```
 
 3. Replace `class OZG_DurakSeatPublic` with:
@@ -690,19 +770,23 @@ with
 
 ```c
         // The cards of this deal: what the session read out of the deck, or
-        // the game's whole set when nobody handed any.
+        // the game's whole set when nobody handed any. The state keeps its
+        // own record of them, in the order they were handed over.
         array<string> deck = new array<string>();
-        array<int> looks = new array<int>();
+        int f;
         if (m_Given)
         {
-            deck.Copy(m_Given);
-            looks.Copy(m_GivenLooks);
+            for (f = 0; f < m_Given.Count(); f++)
+            {
+                s.Dealt.Insert(OZG_DealCard.Make(m_Given[f].Name, m_Given[f].Look));
+                deck.Insert(m_Given[f].Name);
+            }
         }
         else
         {
             CardsUsed(deck);
-            for (int f = 0; f < deck.Count(); f++)
-                looks.Insert(0);
+            for (f = 0; f < deck.Count(); f++)
+                s.Dealt.Insert(OZG_DealCard.Make(deck[f], 0));
         }
         // Six to each seat at the least; the trump is then the last card dealt.
         if (deck.Count() < n * OZG_DurakConst.HAND)
@@ -710,9 +794,6 @@ with
             refusal = OZG_Const.NO_CARDS;
             return false;
         }
-        // Before the shuffle moves them: the state's own record of its cards.
-        s.DealtCards.Copy(deck);
-        s.CardLooks.Copy(looks);
 ```
 
 Before `protected int SeatNoAt(int i)` add:
@@ -724,10 +805,12 @@ Before `protected int SeatNoAt(int i)` add:
     {
         if (!m_S || card == "")
             return 0;
-        int at = m_S.DealtCards.Find(card);
-        if (at < 0 || at >= m_S.CardLooks.Count())
-            return 0;
-        return m_S.CardLooks[at];
+        for (int i = 0; i < m_S.Dealt.Count(); i++)
+        {
+            if (m_S.Dealt[i] && m_S.Dealt[i].Name == card)
+                return m_S.Dealt[i].Look;
+        }
+        return 0;
     }
 
 ```
@@ -779,20 +862,16 @@ with
         // set, every back the deck's own.
         if (s.Version == 1)
         {
-            if (!s.DealtCards)
-                s.DealtCards = new array<string>();
-            if (!s.CardLooks)
-                s.CardLooks = new array<int>();
-            s.DealtCards.Clear();
-            s.CardLooks.Clear();
-            CardsUsed(s.DealtCards);
-            for (int old = 0; old < s.DealtCards.Count(); old++)
-                s.CardLooks.Insert(0);
+            s.Dealt = new array<ref OZG_DealCard>();
+            array<string> whole = new array<string>();
+            CardsUsed(whole);
+            for (int old = 0; old < whole.Count(); old++)
+                s.Dealt.Insert(OZG_DealCard.Make(whole[old], 0));
             s.Version = OZG_DurakConst.VERSION;
         }
         if (s.Version != OZG_DurakConst.VERSION)
             return false;
-        if (!s.DealtCards || !s.CardLooks)
+        if (!s.Dealt)
             return false;
 ```
 
@@ -813,18 +892,37 @@ and replace
 with
 
 ```c
-        if (m_S.CardLooks.Count() != m_S.DealtCards.Count())
-        {
-            why = "the looks do not pair up with the cards";
-            return false;
-        }
         array<string> want = new array<string>();
-        want.Copy(m_S.DealtCards);
+        for (i = 0; i < m_S.Dealt.Count(); i++)
+        {
+            if (!m_S.Dealt[i])
+            {
+                why = "a card of the deal has no record";
+                return false;
+            }
+            want.Insert(m_S.Dealt[i].Name);
+        }
 ```
 
-- [ ] **Step 7: The bots read the trump's suit by the helper**
+Then read `OZG_Durak.c` once for anything else that takes a card apart by position (Grep for `Substring(` and `Length()` in the file): moves are already split at the colons (`move.Split(":", parts)` in `Act`), and nothing else was found when this plan was written.
 
-`OZG_Bots.c:54-55`: replace
+- [ ] **Step 7: The bots take a move's card and the trump's suit by the helpers**
+
+`OZG_Bots.c`, `CardOf`: replace its body
+
+```c
+        if (move.Length() < 4)
+            return "";
+        return move.Substring(2, 2);
+```
+
+with
+
+```c
+        return OZG_Cards.OfMove(move);
+```
+
+and in `Choose` replace
 
 ```c
             if (pub.TrumpCard.Length() == 2)
@@ -842,26 +940,46 @@ with
 Run `mod_lint`, then the stand cycle.
 
 ```
+oz_games {"op":"names"}
+```
+Expected: `names: copy(As)=0 copy(As.7)=7 face(As.61)=As rank(As.61)=12 suit(As.61)=s named(As,0)=As named(As,3)=As.3 move(a:As)=As move(d:As.3:2)=As.3 move(take)=[] wrong=0/5`.
+
+```
 oz_games {"op":"deck"}
 ```
-Expected to contain: `suit(Th)=h suit(AS)=s copy(As)=0 copy(AS)=1 face(Aw)=As named(As,3)=AW copy(AV)=12 named(As,13)=[] notcards=5/5`.
-If `copy(AS)` reads `0`, `IndexOf` does not tell the letters' case apart: make `SUIT_LETTERS` the thirty-two characters `"shdcwxyzabefgijklmnopqrt01234567"` and `COPIES` 8, change the bench's lines to names of that set and the numbers with them (`AS` -> `Aw` is copy 1, `Aw` -> `Aa`, `AW` -> `Ag`, `AV` -> `A7` is copy 7, `named(As,13)` -> `named(As,8)`), and say so in the record and in this file (the checks of the later tasks that name `AS`, `Aw`, `AW` change with it).
+Expected: what it said before this task, to the letter (`notcards=5/5` among it).
 
 ```
 oz_games {"op":"begin","seats":"0,1"}
 ```
 Expected: a line beginning `durak podkidnoy trump=` with `stock=24` (the whole set, as before).
 
-```
-oz_games {"op":"begin","seats":"0,1","cards":"6s 7s 8s 9s Ts Js Qs Ks As 6h 7h 8h AS","looks":"0,0,0,0,0,0,0,0,0,0,0,0,1"}
-```
-Expected: `stock=1`.
+A second ace of spades, with another back:
 
 ```
+oz_games {"op":"begin","seats":"0,1","cards":"6s 7s 8s 9s Ts Js Qs Ks As 6h 7h 8h As.1","looks":"0,0,0,0,0,0,0,0,0,0,0,0,1"}
 oz_games {"op":"save"}
 oz_games {"op":"load"}
 ```
-Expected: `saved <n> B sound=yes -> games_save.json`, then `loaded | durak ...` (a state with a copy in it is sound).
+Expected: `stock=1`; `saved <n> B sound=yes -> games_save.json`; `loaded | durak ...`.
+
+Aces alone, fourteen of them:
+
+```
+oz_games {"op":"begin","seats":"0,1","cards":"As As.1 As.2 As.3 As.4 As.5 As.6 As.7 As.8 As.9 As.10 As.11 As.12 As.13"}
+```
+Expected: `durak podkidnoy trump=As... stock=2 ...`; the line names the opener (`op=`) and the defender (`def=`).
+
+```
+oz_games {"op":"can","seat":"<the opener>"}
+```
+Expected: six moves, `a:` and a different ace each. Play the first of them:
+
+```
+oz_games {"op":"act","seat":"<the opener>","move":"<that move>"}
+oz_games {"op":"can","seat":"<the defender>"}
+```
+Expected: `ok ...`; then the defender can `take` and nothing else (an ace does not beat an ace). `oz_games {"op":"save"}`: `sound=yes`.
 
 ```
 oz_games {"op":"begin","seats":"0,1","cards":"6s 7s 8s"}
@@ -877,12 +995,14 @@ Expected: what it said before this task (the header of `OZG_Fuzz.c` says what th
 
 ```bash
 git add OpenZone_Games OpenZone_Games_Bridge
-git commit -m "A card may be a copy of a face, and durak is dealt from what it is handed
+git commit -m "Any number of cards of one face, and durak dealt from what it is handed
 
-The suit's alphabet says which copy a card is, so a card stays two characters
-and every move keeps its width. A game takes its cards from the session
-(TakeCards) and keeps what the deal began with; it refuses a deal with too few.
-Its views say the look of every back that can be seen.
+A further card of a face is named by the face and its number, with no end to
+it, so a card's name has no fixed width and nothing cuts it by position. A
+card of a deal is a record: its name and the look of its back; the mark will
+join them. A game takes its cards from the session (TakeCards) and keeps what
+the deal began with; it refuses a deal with too few. Its views say the look of
+every back that can be seen.
 
 Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 ```
@@ -1513,9 +1633,8 @@ In `OZG_WorldOps.c`, before `// give who= [deck=class]`, add:
         return s;
     }
 
-    // One card of each face named out of a deck, and gone. The faces must
-    // differ: a card deleted is still counted until the tick ends. Returns
-    // how many were found.
+    // A card out of a deck for each face named, and gone; a face named twice
+    // takes two cards. Returns how many were found.
     static int PullFrom(OZG_Deck_Base deck, string faces)
     {
         array<string> wanted = new array<string>();
@@ -2133,8 +2252,8 @@ Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 - Modify: `OpenZone_Games_Bridge/.../OZG_WorldOps.c`, `OZG_Verb.c` (op `stuff`; `pull` for a place)
 
 **Interfaces:**
-- Consumes: `OZG_Place.OZG_Deck()`, `.OZG_MakeDeck`, `.OZG_Open` (Task 4); `OZG_Game.TakeCards`, `OZG_Cards.CopyNamed`, `.FaceOf`, `.COPIES` (Task 2); `OZG_Card_Base.OZG_Face()`, `.OZG_Look()`, `.OZG_SetStyle` (Task 3); `OZG_WorldOps.DeckOf`, `.PullFrom` (Task 3).
-- Produces: `OZG_DeckRead.ThingsOf(OZG_Place place, array<EntityAI> into)` (every card item a place holds: the deck's in the order of its slots, then those beside it); `OZG_DeckRead.CardsOf(OZG_Place place, array<string> cards, array<int> looks) : int` (the same cards as a game names them, with the looks of their backs; the answer is how many card items there are, those beyond thirteen of a face included).
+- Consumes: `OZG_Place.OZG_Deck()`, `.OZG_MakeDeck`, `.OZG_Open` (Task 4); `OZG_Game.TakeCards`, `OZG_Cards.CopyNamed`, `.FaceOf`, `OZG_DealCard` (Task 2); `OZG_Card_Base.OZG_Face()`, `.OZG_Look()`, `.OZG_SetStyle` (Task 3); `OZG_WorldOps.DeckOf`, `.PullFrom` (Task 3).
+- Produces: `OZG_DeckRead.ThingsOf(OZG_Place place, array<EntityAI> into)` (every card item a place holds: the deck's in the order of its slots, then those beside it); `OZG_DeckRead.CardsOf(OZG_Place place, array<ref OZG_DealCard> into) : int` (the same cards as the records a game is handed: a name each, however many of a face there are, and the look of the back; the answer is how many cards there are).
 
 - [ ] **Step 1: Reading a place's cards**
 
@@ -2175,16 +2294,15 @@ class OZG_DeckRead
         }
     }
 
-    // The cards as a game names them: a face, and for every further card of
-    // that face one of its copies. More than OZG_Cards.COPIES of one face
-    // cannot be told apart in two characters: those are left out of every
-    // game. Beside each, the look of its back, which a copy's number says
-    // nothing of: two aces of spades may wear one back or two. Returns how
-    // many card items there are, the ones left out included.
-    static int CardsOf(OZG_Place place, array<string> cards, array<int> looks)
+    // The cards as a game is handed them: a record a card. The first card of
+    // a face found is named by the face, every further one by the face and
+    // its number (OZG_Cards.CopyNamed), however many there are: a deck of
+    // aces alone is as many names as it has cards. Beside the name, the look
+    // of the card's back; the next phase reads the card's mark here too.
+    // Returns how many cards there are.
+    static int CardsOf(OZG_Place place, array<ref OZG_DealCard> into)
     {
-        cards.Clear();
-        looks.Clear();
+        into.Clear();
         array<EntityAI> things = new array<EntityAI>();
         ThingsOf(place, things);
         map<string, int> seen = new map<string, int>();
@@ -2195,13 +2313,10 @@ class OZG_DeckRead
             int had = 0;
             seen.Find(face, had);
             seen.Set(face, had + 1);
-            if (had >= OZG_Cards.COPIES)
-                continue;
             string named = OZG_Cards.CopyNamed(face, had);
             if (named == "")
                 continue;
-            cards.Insert(named);
-            looks.Insert(card.OZG_Look());
+            into.Insert(OZG_DealCard.Make(named, card.OZG_Look()));
         }
         return things.Count();
     }
@@ -2214,24 +2329,21 @@ In `OZG_Session.c`, `Deal`, before `string refusal;`:
 
 ```c
         // The cards of this deal are the cards the deck holds that are of the
-        // game's set. A place that lost its deck gets one of its class.
+        // game's set, however many of a face there are. A place that lost its
+        // deck gets one of its class.
         if (m_Place && !m_Place.OZG_Deck())
             m_Place.OZG_MakeDeck(m_R.DeckClass);
-        array<string> all = new array<string>();
-        array<int> allLooks = new array<int>();
-        OZG_DeckRead.CardsOf(m_Place, all, allLooks);
+        array<ref OZG_DealCard> all = new array<ref OZG_DealCard>();
+        OZG_DeckRead.CardsOf(m_Place, all);
         array<string> ofGame = new array<string>();
         game.CardsUsed(ofGame);
-        array<string> cards = new array<string>();
-        array<int> looks = new array<int>();
+        array<ref OZG_DealCard> cards = new array<ref OZG_DealCard>();
         for (i = 0; i < all.Count(); i++)
         {
-            if (ofGame.Find(OZG_Cards.FaceOf(all[i])) < 0)
-                continue;
-            cards.Insert(all[i]);
-            looks.Insert(allLooks[i]);
+            if (ofGame.Find(OZG_Cards.FaceOf(all[i].Name)) >= 0)
+                cards.Insert(all[i]);
         }
-        game.TakeCards(cards, looks);
+        game.TakeCards(cards);
 
 ```
 
@@ -2349,18 +2461,25 @@ oz_games {"op":"held","id":"0"}
 ```
 Expected: `stuffed As: deck=1 beside=0`, then `held: deck OZG_Deck_Classic_Sharp slots=62 cards=53 free=9 faces=52 looks=0:52,1:1 beside=0`. Two new puppets, host, deal. Expected: `stock=25` (thirty-seven cards). `auto`, `sess`: `st=2`, no error: a copy plays.
 
-**Too few.** After that game: one call takes twenty-four of the thirty-seven away and leaves the nines to the aces of diamonds and of clubs and the stuffed ace:
+**A deck of aces alone** (the owner's own example). After that game: every card of the game's set leaves the deck but the aces of spades, and aces of spades take their place:
 
 ```
-oz_games {"op":"pull","id":"0","face":"6s 7s 8s 9s Ts Js Qs Ks 6h 7h 8h 9h Th Jh Qh Kh Ah 6d 7d 8d 6c 7c 8c As"}
+oz_games {"op":"pull","id":"0","face":"6s 7s 8s 9s Ts Js Qs Ks 6h 7h 8h 9h Th Jh Qh Kh Ah 6d 7d 8d 9d Td Jd Qd Kd Ad 6c 7c 8c 9c Tc Jc Qc Kc Ac"}
+```
+a tick later
+```
+oz_games {"op":"stuff","id":"0","face":"As","n":"35"}
 oz_games {"op":"held","id":"0"}
 ```
-Expected: `pulled 24 of ...`, then `cards=29` (sixteen twos to fives, twelve of the game's set, and the stuffed ace of spades: thirteen cards a game of durak can use). Deal. Expected: `stock=1`. `auto` to the end, then
+Expected: `pulled 35 of ...`; `stuffed As: deck=35 beside=0`; `held: deck OZG_Deck_Classic_Sharp slots=62 cards=53 free=9 faces=17 looks=0:52,1:1 beside=0` (the sixteen low cards and thirty-seven aces of spades). Deal. Expected: `trump=As` or `trump=As.<n>`, and `stock=25`. `auto`, `sess`: `st=2`: thirty-seven aces of spades are a game of durak, and it ends. `oz_games {"op":"hand","id":"0","seat":"0"}` during it shows names like `As.4`, `As.17`: every one its own.
+
+**Too few.** After that game twenty-five of the aces go (a face named twice takes two cards):
 
 ```
-oz_games {"op":"pull","id":"0","face":"9d Td"}
+oz_games {"op":"pull","id":"0","face":"As As As As As As As As As As As As As As As As As As As As As As As As As"}
+oz_games {"op":"held","id":"0"}
 ```
-and deal. Expected: `refused STR_OZG_NO_CARDS` (eleven cards for two hands of six).
+Expected: `pulled 25 of ...`, then `cards=28` (the sixteen low cards and twelve aces). Deal. Expected: `stock=0`. `auto` to the end, then `oz_games {"op":"pull","id":"0","face":"As"}` and deal. Expected: `refused STR_OZG_NO_CARDS` (eleven cards for two hands of six).
 
 **A restart in mid-game.** Fold, `world_delete` the deck, lay an ordinary deck, two puppets, host, deal; write down the `trump=`, `stock=` and `hands=` of `sess`. Stand cycle (no build), client. `oz_games {"op":"sess","id":"0"}`. Expected: `st=1` and the same three. (The puppets are gone after a restart and their seats are kept: that is the session's rule, not this task's.)
 
@@ -2382,10 +2501,10 @@ Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 ### Task 6: The window draws every card as it is
 
 **Files:**
-- Modify: `OpenZone_Games/scripts/5_Mission/OpenZone_Games/OZG_GameMenu.c` (`SetPicture` at 425, `CardWord` at 443, `PaintSeats` at 606, `MakeCard` at 712, `PaintTable` at 723, `SortKey` at 803, `PaintHand` at 812; the numbers are of the file before this task)
+- Modify: `OpenZone_Games/scripts/5_Mission/OpenZone_Games/OZG_GameMenu.c` (`SetPicture` at 425, `MovesOf` at 496, `PaintSeats` at 606, `MakeCard` at 712, `PaintTable` at 723, `PaintHand` at 812, `LogWord` at 945; the numbers are of the file before this task)
 
 **Interfaces:**
-- Consumes: `OZG_DurakSeatPublic.Backs`, `OZG_DurakPublic.TrumpLook`, `.StockTop`, `.AttackLooks`, `.DefenceLooks`, `OZG_DurakPrivate.HeldLooks` (Task 2); `OZG_Decks.StyleAt` (Task 3); `OZG_Cards.FaceOf`, `.SuitOf`.
+- Consumes: `OZG_DurakSeatPublic.Backs`, `OZG_DurakPublic.TrumpLook`, `.StockTop`, `.AttackLooks`, `.DefenceLooks`, `OZG_DurakPrivate.HeldLooks` (Task 2); `OZG_Decks.StyleAt` (Task 3); `OZG_Cards.FaceOf`, `.SuitOf`, `.OfMove` (Task 2).
 
 - [ ] **Step 1: A picture by look**
 
@@ -2431,13 +2550,12 @@ becomes
         SetPictureOf(ImageWidget.Cast(card.FindAnyWidget("OZG_CardFace")), picture, look);
 ```
 
-- [ ] **Step 3: Every caller says the face and the look**
+- [ ] **Step 3: Every caller says the face and the look; nothing cuts a name by position**
 
 | Now | Becomes |
 |---|---|
 | `SetPicture(back, "back");` (in `PaintSeats`) | `SetPictureOf(back, "back", LookAt(g.Backs, 0));` |
 | `SetPicture(m_Trump, "c_" + m_Pub.TrumpCard);` | `SetPictureOf(m_Trump, "c_" + OZG_Cards.FaceOf(m_Pub.TrumpCard), m_Pub.TrumpLook);` |
-| `SetPicture(m_TrumpSuit, "suit_" + m_Pub.TrumpCard.Substring(1, 1));` | `SetPicture(m_TrumpSuit, "suit_" + OZG_Cards.SuitOf(m_Pub.TrumpCard));` |
 | `SetPicture(m_StockBack, "back");` | `SetPictureOf(m_StockBack, "back", m_Pub.StockTop);` |
 | `MakeCard(m_Bout, "c_" + m_Pub.AttackCards[i], i * pitch, 16, TABLE_W, TABLE_H)` | `MakeCard(m_Bout, "c_" + OZG_Cards.FaceOf(m_Pub.AttackCards[i]), LookAt(m_Pub.AttackLooks, i), i * pitch, 16, TABLE_W, TABLE_H)` |
 | `MakeCard(m_Bout, "c_" + beaten, i * pitch + 30, 70, TABLE_W, TABLE_H)` | `MakeCard(m_Bout, "c_" + OZG_Cards.FaceOf(beaten), LookAt(m_Pub.DefenceLooks, i), i * pitch + 30, 70, TABLE_W, TABLE_H)` |
@@ -2460,11 +2578,23 @@ In `PaintSeats`, after `cards = g.CardCount.ToString();`:
                     cards = cards + " (" + strange.ToString() + "*)";
 ```
 
-In `CardWord`, `string suit = card.Substring(1, 1);` becomes `string suit = OZG_Cards.SuitOf(card);`.
+A card's name has no fixed width now (`As`, `As.1`, `As.12`). Three places took it for two characters:
 
-In `SortKey`, `string suit = card.Substring(1, 1);` becomes `string suit = OZG_Cards.SuitOf(card);`.
+`MovesOf` found a card's moves by looking for its name inside a move, and `As` is inside `a:As.1`. Replace
 
-In `PaintHand`, replace
+```c
+            if (move.IndexOf(":" + card) >= 0)
+                into.Insert(move);
+```
+
+with
+
+```c
+            if (OZG_Cards.OfMove(move) == card)
+                into.Insert(move);
+```
+
+`PaintHand` took the trump's suit only from a name of two characters. Replace
 
 ```c
         if (m_Pub && m_Pub.TrumpCard.Length() == 2)
@@ -2478,7 +2608,27 @@ with
             trumpSuit = OZG_Cards.SuitOf(m_Pub.TrumpCard);
 ```
 
-Run Grep for `Substring(1, 1)` and for `"c_" +` in `OpenZone_Games/scripts/5_Mission`. Expected: no hit that takes a card's second character raw, and every `"c_" +` followed by `OZG_Cards.FaceOf(`.
+`LogWord` cut the card out of a move by position. Replace
+
+```c
+        if (rest.Length() >= 4)
+        {
+            string kind = rest.Substring(0, 1);
+            string card = rest.Substring(2, 2);
+```
+
+with
+
+```c
+        string card = OZG_Cards.OfMove(rest);
+        if (card != "")
+        {
+            string kind = rest.Substring(0, 1);
+```
+
+`CardWord`, `SortKey` and the trump's suit picture in `PaintTable` take a name's first two characters, which is right for a name of any length: they stay as they are. The log words a card by its face alone, so nobody reads from the log which of several aces was played.
+
+Run Grep in `OpenZone_Games/scripts/5_Mission`: for `"c_" +` (every hit is followed by `OZG_Cards.FaceOf(`), for `Length() == 2` (no hit), for `IndexOf(":" +` (no hit), for `Substring(2, 2)` (no hit).
 
 - [ ] **Step 4: Lint, a stand cycle with a client, the picture**
 
@@ -2495,7 +2645,7 @@ oz_games {"op":"ask","id":"0","who":"me","ask":"deal"}
 ```
 (The second `sit`, with no seat, is the action on the place for somebody already seated: it opens the window.)
 
-`client_shot`: the window as it was for a clean deck, the trump and the stock drawn. `oz_games {"op":"hand","id":"0","seat":"0"}` says the hand: when it holds one of `AS`, `Aw`, `AW` (an ace of the worn look; `As` itself is the deck's own), the shot shows one ace in the worn art among the classic ones. When it does not, end the game (`auto`) and deal again: three strange aces among thirty-nine cards come into a hand of six within a few deals. Send the shot with the strange ace, and one where the bot's seat says `(1*)`.
+`client_shot`: the window as it was for a clean deck, the trump and the stock drawn. `oz_games {"op":"hand","id":"0","seat":"0"}` says the hand: when it holds one of `As.1`, `As.2`, `As.3` (the aces of the worn look; `As` itself is the deck's own), the shot shows one ace in the worn art among the classic ones. When it does not, end the game (`auto`) and deal again: three strange aces among thirty-nine cards come into a hand of six within a few deals. Send the shot with the strange ace, and one where the bot's seat says `(1*)`. When the hand holds two aces of spades at once, click one of them: that one alone rises, and the move goes through with it (`sess` names the card on the table, `As` or `As.<n>`).
 
 - [ ] **Step 5: Commit**
 
@@ -2659,16 +2809,15 @@ and, before the comment `// ---- the clock` above `Tick`, the method:
 
         OZG_WCount c = new OZG_WCount();
         c.PlaceId = m_R.PlaceId;
-        array<string> cards = new array<string>();
-        array<int> looks = new array<int>();
-        c.Total = OZG_DeckRead.CardsOf(m_Place, cards, looks);
+        array<ref OZG_DealCard> cards = new array<ref OZG_DealCard>();
+        c.Total = OZG_DeckRead.CardsOf(m_Place, cards);
 
         // The faces that are there, each once.
         array<string> faces = new array<string>();
         int i;
         for (i = 0; i < cards.Count(); i++)
         {
-            string face = OZG_Cards.FaceOf(cards[i]);
+            string face = OZG_Cards.FaceOf(cards[i].Name);
             if (faces.Find(face) < 0)
                 faces.Insert(face);
         }
@@ -3047,7 +3196,7 @@ When the owner says "not now", the record says "not measured" in plain words and
 `docs/2026-11-24-cards-as-things-record.md`, in the shape of `docs/2026-11-24-phases-2-6-record.md`:
 
 - what exists now, in ten lines;
-- the decisions made on the way and why: a copy told by the suit's alphabet; the deck spared by the action, not by a clock; the deck asked out of the hands and waited for; the place shut on the server and silent on a client; the deck back by the ground; a card's look stored as a style's name; a deck told new from old by having been stored;
+- the decisions made on the way and why: a further card of a face named by the face and its number, with no limit to them; a card of a deal as a record that the mark will join; the deck spared by the action, not by a clock; the deck asked out of the hands and waited for; the place shut on the server and silent on a client; the deck back by the ground; a card's look stored as a style's name; a deck told new from old by having been stored;
 - where the build differs from the spec, each with its reason;
 - every number measured: Task 1's `ms`, the fill, the boots, the lines of the checks;
 - the engine facts found (they are in the skill; here a line each and the pointer);
@@ -3061,7 +3210,7 @@ When the owner says "not now", the record says "not measured" in plain words and
 
 The spec: its status line says phase 1 is built and names the record; every place where the build decided otherwise is amended (none is expected beyond what was amended when this plan was written: §3.1, §3.2, §3.3, §3.4, §9).
 
-Every engine fact measured since Task 1 goes into `dayz-modding` with neutral names (a card that names sixty-two slots goes into the first free one; whether `IndexOf` tells case apart; what a storage load asks of `CanReceiveAttachment`; what a deck in the hands shows of its attachments), the pointers to this repository's code into `openzone` (`references/networking-and-items.md`). `python -I openzone/scripts/check-generic.py` from `E:\dayzmod\dayz-modding-skill` must print nothing. Stage only this work's lines in both; commit; **do not push**.
+Every engine fact measured since Task 1 goes into `dayz-modding` with neutral names (a card that names sixty-two slots goes into the first free one; what a storage load asks of `CanReceiveAttachment`; what a deck in the hands shows of its attachments), the pointers to this repository's code into `openzone` (`references/networking-and-items.md`). `python -I openzone/scripts/check-generic.py` from `E:\dayzmod\dayz-modding-skill` must print nothing. Stage only this work's lines in both; commit; **do not push**.
 
 ```bash
 cd /e/openzone/openzone-games
@@ -3082,7 +3231,7 @@ Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 | §3.2 to be measured: sixty-two names on a card, the first free slot; a heavy pack | 3 (Step 7), 9 (Step 2) |
 | §3.3 the place holds the deck; nobody opens it; the deck and its cards survive the move and a restart | 1, 4 |
 | §3.3 more cards than slots: random ones stay where the place lay | 8 |
-| §3.4 a deal from what the deck holds; copies; "not enough cards"; `Sound` | 2, 5 |
+| §3.4 a deal from what the deck holds; any number of cards of a face; "not enough cards"; `Sound` | 2, 5 |
 | §3.5 counting | 7 |
 | §3.6, §6.8 the look of every back, a copy drawn as it is, a hand's length | 2, 6 |
 | §7 `CountSeconds`, `CountNamesCards` | 7 |
