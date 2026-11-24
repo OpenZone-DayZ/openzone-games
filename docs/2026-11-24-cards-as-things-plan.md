@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** A deck becomes a container of fifty-two card items, a laid-out game keeps the deck inside its place, a deal is dealt from the cards the deck really holds (fewer, or with copies), and a player can count the deck.
+**Goal:** A deck becomes a container of fifty-two card items, a laid-out game keeps the deck inside its place, a deal is dealt from the cards the deck really holds (fewer, or with copies). Counting the deck from the window was built too (Task 7) and taken out again the same day by the owner's word: a deck is counted by whoever holds it, by its slots.
 
 **Architecture:** A deck may hold any number of cards of one face (the owner: "even a deck of aces alone"), so in a deal the first card of a face is named by the face (`As`) and every further one by the face and its number (`As.1`, `As.2`, with no end to it), and nothing cuts a card's name by position. A card of a deal is a record (`OZG_DealCard`): the name that tells it apart, the look of its back, and from the next phase its mark and who sees it. The session reads the deck's card items at each deal and hands the game those records (`OZG_Game.TakeCards`); the game keeps what it was dealt from in its own state. Card items live in sixty-two universal slots (fifty-two on an ordinary deck, all sixty-two on a sharp's deck). The place holds the deck in one slot and overflow cards in a small cargo; the deck leaves the placer's hands the way the game's own indoor fireplace takes its first stick, and comes back by the ground.
 
@@ -25,7 +25,7 @@
 - **A server holds the map only near players**: every check that reads the world needs the client connected and standing there.
 - **Stand calls** are written `oz_games {...}` and `tgp {...}`: the MCP tool `world_exec` with `verb="oz_games"` (or `"tgp"`) and those `args`. Every value of `args` is a string. What is compared is the answer's `detail`; the bridge cuts it at 400 characters. Several calls sent in one message run in the order sent.
 - **Screenshots**: every stand run that has something on screen ends with its key shots sent to the owner (`SendUserFile`).
-- The spec's numbers are copied here, not re-decided: 52 slots on an ordinary deck, 62 on a sharp's (the owner's numbers, 2026-11-24), `CountSeconds` 6, `CountNamesCards` 0.
+- The spec's numbers are copied here, not re-decided: 52 slots on an ordinary deck, 62 on a sharp's (the owner's numbers, 2026-11-24). `CountSeconds` 6 and `CountNamesCards` 0 were the spec's too; they went out with the counting (Task 7's note).
 
 ## What the game's own scripts say
 
@@ -47,14 +47,14 @@ Read on 2026-11-24 in `.dayz-mcp/corpus/scripts` (1.30.164289). The plan stands 
 | `OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Cards.c` | a card's rank, suit, face and copy | modify |
 | `.../3_Game/.../OZG_Game.c` | the game contract: `TakeCards` | modify |
 | `.../3_Game/.../OZG_Durak.c`, `OZG_DurakState.c` | durak dealt from given cards; looks in its views | modify |
-| `.../3_Game/.../OZG_Const.c`, `OZG_Settings.c`, `OZG_Wire.c` | names, two settings, the count's answer | modify |
+| `.../3_Game/.../OZG_Const.c`, `OZG_Settings.c`, `OZG_Wire.c` | names (two settings and the count's answer came and went with Task 7) | modify |
 | `tools/make_card_items.py` | writes the slots, the card classes, the cards' names and their lines for the economy | create |
 | `OpenZone_Games/config.cpp`, `strings.csv`, `stringtable.csv`, `docs/examples/types-openzone-games.xml` | slots, cards, two kinds of deck, the place's slot and cargo | modify |
 | `.../4_World/.../OZG_CardThings.c` | the card item; reading a place's cards | create |
 | `.../4_World/.../OZG_Items.c` | looks of decks; the deck fills itself; the place holds a deck | modify |
 | `.../4_World/.../OZG_Actions.c` | laying out never deletes the deck | modify |
-| `.../4_World/.../OZG_Sessions.c`, `OZG_Session.c` | laying out keeps the deck; a deal reads it; counting; gathering | modify |
-| `.../5_Mission/.../OZG_GameMenu.c`, `OZG_MissionGameplay.c`, `tools/make_layouts.py` | backs and faces by look, the count button and its answer | modify |
+| `.../4_World/.../OZG_Sessions.c`, `OZG_Session.c` | laying out keeps the deck; a deal reads it; gathering (counting came and went with Task 7) | modify |
+| `.../5_Mission/.../OZG_GameMenu.c`, `OZG_MissionGameplay.c`, `tools/make_layouts.py` | backs and faces by look (the count button and its answer came and went with Task 7) | modify |
 | `OpenZone_Games_Bridge/.../OZG_Bench.c`, `OZG_WorldOps.c`, `OZG_Verb.c`, `OZG_Bots.c` | checks: cards handed to a game, a deck's contents, pull, stuff, loose cards | modify |
 | `docs/test-commands.md`, `docs/2026-11-24-cards-as-things-record.md`, `README.md` | what a person tries, and what was measured | modify, create |
 
@@ -2683,6 +2683,8 @@ Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 
 ### Task 7: Counting the deck
 
+> **Taken out again on 2026-11-24 by the owner's word, after it was built and checked.** He read what the count did and said: "I think, let us take the 'count' function out: let them close the game and count for themselves, looking at the cards in the deck's slots." The commit that built it (`d31e3d7`) is reverted whole by the commit "Counting the deck is taken out again": the op `count` and its answer `counted`, `OZG_WCount`, the settings `CountSeconds` and `CountNamesCards` (the settings are version 1 again, and the stand's file was put back by hand: a file of version 2 is "from the future" to this build, which would boot on the defaults with an error in the log), the button, the four strings. What the count stood on stays: `OZG_DeckRead.CardsOf` (Task 5), which every deal reads. The steps below are the record of what was built and measured; none of it is in the code. What replaces it is the spec's §3.5: gather or fold the game, and the deck in the hands shows its slots and its cards.
+
 **Files:**
 - Modify: `OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Const.c:94-111`, `OZG_Wire.c:87`, `OZG_Settings.c:49-96`
 - Modify: `OpenZone_Games/scripts/4_World/OpenZone_Games/OZG_Session.c` (`Ask`, `Tick`, `Deal`, new `CountDone`)
@@ -3212,7 +3214,7 @@ Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 
 - [ ] **Step 1: One game by hand of the client, start to end**
 
-On a fresh boot with the client, at the runway: `oz_games {"op":"chat","text":"!ozg deck"}`, `oz_games {"op":"chat","text":"!ozg table"}`, lay the deck out on the table by the hologram (Task 4's way, the aim on the table's top), `oz_games {"op":"bots","id":"0","n":"2"}`, press "Count the deck" (`ui_find` for `OZG_BtnCount`, `ui_click` by the path it gives), wait seven seconds, deal, play three moves by clicks, fold by the button. Shots: the count's line, a bout, the deck back in the hands after the fold. Send them to the owner.
+On a fresh boot with the client, at the runway: `oz_games {"op":"chat","text":"!ozg deck"}`, `oz_games {"op":"chat","text":"!ozg table"}`, lay the deck out on the table by the hologram (Task 4's way, the aim on the table's top), `oz_games {"op":"bots","id":"0","n":"2"}`, deal, play three moves by clicks, fold by the button. Shots: the lobby (`ui_find` for `OZG_BtnCount` finds nothing: the count was taken out, Task 7's note), a bout, the deck back in the hands after the fold, and the inventory open on that deck: its slots are how a deck is counted now. Send them to the owner.
 
 Then the same once on the other stand's terrain when that stand is free (NHChernobyl, the wall in Rostok: `docs/test-commands.md`, "The stand on the NHChernobyl terrain"): the deck must reach a place that lies on a step, not only on a runway.
 
@@ -3229,13 +3231,14 @@ When the owner says "not now", the record says "not measured" in plain words and
 - what exists now, in ten lines;
 - the decisions made on the way and why: a further card of a face named by the face and its number, with no limit to them; a card of a deal as a record that the mark will join; the deck spared by the action, not by a clock; the deck asked out of the hands and waited for; the place shut on the server and silent on a client; the deck back by the ground; a card's look stored as a style's name; a deck told new from old by having been stored;
 - where the build differs from the spec, each with its reason;
+- what was built and taken out again: counting the deck, the owner's word and what replaces it (Task 7's note);
 - every number measured: Task 1's `ms`, the fill, the boots, the lines of the checks;
 - the engine facts found (they are in the skill; here a line each and the pointer);
 - what is not done: marks, noticing, sleights (phases 2 to 4); a card's own model and picture; the table from a card in a game to its item, which phase 2 needs for marks (a game keeps names and looks; the items are read anew at each deal); traders taking a deck with its cards; how long a loose card the economy has no line for lies on the ground; `OZG_Session.Blank`'s ring worked out with nobody near (an older defect); and whatever Step 2 left.
 
 - [ ] **Step 4: What a person tries**
 
-`docs/test-commands.md`: rows for `!ozg deck sharp` and `!ozg deck zonesharp`; a short part "The deck is a box of cards" (take a card out, lay the deck out short of it, count, gather; put more cards in than a deck has room for); in "The verb for scripts" the ops `cards`, `pull`, `undeck`, `stuff`, `held`, `loose`, and `begin`'s `cards=` and `looks=`; a line that a deck from before this build is empty and `!ozg deck` gives a new one. `README.md`: the status paragraph says that a deck is a container of its cards and that a deal is dealt from what it holds; the line about `docs/examples` says "the decks and the cards".
+`docs/test-commands.md`: rows for `!ozg deck sharp` and `!ozg deck zonesharp`; a short part "The deck is a box of cards" (take a card out, lay the deck out short of it, gather, count it by its slots; put more cards in than a deck has room for); in "The verb for scripts" the ops `cards`, `pull`, `undeck`, `stuff`, `held`, `loose`, and `begin`'s `cards=` and `looks=`; a line that a deck from before this build is empty and `!ozg deck` gives a new one. `README.md`: the status paragraph says that a deck is a container of its cards and that a deal is dealt from what it holds; the line about `docs/examples` says "the decks and the cards".
 
 - [ ] **Step 5: The spec, the skills, the commit**
 
@@ -3263,15 +3266,15 @@ Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 | §3.3 the place holds the deck; nobody opens it; the deck and its cards survive the move and a restart | 1, 4 |
 | §3.3 more cards than slots: random ones stay where the place lay | 8 |
 | §3.4 a deal from what the deck holds; any number of cards of a face; "not enough cards"; `Sound` | 2, 5 |
-| §3.5 counting | 7 |
+| §3.5 counting | 7; taken out again (the owner, 2026-11-24): the deck's holder counts it by its slots |
 | §3.6, §6.8 the look of every back, a copy drawn as it is, a hand's length | 2, 6 |
-| §7 `CountSeconds`, `CountNamesCards` | 7 |
+| §7 `CountSeconds`, `CountNamesCards` | 7; taken out with it |
 | §8 a restart: cards and looks with the items, a game in mid-play | 3, 5, 8 |
-| §9 `count`, and its answer `counted` | 7 |
+| §9 `count`, and its answer `counted` | 7; taken out with it |
 | §11.1 "a whole deck plays as it does today" | 5 |
 | §11.1 "a deck short of the ace of trumps deals and plays" (an ace: the trump is not known before the deal) | 5 |
 | §11.1 "a sharp's deck with a second ace deals it" | 5 |
-| §11.1 "a count says so" | 7 |
+| §11.1 "a count says so" | 7; taken out with it: the deck in the hands says so |
 | §11.1 "gather gives back the very deck with its cards" | 4 |
 | §11.1 "with more cards than slots leaves the rest on the ground" | 8 |
 | §11.1 "a restart in mid-game" | 5 |

@@ -84,8 +84,6 @@ STR_OZG_SAY_BROKEN,Запис партії пошкоджено: гра почн
 STR_OZG_SAY_SLOW,Надто швидко,Too fast
 STR_OZG_SAY_SAT,Ви сіли до гри,You sat down to the game
 STR_OZG_SAY_LAID,Гру розкладено,The game is laid out
-STR_OZG_COUNTED,"Карт у колоді: %1. Для цієї гри бракує: %2. Повторів: %3.","Cards in the deck: %1. Missing for this game: %2. Copies: %3."
-STR_OZG_COUNTED_NAMES,Бракує: %1,Missing: %1
 # -- the poses
 STR_OZG_POSE_STANDING,Стоячи,Standing
 STR_OZG_POSE_CROSSLEGGED,По-турецьки,Cross-legged
@@ -99,7 +97,6 @@ STR_OZG_WIN_TAKE,Беру,Take
 STR_OZG_WIN_MOVE_ON,Перевести,Move on
 STR_OZG_WIN_LOG,Журнал,Log
 STR_OZG_WIN_DEAL,Роздати,Deal
-STR_OZG_WIN_COUNT,Перерахувати колоду,Count the deck
 STR_OZG_WIN_TAKE_HOST,Стати господарем,Take the host's role
 STR_OZG_WIN_KICK_DISCARD,Прибрати гравця: карти скинути,Remove the player: discard the cards
 STR_OZG_WIN_KICK_LEAVE,Прибрати гравця: карти лишити,Remove the player: leave the cards
@@ -151,7 +148,6 @@ STR_OZG_LOG_STAND,Місце %1 звільнилось,Seat %1 is free
 STR_OZG_LOG_DROP,Карти місця %1 скинуто,The cards of seat %1 are discarded
 STR_OZG_LOG_LEFT,Місце %1 лишено з картами,Seat %1 is left with its cards
 STR_OZG_LOG_HOST,Господар тепер %1,The host is now %1
-STR_OZG_LOG_COUNT,%1 перераховує колоду,%1 counts the deck
 STR_OZG_LOG_ATTACK,%1: хід %2,%1: plays %2
 STR_OZG_LOG_BEAT,%1: б'є %2,%1: beats with %2
 STR_OZG_LOG_TRANSFER,%1: переводить %2,%1: moves on with %2

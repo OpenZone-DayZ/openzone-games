@@ -966,63 +966,9 @@ FrameWidgetClass OZG_GameRoot {
       }
      }
     }
-    ButtonWidgetClass OZG_BtnCount {
-     visible 0
-     position 1256 494
-     size 328 38
-     hexactpos 1
-     vexactpos 1
-     hexactsize 1
-     vexactsize 1
-     text ""
-     priority 5
-     {
-      PanelWidgetClass OZG_BtnCountEdge {
-       ignorepointer 1
-       position -1 -1
-       size 330 40
-       hexactpos 1
-       vexactpos 1
-       hexactsize 1
-       vexactsize 1
-       color 0.36 0.4 0.34 1
-       style rover_sim_colorable
-       priority 0
-      }
-      PanelWidgetClass OZG_BtnCountBg {
-       ignorepointer 1
-       position 0 0
-       size 328 38
-       hexactpos 1
-       vexactpos 1
-       hexactsize 1
-       vexactsize 1
-       color 0.16 0.2 0.17 1
-       style rover_sim_colorable
-       priority 1
-      }
-      TextWidgetClass OZG_BtnCountText {
-       ignorepointer 1
-       color 0.92 0.92 0.86 1
-       position 0 0
-       size 328 38
-       hexactpos 1
-       vexactpos 1
-       hexactsize 1
-       vexactsize 1
-       text "#STR_OZG_WIN_COUNT"
-       font "gui/fonts/etelkatextpro16"
-       "exact text" 1
-       "exact text size" 15
-       "text halign" center
-       "text valign" center
-       priority 2
-      }
-     }
-    }
     ButtonWidgetClass OZG_BtnTakeHost {
      visible 0
-     position 1256 536
+     position 1256 494
      size 328 38
      hexactpos 1
      vexactpos 1
@@ -1076,7 +1022,7 @@ FrameWidgetClass OZG_GameRoot {
     }
     ButtonWidgetClass OZG_BtnKickDiscard {
      visible 0
-     position 1256 578
+     position 1256 536
      size 328 38
      hexactpos 1
      vexactpos 1
@@ -1130,7 +1076,7 @@ FrameWidgetClass OZG_GameRoot {
     }
     ButtonWidgetClass OZG_BtnKickLeave {
      visible 0
-     position 1256 620
+     position 1256 578
      size 328 38
      hexactpos 1
      vexactpos 1
@@ -1184,7 +1130,7 @@ FrameWidgetClass OZG_GameRoot {
     }
     ButtonWidgetClass OZG_BtnDropLeft {
      visible 0
-     position 1256 662
+     position 1256 620
      size 328 38
      hexactpos 1
      vexactpos 1
@@ -1238,7 +1184,7 @@ FrameWidgetClass OZG_GameRoot {
     }
     ButtonWidgetClass OZG_BtnPose {
      visible 0
-     position 1256 704
+     position 1256 662
      size 328 38
      hexactpos 1
      vexactpos 1
@@ -1292,7 +1238,7 @@ FrameWidgetClass OZG_GameRoot {
     }
     ButtonWidgetClass OZG_BtnStand {
      visible 0
-     position 1256 746
+     position 1256 704
      size 328 38
      hexactpos 1
      vexactpos 1
@@ -1346,7 +1292,7 @@ FrameWidgetClass OZG_GameRoot {
     }
     ButtonWidgetClass OZG_BtnStandDiscard {
      visible 0
-     position 1256 788
+     position 1256 746
      size 328 38
      hexactpos 1
      vexactpos 1
@@ -1400,7 +1346,7 @@ FrameWidgetClass OZG_GameRoot {
     }
     ButtonWidgetClass OZG_BtnStandLeave {
      visible 0
-     position 1256 830
+     position 1256 788
      size 328 38
      hexactpos 1
      vexactpos 1
@@ -1454,7 +1400,7 @@ FrameWidgetClass OZG_GameRoot {
     }
     ButtonWidgetClass OZG_BtnFold {
      visible 0
-     position 1256 872
+     position 1256 830
      size 328 38
      hexactpos 1
      vexactpos 1
@@ -1508,7 +1454,7 @@ FrameWidgetClass OZG_GameRoot {
     }
     ButtonWidgetClass OZG_BtnFoldYes {
      visible 0
-     position 1256 914
+     position 1256 872
      size 328 38
      hexactpos 1
      vexactpos 1

@@ -95,21 +95,6 @@ class OZG_WMine
     }
 }
 
-// What counting the deck found: for the one who counted, and nobody else.
-class OZG_WCount
-{
-    string PlaceId;
-    int    Total;      // cards the deck holds
-    int    Missing;    // faces of the game's set that are not there
-    int    Copies;     // cards that are a second, third or further of their face
-    ref array<string> Names;   // the missing faces, when the server says them
-
-    void OZG_WCount()
-    {
-        Names = new array<string>();
-    }
-}
-
 class OZG_Text
 {
     static const string CUT = "\n";
