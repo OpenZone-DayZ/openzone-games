@@ -403,12 +403,22 @@ class OZG_Place extends ItemBase
 class OZG_PlaceWatch
 {
     static ref ScriptInvoker OnMoved = new ScriptInvoker();
+    // This client's own player was hit.
+    static ref ScriptInvoker OnHit = new ScriptInvoker();
 
     static void Moved(OZG_Place place)
     {
         if (GetGame().IsDedicatedServer())
             return;
         OnMoved.Invoke(place);
+    }
+
+    static void Hit(PlayerBase player)
+    {
+        if (GetGame().IsDedicatedServer())
+            return;
+        if (player && player == GetGame().GetPlayer())
+            OnHit.Invoke();
     }
 }
 

@@ -24,6 +24,7 @@ modded class MissionGameplay
         OZ_ClientState.SyncWatch().Insert(OZG_Sync);
         OZ_Notice.OnAnswer.Insert(OZG_Notice);
         OZG_PlaceWatch.OnMoved.Insert(OZG_PlaceMoved);
+        OZG_PlaceWatch.OnHit.Insert(OZG_Hit);
         if (OZ_ClientState.Ready())
         {
             OZG_TakeSettings();
@@ -173,9 +174,9 @@ modded class MissionGameplay
                     m_OZG_Marks.Clear();
                     // Facing the mat, then the first pose of the seat's kind.
                     PlayerBase me = PlayerBase.Cast(GetGame().GetPlayer());
-                    int mine = view.HeadPart.Mine;
-                    if (me && mine < view.HeadPart.Seats.Count())
-                        me.OZG_Face(view.HeadPart.Seats[mine].Yaw);
+                    int seatNo = view.HeadPart.Mine;
+                    if (me && seatNo < view.HeadPart.Seats.Count())
+                        me.OZG_Face(view.HeadPart.Seats[seatNo].Yaw);
                     OZG_PoseDriver.SitDown(view.HeadPart);
                 }
             }
@@ -187,6 +188,14 @@ modded class MissionGameplay
             if (menu && menu.PlaceId() == view.HeadPart.PlaceId)
                 menu.Redraw();
         }
+    }
+
+    // This client's player was hit: the window closes, the seat is his.
+    void OZG_Hit()
+    {
+        OZG_GameMenu menu = OZG_GameMenu.Current();
+        if (menu)
+            menu.Shut();
     }
 
     // A place's pulse moved: a window open on an older revision asks again,
@@ -202,7 +211,15 @@ modded class MissionGameplay
     {
         super.OnUpdate(timeslice);
         if (m_OZG_Aim)
-            m_OZG_Aim.Update();
+        {
+            m_OZG_Aim.Update(timeslice);
+            // A seated player pressed the mod's key: his game's window.
+            if (m_OZG_Aim.TakeWindowAsk() && OZG_Mine.s_PlaceId != "")
+            {
+                m_OZG_OpenId = OZG_Mine.s_PlaceId;
+                OZG_OpenGame();
+            }
+        }
         if (m_OZG_Marks)
             m_OZG_Marks.Update();
     }
@@ -240,6 +257,7 @@ modded class MissionGameplay
         OZ_ClientState.SyncWatch().Remove(OZG_Sync);
         OZ_Notice.OnAnswer.Remove(OZG_Notice);
         OZG_PlaceWatch.OnMoved.Remove(OZG_PlaceMoved);
+        OZG_PlaceWatch.OnHit.Remove(OZG_Hit);
         GetGame().GetCallQueue(CALL_CATEGORY_GUI).Remove(OZG_OpenGame);
         if (m_OZG_Marks)
             m_OZG_Marks.Clear();

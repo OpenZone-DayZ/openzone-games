@@ -57,7 +57,7 @@ STR_OZG_AIM_GROUND,на землі,on the ground
 STR_OZG_AIM_GUESSED,визначено автоматично,guessed
 STR_OZG_AIM_CHOSEN,обрано вручну,chosen
 STR_OZG_AIM_KEY,%1 — змінити режим місць,%1 — change the seat mode
-STR_OZG_INPUT_MODE,Режим місць під час розкладання,Seat mode while laying out
+STR_OZG_INPUT_MODE,Ігри: режим місць (розкладання) / вікно гри,Games: seat mode (laying out) / game window
 STR_OZG_INPUT_GROUP,OpenZone Games,OpenZone Games
 # -- what the server says
 STR_OZG_SAY_OTHER_SEAT,Ви вже маєте місце за іншою грою,You already hold a seat at another game
@@ -163,3 +163,6 @@ STR_OZG_SUIT_C,треф,of clubs
 # -- the fan in hands
 STR_OZG_HAND_NAME,Карти в руці,Cards in hand
 STR_OZG_HAND_DESC,Ваші карти в грі.,Your cards in the game.
+STR_OZG_SAY_NO_SEATS,"Партія триває: місця звільняться після неї. Можна спостерігати.","A game is in progress: seats open when it ends. You may watch."
+STR_OZG_SEATED,Ви за грою,You are at the game
+STR_OZG_SEATED_KEY,%1 — відкрити вікно гри,%1 — open the game window

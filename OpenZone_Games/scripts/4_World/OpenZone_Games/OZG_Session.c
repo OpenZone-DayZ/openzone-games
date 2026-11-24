@@ -747,7 +747,20 @@ class OZG_Session
             }
         }
 
-        // The first step, or a player who stands on no mark: the seats.
+        // The first step, or a player who stands on no mark: the seats. With
+        // none to take now -- a game runs and no seat was left with cards --
+        // there is nothing to mark, and the player is told why.
+        bool any = false;
+        for (int i = 0; i < m_R.Seats.Count(); i++)
+        {
+            if (Takeable(m_R.Seats[i]))
+                any = true;
+        }
+        if (!any)
+        {
+            Say(player, OZG_Const.NOTICE_SIT, OZG_Const.SAY_NO_SEATS);
+            return;
+        }
         m_Asked.Set(uid, now);
         SendTo(player, OZG_Const.OP_SEATS, ViewBody(ViewHead(), uid));
     }

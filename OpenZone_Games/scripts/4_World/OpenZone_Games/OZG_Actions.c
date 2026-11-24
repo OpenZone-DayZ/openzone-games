@@ -237,6 +237,14 @@ modded class PlayerBase
         m_OZG_TurnYaw = yaw;
     }
 
+    // A player who is hurt has to be able to answer: the game's window
+    // closes, as the game's own map does on the same call.
+    override void OnPlayerRecievedHit()
+    {
+        super.OnPlayerRecievedHit();
+        OZG_PlaceWatch.Hit(this);
+    }
+
     override bool HeadingModel(float pDt, SDayZPlayerHeadingModel pModel)
     {
         if (m_OZG_Turn)

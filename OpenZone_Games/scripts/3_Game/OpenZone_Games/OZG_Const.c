@@ -141,6 +141,7 @@ class OZG_Const
     static const string SAY_KICKED      = "STR_OZG_SAY_KICKED";
     static const string SAY_BROKEN      = "STR_OZG_SAY_BROKEN";
     static const string SAY_SLOW        = "STR_OZG_SAY_SLOW";
+    static const string SAY_NO_SEATS    = "STR_OZG_SAY_NO_SEATS";
     static const string SAY_SAT         = "STR_OZG_SAY_SAT";
     static const string SAY_LAID        = "STR_OZG_SAY_LAID";
 }

@@ -41,7 +41,7 @@ class OZG_GameMenu : UIScriptedMenu
     protected float m_K;
     protected float m_SaidLeft;
     protected float m_AskWait;
-    protected float m_Health;
+    protected float m_Recheck;
 
     protected Widget m_Win;
     protected Widget m_SeatsBox;
@@ -218,10 +218,6 @@ class OZG_GameMenu : UIScriptedMenu
                 hud.ShowQuickbarUI(false);
             }
         }
-        PlayerBase player = PlayerBase.Cast(GetGame().GetPlayer());
-        if (player)
-            m_Health = player.GetHealth("", "");
-
         Measure();
         Redraw();
         // The view may be older than the table: ask once on opening.
@@ -318,21 +314,34 @@ class OZG_GameMenu : UIScriptedMenu
                 m_Said.SetText("");
         }
 
-        // A player who is hurt has to be able to answer: the window closes,
-        // the seat is his.
+        // Never over a player who is not there to play. (A hit closes the
+        // window too: the mission hears it from the player's own hook --
+        // health itself cannot be read on a client.)
         PlayerBase player = PlayerBase.Cast(GetGame().GetPlayer());
         if (!player || !player.IsAlive() || player.IsUnconscious())
         {
             Shut();
             return;
         }
-        float health = player.GetHealth("", "");
-        if (health < m_Health - 0.5)
+
+        // The pulse on the place says a newer revision than the one shown:
+        // ask again. Looked at every two seconds, so a view that was lost, or
+        // a pulse that came while an answer was on its way, is made up for.
+        m_Recheck = m_Recheck + timeslice;
+        if (m_Recheck >= 2.0)
         {
-            Shut();
-            return;
+            m_Recheck = 0;
+            array<OZG_Place> places = OZG_Place.All();
+            for (int i = 0; i < places.Count(); i++)
+            {
+                OZG_Place place = places[i];
+                if (!place || place.OZG_Id() != m_PlaceId)
+                    continue;
+                if (place.OZG_Rev() > m_ShownRev)
+                    Send(OZG_Const.OP_OPEN, "", -1, "", "", "", 0);
+                break;
+            }
         }
-        m_Health = health;
     }
 
     // ------------------------------------------------------------ asking the server
