@@ -87,8 +87,10 @@ class OZG_Ring
     // The mod's own guess: from this drop up the players stand, under it they
     // sit.
     static const float STAND_FROM  = 0.6;
-    // How far under its start a floor is looked for.
+    // How far under its start a floor is looked for, and how near a road
+    // surface must be to be taken for the floor without a ray.
     static const float FLOOR_REACH = 2.0;
+    static const float ROAD_NEAR   = 0.56;
     // A candidate.
     static const float STEP        = 0.1;
     static const float LEVEL_SLACK = 0.35;
@@ -184,11 +186,16 @@ class OZG_Ring
     static float LevelUnder(float x, float top, float z, Object ignore)
     {
         float road = GetGame().SurfaceRoadY3D(x, top, z, RoadSurfaceDetection.UNDER);
+        // A road surface right under the start is the floor, and no ray is
+        // spent on it: every caller starts no more than half a metre over the
+        // level it expects. A ray costs: measured 2026-11-24 on a wall whose
+        // step is no road surface, a ring took 9 ms with a ray at every read
+        // where it had taken 2 to 3 ms with none.
+        if (top - road < ROAD_NEAR)
+            return road;
         float bottom = top - FLOOR_REACH;
         if (road > bottom)
             bottom = road;
-        if (top - bottom < 0.06)
-            return road;
 
         vector to = Vector(x, bottom, z);
         vector from;
