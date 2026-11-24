@@ -10,6 +10,8 @@ class OZG_Bots
     static bool s_On;
     protected static float s_Wait;
     protected static int s_Made;
+    // The bots this tool made and has not sent away yet, by id.
+    protected static ref array<string> s_Uids = new array<string>();
     protected static ref array<Object> s_Tables = new array<Object>();
 
     static const float STEP_SECONDS = 2.5;
@@ -114,12 +116,13 @@ class OZG_Bots
     // Every few seconds: one move in each session where a bot is waited for.
     static void Tick(float timeslice)
     {
-        if (!s_On)
-            return;
         s_Wait = s_Wait + timeslice;
         if (s_Wait < STEP_SECONDS)
             return;
         s_Wait = 0;
+        Sweep();
+        if (!s_On)
+            return;
 
         for (int i = 0; i < OZG_Sessions.Count(); i++)
         {
@@ -204,6 +207,7 @@ class OZG_Bots
                 GetGame().ObjectDelete(body);
                 continue;
             }
+            s_Uids.Insert(uid);
             return name;
         }
         return "";
@@ -236,7 +240,57 @@ class OZG_Bots
                 gone++;
             }
         }
+        // And those a game left behind when it was folded under them.
+        for (int n = 0; n < s_Uids.Count(); n++)
+        {
+            string behind = s_Uids[n];
+            if (OZG_Sessions.PlayerOf(behind))
+                gone++;
+            Away(behind);
+        }
+        s_Uids.Clear();
         return gone;
+    }
+
+    // Is this bot on a seat of some session.
+    protected static bool Seated(string uid)
+    {
+        for (int i = 0; i < OZG_Sessions.Count(); i++)
+        {
+            OZG_Session s = OZG_Sessions.At(i);
+            if (!s)
+                continue;
+            for (int k = 0; k < s.m_R.Seats.Count(); k++)
+            {
+                if (s.m_R.Seats[k].Uid == uid)
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    // A bot goes: its body out of the world, its name out of the table.
+    protected static void Away(string uid)
+    {
+        PlayerBase body = OZG_Sessions.PlayerOf(uid);
+        if (body)
+            GetGame().ObjectDelete(body);
+        OZG_Who.Unfake(uid);
+    }
+
+    // A bot whose game was folded under it, or who was removed from its
+    // seat, goes by itself: a body left standing where a mat lay is in the
+    // way of the next one (the hologram says "something is in the way").
+    protected static void Sweep()
+    {
+        for (int i = s_Uids.Count() - 1; i >= 0; i--)
+        {
+            string uid = s_Uids[i];
+            if (Seated(uid))
+                continue;
+            Away(uid);
+            s_Uids.RemoveOrdered(i);
+        }
     }
 
     // The session of the place nearest to a player, within reach of a walk.
