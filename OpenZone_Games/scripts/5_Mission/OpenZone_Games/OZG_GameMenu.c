@@ -719,7 +719,11 @@ class OZG_GameMenu : UIScriptedMenu
         m_StockCount.SetText("");
         m_Discards.SetText("");
         m_Limit.SetText("");
-        if (!m_Pub || m_V.St == OZG_Const.ST_LOBBY)
+        Widget trumpLabel = layoutRoot.FindAnyWidget("OZG_TrumpLabel");
+        bool dealt = m_Pub && m_V.St != OZG_Const.ST_LOBBY;
+        if (trumpLabel)
+            trumpLabel.Show(dealt);
+        if (!dealt)
             return;
 
         // The stock: the trump face up under it; when the stock is gone the
@@ -845,8 +849,10 @@ class OZG_GameMenu : UIScriptedMenu
             Widget w = MakeCard(m_HandBox, "c_" + card, x0 + i * step, y, HAND_W, HAND_H);
             if (!w)
                 continue;
+            // A card that cannot be played now is dimmed by its own colour.
             bool lit = moves.Count() > 0;
-            w.FindAnyWidget("OZG_CardShade").Show(!lit && Playing());
+            if (!lit && Playing())
+                w.FindAnyWidget("OZG_CardFace").SetColor(ARGB(255, 150, 150, 150));
             w.FindAnyWidget("OZG_CardGlow").Show(card == m_Picked);
             m_HandW.Insert(w);
             m_HandCodes.Insert(card);

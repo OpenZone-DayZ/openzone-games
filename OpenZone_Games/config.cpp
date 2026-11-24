@@ -21,8 +21,6 @@ class CfgPatches
         {
             "DZ_Data",
             "DZ_Scripts",
-            "DZ_Gear_Consumables",
-            "DZ_Gear_Crafting",
             "JM_CF_Scripts",
             "OpenZone_Core"
         };
@@ -74,38 +72,44 @@ class CfgVehicles
     // ------------------------------------------------------------ decks
     //
     // A deck is a config class and its art; no script is needed to add one.
-    // Another mod adds a deck with a class that inherits OZG_Deck_Base and an
-    // imageset of its own, ozg_cards_<ozgStyle>. A deck is always 52 cards:
-    // decks differ in how they look, not in what they hold.
+    // Another mod adds a deck with a class that inherits OZG_Deck_Base, an
+    // imageset of its own, ozg_cards_<ozgStyle>, and a sheet for the 3D
+    // things, ozgSheet (the back on its left half, a blank face and the edges
+    // of a stack on its right). A deck is always 52 cards: decks differ in how
+    // they look, not in what they hold.
     class OZG_Deck_Base: Inventory_Base
     {
         scope = 0;
         displayName = "$STR_OZG_DECK_NAME";
         descriptionShort = "$STR_OZG_DECK_DESC";
-        model = "\dz\gear\consumables\Matchbox.p3d";
+        model = "\OpenZone_Games\models\deck\ozg_deck.p3d";
         itemSize[] = {1, 2};
         weight = 100;
         rotationFlags = 16;
         isMeleeWeapon = 1;
+        hiddenSelections[] = {"camo"};
+        hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\ozg_deck_classic_co.paa"};
+        hiddenSelectionsMaterials[] = {"OpenZone_Games\data\cards\ozg_deck.rvmat"};
         // What the hologram shows while the deck is being laid out.
         projectionTypename = "OZG_PlacePlacing";
-        // The style the cards are drawn in, and the back the 3D things wear.
+        // The style the cards are drawn in, and the sheet the 3D things wear.
         ozgStyle = "classic";
-        ozgSheet = "";
+        ozgSheet = "OpenZone_Games\data\cards\ozg_deck_classic_co.paa";
     };
 
     class OZG_Deck_Classic: OZG_Deck_Base
     {
         scope = 2;
         displayName = "$STR_OZG_DECK_CLASSIC";
-        ozgStyle = "classic";
     };
 
     class OZG_Deck_Zone: OZG_Deck_Base
     {
         scope = 2;
         displayName = "$STR_OZG_DECK_ZONE";
+        hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\ozg_deck_zone_co.paa"};
         ozgStyle = "zone";
+        ozgSheet = "OpenZone_Games\data\cards\ozg_deck_zone_co.paa";
     };
 
     // ------------------------------------------------------------ the place
@@ -114,26 +118,55 @@ class CfgVehicles
     // written to the world's storage -- its OnStoreSave is not even called
     // (measured 2026-11-24: of three things made by one call on one spot, the
     // two of scope 1 were gone after a restart and the one of scope 2 stood).
-    // What the hologram shows and the seats' marks stay at scope 1 for the
-    // same reason turned round: they must never be saved.
+    // What the hologram shows, the fan in hands and the seats' marks stay at
+    // scope 1 for the same reason turned round: they must never be saved.
     class OZG_Place: Inventory_Base
     {
         scope = 2;
         displayName = "$STR_OZG_PLACE_NAME";
         descriptionShort = "$STR_OZG_PLACE_DESC";
-        model = "\dz\gear\crafting\bp_burlap_sack.p3d";
+        model = "\OpenZone_Games\models\place\ozg_place.p3d";
         itemSize[] = {10, 10};
-        weight = 500;
+        weight = 400;
+        // The deck on the mat wears the sheet of the deck the place was laid
+        // out from (OZG_Place.OZG_Look).
+        hiddenSelections[] = {"deck"};
+        hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\ozg_deck_classic_co.paa"};
+        hiddenSelectionsMaterials[] = {"OpenZone_Games\data\cards\ozg_deck.rvmat"};
     };
 
+    // The same model with one selection over all of it: the hologram repaints
+    // it with <hologramMaterialPath>\<hologramMaterial>_deployable.rvmat or
+    // _undeployable.rvmat.
     class OZG_PlacePlacing: Inventory_Base
     {
         scope = 1;
         displayName = "$STR_OZG_PLACE_NAME";
         descriptionShort = "$STR_OZG_PLACE_DESC";
-        model = "\dz\gear\crafting\bp_burlap_sack.p3d";
+        model = "\OpenZone_Games\models\place\ozg_place.p3d";
         itemSize[] = {10, 10};
-        weight = 500;
+        weight = 400;
+        hiddenSelections[] = {"camo"};
+        hologramMaterial = "ozg_place";
+        hologramMaterialPath = "OpenZone_Games\models\place\data";
+    };
+
+    // ------------------------------------------------------------ the fan in hands
+    //
+    // Eight cards, each a selection of its own: the cards a player does not
+    // hold are blanked (OZG_Hand.OZG_Show).
+    class OZG_Hand: Inventory_Base
+    {
+        scope = 1;
+        displayName = "$STR_OZG_HAND_NAME";
+        descriptionShort = "$STR_OZG_HAND_DESC";
+        model = "\OpenZone_Games\models\hand\ozg_hand.p3d";
+        itemSize[] = {2, 3};
+        weight = 20;
+        rotationFlags = 16;
+        hiddenSelections[] = {"card1", "card2", "card3", "card4", "card5", "card6", "card7", "card8"};
+        hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\ozg_deck_classic_co.paa", "OpenZone_Games\data\cards\ozg_deck_classic_co.paa", "OpenZone_Games\data\cards\ozg_deck_classic_co.paa", "OpenZone_Games\data\cards\ozg_deck_classic_co.paa", "OpenZone_Games\data\cards\ozg_deck_classic_co.paa", "OpenZone_Games\data\cards\ozg_deck_classic_co.paa", "OpenZone_Games\data\cards\ozg_deck_classic_co.paa", "OpenZone_Games\data\cards\ozg_deck_classic_co.paa"};
+        hiddenSelectionsMaterials[] = {"OpenZone_Games\data\cards\ozg_deck.rvmat", "OpenZone_Games\data\cards\ozg_deck.rvmat", "OpenZone_Games\data\cards\ozg_deck.rvmat", "OpenZone_Games\data\cards\ozg_deck.rvmat", "OpenZone_Games\data\cards\ozg_deck.rvmat", "OpenZone_Games\data\cards\ozg_deck.rvmat", "OpenZone_Games\data\cards\ozg_deck.rvmat", "OpenZone_Games\data\cards\ozg_deck.rvmat"};
     };
 
     // ------------------------------------------------------------ a seat's mark
@@ -142,12 +175,12 @@ class CfgVehicles
         scope = 1;
         displayName = "$STR_OZG_MARK_NAME";
         descriptionShort = "$STR_OZG_MARK_NAME";
-        model = "\dz\gear\consumables\Chemlight.p3d";
+        model = "\OpenZone_Games\models\mark\ozg_mark.p3d";
         itemSize[] = {10, 10};
         weight = 10;
         hiddenSelections[] = {"camo"};
-        hiddenSelectionsTextures[] = {"dz\gear\consumables\data\chemlight_ca.paa"};
-        hiddenSelectionsMaterials[] = {"dz\gear\consumables\data\chemlight_green_on.rvmat"};
+        hiddenSelectionsTextures[] = {"#(argb,8,8,3)color(0.25,0.9,0.35,1.0,co)"};
+        hiddenSelectionsMaterials[] = {"OpenZone_Games\models\mark\data\ozg_mark.rvmat"};
     };
 
     // A free seat.
@@ -158,6 +191,7 @@ class CfgVehicles
     // A seat left with cards.
     class OZG_SeatMark_Left: OZG_SeatMark
     {
-        hiddenSelectionsMaterials[] = {"dz\gear\consumables\data\chemlight_yellow_on.rvmat"};
+        hiddenSelectionsTextures[] = {"#(argb,8,8,3)color(1.0,0.72,0.15,1.0,co)"};
+        hiddenSelectionsMaterials[] = {"OpenZone_Games\models\mark\data\ozg_mark_amber.rvmat"};
     };
 };

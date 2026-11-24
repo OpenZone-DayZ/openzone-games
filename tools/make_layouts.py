@@ -192,7 +192,9 @@ def window():
 # ---------------------------------------------------------------- a card
 #
 # A button whose children follow its size: a script resizes the root alone and
-# the face, the shade and the outline go with it.
+# the face and the outline go with it. A card that cannot be played is dimmed
+# by the face's own colour, not by a panel over it: a panel is a rectangle and
+# would show in the card's round corners.
 
 def frac(x, y, w, h):
     return [("position", "%s %s" % (x, y)), ("size", "%s %s" % (w, h)),
@@ -203,7 +205,6 @@ def card():
     kids = [
         panel("OZG_CardGlow", frac(-0.035, -0.025, 1.07, 1.05), "1 0.84 0.3 1", [("priority", 0), ("visible", 0)]),
         image("OZG_CardFace", frac(0, 0, 1, 1), [("priority", 1)]),
-        panel("OZG_CardShade", frac(0, 0, 1, 1), "0 0 0 0.42", [("priority", 2), ("visible", 0)]),
     ]
     return block("ButtonWidgetClass", "OZG_Card",
                  [("visible", 1)] + exact(0, 0, 110, 154) + [("text", '""'), ("priority", 3)], kids)

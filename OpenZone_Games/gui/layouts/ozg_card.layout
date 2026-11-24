@@ -37,18 +37,5 @@ ButtonWidgetClass OZG_Card {
    "stretch mode" stretch_w_h
    priority 1
   }
-  PanelWidgetClass OZG_CardShade {
-   ignorepointer 1
-   position 0 0
-   size 1 1
-   hexactpos 0
-   vexactpos 0
-   hexactsize 0
-   vexactsize 0
-   color 0 0 0 0.42
-   style rover_sim_colorable
-   priority 2
-   visible 0
-  }
  }
 }

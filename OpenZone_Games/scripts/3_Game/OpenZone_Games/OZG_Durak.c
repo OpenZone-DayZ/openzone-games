@@ -607,6 +607,16 @@ class OZG_Durak : OZG_Game
 
     // ---- who is waited for ---------------------------------------------------
 
+    override int HeldCount(int seat)
+    {
+        if (!m_S)
+            return 0;
+        int at = IndexOfSeat(seat);
+        if (at < 0)
+            return 0;
+        return m_S.SeatList[at].Held.Count();
+    }
+
     // The game stands still for: the opener while the table is empty; the
     // defender while a card lies unbeaten and he has not said "take"; and, once
     // the bout could close, every seat that may still throw in and has not

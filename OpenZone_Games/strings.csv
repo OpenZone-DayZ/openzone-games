@@ -160,3 +160,6 @@ STR_OZG_SUIT_S,пік,of spades
 STR_OZG_SUIT_H,чирв,of hearts
 STR_OZG_SUIT_D,бубн,of diamonds
 STR_OZG_SUIT_C,треф,of clubs
+# -- the fan in hands
+STR_OZG_HAND_NAME,Карти в руці,Cards in hand
+STR_OZG_HAND_DESC,Ваші карти в грі.,Your cards in the game.

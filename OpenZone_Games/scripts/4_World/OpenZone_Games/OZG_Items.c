@@ -86,9 +86,12 @@ class OZG_Deck_Base extends ItemBase
         return true;
     }
 
+    // One second of progress. What a player holds for is longer: the body
+    // kneels down first. Measured 2026-11-24 with a progress of two seconds:
+    // a hold of five seconds placed nothing, six placed the game.
     override float GetDeployTime()
     {
-        return 2.0;
+        return 1.0;
     }
 
     override void SetActions()

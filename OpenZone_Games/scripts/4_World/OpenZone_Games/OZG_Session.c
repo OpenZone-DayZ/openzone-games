@@ -698,6 +698,7 @@ class OZG_Session
         s.Uid = "";
         s.Name = "";
         s.PoseNo = 0;
+        DropFan(was);
         if (was != "" && was == m_R.HostUid)
             PassHost(no);
         if (playing)
@@ -1017,6 +1018,70 @@ class OZG_Session
         return "";
     }
 
+    // ------------------------------------------------------------ cards in hands
+
+    // A present seated player who has cards and whose hands are empty holds a
+    // fan of them, backs outwards. It is never in the way: it leaves with
+    // whatever else the player takes into his hands, and comes back when they
+    // are empty again. A game goes on without it.
+    protected void Fans()
+    {
+        bool playing = false;
+        if (m_Game && m_R.St == OZG_Const.ST_PLAYING)
+            playing = true;
+        int deckNo = OZG_Decks.NumberOf(m_R.DeckClass);
+        for (int i = 0; i < m_R.Seats.Count(); i++)
+        {
+            OZG_SeatRec s = m_R.Seats[i];
+            if (s.Uid == "")
+                continue;
+            PlayerBase p = OZG_Sessions.PlayerOf(s.Uid);
+            if (!p || !p.IsAlive())
+                continue;
+
+            int want = 0;
+            if (playing && s.St == OZG_Const.SEAT_TAKEN && m_R.Dealt.Find(i) >= 0)
+                want = m_Game.HeldCount(i);
+            if (want > 8)
+                want = 8;
+
+            EntityAI held = p.GetItemInHands();
+            OZG_Hand fan = OZG_Hand.Cast(held);
+            if (want > 0)
+            {
+                if (!fan && !held)
+                    fan = OZG_Hand.Cast(p.GetHumanInventory().CreateInHands("OZG_Hand"));
+                if (fan)
+                    fan.OZG_Set(want, deckNo);
+            }
+            else if (fan)
+            {
+                GetGame().ObjectDelete(fan);
+            }
+        }
+    }
+
+    // A player who no longer sits here holds no fan of this game.
+    protected void DropFan(string uid)
+    {
+        PlayerBase p = OZG_Sessions.PlayerOf(uid);
+        if (!p)
+            return;
+        OZG_Hand fan = OZG_Hand.Cast(p.GetItemInHands());
+        if (fan)
+            GetGame().ObjectDelete(fan);
+    }
+
+    // The place is going: every fan of it goes too.
+    void DropFans()
+    {
+        for (int i = 0; i < m_R.Seats.Count(); i++)
+        {
+            if (m_R.Seats[i].Uid != "")
+                DropFan(m_R.Seats[i].Uid);
+        }
+    }
+
     // ------------------------------------------------------------ the clock
 
     // Once a second.
@@ -1085,6 +1150,8 @@ class OZG_Session
         {
             Changed();
         }
+
+        Fans();
 
         // Idle: nobody seated has been here for a long while.
         if (anyone)

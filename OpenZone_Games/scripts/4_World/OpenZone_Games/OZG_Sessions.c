@@ -246,6 +246,7 @@ class OZG_Sessions
             at = by.GetPosition();
 
         s.CloseAll(why);
+        s.DropFans();
         DeleteFile(OZG_Session.PathOf(id));
         // Out of the table first: deleting the place looks for its session.
         s.m_Place = null;
@@ -269,6 +270,7 @@ class OZG_Sessions
             return;
         if (!s_Closing)
         {
+            s.DropFans();
             s.CloseAll(OZG_Const.SAY_GONE);
             OZG_Log.Info("place " + id + " left the world");
         }
@@ -375,6 +377,10 @@ class OZG_Sessions
 
     static void Start()
     {
+        // The engine's chance starts every server from the same place:
+        // measured 2026-11-24, the first deal of two boots gave the same trump
+        // and the same hands. Seeded from the clock, once a mission.
+        Math.Randomize(-1);
         s_Closing = false;
         s_Swept = false;
         s_Now = 0;

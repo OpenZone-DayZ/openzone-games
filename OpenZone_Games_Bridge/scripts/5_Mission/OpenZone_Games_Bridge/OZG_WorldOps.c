@@ -360,6 +360,47 @@ class OZG_WorldOps
         return true;
     }
 
+    // chat text="!ozg ...": a chat command as the first connected player
+    // would have typed it.
+    static bool OpChat(map<string, string> args, out string detail)
+    {
+        PlayerBase me = FirstPlayer();
+        if (!me)
+        {
+            detail = "chat: nobody is connected";
+            return false;
+        }
+        string text = OZG_VerbOps.Arg(args, "text", "!ozg");
+        OZG_Bots.OnChat(OZG_Who.Name(me), text);
+        detail = "said '" + text + "' as " + OZG_Who.Name(me) + "; " + OZG_Sessions.Describe();
+        return true;
+    }
+
+    // bots id= n= [on=0|1]: bots on a session's free seats, playing or waiting.
+    static bool OpBots(map<string, string> args, out string detail)
+    {
+        string on = OZG_VerbOps.Arg(args, "on", "1");
+        bool playing = on == "1";
+        OZG_Bots.s_On = playing;
+        int n = OZG_VerbOps.Arg(args, "n", "0").ToInt();
+        string names = "";
+        if (n > 0)
+        {
+            OZG_Session s = Sess(args, detail);
+            if (!s)
+                return false;
+            for (int i = 0; i < n; i++)
+            {
+                string name = OZG_Bots.Seat(s);
+                if (name == "")
+                    break;
+                names = names + " " + name;
+            }
+        }
+        detail = "bots on=" + on + " seated:" + names;
+        return true;
+    }
+
     // give who= [deck=class]: a deck into a player's hands.
     static bool OpGive(map<string, string> args, out string detail)
     {

@@ -84,6 +84,13 @@ class OZG_Game
         return false;
     }
 
+    // How many cards the seat holds now: what the fan in a player's hands
+    // shows. Nothing of which cards they are.
+    int HeldCount(int seat)
+    {
+        return 0;
+    }
+
     // Does the game stand still until this seat moves?
     bool Waits(int seat)
     {
