@@ -5,6 +5,7 @@ STR_OZG_NO_OVER,Партію завершено,The game is over
 STR_OZG_NO_SEAT,Це місце не в грі,This seat is not in the game
 STR_OZG_NO_MOVE,Незрозумілий хід,The move is not understood
 STR_OZG_NO_CARD,У вас немає цієї карти,You do not hold this card
+STR_OZG_NO_CARDS,У колоді замало карт для цієї гри,There are not enough cards in the deck for this game
 STR_OZG_GAME_DURAK,Дурень,Durak
 STR_OZG_DURAK_VARIANT,Варіант,Variant
 STR_OZG_DURAK_THROW,Підкидний,Podkidnoy (throw-in)

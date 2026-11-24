@@ -73,8 +73,31 @@ class OZG_Durak : OZG_Game
         if (variant == OZG_DurakConst.VARIANT_TRANSFER)
             s.Transfer = 1;
 
+        // The cards of this deal: what the session read out of the deck, or
+        // the game's whole set when nobody handed any. The state keeps its
+        // own record of them, in the order they were handed over.
         array<string> deck = new array<string>();
-        CardsUsed(deck);
+        int f;
+        if (m_Given)
+        {
+            for (f = 0; f < m_Given.Count(); f++)
+            {
+                s.Dealt.Insert(OZG_DealCard.Make(m_Given[f].Name, m_Given[f].Look));
+                deck.Insert(m_Given[f].Name);
+            }
+        }
+        else
+        {
+            CardsUsed(deck);
+            for (f = 0; f < deck.Count(); f++)
+                s.Dealt.Insert(OZG_DealCard.Make(deck[f], 0));
+        }
+        // Six to each seat at the least; the trump is then the last card dealt.
+        if (deck.Count() < n * OZG_DurakConst.HAND)
+        {
+            refusal = OZG_Const.NO_CARDS;
+            return false;
+        }
         // A deal with no chance handed in takes the real one. Into a local: a
         // parameter is not a strong reference and cannot take `new`.
         OZG_Random dice = chance;
@@ -738,6 +761,20 @@ class OZG_Durak : OZG_Game
         return -1;
     }
 
+    // The look of a card's back, by what the deal began with; 0 for a card the
+    // deal does not know.
+    protected int LookOf(string card)
+    {
+        if (!m_S || card == "")
+            return 0;
+        for (int i = 0; i < m_S.Dealt.Count(); i++)
+        {
+            if (m_S.Dealt[i] && m_S.Dealt[i].Name == card)
+                return m_S.Dealt[i].Look;
+        }
+        return 0;
+    }
+
     protected int SeatNoAt(int i)
     {
         if (i < 0 || i >= m_S.SeatList.Count())
@@ -887,12 +924,26 @@ class OZG_Durak : OZG_Game
         v.Ended = m_S.Ended;
         v.DurakSeat = m_S.DurakSeat;
         v.Tie = m_S.Tie;
+        v.TrumpLook = LookOf(m_S.TrumpCard);
+        if (m_S.StockCards.Count() > 0)
+            v.StockTop = LookOf(m_S.StockCards[0]);
+        for (int t = 0; t < m_S.AttackCards.Count(); t++)
+        {
+            v.AttackLooks.Insert(LookOf(m_S.AttackCards[t]));
+            if (m_S.DefenceCards[t] != "")
+                v.DefenceLooks.Insert(LookOf(m_S.DefenceCards[t]));
+            else
+                v.DefenceLooks.Insert(-1);
+        }
         for (int i = 0; i < m_S.SeatList.Count(); i++)
         {
             OZG_DurakSeat seat = m_S.SeatList[i];
             OZG_DurakSeatPublic shown = new OZG_DurakSeatPublic();
             shown.SeatNo = seat.SeatNo;
             shown.CardCount = seat.Held.Count();
+            for (int b = 0; b < seat.Held.Count(); b++)
+                shown.Backs.Insert(LookOf(seat.Held[b]));
+            shown.Backs.Sort();
             shown.Gone = seat.Gone;
             shown.Passed = seat.Passed;
             v.SeatList.Insert(shown);
@@ -912,6 +963,8 @@ class OZG_Durak : OZG_Game
         if (i >= 0)
         {
             v.Held.Copy(m_S.SeatList[i].Held);
+            for (int h = 0; h < v.Held.Count(); h++)
+                v.HeldLooks.Insert(LookOf(v.Held[h]));
             Moves(seat, v.CanPlay);
         }
         string text;
@@ -936,7 +989,22 @@ class OZG_Durak : OZG_Game
         string err;
         if (!JsonFileLoader<OZG_DurakState>.LoadData(data, s, err))
             return false;
-        if (!s || s.Version != OZG_DurakConst.VERSION)
+        if (!s)
+            return false;
+        // A game saved before cards were things: it was dealt from the whole
+        // set, every back the deck's own.
+        if (s.Version == 1)
+        {
+            s.Dealt = new array<ref OZG_DealCard>();
+            array<string> whole = new array<string>();
+            CardsUsed(whole);
+            for (int old = 0; old < whole.Count(); old++)
+                s.Dealt.Insert(OZG_DealCard.Make(whole[old], 0));
+            s.Version = OZG_DurakConst.VERSION;
+        }
+        if (s.Version != OZG_DurakConst.VERSION)
+            return false;
+        if (!s.Dealt)
             return false;
         if (!s.SeatList || !s.StockCards || !s.DiscardCards)
             return false;
@@ -959,8 +1027,8 @@ class OZG_Durak : OZG_Game
         return true;
     }
 
-    // Every one of the 36 exactly once, between the hands, the stock, the
-    // table and the discards; and the few numbers in their ranges.
+    // Every card the deal began with exactly once, between the hands, the
+    // stock, the table and the discards; and the few numbers in their ranges.
     override bool Sound(out string why)
     {
         why = "";
@@ -1012,7 +1080,15 @@ class OZG_Durak : OZG_Game
         }
 
         array<string> want = new array<string>();
-        CardsUsed(want);
+        for (i = 0; i < m_S.Dealt.Count(); i++)
+        {
+            if (!m_S.Dealt[i])
+            {
+                why = "a card of the deal has no record";
+                return false;
+            }
+            want.Insert(m_S.Dealt[i].Name);
+        }
         if (have.Count() != want.Count())
         {
             why = "cards: " + have.Count().ToString() + " of " + want.Count().ToString();

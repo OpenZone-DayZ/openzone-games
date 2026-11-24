@@ -9,7 +9,7 @@ class OZG_DurakConst
     static const string VARIANT_TRANSFER = "perevodnoy";
 
     // The format of a saved game.
-    static const int VERSION = 1;
+    static const int VERSION = 2;
     // Cards dealt to a seat, and drawn up to after a bout.
     static const int HAND = 6;
     // Attack cards in one bout, and in the first bout of a game.
@@ -96,6 +96,9 @@ class OZG_DurakState
     int DurakSeat;
     // 1: the last cards left both hands at once.
     int Tie;
+    // Every card this deal began with, in the order it was handed over: its
+    // name and what it is like. Sound counts against it.
+    ref array<ref OZG_DealCard> Dealt;
 
     void OZG_DurakState()
     {
@@ -104,6 +107,7 @@ class OZG_DurakState
         DiscardCards = new array<string>();
         AttackCards = new array<string>();
         DefenceCards = new array<string>();
+        Dealt = new array<ref OZG_DealCard>();
         DurakSeat = -1;
     }
 }
@@ -117,6 +121,14 @@ class OZG_DurakSeatPublic
     int CardCount;
     int Gone;
     int Passed;
+    // The look of each card's back, the lowest first: what anybody at the
+    // table sees of a hand.
+    ref array<int> Backs;
+
+    void OZG_DurakSeatPublic()
+    {
+        Backs = new array<int>();
+    }
 }
 
 // The public half of a view.
@@ -140,6 +152,12 @@ class OZG_DurakPublic
     int Ended;
     int DurakSeat;
     int Tie;
+    int TrumpLook;
+    // The look of the card drawn next; -1 when the stock is empty.
+    int StockTop;
+    // Beside AttackCards and DefenceCards; -1 beside an unbeaten card.
+    ref array<int> AttackLooks;
+    ref array<int> DefenceLooks;
 
     void OZG_DurakPublic()
     {
@@ -147,6 +165,9 @@ class OZG_DurakPublic
         DefenceCards = new array<string>();
         SeatList = new array<ref OZG_DurakSeatPublic>();
         Awaited = new array<int>();
+        AttackLooks = new array<int>();
+        DefenceLooks = new array<int>();
+        StockTop = -1;
         OpenerSeat = -1;
         DefenderSeat = -1;
         DurakSeat = -1;
@@ -158,10 +179,13 @@ class OZG_DurakPrivate
 {
     ref array<string> Held;
     ref array<string> CanPlay;
+    // Beside Held.
+    ref array<int> HeldLooks;
 
     void OZG_DurakPrivate()
     {
         Held = new array<string>();
         CanPlay = new array<string>();
+        HeldLooks = new array<int>();
     }
 }

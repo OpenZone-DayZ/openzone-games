@@ -426,7 +426,7 @@ The owner's words this task answers (2026-11-24): "There may be as many copies a
 **Interfaces:**
 - Produces: `OZG_Cards.RankOf(card) : int`, `.SuitOf(card) : string`, `.IsCard(card) : bool` for a name of any length; `OZG_Cards.FaceOf(card) : string`, `.CopyOf(card) : int`, `.CopyNamed(face, copy) : string`, `.OfMove(move) : string`; `class OZG_DealCard { string Name; int Look; static OZG_DealCard Make(string name, int look); }`; `OZG_Game.TakeCards(array<ref OZG_DealCard> cards)`; `OZG_Const.NO_CARDS`; `OZG_DurakState.Dealt`; in durak's views `OZG_DurakSeatPublic.Backs`, `OZG_DurakPublic.TrumpLook`, `.StockTop`, `.AttackLooks`, `.DefenceLooks`, `OZG_DurakPrivate.HeldLooks`.
 
-- [ ] **Step 1: The checks on the bench, written first**
+- [x] **Step 1: The checks on the bench, written first**
 
 In `OZG_Bench.c`, after `OpDeck` (before the comment of the next op), add:
 
@@ -502,7 +502,7 @@ and add the line `//       cards=<cards> looks=<n,..>  what the deal is dealt fr
 
 Nothing is run yet: the build would stop on `CopyOf`.
 
-- [ ] **Step 2: A card's name, of any length**
+- [x] **Step 2: A card's name, of any length**
 
 Replace `OZG_Cards.c` from its first line down to the end of `IsCard` (everything above the comment of `Whole`) with:
 
@@ -656,7 +656,7 @@ class OZG_DealCard
 }
 ```
 
-- [ ] **Step 3: `TakeCards` in the contract**
+- [x] **Step 3: `TakeCards` in the contract**
 
 In `OZG_Game.c`, after the method `Fresh()` and before the comment `// ---- a game being played`, add:
 
@@ -682,7 +682,7 @@ In `OZG_Game.c`, after the method `Fresh()` and before the comment `// ---- a ga
 
 ```
 
-- [ ] **Step 4: The refusal's key and word**
+- [x] **Step 4: The refusal's key and word**
 
 In `OZG_Const.c`, after `static const string NO_CARD    = "STR_OZG_NO_CARD";`:
 
@@ -698,7 +698,7 @@ STR_OZG_NO_CARDS,У колоді замало карт для цієї гри,Th
 
 Run `python -I tools/stringtable.py OpenZone_Games`. Expected: `stringtable.csv: 158 strings` (one more than before).
 
-- [ ] **Step 5: The state keeps what the deal began with**
+- [x] **Step 5: The state keeps what the deal began with**
 
 In `OZG_DurakState.c`:
 
@@ -766,7 +766,7 @@ class OZG_DurakSeatPublic
 
    and in its constructor `HeldLooks = new array<int>();`.
 
-- [ ] **Step 6: Durak deals from what it is handed**
+- [x] **Step 6: Durak deals from what it is handed**
 
 In `OZG_Durak.c`, `Begin`, replace
 
@@ -915,7 +915,7 @@ with
 
 Then read `OZG_Durak.c` once for anything else that takes a card apart by position (Grep for `Substring(` and `Length()` in the file): moves are already split at the colons (`move.Split(":", parts)` in `Act`), and nothing else was found when this plan was written.
 
-- [ ] **Step 7: The bots take a move's card and the trump's suit by the helpers**
+- [x] **Step 7: The bots take a move's card and the trump's suit by the helpers**
 
 `OZG_Bots.c`, `CardOf`: replace its body
 
@@ -944,7 +944,7 @@ with
             trumpSuit = OZG_Cards.SuitOf(pub.TrumpCard);
 ```
 
-- [ ] **Step 8: Lint, a stand cycle without a client, the bench**
+- [x] **Step 8: Lint, a stand cycle without a client, the bench**
 
 Run `mod_lint`, then the stand cycle.
 
@@ -1000,7 +1000,7 @@ oz_games {"op":"fuzz","games":"20"}
 ```
 Expected: what it said before this task (the header of `OZG_Fuzz.c` says what the line looks like): every game ends, no state unsound.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add OpenZone_Games OpenZone_Games_Bridge
@@ -1015,6 +1015,8 @@ every back that can be seen.
 
 Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 ```
+
+**Done 2026-11-24.** The bench said, to the letter: `names: copy(As)=0 copy(As.7)=7 face(As.61)=As rank(As.61)=12 suit(As.61)=s named(As,0)=As named(As,3)=As.3 move(a:As)=As move(d:As.3:2)=As.3 move(take)=[] wrong=0/5`; `deck` as before; the whole set `stock=24`; a second ace of another back `stock=1`, `saved 684 B sound=yes`, `loaded`; fourteen aces `trump=As.9 stock=2`, the opener `can: a:As.12 a:As a:As.13 a:As.11 a:As.1 a:As.2`, the defender after `a:As.12` `can: take`, `saved 771 B sound=yes`; three cards `no STR_OZG_NO_CARDS`; `fuzz: 20 games, 3032 moves, longest 242, ... 0 defects, 465 ms`.
 
 ---
 

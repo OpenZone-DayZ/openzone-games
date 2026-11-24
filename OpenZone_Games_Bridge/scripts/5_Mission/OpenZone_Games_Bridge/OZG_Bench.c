@@ -133,6 +133,36 @@ class OZG_Bench
         return true;
     }
 
+    // names: what a card's name says, the names of further cards of one face
+    // with it.
+    static bool OpNames(out string detail)
+    {
+        int wrong = 0;
+        if (OZG_Cards.IsCard("As.0"))
+            wrong++;
+        if (OZG_Cards.IsCard("As.01"))
+            wrong++;
+        if (OZG_Cards.IsCard("As1"))
+            wrong++;
+        if (OZG_Cards.IsCard("As.x"))
+            wrong++;
+        if (OZG_Cards.IsCard("As."))
+            wrong++;
+
+        detail = "names: copy(As)=" + OZG_Cards.CopyOf("As").ToString();
+        detail = detail + " copy(As.7)=" + OZG_Cards.CopyOf("As.7").ToString();
+        detail = detail + " face(As.61)=" + OZG_Cards.FaceOf("As.61");
+        detail = detail + " rank(As.61)=" + OZG_Cards.RankOf("As.61").ToString();
+        detail = detail + " suit(As.61)=" + OZG_Cards.SuitOf("As.61");
+        detail = detail + " named(As,0)=" + OZG_Cards.CopyNamed("As", 0);
+        detail = detail + " named(As,3)=" + OZG_Cards.CopyNamed("As", 3);
+        detail = detail + " move(a:As)=" + OZG_Cards.OfMove("a:As");
+        detail = detail + " move(d:As.3:2)=" + OZG_Cards.OfMove("d:As.3:2");
+        detail = detail + " move(take)=[" + OZG_Cards.OfMove("take") + "]";
+        detail = detail + " wrong=" + wrong.ToString() + "/5";
+        return true;
+    }
+
     // games: every registered game with its numbers and its options; the
     // default value of an option is starred.
     static bool OpGames(out string detail)
@@ -176,6 +206,7 @@ class OZG_Bench
     //       deck=<cards>  the order of the deck, fixed (the cards named first)
     //       seed=<n>      or a shuffle that repeats itself (the default, 1);
     //                     seed=0 is the real chance
+    //       cards=<cards> looks=<n,..>  what the deal is dealt from, and their backs
     static bool OpBegin(map<string, string> args, out string detail)
     {
         string id = OZG_VerbOps.Arg(args, "game", "durak");
@@ -190,6 +221,28 @@ class OZG_Bench
         OZG_VerbOps.Numbers(OZG_VerbOps.Arg(args, "seats", "0,1"), seats);
         map<string, string> options = new map<string, string>();
         OZG_VerbOps.Pairs(OZG_VerbOps.Arg(args, "opt", ""), options);
+
+        // cards=<cards> looks=<n,n,..>: what the deal is dealt from, as a
+        // session hands it over after reading a deck.
+        string given = OZG_VerbOps.Arg(args, "cards", "");
+        if (given != "")
+        {
+            array<string> givenNames = new array<string>();
+            OZG_Cards.Parse(given, givenNames);
+            array<int> givenBacks = new array<int>();
+            string lookText = OZG_VerbOps.Arg(args, "looks", "");
+            if (lookText != "")
+                OZG_VerbOps.Numbers(lookText, givenBacks);
+            array<ref OZG_DealCard> handed = new array<ref OZG_DealCard>();
+            for (int h = 0; h < givenNames.Count(); h++)
+            {
+                int back = 0;
+                if (h < givenBacks.Count())
+                    back = givenBacks[h];
+                handed.Insert(OZG_DealCard.Make(givenNames[h], back));
+            }
+            game.TakeCards(handed);
+        }
 
         OZG_Random chance;
         string deck = OZG_VerbOps.Arg(args, "deck", "");

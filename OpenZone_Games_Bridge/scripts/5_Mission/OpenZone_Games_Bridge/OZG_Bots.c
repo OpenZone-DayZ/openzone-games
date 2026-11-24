@@ -32,9 +32,7 @@ class OZG_Bots
     // The card a move plays: "a:6s" and "t:6s" and "d:6s:1" all name it second.
     protected static string CardOf(string move)
     {
-        if (move.Length() < 4)
-            return "";
-        return move.Substring(2, 2);
+        return OZG_Cards.OfMove(move);
     }
 
     // One move for a seat the game waits for; "" when it has nothing to say.
@@ -51,8 +49,7 @@ class OZG_Bots
         string err;
         if (JsonFileLoader<OZG_DurakPublic>.LoadData(game.PublicView(), pub, err) && pub)
         {
-            if (pub.TrumpCard.Length() == 2)
-                trumpSuit = pub.TrumpCard.Substring(1, 1);
+            trumpSuit = OZG_Cards.SuitOf(pub.TrumpCard);
             if (pub.AttackCards && pub.AttackCards.Count() > 0)
                 opening = false;
         }

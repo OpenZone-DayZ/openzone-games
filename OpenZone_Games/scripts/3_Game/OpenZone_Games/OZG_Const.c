@@ -17,6 +17,7 @@ class OZG_Const
     static const string NO_SEAT    = "STR_OZG_NO_SEAT";
     static const string NO_MOVE    = "STR_OZG_NO_MOVE";
     static const string NO_CARD    = "STR_OZG_NO_CARD";
+    static const string NO_CARDS   = "STR_OZG_NO_CARDS";
 
     // ---------------------------------------------------------------- laying out
 

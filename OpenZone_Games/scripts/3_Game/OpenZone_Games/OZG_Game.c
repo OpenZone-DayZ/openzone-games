@@ -65,6 +65,25 @@ class OZG_Game
         return null;
     }
 
+    // ---- the cards of a deal -------------------------------------------------
+
+    // What the next deal is dealt from, when there is a deck to read: a
+    // record a card, every name of the deal its own. A game nobody hands
+    // cards to deals its own whole set, every back of look 0: what the
+    // stand's bench and a check rely on.
+    protected ref array<ref OZG_DealCard> m_Given;
+
+    void TakeCards(array<ref OZG_DealCard> cards)
+    {
+        m_Given = new array<ref OZG_DealCard>();
+        for (int i = 0; i < cards.Count(); i++)
+        {
+            OZG_DealCard c = cards[i];
+            if (c && OZG_Cards.IsCard(c.Name))
+                m_Given.Insert(OZG_DealCard.Make(c.Name, c.Look));
+        }
+    }
+
     // ---- a game being played -------------------------------------------------
 
     // A deal. `seats` are the seats dealt in, in their order around the mat;
