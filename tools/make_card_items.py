@@ -28,6 +28,23 @@ SUIT_UA = {"s": "пік", "h": "чирв", "d": "бубн", "c": "треф"}
 SUIT_EN = {"s": "of spades", "h": "of hearts", "d": "of diamonds", "c": "of clubs"}
 
 
+# The pictures a card's two sides wear in the config: those of the first look,
+# the classic deck's. A card of another look wears its own once the script has
+# painted it (OZG_Card_Base.OZG_Paint). tools/make_cards.py draws them all and
+# names them ozg_<style>_<face>_co.paa: FIRST_LOOK is the classic deck's
+# ozgCards, the path up to the face.
+FIRST_LOOK = "OpenZone_Games\\data\\cards\\classic\\ozg_classic_"
+CARD_MATERIAL = "OpenZone_Games\\data\\cards\\ozg_card.rvmat"
+
+
+def face_texture(face):
+    return FIRST_LOOK + face + "_co.paa"
+
+
+def back_texture():
+    return FIRST_LOOK + "back_co.paa"
+
+
 def faces():
     # The order of OZG_Cards.Whole: a suit at a time, the two first.
     out = []
@@ -88,13 +105,13 @@ def config():
              "    {",
              "        scope = 0;",
              '        descriptionShort = "$STR_OZG_CARD_DESC";',
-             '        model = "\\OpenZone_Games\\models\\deck\\ozg_deck.p3d";',
+             '        model = "\\OpenZone_Games\\models\\card\\ozg_card.p3d";',
              "        itemSize[] = {1, 1};",
              "        weight = 2;",
              "        rotationFlags = 16;",
-             '        hiddenSelections[] = {"camo"};',
-             '        hiddenSelectionsTextures[] = {"OpenZone_Games\\data\\cards\\ozg_deck_classic_co.paa"};',
-             '        hiddenSelectionsMaterials[] = {"OpenZone_Games\\data\\cards\\ozg_deck.rvmat"};',
+             '        hiddenSelections[] = {"face", "back"};',
+             '        hiddenSelectionsTextures[] = {"%s", "%s"};' % (face_texture("As"), back_texture()),
+             '        hiddenSelectionsMaterials[] = {"%s", "%s"};' % (CARD_MATERIAL, CARD_MATERIAL),
              '        ozgFace = "";',
              "        inventorySlot[] =",
              "        {"]
@@ -102,7 +119,8 @@ def config():
     cards += ["        };", "    };"]
     for f in faces():
         cards.append('    class OZG_Card_%s: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_%s"; '
-                     'ozgFace = "%s"; };' % (f, f.upper(), f))
+                     'ozgFace = "%s"; hiddenSelectionsTextures[] = {"%s", "%s"}; };'
+                     % (f, f.upper(), f, face_texture(f), back_texture()))
 
     path = os.path.join(MOD, "config.cpp")
     text, bom, crlf = read(path)
@@ -110,7 +128,6 @@ def config():
                         ("cards", cards),
                         ("deck slots", slot_list(names[:PLAIN])),
                         ("sharp slots, classic", slot_list(names)),
-                        ("sharp slots, zone", slot_list(names)),
                         ("sharp slots, stalker", slot_list(names))):
         text = between(text, "// >>> generated: " + name, "// <<< generated: " + name, lines)
     write(path, text, bom, crlf)

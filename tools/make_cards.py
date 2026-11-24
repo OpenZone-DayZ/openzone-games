@@ -1,7 +1,7 @@
 # openzone-games/tools/make_cards.py
-"""Draw the playing cards of OpenZone Games: three decks, their atlases, the sheets for the models.
+"""Draw the playing cards of OpenZone Games: two decks, their atlases, the sheets for the models.
 
-Every picture of `classic` and `zone` is drawn here, from polygons, circles and curves: no
+Every picture of `classic` is drawn here, from polygons, circles and curves: no
 image is read, nothing is traced from another deck. The suits are shapes of this script; only
 the rank letters come from a font. The `stalker` deck is drawn the same way, and then twenty
 of its cards carry a picture read from art/cards/stalker/src: stalkers and mutants cut from
@@ -11,16 +11,18 @@ same run always gives the same pictures: all chance is seeded from the style and
 picture's name.
 
     python -I tools/make_cards.py                # every style, everything
-    python -I tools/make_cards.py --style zone   # one style
+    python -I tools/make_cards.py --style stalker   # one style
     python -I tools/make_cards.py --no-paa       # stop at the PNG files and the .imageset
 
 Needs Python 3.9+ and Pillow 10.1+ (written against 3.13 and 12.3); the .paa files need
 DayZ Tools (ImageToPAA). The pictures are committed: should another Pillow or FreeType
 move a pixel, the diff shows it.
 
-Three styles: `classic`, a clean deck; `zone`, a worn one; `stalker`, a worn one whose every
-card is worn its own way and whose aces, kings, queens, jacks and tens carry pictures. Who
-is on which card is the table PICTURES below: a line a card. For each style the run writes
+Two styles: `classic`, a clean deck, and `stalker`, a worn one whose every card is worn its
+own way and whose aces, kings, queens, jacks and tens carry pictures. Who is on which card
+is the table PICTURES below: a line a card. (`zone`, the worn deck of the first phases, left
+the mod on 2026-11-24; its palette is the ground the stalkers' deck is drawn on.) For each
+style the run writes
 
     art/cards/<style>/<name>.png       57 pictures, 200 x 280, RGBA, round corners: the sources
     art/cards/<style>/deck_sheet.png   512 x 512, opaque, for the 3D deck: the back on the left
@@ -28,6 +30,12 @@ is on which card is the table PICTURES below: a line a card. For each style the 
     art/cards/<style>/_sheet.png       the 57 on grey, to look at
     OpenZone_Games/gui/imagesets/ozg_cards_<style>.imageset   and ozg_cards_<style>_ca.paa
     OpenZone_Games/data/cards/ozg_deck_<style>_co.paa
+    OpenZone_Games/data/cards/<style>/ozg_<style>_<face>_co.paa and ozg_<style>_back_co.paa
+                                       256 x 512, DXT1: one card's face, and the back, for the
+                                       3D card (models/src/card.py), which wears one on each side.
+                                       The style is in the file's NAME, not only in its folder:
+                                       the game took two textures of one file name in two
+                                       folders for one texture (card_file below)
     build/cards/                       the PNG files the .paa are made from (not committed)
 
 The 57 names: `c_<rank><suit>` with rank one of 2 3 4 5 6 7 8 9 T J Q K A and suit one of
@@ -131,6 +139,7 @@ CLASSIC = Style(
     black=(24, 22, 24), red=(200, 26, 40), gold=(224, 172, 52),
     tints={"J": (214, 228, 216), "Q": (244, 216, 214), "K": (246, 230, 176)},
     back=(104, 16, 36), back_deep=(84, 10, 28), line=(250, 244, 230),
+    mark=(250, 244, 230), accent=(79, 181, 232),     # the mark as the radios carry it: a pale ring, 4FB5E8
     gap=(170, 162, 146),
 )
 
@@ -154,7 +163,10 @@ STALKER = replace(
     mark=(232, 220, 184), accent=(232, 220, 184),
 )
 
-STYLES = {s.name: s for s in (CLASSIC, ZONE, STALKER)}
+# The decks the mod ships: the classic one and the stalkers'. `zone`, the worn deck of the
+# first phases, is not one of them since 2026-11-24 (the owner's word: two decks); its
+# palette stays, as the ground the stalkers' deck is drawn on.
+STYLES = {s.name: s for s in (CLASSIC, STALKER)}
 
 
 # ----------------------------------------------------------------------------- geometry
@@ -822,7 +834,9 @@ def face_layers(style, rank, suit):
 
 
 def back_classic(ink, style):
-    """Deep burgundy under a white lattice, a border, a lozenge in the middle; it reads the same either way up."""
+    """Deep burgundy under a white lattice, a border, and in the middle a medallion with the
+    mark of the series (the owner's word, 2026-11-24: the logo of OpenZone on the classic back).
+    The mark leans up and right, so the back no longer reads the same either way up."""
     ground, line = style.back, style.line
     ink.rrect(9, 9, W - 9, H - 9, 8, fill=ground)
     step, slope = 14.0, math.tan(math.radians(55))
@@ -839,18 +853,11 @@ def back_classic(ink, style):
     ink.add(net)
     ink.rrect(12.5, 12.5, W - 12.5, H - 12.5, 5.5, outline=line, width=1.4)
 
-    hw, hh = 2 * step, 2 * step * slope            # the lozenge's corners lie on crossings
-
-    def lozenge(k):
-        return [(CX, CY - hh * k), (CX + hw * k, CY), (CX, CY + hh * k), (CX - hw * k, CY)]
-
-    ink.poly(lozenge(1.0), line)
-    ink.poly(lozenge(0.93), style.back_deep)
-    ink.line(lozenge(0.78), line, 0.8, closed=True)
-    ink.poly([(CX, CY - 24), (CX + 4.6, CY), (CX, CY + 24), (CX - 4.6, CY)], line)
-    ink.poly([(CX - 15, CY), (CX, CY - 4.6), (CX + 15, CY), (CX, CY + 4.6)], line)
-    ink.disc(CX, CY, 3.4, style.back_deep)
-    ink.disc(CX, CY, 1.6, line)
+    ink.disc(CX, CY, 40.0, line)
+    ink.disc(CX, CY, 38.0, style.back_deep)
+    ink.circle(CX, CY, 34.5, line, 0.8)
+    r = 18.0                                       # the mark leans up and right; this centres it
+    oz_mark(ink, CX - 0.25 * r, CY + 0.25 * r, r, style.mark, style.accent)
 
 
 def back_zone(ink, style):
@@ -1216,6 +1223,34 @@ def picture(style, name):
     return suit_picture(style, name[-1]) if name.startswith("suit_") else card_picture(style, name)
 
 
+# The 3D card (models/src/card.py) wears one texture on its face and one on its back, each
+# the whole card stretched over it. The model rounds the corners itself, so the texture
+# keeps the square card the stock is drawn on: the edge colour where the corners are cut.
+CARD_TEXTURE = (256, 512)
+
+
+def card_file(style, name):
+    """The .paa a card's face or the back is, in its style's folder: ozg_<style>_<face>_co.paa,
+    ozg_<style>_back_co.paa. The deck's ozgCards in config.cpp is the path up to the face.
+
+    Measured 2026-11-24 (diag 1.30): with the two decks' textures named alike in two folders
+    (classic/c_2s_co.paa, stalker/c_2s_co.paa), both decks in one inventory drew the same
+    picture for each card, the classic one for some cards and the stalkers' for others. The
+    file name is what the game told them apart by, so it has to be a name no other deck has."""
+    face = name[2:] if name.startswith("c_") else name
+    return DECKS / style.name / f"ozg_{style.name}_{face}_co.paa"
+
+
+def card_texture(style, name):
+    """A card or the back for the 3D card: drawn at twice a card's size, worn as the card is
+    in the window (the same lot, the same marks), opaque, then stretched to CARD_TEXTURE."""
+    if name == "back":
+        paper, ink = back_layers(style)
+    else:
+        paper, ink = face_layers(style, name[2], name[3])
+    return finish(style, name, paper, ink, k=2, rubbed=name == "back").resize(CARD_TEXTURE, LANCZOS)
+
+
 def edge_band(style, size=(256, 128)):
     """The side of a stack: a card every two rows, its edge and the dark between it and the next.
 
@@ -1473,6 +1508,13 @@ def build(style, exe):
     texture = ROOT / check_imageset(imageset, sheet, pictures)     # the pbo prefix is the mod's folder
     print(f"  {imageset}: {len(NAMES)} images, read back and held against the atlas")
 
+    textures = []                                  # the 3D card's: 52 faces and the back
+    for name in NAMES[:53]:
+        png = BUILD / "3d" / style.name / f"{name}_co.png"
+        save_png(card_texture(style, name), png)
+        textures.append((png, card_file(style, name), CARD_TEXTURE))
+    print(f"  {len(textures)} textures of the 3D card, {CARD_TEXTURE[0]} x {CARD_TEXTURE[1]}, in {png.parent}")
+
     if exe is None:
         print("  no .paa made (--no-paa)")
         return
@@ -1480,6 +1522,11 @@ def build(style, exe):
                            (deck_png, DECKS / f"ozg_deck_{style.name}_co.paa", deck.size)):
         kind = to_paa(exe, png, paa, size)
         print(f"  {paa}: {paa.stat().st_size:,} bytes, {kind}")
+    total = 0
+    for png, paa, size in textures:
+        to_paa(exe, png, paa, size)
+        total += paa.stat().st_size
+    print(f"  {len(textures)} textures of the 3D card in {DECKS / style.name}: {total:,} bytes, DXT1")
 
 
 def main(argv=None):

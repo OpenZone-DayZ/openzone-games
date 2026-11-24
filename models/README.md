@@ -1,13 +1,15 @@
 # The models of OpenZone Games
 
-Four small models, drawn from nothing by the scripts in this folder: the laid-out game, the
-deck, the fan of cards in a hand and the mark of a seat. Nothing in them is copied from
-another game or mod; meshes and textures alike are made by the scripts.
+Five small models, drawn from nothing by the scripts in this folder: the laid-out game, the
+deck, a single card, the fan of cards in a hand and the mark of a seat. Nothing in them is
+copied from another game or mod; meshes and textures alike are made by the scripts (the
+pictures some cards of the stalkers' deck carry are GSC Game World's, see the mod's NOTICE).
 
 | | |
 |---|---|
 | ![place](preview/place.png) | ![deck](preview/deck.png) |
-| ![hand](preview/hand.png) | ![mark](preview/mark.png) |
+| ![card](preview/card.png) | ![hand](preview/hand.png) |
+| ![mark](preview/mark.png) | |
 
 The picture of the fan shows it twice: on the left as others see it, on the right the same
 fan turned round, as its holder sees it.
@@ -17,9 +19,10 @@ fan turned round, as its holder sees it.
 | Path | What |
 |---|---|
 | `OpenZone_Games/models/<model>/` | what the mod ships: the binarized `.p3d`, its `model.cfg` and `data/` (`.paa` textures, `.rvmat` materials) |
-| `OpenZone_Games/data/cards/` | the deck sheets and their material, shared by three of the models |
+| `OpenZone_Games/data/cards/` | the deck sheets and their material, shared by three of the models; `ozg_card.rvmat`, the single card's material |
+| `OpenZone_Games/data/cards/<style>/` | the single card's pictures in one deck: `ozg_<style>_<face>_co.paa` for each face and `ozg_<style>_back_co.paa` (`tools/make_cards.py`) |
 | `models/src/<model>.py` | the Blender script that builds `models/src/<model>.blend` and renders `models/preview/<model>.png` |
-| `models/src/ozg_kit.py` | what the four scripts share: faces, LODs, materials, the preview |
+| `models/src/ozg_kit.py` | what the five scripts share: faces, LODs, materials, the preview |
 | `models/src/make_textures.py` | draws the PNG sources of the textures (Pillow) |
 | `models/<model>/<name>.p3d` | the MLOD exported from the `.blend`: the source the shipped model is built from |
 | `models/<model>/data/*.png`, `models/cards/data/*.png` | the texture sources |
@@ -37,7 +40,8 @@ off the exported MLODs by `measure.py`.
 | Model | Size X x Y x Z | Triangles | Selections | Other LODs |
 |---|---|---|---|---|
 | `place/ozg_place.p3d` | 0.500 x 0.022 x 0.350 | 70 | `camo`, `deck` | Geometry, View Geometry, Fire Geometry: one box 0.50 x 0.03 x 0.35 |
-| `deck/ozg_deck.p3d` | 0.063 x 0.018 x 0.088 | 12 | `camo` | Geometry, View Geometry, Fire Geometry: the same box as the deck |
+| `deck/ozg_deck.p3d` | 0.063 x 0.088 x 0.018 | 12 | `camo` | Geometry, View Geometry, Fire Geometry: the same box as the deck; Memory: the inventory's camera |
+| `card/ozg_card.p3d` | 0.063 x 0.088 x 0.0003 | 36 | `face`, `back` | Geometry, View Geometry: a box 0.063 x 0.088 x 0.002; Memory: the inventory's camera |
 | `hand/ozg_hand.p3d` | 0.149 x 0.112 x 0.0045 | 32 | `card1` ... `card8` | Geometry: one box 0.06 x 0.09 x 0.01 |
 | `mark/ozg_mark.p3d` | 0.480 x 0.040 x 0.480 | 68 | `camo` | none |
 
@@ -72,19 +76,56 @@ model carries a bounding centre of 0, 0, 0).
 
 ### deck: the item
 
-The same stack of cards (`ozg_kit.py`, `Lod.stack`), with an underside. The top is the card
-back, the underside the blank face, the four sides the edge band. `camo` is every face.
-The Geometry LOD is a box of the same size, 0.1 kg, with no `autocenter` property: the
-engine centres the model itself (the built model's bounding centre is 0, 0.009, 0, the
-middle of the stack).
+The same stack of cards (`ozg_kit.py`, `Lod.stack`), with an underside: the top and the
+underside are both the card back (`back_under`), the four sides the edge band. `camo` is
+every face. The Geometry LOD is a box of the same size, 0.1 kg, `autocenter = 0`: the
+origin is the middle of the stack (the built model's bounding centre is 0, 0, 0).
 
-The stack LIES in the model: 0.063 along X, 0.088 along Z, 0.018 high. The game's own
-Matchbox, whose pose in the hand a deck may borrow, STANDS in its model: a box
-0.065 x 0.121 x 0.037 with its long side along Y and its thin side along Z (read off
-`dz\gear\consumables\Matchbox.p3d`). `TURN` at the top of `deck.py` (yaw, tilt, lean, in
-degrees) stands the deck another way; a tilt of 90 or -90 stands it as the matchbox
-stands, its back towards +Z or -Z. How an item lies on the ground is the config's
-`rotationFlags`, which names the side it is laid on.
+The stack STANDS in the model, as the game's own Matchbox stands, whose pose in the hand
+the deck borrows (`OZG_Hand.c`, `Matchbox.anm`): 0.063 along X, 0.088 along Y, 0.018 along
+Z, the back towards +Z. The matchbox is a box 0.065 x 0.121 x 0.037 with its long side
+along Y and its thin side along Z (read off `dz\gear\consumables\Matchbox.p3d`). `TURN` at
+the top of `deck.py` (yaw, tilt, lean, in degrees) says how the stack drawn lying is stood.
+
+Measured in the game on 2026-11-24:
+
+- `rotationFlags = 16` in the config lays the item on the ground with its Z axis upright
+  and +Z on top. The deck lying in its model stood on its end; standing with its back
+  towards -Z it lay face up; with the back towards +Z it lies back up. `rotationFlags = 32`
+  left it standing on its end.
+- In the hand the Matchbox pose turns the model's -Z towards the thigh, so whatever the
+  underside is shows there. That is why it is the back as well and not the sheet's blank
+  face: no side of the item shows a white block.
+- The picture in the inventory (the slot, the hands, the tooltip) is taken from the
+  Memory LOD's `invView` point, framed by `boundingbox_min` and `boundingbox_max`; without
+  them the camera looked along Z at the deck's edge. `invView` is 0.24 in front of the
+  back, a little aside and above, so the back and two sides show.
+
+### card: one card
+
+One card as a thing: a card of 0.063 x 0.088 with corners rounded to 3.5 mm, two faces
+0.3 mm apart. It STANDS in the model, the face towards -Z, the back towards +Z, as the
+game's own PunchedCard stands (its printed side towards -Z, where its inventory camera
+is). `face` and `back` are the two selections, each one side, and each side takes a whole
+texture stretched over the card (256 x 512): every card of every deck is this one model,
+and what tells them apart is the pictures. The config names the classic deck's; the
+script puts on those of the card's own look (`OZG_Card_Base.OZG_Paint`). The material is
+`OpenZone_Games/data/cards/ozg_card.rvmat`, the deck's matte paper with flat 16 px
+`ozg_card_nohq.paa` and `ozg_card_smdi.paa`.
+
+The Geometry and View Geometry LODs are a box 0.063 x 0.088 x 0.002, 0.002 kg,
+`autocenter = 0`: the origin is the middle of the card, and the PunchedCard pose
+(`OZG_Hand.c`) holds a card so made by its end, the face outwards (seen in the game,
+2026-11-24). `rotationFlags = 16` lays it back up; `invView` is 0.30 in front of the face,
+so the inventory shows the face.
+
+The pictures of a card are `OpenZone_Games/data/cards/<style>/ozg_<style>_<face>_co.paa`
+and `ozg_<style>_back_co.paa`, and the style is in the file's NAME on purpose. Measured
+2026-11-24: with the two decks' pictures named alike in two folders (`classic\c_2s_co.paa`,
+`stalker\c_2s_co.paa`), both decks in one inventory drew the same picture for each card,
+the classic one for some cards and the stalkers' for others, while the script set the
+right path for every card on both sides (checked by printing it). Named apart, each deck
+draws its own.
 
 ### hand: the fan
 
@@ -155,8 +196,8 @@ left:
 
 | Field | Pixels | On the models |
 |---|---|---|
-| the card back, stretched to fill | x 0..255, y 0..511 | the top of the deck, the back of every card of the fan |
-| a blank card face | x 256..511, y 0..383 | the underside of the deck, the face of every card of the fan |
+| the card back, stretched to fill | x 0..255, y 0..511 | the top of the deck, the underside of the deck item, the back of every card of the fan |
+| a blank card face | x 256..511, y 0..383 | the face of every card of the fan |
 | the edge band | x 256..511, y 384..511 | the four sides of the deck |
 
 The models take each field one texel inside its border. In a model the texture is the
@@ -173,9 +214,17 @@ side of the stack none.
 ```
 // the deck
 model = "\OpenZone_Games\models\deck\ozg_deck.p3d";
+rotationFlags = 16;
 hiddenSelections[] = {"camo"};
 hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\ozg_deck_classic_co.paa"};
 hiddenSelectionsMaterials[] = {"OpenZone_Games\data\cards\ozg_deck.rvmat"};
+
+// a card (tools/make_card_items.py writes the fifty-two classes)
+model = "\OpenZone_Games\models\card\ozg_card.p3d";
+rotationFlags = 16;
+hiddenSelections[] = {"face", "back"};
+hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_As_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"};
+hiddenSelectionsMaterials[] = {"OpenZone_Games\data\cards\ozg_card.rvmat", "OpenZone_Games\data\cards\ozg_card.rvmat"};
 
 // the place
 model = "\OpenZone_Games\models\place\ozg_place.p3d";
@@ -259,18 +308,20 @@ Read off the files (2026-11-24):
 - a game point (X, Y, Z) is the Blender point (X, Z, Y) in the exporter, and the corner
   order and the stored normals of the exports agree with those of a model of the series
   that is known to work in the game;
-- the built models: all four are clean for `asset_check` (C1 to C12), both materials of
+- the built models: all five are clean for `asset_check` (C1 to C12), both materials of
   the place were inlined, the selections are in the models, and `sections[]` does split
   the faces (the fan built with an empty `sections[]` is 326 bytes smaller);
-- the bounding centre each built model carries (`measure.py`): 0, 0, 0 for the place, the
-  fan and the mark, the middle of the stack for the deck.
+- the bounding centre each built model carries (`measure.py`): 0, 0, 0 for all five.
+
+Seen in the game (2026-11-24, diag 1.30, the NHChernobyl stand): the deck and the card in
+the inventory, in the hand and on the ground, as written under each; both decks' cards in
+one inventory, each with its own pictures; the classic back with the mark of the series
+in the window and on the 3D things.
 
 Not checked, because only the game can say:
 
 - how the fan sits in a hand: which way it faces and where the fingers are in each pose
   (`BACKS`, `TURN`, `SHIFT`);
-- how the deck sits in a hand and lies on the ground (`TURN` in `deck.py`, `rotationFlags`
-  in the config);
 - how bright the mark is by day and by night (the fourth number of `emmisive[]`), and
   that its glow keeps the material's colour whatever the texture is;
 - the mark as an item with no geometry at all: that nothing meets it, and that it stands

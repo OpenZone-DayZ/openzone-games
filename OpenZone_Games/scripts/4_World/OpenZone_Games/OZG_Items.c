@@ -13,12 +13,16 @@ class OZG_Decks
     // tells the clients; both sides read the same config in the same order.
     protected static ref array<string> s_Styles;
     protected static ref array<string> s_Sheets;
+    // The pictures of a look's single cards: the path of their files up to
+    // the face (the deck's ozgCards), which <face>_co.paa and back_co.paa end.
+    protected static ref array<string> s_Cards;
 
     protected static void Load()
     {
         s_Classes = new array<string>();
         s_Styles = new array<string>();
         s_Sheets = new array<string>();
+        s_Cards = new array<string>();
         int n = GetGame().ConfigGetChildrenCount("CfgVehicles");
         string name;
         for (int i = 0; i < n; i++)
@@ -34,6 +38,7 @@ class OZG_Decks
             {
                 s_Styles.Insert(style);
                 s_Sheets.Insert(GetGame().ConfigGetTextOut("CfgVehicles " + name + " ozgSheet"));
+                s_Cards.Insert(GetGame().ConfigGetTextOut("CfgVehicles " + name + " ozgCards"));
             }
         }
         OZG_Log.Dbg("decks: " + s_Classes.Count().ToString() + " in config");
@@ -114,11 +119,39 @@ class OZG_Decks
         return s_Sheets[look];
     }
 
+    // The picture of one card's face in a look, and of the look's back; ""
+    // when the look names no single cards.
+    static string CardFaceAt(int look, string face)
+    {
+        string path = CardsAt(look);
+        if (path == "" || face == "")
+            return "";
+        return path + face + "_co.paa";
+    }
+
+    static string CardBackAt(int look)
+    {
+        string path = CardsAt(look);
+        if (path == "")
+            return "";
+        return path + "back_co.paa";
+    }
+
+    protected static string CardsAt(int look)
+    {
+        if (!s_Classes)
+            Load();
+        if (look < 0 || look >= s_Cards.Count())
+            return "";
+        return s_Cards[look];
+    }
+
     static void Reset()
     {
         s_Classes = null;
         s_Styles = null;
         s_Sheets = null;
+        s_Cards = null;
     }
 }
 

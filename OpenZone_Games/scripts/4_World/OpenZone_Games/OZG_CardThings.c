@@ -34,6 +34,7 @@ class OZG_Card_Base extends ItemBase
         m_OZG_Style = style;
         m_OZG_Look = OZG_Decks.LookOfStyle(style);
         SetSynchDirty();
+        OZG_Paint();
     }
 
     override void OnVariablesSynchronized()
@@ -48,20 +49,25 @@ class OZG_Card_Base extends ItemBase
         OZG_Paint();
     }
 
-    // A client: the thing wears the sheet of its look.
+    // The card wears its own face and the back of its look, one picture on
+    // each side. Done on the server as well as on each client: the game's own
+    // food changes its pictures on the server, and that is what the inventory
+    // shows; the config's pictures are those of the first look.
     protected void OZG_Paint()
     {
-        if (!GetGame() || GetGame().IsDedicatedServer())
+        if (!GetGame())
             return;
         if (m_OZG_Painted == m_OZG_Look)
             return;
         m_OZG_Painted = m_OZG_Look;
-        string sheet = OZG_Decks.SheetAt(m_OZG_Look);
-        if (sheet == "")
-            return;
-        int at = GetHiddenSelectionIndex("camo");
-        if (at >= 0)
-            SetObjectTexture(at, sheet);
+        string face = OZG_Decks.CardFaceAt(m_OZG_Look, OZG_Face());
+        string back = OZG_Decks.CardBackAt(m_OZG_Look);
+        int at = GetHiddenSelectionIndex("face");
+        if (at >= 0 && face != "")
+            SetObjectTexture(at, face);
+        at = GetHiddenSelectionIndex("back");
+        if (at >= 0 && back != "")
+            SetObjectTexture(at, back);
     }
 
     override void OnStoreSave(ParamsWriteContext ctx)
@@ -92,6 +98,7 @@ class OZG_Card_Base extends ItemBase
             return;
         m_OZG_Look = OZG_Decks.LookOfStyle(m_OZG_Style);
         SetSynchDirty();
+        OZG_Paint();
     }
 }
 

@@ -37,9 +37,10 @@ MOD = "OpenZone_Games"
 # The LOD types of the exporter (utilities/data.py, class LOD), as the text it stores.
 VISUAL = "0"
 GEOMETRY = "6"
+MEMORY = "9"
 VIEW_GEOMETRY = "14"
 FIRE_GEOMETRY = "15"
-LOD_NAMES = {VISUAL: "Resolution", GEOMETRY: "Geometry", VIEW_GEOMETRY: "View Geometry",
+LOD_NAMES = {VISUAL: "Resolution", GEOMETRY: "Geometry", MEMORY: "Memory", VIEW_GEOMETRY: "View Geometry",
              FIRE_GEOMETRY: "Fire Geometry"}
 
 # What a bullet meets in the Fire Geometry: the game's own materials.
@@ -270,11 +271,12 @@ class Lod:
         for points, facing in sides:
             self.face(part, points, None, facing, mat)
 
-    def stack(self, part, middle, turn_deg, mat, underside=True):
+    def stack(self, part, middle, turn_deg, mat, underside=True, back_under=False):
         """The deck as a stack of cards lying face down, CARD_WIDE along its own right and
         CARD_LONG along its own forward, DECK_HIGH tall. `middle` is the middle of its
         underside; `turn_deg` turns it clockwise seen from above. The top is the card
-        back, the underside the blank face, the four sides the edge band."""
+        back, the underside the blank face (the back too with `back_under`), the four
+        sides the edge band."""
         t = math.radians(turn_deg)
         right = Vector((math.cos(t), 0.0, -math.sin(t)))
         ahead = Vector((math.sin(t), 0.0, math.cos(t)))
@@ -285,7 +287,8 @@ class Lod:
         self.rect(part, c - right * w - ahead * d + up * DECK_HIGH, right, ahead, CARD_WIDE, CARD_LONG,
                   SHEET_BACK, mat)
         if underside:
-            self.rect(part, c + right * w - ahead * d, -right, ahead, CARD_WIDE, CARD_LONG, SHEET_FACE, mat)
+            self.rect(part, c + right * w - ahead * d, -right, ahead, CARD_WIDE, CARD_LONG,
+                      SHEET_BACK if back_under else SHEET_FACE, mat)
         self.rect(part, c - right * w - ahead * d, right, up, CARD_WIDE, DECK_HIGH, SHEET_EDGE, mat)
         self.rect(part, c + right * w + ahead * d, -right, up, CARD_WIDE, DECK_HIGH, SHEET_EDGE, mat)
         self.rect(part, c + right * w - ahead * d, ahead, up, CARD_LONG, DECK_HIGH, SHEET_EDGE, mat)
@@ -312,7 +315,7 @@ class Lod:
         bm.free()
         for mat in self.materials:
             mesh.materials.append(mat)
-        if lod != VISUAL:
+        if lod != VISUAL and len(mesh.uv_layers):
             # The exporter drops the pictures of every LOD that is not looked at.
             mesh.uv_layers.remove(mesh.uv_layers[0])
 
@@ -340,6 +343,38 @@ class Lod:
             wanted = parts or tuple(members)
             group.add([i for part in wanted for i in members[part]], 1.0, 'REPLACE')
         return ob
+
+
+def memory(name, points):
+    """The Memory LOD: named points with no faces, in the MODEL's frame (no pose).
+
+    What the game reads from it for an item (measured 2026-11-24 against the game's own
+    Paper, PunchedCard, Cassette and Matchbox, and read in scripts/3_game/gameplay.c and
+    5_mission/gui/inventorynew/containeditems/icon.c): the inventory draws an item's picture
+    with the camera at `invView`, framed by `boundingbox_min` and `boundingbox_max`
+    (view 0; `invView2` with `boundingbox_min2` / `boundingbox_max2` would be view 1, for
+    attachment slots and the ground). The game's own items also carry `ce_center` and
+    `ce_radius`. Without these points the camera looks along Z at the model's middle."""
+    lod = Lod()
+    for point_name, where in points:
+        lod.point(point_name, where)
+        lod.select(point_name, point_name)
+    return lod.finish(name, MEMORY, 0)
+
+
+def card_outline(width, height, radius, steps=4):
+    """A card's outline round its middle, its corners rounded: (x, y) points in order round
+    it. Which way round does not matter: face() turns a face the way it is told to look."""
+    out = []
+    corners = ((width / 2 - radius, height / 2 - radius, 0.0),
+               (-width / 2 + radius, height / 2 - radius, 90.0),
+               (-width / 2 + radius, -height / 2 + radius, 180.0),
+               (width / 2 - radius, -height / 2 + radius, 270.0))
+    for cx, cy, start in corners:
+        for i in range(steps + 1):
+            a = math.radians(start + 90.0 * i / steps)
+            out.append((cx + radius * math.cos(a), cy + radius * math.sin(a)))
+    return out
 
 
 def geometry(name, lod, lo, hi, mass=0.0, props=(), mat=None, pose=None):

@@ -12,7 +12,7 @@ class CfgPatches
 {
     class OpenZone_Games
     {
-        units[] = {"OZG_Deck_Classic", "OZG_Deck_Zone", "OZG_Deck_Stalker", "OZG_Deck_Classic_Sharp", "OZG_Deck_Zone_Sharp", "OZG_Deck_Stalker_Sharp"};
+        units[] = {"OZG_Deck_Classic", "OZG_Deck_Stalker", "OZG_Deck_Classic_Sharp", "OZG_Deck_Stalker_Sharp"};
         weapons[] = {};
         requiredVersion = 0.1;
         // Hard dependencies: a blocking window before the game loads rather
@@ -58,7 +58,6 @@ class CfgMods
                 files[] =
                 {
                     "OpenZone_Games/gui/imagesets/ozg_cards_classic.imageset",
-                    "OpenZone_Games/gui/imagesets/ozg_cards_zone.imageset",
                     "OpenZone_Games/gui/imagesets/ozg_cards_stalker.imageset"
                 };
             };
@@ -147,11 +146,17 @@ class CfgVehicles
     //
     // A deck is a config class and its art; no script is needed to add one.
     // Another mod adds a deck with a class that inherits OZG_Deck_Base, an
-    // imageset of its own, ozg_cards_<ozgStyle>, and a sheet for the 3D
-    // things, ozgSheet (the back on its left half, a blank face and the edges
-    // of a stack on its right). A deck holds cards, which are things, in slots
-    // that take any card: a new deck fills itself with the fifty-two of its
-    // own look, and what it holds after that is its owner's business.
+    // imageset of its own, ozg_cards_<ozgStyle>, a sheet for the 3D things,
+    // ozgSheet (the back on its left half, a blank face and the edges of a
+    // stack on its right), and the single cards' pictures, ozgCards: the path
+    // of their files up to the face, which the script ends with <face>_co.paa
+    // and back_co.paa (256 x 512, tools/make_cards.py). The file names must
+    // be no other deck's: the game took two textures of one file name in two
+    // folders for one texture (measured 2026-11-24), hence ozg_<style>_ in
+    // each name and not only a folder of the deck's own. A deck holds cards,
+    // which are things, in slots that take any card: a new deck fills itself
+    // with the fifty-two of its own look, and what it holds after that is its
+    // owner's business.
     class OZG_Deck_Base: Inventory_Base
     {
         scope = 0;
@@ -167,9 +172,11 @@ class CfgVehicles
         hiddenSelectionsMaterials[] = {"OpenZone_Games\data\cards\ozg_deck.rvmat"};
         // What the hologram shows while the deck is being laid out.
         projectionTypename = "OZG_PlacePlacing";
-        // The style the cards are drawn in, and the sheet the 3D things wear.
+        // The style the cards are drawn in, the sheet the 3D things wear and
+        // where the pictures of its single cards lie.
         ozgStyle = "classic";
         ozgSheet = "OpenZone_Games\data\cards\ozg_deck_classic_co.paa";
+        ozgCards = "OpenZone_Games\data\cards\classic\ozg_classic_";
         // A laid-out game keeps its deck in this slot of the place.
         inventorySlot[] = {"OZG_DeckHold"};
 // >>> generated: deck slots
@@ -191,15 +198,6 @@ class CfgVehicles
         displayName = "$STR_OZG_DECK_CLASSIC";
     };
 
-    class OZG_Deck_Zone: OZG_Deck_Base
-    {
-        scope = 2;
-        displayName = "$STR_OZG_DECK_ZONE";
-        hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\ozg_deck_zone_co.paa"};
-        ozgStyle = "zone";
-        ozgSheet = "OpenZone_Games\data\cards\ozg_deck_zone_co.paa";
-    };
-
     // The stalkers' deck: a worn one whose aces and kings carry stalkers and
     // whose queens, jacks and tens carry mutants. The pictures on those twenty
     // cards are GSC Game World's, from the S.T.A.L.K.E.R. games (see NOTICE).
@@ -210,6 +208,7 @@ class CfgVehicles
         hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\ozg_deck_stalker_co.paa"};
         ozgStyle = "stalker";
         ozgSheet = "OpenZone_Games\data\cards\ozg_deck_stalker_co.paa";
+        ozgCards = "OpenZone_Games\data\cards\stalker\ozg_stalker_";
     };
 
     // A card sharp's deck: the same deck outside, ten empty slots more
@@ -228,22 +227,6 @@ class CfgVehicles
             "OZG_Card61", "OZG_Card62"
         };
 // <<< generated: sharp slots, classic
-    };
-
-    class OZG_Deck_Zone_Sharp: OZG_Deck_Zone
-    {
-// >>> generated: sharp slots, zone
-        attachments[] =
-        {
-            "OZG_Card01", "OZG_Card02", "OZG_Card03", "OZG_Card04", "OZG_Card05", "OZG_Card06", "OZG_Card07", "OZG_Card08", "OZG_Card09", "OZG_Card10",
-            "OZG_Card11", "OZG_Card12", "OZG_Card13", "OZG_Card14", "OZG_Card15", "OZG_Card16", "OZG_Card17", "OZG_Card18", "OZG_Card19", "OZG_Card20",
-            "OZG_Card21", "OZG_Card22", "OZG_Card23", "OZG_Card24", "OZG_Card25", "OZG_Card26", "OZG_Card27", "OZG_Card28", "OZG_Card29", "OZG_Card30",
-            "OZG_Card31", "OZG_Card32", "OZG_Card33", "OZG_Card34", "OZG_Card35", "OZG_Card36", "OZG_Card37", "OZG_Card38", "OZG_Card39", "OZG_Card40",
-            "OZG_Card41", "OZG_Card42", "OZG_Card43", "OZG_Card44", "OZG_Card45", "OZG_Card46", "OZG_Card47", "OZG_Card48", "OZG_Card49", "OZG_Card50",
-            "OZG_Card51", "OZG_Card52", "OZG_Card53", "OZG_Card54", "OZG_Card55", "OZG_Card56", "OZG_Card57", "OZG_Card58", "OZG_Card59", "OZG_Card60",
-            "OZG_Card61", "OZG_Card62"
-        };
-// <<< generated: sharp slots, zone
     };
 
     class OZG_Deck_Stalker_Sharp: OZG_Deck_Stalker
@@ -265,21 +248,23 @@ class CfgVehicles
     // ------------------------------------------------------------ cards
     //
     // One class a face, written by tools/make_card_items.py. A card fits every
-    // card slot. Its back is the look of the deck it was made for, which the
-    // script keeps and tells the clients; the model and the picture are the
-    // deck's own until a card has art of its own.
+    // card slot. Its look is the deck it was made for, which the script keeps
+    // and tells the clients. Every card is one model, ozg_card.p3d, with two
+    // sides: `face` wears that card's picture in its look and `back` the look's
+    // back. The config names the classic deck's pictures; the script puts on
+    // those of the card's own look (OZG_Card_Base.OZG_Paint).
 // >>> generated: cards
     class OZG_Card_Base: Inventory_Base
     {
         scope = 0;
         descriptionShort = "$STR_OZG_CARD_DESC";
-        model = "\OpenZone_Games\models\deck\ozg_deck.p3d";
+        model = "\OpenZone_Games\models\card\ozg_card.p3d";
         itemSize[] = {1, 1};
         weight = 2;
         rotationFlags = 16;
-        hiddenSelections[] = {"camo"};
-        hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\ozg_deck_classic_co.paa"};
-        hiddenSelectionsMaterials[] = {"OpenZone_Games\data\cards\ozg_deck.rvmat"};
+        hiddenSelections[] = {"face", "back"};
+        hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_As_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"};
+        hiddenSelectionsMaterials[] = {"OpenZone_Games\data\cards\ozg_card.rvmat", "OpenZone_Games\data\cards\ozg_card.rvmat"};
         ozgFace = "";
         inventorySlot[] =
         {
@@ -292,58 +277,58 @@ class CfgVehicles
             "OZG_Card61", "OZG_Card62"
         };
     };
-    class OZG_Card_2s: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_2S"; ozgFace = "2s"; };
-    class OZG_Card_3s: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_3S"; ozgFace = "3s"; };
-    class OZG_Card_4s: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_4S"; ozgFace = "4s"; };
-    class OZG_Card_5s: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_5S"; ozgFace = "5s"; };
-    class OZG_Card_6s: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_6S"; ozgFace = "6s"; };
-    class OZG_Card_7s: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_7S"; ozgFace = "7s"; };
-    class OZG_Card_8s: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_8S"; ozgFace = "8s"; };
-    class OZG_Card_9s: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_9S"; ozgFace = "9s"; };
-    class OZG_Card_Ts: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_TS"; ozgFace = "Ts"; };
-    class OZG_Card_Js: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_JS"; ozgFace = "Js"; };
-    class OZG_Card_Qs: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_QS"; ozgFace = "Qs"; };
-    class OZG_Card_Ks: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_KS"; ozgFace = "Ks"; };
-    class OZG_Card_As: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_AS"; ozgFace = "As"; };
-    class OZG_Card_2h: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_2H"; ozgFace = "2h"; };
-    class OZG_Card_3h: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_3H"; ozgFace = "3h"; };
-    class OZG_Card_4h: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_4H"; ozgFace = "4h"; };
-    class OZG_Card_5h: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_5H"; ozgFace = "5h"; };
-    class OZG_Card_6h: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_6H"; ozgFace = "6h"; };
-    class OZG_Card_7h: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_7H"; ozgFace = "7h"; };
-    class OZG_Card_8h: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_8H"; ozgFace = "8h"; };
-    class OZG_Card_9h: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_9H"; ozgFace = "9h"; };
-    class OZG_Card_Th: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_TH"; ozgFace = "Th"; };
-    class OZG_Card_Jh: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_JH"; ozgFace = "Jh"; };
-    class OZG_Card_Qh: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_QH"; ozgFace = "Qh"; };
-    class OZG_Card_Kh: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_KH"; ozgFace = "Kh"; };
-    class OZG_Card_Ah: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_AH"; ozgFace = "Ah"; };
-    class OZG_Card_2d: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_2D"; ozgFace = "2d"; };
-    class OZG_Card_3d: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_3D"; ozgFace = "3d"; };
-    class OZG_Card_4d: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_4D"; ozgFace = "4d"; };
-    class OZG_Card_5d: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_5D"; ozgFace = "5d"; };
-    class OZG_Card_6d: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_6D"; ozgFace = "6d"; };
-    class OZG_Card_7d: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_7D"; ozgFace = "7d"; };
-    class OZG_Card_8d: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_8D"; ozgFace = "8d"; };
-    class OZG_Card_9d: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_9D"; ozgFace = "9d"; };
-    class OZG_Card_Td: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_TD"; ozgFace = "Td"; };
-    class OZG_Card_Jd: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_JD"; ozgFace = "Jd"; };
-    class OZG_Card_Qd: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_QD"; ozgFace = "Qd"; };
-    class OZG_Card_Kd: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_KD"; ozgFace = "Kd"; };
-    class OZG_Card_Ad: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_AD"; ozgFace = "Ad"; };
-    class OZG_Card_2c: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_2C"; ozgFace = "2c"; };
-    class OZG_Card_3c: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_3C"; ozgFace = "3c"; };
-    class OZG_Card_4c: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_4C"; ozgFace = "4c"; };
-    class OZG_Card_5c: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_5C"; ozgFace = "5c"; };
-    class OZG_Card_6c: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_6C"; ozgFace = "6c"; };
-    class OZG_Card_7c: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_7C"; ozgFace = "7c"; };
-    class OZG_Card_8c: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_8C"; ozgFace = "8c"; };
-    class OZG_Card_9c: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_9C"; ozgFace = "9c"; };
-    class OZG_Card_Tc: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_TC"; ozgFace = "Tc"; };
-    class OZG_Card_Jc: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_JC"; ozgFace = "Jc"; };
-    class OZG_Card_Qc: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_QC"; ozgFace = "Qc"; };
-    class OZG_Card_Kc: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_KC"; ozgFace = "Kc"; };
-    class OZG_Card_Ac: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_AC"; ozgFace = "Ac"; };
+    class OZG_Card_2s: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_2S"; ozgFace = "2s"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_2s_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_3s: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_3S"; ozgFace = "3s"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_3s_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_4s: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_4S"; ozgFace = "4s"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_4s_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_5s: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_5S"; ozgFace = "5s"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_5s_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_6s: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_6S"; ozgFace = "6s"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_6s_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_7s: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_7S"; ozgFace = "7s"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_7s_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_8s: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_8S"; ozgFace = "8s"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_8s_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_9s: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_9S"; ozgFace = "9s"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_9s_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_Ts: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_TS"; ozgFace = "Ts"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_Ts_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_Js: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_JS"; ozgFace = "Js"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_Js_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_Qs: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_QS"; ozgFace = "Qs"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_Qs_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_Ks: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_KS"; ozgFace = "Ks"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_Ks_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_As: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_AS"; ozgFace = "As"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_As_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_2h: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_2H"; ozgFace = "2h"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_2h_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_3h: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_3H"; ozgFace = "3h"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_3h_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_4h: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_4H"; ozgFace = "4h"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_4h_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_5h: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_5H"; ozgFace = "5h"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_5h_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_6h: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_6H"; ozgFace = "6h"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_6h_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_7h: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_7H"; ozgFace = "7h"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_7h_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_8h: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_8H"; ozgFace = "8h"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_8h_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_9h: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_9H"; ozgFace = "9h"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_9h_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_Th: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_TH"; ozgFace = "Th"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_Th_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_Jh: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_JH"; ozgFace = "Jh"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_Jh_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_Qh: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_QH"; ozgFace = "Qh"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_Qh_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_Kh: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_KH"; ozgFace = "Kh"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_Kh_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_Ah: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_AH"; ozgFace = "Ah"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_Ah_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_2d: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_2D"; ozgFace = "2d"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_2d_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_3d: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_3D"; ozgFace = "3d"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_3d_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_4d: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_4D"; ozgFace = "4d"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_4d_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_5d: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_5D"; ozgFace = "5d"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_5d_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_6d: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_6D"; ozgFace = "6d"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_6d_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_7d: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_7D"; ozgFace = "7d"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_7d_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_8d: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_8D"; ozgFace = "8d"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_8d_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_9d: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_9D"; ozgFace = "9d"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_9d_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_Td: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_TD"; ozgFace = "Td"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_Td_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_Jd: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_JD"; ozgFace = "Jd"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_Jd_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_Qd: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_QD"; ozgFace = "Qd"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_Qd_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_Kd: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_KD"; ozgFace = "Kd"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_Kd_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_Ad: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_AD"; ozgFace = "Ad"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_Ad_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_2c: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_2C"; ozgFace = "2c"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_2c_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_3c: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_3C"; ozgFace = "3c"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_3c_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_4c: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_4C"; ozgFace = "4c"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_4c_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_5c: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_5C"; ozgFace = "5c"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_5c_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_6c: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_6C"; ozgFace = "6c"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_6c_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_7c: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_7C"; ozgFace = "7c"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_7c_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_8c: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_8C"; ozgFace = "8c"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_8c_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_9c: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_9C"; ozgFace = "9c"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_9c_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_Tc: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_TC"; ozgFace = "Tc"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_Tc_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_Jc: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_JC"; ozgFace = "Jc"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_Jc_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_Qc: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_QC"; ozgFace = "Qc"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_Qc_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_Kc: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_KC"; ozgFace = "Kc"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_Kc_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_Ac: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_AC"; ozgFace = "Ac"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_Ac_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
 // <<< generated: cards
 
     // ------------------------------------------------------------ the place

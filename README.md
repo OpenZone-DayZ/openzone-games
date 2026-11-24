@@ -18,8 +18,8 @@ first game is durak, podkidnoy and perevodnoy. Class prefix `OZG_`; runs with
 
 ## Status: a game can be played (2026-11-24); nothing is published
 
-- **A deck** is a container of its cards, fifty-two items in fifty-two slots, in three
-  looks (classic, worn, and the stalkers' deck with stalkers and mutants on its picture
+- **A deck** is a container of its cards, fifty-two items in fifty-two slots, in two
+  looks (the classic deck, and the stalkers' deck with stalkers and mutants on its picture
   cards); a card sharp's deck of either look has ten empty slots more. A game is dealt
   from the cards the deck really holds: fewer, or with further cards of a face. Gathering
   the game gives the very deck back. With it in hands a player takes "Choose placement":
@@ -27,6 +27,10 @@ first game is durak, podkidnoy and perevodnoy. Class prefix `OZG_`; runs with
   what kind, or why the spot is refused. A key steps through the seat modes (guessed,
   standing, sitting, on the floor). "Lay out the game", held, puts the mat with the deck
   there.
+- **A card is a thing too**: one model for all, each card wearing its own face and its
+  deck's back. A deck's slots show the faces, the deck shows its back (the classic one
+  carries the mark of OpenZone); a deck is held in the palm, a single card by its end, and
+  both lie back up on the ground.
 - **Seats** are worked out around the mat in one of three layouts: standing or sitting on
   the floor below a raised thing the mat lies on (a table, a wall's top, a crate), or
   sitting on the level of the mat itself. A player turns to the mat, is shown the free
@@ -59,9 +63,9 @@ No key, no `mod.cpp`, no Workshop item: nothing is published without the owner's
 | `OpenZone_Games/` | the mod: scripts, config, layouts, card imagesets, models |
 | `OpenZone_Games_Bridge/` | stand tool, server only: the `oz_games` verb, bots, the `!ozg` chat commands |
 | `TableGamesProbe/`, `TableGamesProbe_Bridge/` | stand tool of the first measurements ([docs/probe.md](docs/probe.md)) |
-| `tools/` | `make_cards.py` (the three decks' art), `make_card_items.py` (the card items, their slots and names), `make_layouts.py` (the window), `stringtable.py`, `analyze.py` |
+| `tools/` | `make_cards.py` (the two decks' art), `make_card_items.py` (the card items, their slots and names), `make_layouts.py` (the window), `stringtable.py`, `analyze.py` |
 | `art/` | sources of the cards and the font of their letters (Oswald, SIL Open Font License) |
-| `models/` | sources of the four models and how they are built ([models/README.md](models/README.md)) |
+| `models/` | sources of the five models and how they are built ([models/README.md](models/README.md)) |
 | `docs/` | plans, records, measurements, an example for a server's economy |
 
 The three stand tools are never published and no server should load them.
@@ -84,8 +88,11 @@ the lines for `types.xml`, with a nominal of 0 for an admin to raise.
 перевідний.
 
 Стан на 2026-11-24: у гру можна грати. Колода — вмістище своїх карт: п'ятдесят дві
-карти-предмети у п'ятдесяти двох слотах (три вигляди: класична, потерта і сталкерська, зі сталкерами та мутантами на картах; шулерська колода має ще десять
-порожніх слотів). Роздають з того, що в колоді справді є, а зібравши гру, гравець
+карти-предмети у п'ятдесяти двох слотах (два вигляди: класична і сталкерська, зі сталкерами та мутантами на картах; шулерська колода має ще десять
+порожніх слотів). Карта теж предмет: одна модель на всі, кожна з власним лицем і сорочкою
+своєї колоди; у слотах колоди видно лиця, сама колода показує сорочку (на класичній — знак
+OpenZone), колоду тримають у долоні, одну карту — за край, і обидві лягають на землю
+сорочкою догори. Роздають з того, що в колоді справді є, а зібравши гру, гравець
 отримує назад ту саму колоду. З нею в руках
 гравець обирає місце, голограма килимка показує, скільки там місць і яких, або чому місце
 не годиться. Місця навколо обчислює мод: стоячи біля столу або сидячи на землі. Партію

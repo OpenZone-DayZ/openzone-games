@@ -140,9 +140,10 @@ class OZG_Hand extends ItemBase
     }
 }
 
-// How the mod's two hand-held things are held: with the game's own poses, no
-// animation is added. The fan as a sheet of paper is held, the deck as a
-// small box.
+// How the mod's hand-held things are held: with the game's own poses, no
+// animation is added. The fan as a sheet of paper is held; the deck as the
+// matchbox, which stands in its model as the deck does; one card as the
+// punched card, held by its end (models/README.md).
 modded class ModItemRegisterCallbacks
 {
     override void RegisterOneHanded(DayZPlayerType pType, DayzPlayerItemBehaviorCfg pBehavior)
@@ -150,5 +151,6 @@ modded class ModItemRegisterCallbacks
         super.RegisterOneHanded(pType, pBehavior);
         pType.AddItemInHandsProfileIK("OZG_Hand", "dz/anims/workspaces/player/player_main/player_main_1h.asi", pBehavior, "dz/anims/anm/player/ik/gear/paper.anm");
         pType.AddItemInHandsProfileIK("OZG_Deck_Base", "dz/anims/workspaces/player/player_main/player_main_1h.asi", pBehavior, "dz/anims/anm/player/ik/gear/Matchbox.anm");
+        pType.AddItemInHandsProfileIK("OZG_Card_Base", "dz/anims/workspaces/player/player_main/player_main_1h.asi", pBehavior, "dz/anims/anm/player/ik/gear/PunchedCard.anm");
     }
 }

@@ -13,6 +13,8 @@ It writes the PNG sources the shipped .paa are converted from (asset_convert):
     models/cards/data/ozg_deck_smdi.png             64  the deck sheet's shine
     models/mark/data/ozg_mark_nohq.png              16  flat
     models/mark/data/ozg_mark_smdi.png              16  no shine
+    models/cards/data/ozg_card_nohq.png             16  one card: flat
+    models/cards/data/ozg_card_smdi.png             16  one card: a soft sheen
 
 Everything is drawn from fixed seeds: a second run gives the same pictures.
 
@@ -477,6 +479,9 @@ def main():
     save(deck_shine(), "cards", "data", "ozg_deck_smdi.png")
     save(flat(16, (128, 128, 255)), "mark", "data", "ozg_mark_nohq.png")
     save(flat(16, (255, 0, 0)), "mark", "data", "ozg_mark_smdi.png")
+    # One card: flat, with the soft sheen of a coated card on both sides.
+    save(flat(16, (128, 128, 255)), "cards", "data", "ozg_card_nohq.png")
+    save(flat(16, (255, 22, 77)), "cards", "data", "ozg_card_smdi.png")
 
 
 if __name__ == "__main__":

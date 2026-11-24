@@ -455,12 +455,8 @@ class OZG_Bots
         if (cmd == "deck")
         {
             string deck = "OZG_Deck_Classic";
-            if (arg == "zone")
-                deck = "OZG_Deck_Zone";
             if (arg == "sharp")
                 deck = "OZG_Deck_Classic_Sharp";
-            if (arg == "zonesharp")
-                deck = "OZG_Deck_Zone_Sharp";
             if (arg == "stalker")
                 deck = "OZG_Deck_Stalker";
             if (arg == "stalkersharp")
@@ -560,7 +556,7 @@ class OZG_Bots
             return;
         }
 
-        Reply(player, "!ozg deck [zone|stalker|sharp|zonesharp|stalkersharp] | table | bots [n] | pause | clear | noon | day | feed");
+        Reply(player, "!ozg deck [stalker|sharp|stalkersharp] | table | bots [n] | pause | clear | noon | day | feed");
     }
 }
 
