@@ -3212,7 +3212,7 @@ Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 - Modify: `E:\openzone\docs\specs\2026-11-24-openzone-games-cardsharp-design.md` (status of phase 1; anything the build decided otherwise)
 - Modify: the `dayz-modding` skill and the `openzone` skill (own lines only)
 
-- [ ] **Step 1: One game by hand of the client, start to end**
+- [x] **Step 1: One game by hand of the client, start to end**
 
 On a fresh boot with the client, at the runway: `oz_games {"op":"chat","text":"!ozg deck"}`, `oz_games {"op":"chat","text":"!ozg table"}`, lay the deck out on the table by the hologram (Task 4's way, the aim on the table's top), `oz_games {"op":"bots","id":"0","n":"2"}`, deal, play three moves by clicks, fold by the button. Shots: the lobby (`ui_find` for `OZG_BtnCount` finds nothing: the count was taken out, Task 7's note), a bout, the deck back in the hands after the fold, and the inventory open on that deck: its slots are how a deck is counted now. Send them to the owner.
 
@@ -3224,7 +3224,7 @@ Sixty-three slots more against the slot table of a server with many mods (spec �
 
 When the owner says "not now", the record says "not measured" in plain words and phase 1 is not called done.
 
-- [ ] **Step 3: The record**
+- [x] **Step 3: The record**
 
 `docs/2026-11-24-cards-as-things-record.md`, in the shape of `docs/2026-11-24-phases-2-6-record.md`:
 
@@ -3236,11 +3236,11 @@ When the owner says "not now", the record says "not measured" in plain words and
 - the engine facts found (they are in the skill; here a line each and the pointer);
 - what is not done: marks, noticing, sleights (phases 2 to 4); a card's own model and picture; the table from a card in a game to its item, which phase 2 needs for marks (a game keeps names and looks; the items are read anew at each deal); traders taking a deck with its cards; how long a loose card the economy has no line for lies on the ground; `OZG_Session.Blank`'s ring worked out with nobody near (an older defect); and whatever Step 2 left.
 
-- [ ] **Step 4: What a person tries**
+- [x] **Step 4: What a person tries**
 
 `docs/test-commands.md`: rows for `!ozg deck sharp` and `!ozg deck zonesharp`; a short part "The deck is a box of cards" (take a card out, lay the deck out short of it, gather, count it by its slots; put more cards in than a deck has room for); in "The verb for scripts" the ops `cards`, `pull`, `undeck`, `stuff`, `held`, `loose`, and `begin`'s `cards=` and `looks=`; a line that a deck from before this build is empty and `!ozg deck` gives a new one. `README.md`: the status paragraph says that a deck is a container of its cards and that a deal is dealt from what it holds; the line about `docs/examples` says "the decks and the cards".
 
-- [ ] **Step 5: The spec, the skills, the commit**
+- [x] **Step 5: The spec, the skills, the commit**
 
 The spec: its status line says phase 1 is built and names the record; every place where the build decided otherwise is amended (none is expected beyond what was amended when this plan was written: §3.1, §3.2, §3.3, §3.4, §9).
 
@@ -3253,6 +3253,15 @@ git commit -m "Cards as things: the record, and how one person tries it
 
 Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 ```
+
+**Done 2026-11-24, all but Step 2.**
+
+- **Step 1**, on the build without the count (`ec20992`). World 83, the runway, a kitchen table from `!ozg table`: the hologram on the table's top said "Seats: 8 — standing, guessed"; after the hold `held: deck OZG_Deck_Classic slots=52 cards=52 free=0 faces=52 looks=0:52 beside=0` and the window open on the lobby with "Variant", "Deal", "Stand up", "Fold the game" and no count (`ui_find` for `OZG_BtnCount`: 0 of 170; `ask count`: `refused STR_OZG_SAY_CANNOT`). Two bots, "Deal" pressed: `trump=Td stock=18 ... hands=0:6,3:6,5:6`. Three moves by clicks: `7c` (`table=7c/Jc`), `9c` thrown in (`9c/Ac`), "Pass" (`dis=12 stock=6`). "Fold the game" and its "yes": `sessions=0 places=0`, the deck in the hands `cards=52 free=0`. World 84, the wall in Rostok, the mat on the wall's top (the top is 0.87 m over the step: `level` read 108.41 against 107.54) and the placer on the step at 6081.7 107.58 6030.21: "Seats: 3 — standing, guessed", `held: ... cards=52 ... beside=0`, three seats on the step at 107.55, `trump=7c stock=18`, a card thrown in by a click (`6s/Ts`), folded by the button, `cards=52` in the hands.
+- **Not asked by this plan and done on the way.** A client in Ukrainian (the engine's "Russian" slot): the aiming panel, the deck's name, the window and the refusal "У колоді замало карт для цієї гри" from a deck holding eleven cards of the game's set for two players. The inventory by hand, with the real mouse: a card dragged out of its slot into the shirt (`cards=27` to `26`) and back onto an empty slot (`27`); a card dropped on the deck's picture swaps the hands; a double click takes nothing out; the cursor names a card in its slot. And a defect of the stand's tool that stood in the way: a bot whose game was folded kept its body (`OZG_Bots.Clear` walked the sessions only), three of them blocked the next hologram on the wall's step; the tool now remembers its bots and its tick sends away those that sit at no session (after a fold `world_entities` for `SurvivorBase` said 0 within four seconds).
+- **A deck from before this build is empty**, as the plan said it would be: world 84's character carried one, `slots=52 cards=0 free=52`. It was replaced with a new one.
+- **Step 2 is open.** Which stand carries a heavy pack and whether it may be booted with this mod added is the owner's to say; nothing was booted for it. The record and the spec say so, and neither calls phase 1 done.
+- **Step 3**: `docs/2026-11-24-cards-as-things-record.md`. **Step 4**: `docs/test-commands.md` and `README.md`.
+- **Step 5**: the spec's status line and §3.5, §6.8, §7, §9 to §12. The skills: `dayz-modding` `a38c2fe` (two new sections; `check-generic.py` printed nothing), `openzone` `065a404`; in both only this work's lines were staged, and nothing was pushed.
 
 ---
 

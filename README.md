@@ -8,7 +8,10 @@ first game is durak, podkidnoy and perevodnoy. Class prefix `OZG_`; runs with
 
 ## Status: a game can be played (2026-11-24); nothing is published
 
-- **A deck** is an item, in two looks. With it in hands a player takes "Choose placement":
+- **A deck** is a container of its cards, fifty-two items in fifty-two slots, in two
+  looks; a card sharp's deck of either look has ten empty slots more. A game is dealt
+  from the cards the deck really holds: fewer, or with further cards of a face. Gathering
+  the game gives the very deck back. With it in hands a player takes "Choose placement":
   a hologram of a mat follows the aim, a panel says how many seats the spot has and of
   what kind, or why the spot is refused. A key steps through the seat modes (guessed,
   standing, sitting, on the floor). "Lay out the game", held, puts the mat with the deck
@@ -26,11 +29,15 @@ first game is durak, podkidnoy and perevodnoy. Class prefix `OZG_`; runs with
 - A player in a game holds **a fan of cards**; poses are settings.
 
 What was seen on the stand and what was not is in
-[docs/2026-11-24-phases-2-6-record.md](docs/2026-11-24-phases-2-6-record.md); how one
-person tries it alone is in [docs/test-commands.md](docs/test-commands.md). The rules were
+[docs/2026-11-24-phases-2-6-record.md](docs/2026-11-24-phases-2-6-record.md) and, for
+the cards as items, in
+[docs/2026-11-24-cards-as-things-record.md](docs/2026-11-24-cards-as-things-record.md);
+how one person tries it alone is in [docs/test-commands.md](docs/test-commands.md). The rules were
 checked by script and by chance in phase 1 ([docs/measurements](docs/measurements)). The
 design note lives beside the repositories of the series, in
-`docs/specs/2026-11-23-openzone-games-design.md`.
+`docs/specs/2026-11-23-openzone-games-design.md`; the cards as items are the first phase of
+`docs/specs/2026-11-24-openzone-games-cardsharp-design.md` (marks, noticing and sleights
+are its later phases; nothing of them is built).
 
 No key, no `mod.cpp`, no Workshop item: nothing is published without the owner's word.
 
@@ -41,7 +48,7 @@ No key, no `mod.cpp`, no Workshop item: nothing is published without the owner's
 | `OpenZone_Games/` | the mod: scripts, config, layouts, card imagesets, models |
 | `OpenZone_Games_Bridge/` | stand tool, server only: the `oz_games` verb, bots, the `!ozg` chat commands |
 | `TableGamesProbe/`, `TableGamesProbe_Bridge/` | stand tool of the first measurements ([docs/probe.md](docs/probe.md)) |
-| `tools/` | `make_cards.py` (the two decks), `make_layouts.py` (the window), `stringtable.py`, `analyze.py` |
+| `tools/` | `make_cards.py` (the two decks' art), `make_card_items.py` (the card items, their slots and names), `make_layouts.py` (the window), `stringtable.py`, `analyze.py` |
 | `art/` | sources of the cards and the font of their letters (Oswald, SIL Open Font License) |
 | `models/` | sources of the four models and how they are built ([models/README.md](models/README.md)) |
 | `docs/` | plans, records, measurements, an example for a server's economy |
@@ -55,8 +62,8 @@ and editable in the core's admin window: the poses (a stance or the number of a 
 so an animation mod's gestures can be added), the radii, the spacing of seats and of
 places, how long a place may stand idle, which games are on.
 
-Decks are not in any loot table: [docs/examples](docs/examples) has the lines for
-`types.xml`, with a nominal of 0 for an admin to raise.
+The decks and the cards are not in any loot table: [docs/examples](docs/examples) has
+the lines for `types.xml`, with a nominal of 0 for an admin to raise.
 
 ## Українською
 
@@ -65,7 +72,10 @@ Decks are not in any loot table: [docs/examples](docs/examples) has the lines fo
 а гра йде у вікні, поки персонажі сидять за нею. Перша гра — дурень, підкидний і
 перевідний.
 
-Стан на 2026-11-24: у гру можна грати. Колода — предмет (два вигляди); з нею в руках
+Стан на 2026-11-24: у гру можна грати. Колода — вмістище своїх карт: п'ятдесят дві
+карти-предмети у п'ятдесяти двох слотах (два вигляди; шулерська колода має ще десять
+порожніх слотів). Роздають з того, що в колоді справді є, а зібравши гру, гравець
+отримує назад ту саму колоду. З нею в руках
 гравець обирає місце, голограма килимка показує, скільки там місць і яких, або чому місце
 не годиться. Місця навколо обчислює мод: стоячи біля столу або сидячи на землі. Партію
 тримає сервер, а вікно показує стіл, інших гравців, руку з підсвіченими картами, журнал
