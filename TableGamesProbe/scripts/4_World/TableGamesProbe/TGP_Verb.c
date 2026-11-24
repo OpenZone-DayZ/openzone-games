@@ -339,6 +339,30 @@ class TGP_Verb
             return true;
         }
 
+        // The hold probe: deckfill (a full probe deck into the hands), hold
+        // pos="x y z" (what the mat there holds), holdback pos="x y z" (the
+        // deck out of it again).
+        if (op == "deckfill")
+        {
+            detail = TGP_Slots.DeckFill();
+            return true;
+        }
+
+        if (op == "hold" || op == "holdback")
+        {
+            if (!Numbers(Arg(args, "pos", ""), nums) || nums.Count() != 3)
+            {
+                detail = op + ": pos must be 'x y z'";
+                return false;
+            }
+            vector holdAt = Vector(nums.Get(0), nums.Get(1), nums.Get(2));
+            if (op == "hold")
+                detail = TGP_Slots.Hold(holdAt);
+            else
+                detail = TGP_Slots.HoldBack(holdAt);
+            return true;
+        }
+
         if (op == "slotfill" || op == "slotclear")
         {
             if (!Numbers(Arg(args, "pos", ""), nums) || nums.Count() != 3)
@@ -354,7 +378,7 @@ class TGP_Verb
             return true;
         }
 
-        detail = "tgp knows the ops: status, catalog, area, col, seat, sweep, ask, told, slots, slotfill, slotclear, cancel";
+        detail = "tgp knows the ops: status, catalog, area, col, seat, sweep, ask, told, slots, slotfill, slotclear, deckfill, hold, holdback, cancel";
         return false;
     }
 }

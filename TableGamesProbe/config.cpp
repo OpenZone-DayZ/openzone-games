@@ -102,6 +102,7 @@ class CfgSlots
     class Slot_TGP_C49 { name = "TGP_C49"; displayName = "Probe card 49"; ghostIcon = "set:dayz_inventory image:missing"; };
     class Slot_TGP_C50 { name = "TGP_C50"; displayName = "Probe card 50"; ghostIcon = "set:dayz_inventory image:missing"; };
     class Slot_TGP_C51 { name = "TGP_C51"; displayName = "Probe card 51"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_TGP_Hold { name = "TGP_Hold"; displayName = "Probe deck"; ghostIcon = "set:dayz_inventory image:missing"; };
 };
 
 class CfgVehicles
@@ -119,6 +120,16 @@ class CfgVehicles
         weight = 100;
         rotationFlags = 16;
         projectionTypename = "TGP_DeckPlacing";
+        // The hold probe: the deck goes into the mat it has placed, with the
+        // fifty-two probe cards it holds.
+        inventorySlot[] = {"TGP_Hold"};
+        attachments[] =
+        {
+            "TGP_C00", "TGP_C01", "TGP_C02", "TGP_C03", "TGP_C04", "TGP_C05", "TGP_C06", "TGP_C07", "TGP_C08", "TGP_C09", "TGP_C10", "TGP_C11", "TGP_C12",
+            "TGP_C13", "TGP_C14", "TGP_C15", "TGP_C16", "TGP_C17", "TGP_C18", "TGP_C19", "TGP_C20", "TGP_C21", "TGP_C22", "TGP_C23", "TGP_C24", "TGP_C25",
+            "TGP_C26", "TGP_C27", "TGP_C28", "TGP_C29", "TGP_C30", "TGP_C31", "TGP_C32", "TGP_C33", "TGP_C34", "TGP_C35", "TGP_C36", "TGP_C37", "TGP_C38",
+            "TGP_C39", "TGP_C40", "TGP_C41", "TGP_C42", "TGP_C43", "TGP_C44", "TGP_C45", "TGP_C46", "TGP_C47", "TGP_C48", "TGP_C49", "TGP_C50", "TGP_C51"
+        };
     };
 
     // What the hologram shows and what is left on the surface: a flat mat.
@@ -130,6 +141,7 @@ class CfgVehicles
         model = "\dz\gear\crafting\bp_burlap_sack.p3d";
         itemSize[] = {3, 2};
         weight = 100;
+        attachments[] = {"TGP_Hold"};
         // slopeTolerance and yawPitchRollLimit are left to what the game gives
         // every item: the probe measures the hologram as it ships.
     };

@@ -74,7 +74,7 @@ The design keeps the deck item (spec §3.3). Facts 1 to 6 above say how; none of
 - Consumes: the probe's slots `TGP_C00`..`TGP_C51` and cards `TGP_SlotCard_00`..`51` (commit 6aa95d7).
 - Produces: a measured answer, written into the record (Task 9) and into the `dayz-modding` skill (Step 7).
 
-- [ ] **Step 1: The config: one more slot, a mat that holds a deck, a deck that holds cards**
+- [x] **Step 1: The config: one more slot, a mat that holds a deck, a deck that holds cards**
 
 In `TableGamesProbe/config.cpp`, inside `class CfgSlots`, after the line of `Slot_TGP_C51`, add:
 
@@ -101,7 +101,7 @@ In `class TGP_Mat`, after its `weight = 100;`, add:
         attachments[] = {"TGP_Hold"};
 ```
 
-- [ ] **Step 2: The probe's deck is spared and asked into the mat**
+- [x] **Step 2: The probe's deck is spared and asked into the mat**
 
 In `TGP_Client.c` replace the whole `class TGP_Deck` (from the comment `// The stand-in deck:` to the class's closing brace) with:
 
@@ -194,7 +194,7 @@ modded class ActionDeployObject
 }
 ```
 
-- [ ] **Step 3: Three ops: a full deck into hands, what the mat holds, the deck back**
+- [x] **Step 3: Three ops: a full deck into hands, what the mat holds, the deck back**
 
 In `TGP_Slots.c`, inside `class TGP_Slots`, add after `static const int CARDS = 52;`:
 
@@ -237,9 +237,16 @@ In `TGP_Slots.c`, inside `class TGP_Slots`, add after `static const int CARDS = 
         PlayerBase p = FirstPlayer();
         if (!p)
             return "deckfill: nobody is connected";
+        // What the hands hold goes: the probe wants them free, and the stand's
+        // own delete does not reach a thing in hands. They are free a tick
+        // later, so the deck is asked for again.
         EntityAI busy = p.GetHumanInventory().GetEntityInHands();
         if (busy)
-            return "deckfill: the hands hold " + busy.GetType() + "; empty them first";
+        {
+            string was = busy.GetType();
+            GetGame().ObjectDelete(busy);
+            return "deckfill: the hands held " + was + ", which is deleted; ask again";
+        }
         EntityAI deck = p.GetHumanInventory().CreateInHands("TGP_Deck");
         if (!deck)
             return "deckfill: the hands did not take a deck";
@@ -339,17 +346,17 @@ In `TGP_Verb.c`, before the line `if (op == "slotfill" || op == "slotclear")`, a
 
 and add `deckfill, hold, holdback` to the list of ops in the last `detail = "tgp knows the ops: ..."` line.
 
-- [ ] **Step 4: Lint, then a stand cycle with a client**
+- [x] **Step 4: Lint, then a stand cycle with a client**
 
 Run `mod_lint`. Expected: nothing refused.
 Run the stand cycle, start the client, `world_teleport "4699.56 339.02 10192.5"`.
 
-- [ ] **Step 5: Place the probe's deck by hand of the client**
+- [x] **Step 5: Place the probe's deck by hand of the client**
 
 ```
 tgp {"op":"deckfill"}
 ```
-Expected: `deckfill: cards=52 held=52`. (When it says the hands hold something, empty them on the client first: the inventory, or the drop key.)
+Expected: `deckfill: cards=52 held=52`. (When it says the hands held something, that thing is deleted: ask again. `world_delete` does not reach a thing in a player's hands: measured 2026-11-24, 0 deleted.)
 
 ```
 tgp {"op":"ask","do":"aimplace","text":"4698.1 339.02 10192.5"}
@@ -364,7 +371,7 @@ tgp {"op":"hold","pos":"4698.1 339.02 10192.5"}
 
 `client_shot`: the character's hands are empty and the mat lies there. The client's own belief matters as much: `tgp {"op":"ask","do":"state","text":""}` then `tgp {"op":"told"}` must name no item in the hands. A client that still believes it holds the deck is a no go.
 
-- [ ] **Step 6: It survives a restart, and the deck comes back whole**
+- [x] **Step 6: It survives a restart, and the deck comes back whole**
 
 Stand cycle (no build), client, `world_teleport "4699.56 339.02 10192.5"`, then:
 
@@ -383,7 +390,7 @@ tgp {"op":"hold","pos":"4698.1 339.02 10192.5"}
 ```
 Expected: `hold: no mat within 4 m hands=TGP_Deck/52 ...`. `client_shot`: the deck is in the hands. When the hands did not take it (`hands=none`), `world_entities` for `TGP_Deck` near the spot must show it on the ground: that is still a go for the plan (a deck that lies where the game lay is the design's own second choice), and the record says so.
 
-- [ ] **Step 7: Write the facts down, and commit**
+- [x] **Step 7: Write the facts down, and commit**
 
 The measured facts go into the `dayz-modding` skill now, not at the end of the plan (a plan that stops here must not lose them): in `E:\dayzmod\dayz-agentic-modding-mcp\skills\dayz-modding\references\items-and-processing.md`, a section "A kit that goes into what it placed" with neutral names (`MyMod_Deck`, `MyMod_Mat`): the action's override, the server's ask, how long the hands took, what the client's guard asks, the way back by the ground, what a restart kept. `python -I openzone/scripts/check-generic.py` from `E:\dayzmod\dayz-modding-skill` must print nothing. Stage only this section's lines (the repository holds other sessions' changes: stage HEAD's blob plus the new lines with `git hash-object -w` and `git update-index --cacheinfo`), commit there, **do not push**.
 
@@ -397,6 +404,8 @@ with what Step 5 and Step 6 said: ms, parentAtOnce, the restart, the way back>.
 
 Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 ```
+
+**Done 2026-11-24, and it says GO.** Step 5: `hold: mat atts=1 deck=TGP_Deck cards=52 hands=none ms=73; asked=1 parentAtOnce=SurvivorM_Seth`, and the client's own state said `hands=none`. Step 6, after a restart: `hold: mat atts=1 deck=TGP_Deck cards=52 hands=none`; `holdback: dropped=1 parentAfterDrop=none cards=52`; three seconds later `hold: no mat within 4 m hands=TGP_Deck/52`, the client's state `hands=TGP_Deck`, and the client offers "Choose placement" for it: it is a kit again. So the move out of the hands is not done inside the call (73 ms on one machine), the way back by the ground works, and `EEItemAttached` fires for the deck when the mat is loaded from storage (`ms=30400` after the restart). One thing changed on the way: `deckfill` deletes what the hands hold, because `world_delete` does not reach it.
 
 ---
 

@@ -29,12 +29,21 @@ class TGP_Holo
 }
 
 // The stand-in deck: a kit in the game's sense. Its hologram is the config
-// class named by projectionTypename, and laying it out leaves a mat.
+// class named by projectionTypename, and laying it out leaves a mat that takes
+// the deck itself, with what the deck holds.
 class TGP_Deck extends ItemBase
 {
+    // Server: true only while the game's own action ends this deck's placing.
+    protected bool m_TGP_Spared;
+
     override bool IsBasebuildingKit()
     {
-        return true;
+        return !m_TGP_Spared;
+    }
+
+    void TGP_Spare(bool on)
+    {
+        m_TGP_Spared = on;
     }
 
     override bool IsDeployable()
@@ -57,12 +66,52 @@ class TGP_Deck extends ItemBase
         if (!GetGame().IsServer())
             return;
 
-        Object mat = GetGame().CreateObjectEx("TGP_Mat", position, ECE_PLACE_ON_SURFACE | ECE_NOLIFETIME);
-        if (mat)
-        {
-            mat.SetPosition(position);
-            mat.SetOrientation(orientation);
-        }
+        EntityAI mat = EntityAI.Cast(GetGame().CreateObjectEx("TGP_Mat", position, ECE_PLACE_ON_SURFACE | ECE_NOLIFETIME));
+        if (!mat)
+            return;
+        mat.SetPosition(position);
+        mat.SetOrientation(orientation);
+
+        // The deck is asked out of the placer's hands into the mat, as the
+        // game's indoor fireplace takes its first stick
+        // (actioncreateindoorfireplace.c:95). The hands answer later.
+        TGP_Slots.s_AskedAt = GetGame().GetTime();
+        TGP_Slots.s_ArrivedMs = -1;
+        bool asked = false;
+        if (player)
+            asked = player.ServerTakeEntityToTargetAttachmentEx(mat, this, InventorySlots.GetSlotIdFromString("TGP_Hold"));
+        string parent = "none";
+        if (GetHierarchyParent())
+            parent = GetHierarchyParent().GetType();
+        TGP_Slots.s_Moved = "asked=" + TGP_Out.B(asked) + " parentAtOnce=" + parent;
+    }
+}
+
+// The mat: when the deck reaches it is written down.
+class TGP_Mat extends ItemBase
+{
+    override void EEItemAttached(EntityAI item, string slot_name)
+    {
+        super.EEItemAttached(item, slot_name);
+        if (GetGame().IsServer() && TGP_Slots.s_ArrivedMs < 0)
+            TGP_Slots.s_ArrivedMs = GetGame().GetTime() - TGP_Slots.s_AskedAt;
+    }
+}
+
+// The game's action deletes a kit it has placed (actiondeployobject.c:230).
+// The probe's deck is spared: for the length of that one call it is no kit.
+modded class ActionDeployObject
+{
+    override void OnEndServer(ActionData action_data)
+    {
+        TGP_Deck deck;
+        if (action_data)
+            deck = TGP_Deck.Cast(action_data.m_MainItem);
+        if (deck)
+            deck.TGP_Spare(true);
+        super.OnEndServer(action_data);
+        if (deck)
+            deck.TGP_Spare(false);
     }
 }
 

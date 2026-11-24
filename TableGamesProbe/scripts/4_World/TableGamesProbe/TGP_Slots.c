@@ -9,6 +9,123 @@ class TGP_Slots
 {
     static const int CARDS = 52;
 
+    // The hold probe (2026-11-24): can a kit go into what it has placed, with
+    // what it holds, and come back. What the probe's deck said when it was
+    // placed, when it asked the hands, and how long after that the mat had it
+    // (-1: not yet).
+    static string s_Moved;
+    static int s_AskedAt;
+    static int s_ArrivedMs = -1;
+
+    protected static PlayerBase FirstPlayer()
+    {
+        array<Man> men = new array<Man>;
+        GetGame().GetPlayers(men);
+        for (int i = 0; i < men.Count(); i++)
+        {
+            PlayerBase p = PlayerBase.Cast(men.Get(i));
+            if (p && p.GetIdentity())
+                return p;
+        }
+        return null;
+    }
+
+    protected static EntityAI MatNear(vector at)
+    {
+        array<Object> found = new array<Object>;
+        GetGame().GetObjectsAtPosition(at, 4.0, found, null);
+        for (int i = 0; i < found.Count(); i++)
+        {
+            Object o = found.Get(i);
+            if (o && o.GetType() == "TGP_Mat")
+                return EntityAI.Cast(o);
+        }
+        return null;
+    }
+
+    // A probe deck with its fifty-two cards into the first player's hands.
+    static string DeckFill()
+    {
+        PlayerBase p = FirstPlayer();
+        if (!p)
+            return "deckfill: nobody is connected";
+        // What the hands hold goes: the probe wants them free, and the stand's
+        // own delete does not reach a thing in hands. They are free a tick
+        // later, so the deck is asked for again.
+        EntityAI busy = p.GetHumanInventory().GetEntityInHands();
+        if (busy)
+        {
+            string was = busy.GetType();
+            GetGame().ObjectDelete(busy);
+            return "deckfill: the hands held " + was + ", which is deleted; ask again";
+        }
+        EntityAI deck = p.GetHumanInventory().CreateInHands("TGP_Deck");
+        if (!deck)
+            return "deckfill: the hands did not take a deck";
+        int made = 0;
+        for (int i = 0; i < CARDS; i++)
+        {
+            int id = InventorySlots.GetSlotIdFromString("TGP_C" + Two(i));
+            if (deck.GetInventory().CreateAttachmentEx("TGP_SlotCard_" + Two(i), id))
+                made++;
+        }
+        return "deckfill: cards=" + made.ToString() + " held=" + deck.GetInventory().AttachmentCount().ToString();
+    }
+
+    // What the mat near a point holds, and what the first player's hands hold.
+    static string Hold(vector at)
+    {
+        string s = "hold:";
+        EntityAI mat = MatNear(at);
+        if (!mat)
+        {
+            s = s + " no mat within 4 m";
+        }
+        else
+        {
+            s = s + " mat atts=" + mat.GetInventory().AttachmentCount().ToString();
+            EntityAI deck = mat.GetInventory().FindAttachmentByName("TGP_Hold");
+            if (deck)
+                s = s + " deck=" + deck.GetType() + " cards=" + deck.GetInventory().AttachmentCount().ToString();
+            else
+                s = s + " deck=none";
+        }
+        string hands = "none";
+        PlayerBase p = FirstPlayer();
+        EntityAI held;
+        if (p)
+            held = p.GetHumanInventory().GetEntityInHands();
+        if (held)
+            hands = held.GetType() + "/" + held.GetInventory().AttachmentCount().ToString();
+        s = s + " hands=" + hands + " ms=" + s_ArrivedMs.ToString() + "; " + s_Moved;
+        return s;
+    }
+
+    // The deck out of the mat onto the ground where the mat lies, at once; the
+    // mat is removed; free hands are asked to take the deck up.
+    static string HoldBack(vector at)
+    {
+        EntityAI mat = MatNear(at);
+        PlayerBase p = FirstPlayer();
+        if (!mat || !p)
+            return "holdback: no mat, or nobody connected";
+        EntityAI deck = mat.GetInventory().FindAttachmentByName("TGP_Hold");
+        if (!deck)
+            return "holdback: the mat holds no deck";
+        vector m4[4];
+        mat.GetTransform(m4);
+        bool dropped = mat.GetInventory().DropEntityWithTransform(InventoryMode.SERVER, mat, deck, m4);
+        string parent = "none";
+        if (deck.GetHierarchyParent())
+            parent = deck.GetHierarchyParent().GetType();
+        GetGame().ObjectDelete(mat);
+        if (dropped && !p.GetHumanInventory().GetEntityInHands())
+            p.ServerTakeEntityToHands(deck);
+        string s = "holdback: dropped=" + TGP_Out.B(dropped) + " parentAfterDrop=" + parent;
+        s = s + " cards=" + deck.GetInventory().AttachmentCount().ToString();
+        return s;
+    }
+
     protected static string Two(int i)
     {
         if (i < 10)
