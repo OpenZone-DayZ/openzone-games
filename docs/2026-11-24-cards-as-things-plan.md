@@ -2270,7 +2270,7 @@ Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 - Consumes: `OZG_Place.OZG_Deck()`, `.OZG_MakeDeck`, `.OZG_Open` (Task 4); `OZG_Game.TakeCards`, `OZG_Cards.CopyNamed`, `.FaceOf`, `OZG_DealCard` (Task 2); `OZG_Card_Base.OZG_Face()`, `.OZG_Look()`, `.OZG_SetStyle` (Task 3); `OZG_WorldOps.DeckOf`, `.PullFrom` (Task 3).
 - Produces: `OZG_DeckRead.ThingsOf(OZG_Place place, array<EntityAI> into)` (every card item a place holds: the deck's in the order of its slots, then those beside it); `OZG_DeckRead.CardsOf(OZG_Place place, array<ref OZG_DealCard> into) : int` (the same cards as the records a game is handed: a name each, however many of a face there are, and the look of the back; the answer is how many cards there are).
 
-- [ ] **Step 1: Reading a place's cards**
+- [x] **Step 1: Reading a place's cards**
 
 Append to `OZG_CardThings.c`:
 
@@ -2338,7 +2338,7 @@ class OZG_DeckRead
 }
 ```
 
-- [ ] **Step 2: The deal reads the deck**
+- [x] **Step 2: The deal reads the deck**
 
 In `OZG_Session.c`, `Deal`, before `string refusal;`:
 
@@ -2362,7 +2362,7 @@ In `OZG_Session.c`, `Deal`, before `string refusal;`:
 
 ```
 
-- [ ] **Step 3: Ops to change a laid-out deck**
+- [x] **Step 3: Ops to change a laid-out deck**
 
 In `OZG_WorldOps.c`, replace `OpPull` with a version that takes a session's deck when `id=` is given:
 
@@ -2436,7 +2436,7 @@ In `OZG_WorldOps.c`, replace `OpPull` with a version that takes a session's deck
 
 Route `stuff` in `OZG_Verb.c` and add it to `KnownOps()`.
 
-- [ ] **Step 4: Lint, a stand cycle with a client, the checks**
+- [x] **Step 4: Lint, a stand cycle with a client, the checks**
 
 `mod_lint`, the stand cycle, the client, `world_teleport "4699.56 339.02 10192.5"`; gather what the world holds (`places`, `gather`), `undeck`.
 
@@ -2498,7 +2498,7 @@ Expected: `pulled 25 of ...`, then `cards=28` (the sixteen low cards and twelve 
 
 **A restart in mid-game.** Fold, `world_delete` the deck, lay an ordinary deck, two puppets, host, deal; write down the `trump=`, `stock=` and `hands=` of `sess`. Stand cycle (no build), client. `oz_games {"op":"sess","id":"0"}`. Expected: `st=1` and the same three. (The puppets are gone after a restart and their seats are kept: that is the session's rule, not this task's.)
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add OpenZone_Games OpenZone_Games_Bridge
@@ -2510,6 +2510,8 @@ card of a face is dealt as its copy. Nobody is told.
 
 Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 ```
+
+**Done 2026-11-24.** A whole deck: `trump=Ad stock=24`, played to `st=2` (`dis=32 hands=0:4,1:0x`). Short of the ace of spades: `stock=23`, `st=2` (`dis=34 hands=0:0x,1:1`). A sharp's deck with a second ace: `stuffed As: deck=1 beside=0`, `held: deck OZG_Deck_Classic_Sharp slots=62 cards=53 free=9 faces=52 looks=0:52,1:1 beside=0`, `stock=25`, `st=2`. Aces alone: `pulled 35`, `stuffed As: deck=35 beside=0`, `held: ... cards=53 free=9 faces=17 looks=0:52,1:1`, `trump=As.33 stock=25`, a hand `['As','As.14','As.22','As.34','As.18','As.12']` with `HeldLooks [1,0,0,0,0,0]`, played to `st=2 ... hands=0:37,1:0x`: thirty-seven aces of spades are a game that ends. Too few: `pulled 25`, `cards=28`, `stock=0`, `st=2`, one ace less: `refused STR_OZG_NO_CARDS`. A restart in mid-game: `st=1 ... trump=Kc stock=24 ... hands=0:6,1:6` before and after. No error in the log. Two things learnt: `auto` plays fifteen to twenty moves a call (the session lets a player make so many a second), so it is asked again until `st=2`; and the first card of a face that a deal finds is not always the deck's own (the worn ace read first and was named `As`): a card's name says nothing of where it came from. The puppets of one check were seated again with `sit who=puppet1 seat=0` instead of making new ones.
 
 ---
 
@@ -2660,7 +2662,7 @@ oz_games {"op":"ask","id":"0","who":"me","ask":"deal"}
 ```
 (The second `sit`, with no seat, is the action on the place for somebody already seated: it opens the window.)
 
-`client_shot`: the window as it was for a clean deck, the trump and the stock drawn. `oz_games {"op":"hand","id":"0","seat":"0"}` says the hand: when it holds one of `As.1`, `As.2`, `As.3` (the aces of the worn look; `As` itself is the deck's own), the shot shows one ace in the worn art among the classic ones. When it does not, end the game (`auto`) and deal again: three strange aces among thirty-nine cards come into a hand of six within a few deals. Send the shot with the strange ace, and one where the bot's seat says `(1*)`. When the hand holds two aces of spades at once, click one of them: that one alone rises, and the move goes through with it (`sess` names the card on the table, `As` or `As.<n>`).
+`client_shot`: the window as it was for a clean deck, the trump and the stock drawn. `oz_games {"op":"hand","id":"0","seat":"0"}` says the hand: which of its aces of spades are worn is in `HeldLooks` beside `Held` (a 1 is the worn look; the name does not say: the worn ace may be the one named `As`), the shot shows one ace in the worn art among the classic ones. When it does not, end the game (`auto`) and deal again: three strange aces among thirty-nine cards come into a hand of six within a few deals. Send the shot with the strange ace, and one where the bot's seat says `(1*)`. When the hand holds two aces of spades at once, click one of them: that one alone rises, and the move goes through with it (`sess` names the card on the table, `As` or `As.<n>`).
 
 - [ ] **Step 5: Commit**
 

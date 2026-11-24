@@ -632,20 +632,68 @@ class OZG_WorldOps
         return true;
     }
 
-    // pull who= face="<face> [<face> ..]": a card of each face out of the deck
-    // a player carries, and gone.
+    // pull who= face="<face> [<face> ..]", or pull id= face=..: a card of each
+    // face out of the deck a player carries, or out of a laid-out game's deck,
+    // and gone.
     static bool OpPull(map<string, string> args, out string detail)
     {
         string faces = OZG_VerbOps.Arg(args, "face", "As");
-        string uid;
-        PlayerBase p = Who(args, uid);
-        OZG_Deck_Base deck = DeckOf(p);
+        OZG_Deck_Base deck;
+        if (OZG_VerbOps.Arg(args, "id", "") != "")
+        {
+            OZG_Session s = Sess(args, detail);
+            if (!s)
+                return false;
+            deck = s.m_Place.OZG_Deck();
+        }
+        else
+        {
+            string uid;
+            PlayerBase p = Who(args, uid);
+            deck = DeckOf(p);
+        }
         if (!deck)
         {
-            detail = "pull: '" + uid + "' carries no deck";
+            detail = "pull: no deck there";
             return true;
         }
-        detail = "pulled " + PullFrom(deck, faces).ToString() + " of '" + faces + "'; a tick later: cards";
+        detail = "pulled " + PullFrom(deck, faces).ToString() + " of '" + faces + "'; a tick later: cards or held";
+        return true;
+    }
+
+    // stuff id= face=<face> [style=classic] [n=1]: cards of a face put into a
+    // laid-out game: into the deck's free slots, then beside it.
+    static bool OpStuff(map<string, string> args, out string detail)
+    {
+        OZG_Session s = Sess(args, detail);
+        if (!s)
+            return false;
+        string face = OZG_VerbOps.Arg(args, "face", "As");
+        string style = OZG_VerbOps.Arg(args, "style", "classic");
+        int n = OZG_VerbOps.Arg(args, "n", "1").ToInt();
+        OZG_Deck_Base deck = s.m_Place.OZG_Deck();
+        int inDeck = 0;
+        int beside = 0;
+        for (int i = 0; i < n; i++)
+        {
+            OZG_Card_Base card;
+            if (deck && deck.OZG_Free() > 0)
+                card = OZG_Card_Base.Cast(deck.GetInventory().CreateAttachment(OZG_Const.CARD_PREFIX + face));
+            if (card)
+            {
+                inDeck++;
+            }
+            else
+            {
+                s.m_Place.OZG_Open();
+                card = OZG_Card_Base.Cast(s.m_Place.GetInventory().CreateEntityInCargo(OZG_Const.CARD_PREFIX + face));
+                if (card)
+                    beside++;
+            }
+            if (card)
+                card.OZG_SetStyle(style);
+        }
+        detail = "stuffed " + face + ": deck=" + inDeck.ToString() + " beside=" + beside.ToString();
         return true;
     }
 

@@ -995,6 +995,23 @@ class OZG_Session
             }
         }
 
+        // The cards of this deal are the cards the deck holds that are of the
+        // game's set, however many of a face there are. A place that lost its
+        // deck gets one of its class.
+        if (m_Place && !m_Place.OZG_Deck())
+            m_Place.OZG_MakeDeck(m_R.DeckClass);
+        array<ref OZG_DealCard> all = new array<ref OZG_DealCard>();
+        OZG_DeckRead.CardsOf(m_Place, all);
+        array<string> ofGame = new array<string>();
+        game.CardsUsed(ofGame);
+        array<ref OZG_DealCard> cards = new array<ref OZG_DealCard>();
+        for (i = 0; i < all.Count(); i++)
+        {
+            if (ofGame.Find(OZG_Cards.FaceOf(all[i].Name)) >= 0)
+                cards.Insert(all[i]);
+        }
+        game.TakeCards(cards);
+
         string refusal;
         OZG_Random chance = new OZG_Random();
         if (!game.Begin(seats, options, chance, hint, refusal))

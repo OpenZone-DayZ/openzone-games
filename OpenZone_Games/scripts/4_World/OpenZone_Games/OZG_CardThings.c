@@ -94,3 +94,65 @@ class OZG_Card_Base extends ItemBase
         SetSynchDirty();
     }
 }
+
+// What a place holds, read as cards: the deck's own, in the order of its
+// slots, then those the place keeps beside it.
+class OZG_DeckRead
+{
+    // Every card item of a place.
+    static void ThingsOf(OZG_Place place, array<EntityAI> into)
+    {
+        into.Clear();
+        if (!place)
+            return;
+        OZG_Deck_Base deck = place.OZG_Deck();
+        int i;
+        if (deck)
+        {
+            int held = deck.GetInventory().AttachmentCount();
+            for (i = 0; i < held; i++)
+            {
+                EntityAI one = deck.GetInventory().GetAttachmentFromIndex(i);
+                if (one && one.IsInherited(OZG_Card_Base))
+                    into.Insert(one);
+            }
+        }
+        CargoBase cargo = place.GetInventory().GetCargo();
+        if (cargo)
+        {
+            for (i = 0; i < cargo.GetItemCount(); i++)
+            {
+                EntityAI beside = cargo.GetItem(i);
+                if (beside && beside.IsInherited(OZG_Card_Base))
+                    into.Insert(beside);
+            }
+        }
+    }
+
+    // The cards as a game is handed them: a record a card. The first card of
+    // a face found is named by the face, every further one by the face and
+    // its number (OZG_Cards.CopyNamed), however many there are: a deck of
+    // aces alone is as many names as it has cards. Beside the name, the look
+    // of the card's back; the next phase reads the card's mark here too.
+    // Returns how many cards there are.
+    static int CardsOf(OZG_Place place, array<ref OZG_DealCard> into)
+    {
+        into.Clear();
+        array<EntityAI> things = new array<EntityAI>();
+        ThingsOf(place, things);
+        map<string, int> seen = new map<string, int>();
+        for (int i = 0; i < things.Count(); i++)
+        {
+            OZG_Card_Base card = OZG_Card_Base.Cast(things[i]);
+            string face = card.OZG_Face();
+            int had = 0;
+            seen.Find(face, had);
+            seen.Set(face, had + 1);
+            string named = OZG_Cards.CopyNamed(face, had);
+            if (named == "")
+                continue;
+            into.Insert(OZG_DealCard.Make(named, card.OZG_Look()));
+        }
+        return things.Count();
+    }
+}
