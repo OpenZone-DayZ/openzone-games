@@ -633,6 +633,9 @@ class OZG_GameMenu : UIScriptedMenu
             string cards = "";
             OZG_DurakSeatPublic g = GameSeat(i);
             bool shown = false;
+            // A seat that is free now says nothing of a game that has ended.
+            if (g && m_Pub.Ended == 1 && s.St == OZG_Const.SEAT_FREE)
+                g = null;
             if (g && m_V.St != OZG_Const.ST_LOBBY)
             {
                 cards = g.CardCount.ToString();

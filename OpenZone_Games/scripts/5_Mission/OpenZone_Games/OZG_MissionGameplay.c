@@ -25,13 +25,30 @@ modded class MissionGameplay
         OZ_Notice.OnAnswer.Insert(OZG_Notice);
         OZG_PlaceWatch.OnMoved.Insert(OZG_PlaceMoved);
         if (OZ_ClientState.Ready())
+        {
+            OZG_TakeSettings();
             OZG_AskMine();
+        }
+    }
+
+    // What the server sent of its settings: the radii and the poses.
+    protected void OZG_TakeSettings()
+    {
+        string text = OZ_ClientState.Extra(OZG_Cfg.SYNC_CFG, "");
+        int count = OZG_Cfg.PoseCountOf(text);
+        if (count < 0)
+            return;
+        array<string> poses = new array<string>();
+        for (int i = 0; i < count; i++)
+            poses.Insert(OZ_ClientState.Extra(OZG_Cfg.SYNC_POSE + i.ToString(), ""));
+        OZG_Cfg.TakeSync(text, poses);
     }
 
     // The core's packet has come: the server knows this client, and can say
     // whether it holds a seat somewhere from before it connected.
     void OZG_Sync(OZ_SyncPayload p)
     {
+        OZG_TakeSettings();
         OZG_AskMine();
     }
 
@@ -154,6 +171,11 @@ modded class MissionGameplay
                 if (fresh)
                 {
                     m_OZG_Marks.Clear();
+                    // Facing the mat, then the first pose of the seat's kind.
+                    PlayerBase me = PlayerBase.Cast(GetGame().GetPlayer());
+                    int mine = view.HeadPart.Mine;
+                    if (me && mine < view.HeadPart.Seats.Count())
+                        me.OZG_Face(view.HeadPart.Seats[mine].Yaw);
                     OZG_PoseDriver.SitDown(view.HeadPart);
                 }
             }

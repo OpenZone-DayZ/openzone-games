@@ -159,11 +159,36 @@ class OZG_Bots
         if (!s)
             return "";
         array<string> names = {"Ostap", "Taras", "Bohdan", "Marko", "Petro", "Danylo", "Ivan"};
-        for (int i = 0; i < s.m_R.Seats.Count(); i++)
+        // The free seat furthest from every taken one first: bots spread
+        // round the mat as people do.
+        array<int> order = new array<int>();
+        array<float> rooms = new array<float>();
+        int n = s.m_R.Seats.Count();
+        int a;
+        int b;
+        for (a = 0; a < n; a++)
         {
-            OZG_SeatRec r = s.m_R.Seats[i];
-            if (r.St != OZG_Const.SEAT_FREE)
+            if (s.m_R.Seats[a].St != OZG_Const.SEAT_FREE)
                 continue;
+            float room = 1000;
+            for (b = 0; b < n; b++)
+            {
+                if (s.m_R.Seats[b].St == OZG_Const.SEAT_FREE)
+                    continue;
+                float d = vector.Distance(s.m_R.Seats[a].Where(), s.m_R.Seats[b].Where());
+                if (d < room)
+                    room = d;
+            }
+            int at0 = 0;
+            while (at0 < order.Count() && rooms[at0] >= room)
+                at0++;
+            order.InsertAt(a, at0);
+            rooms.InsertAt(room, at0);
+        }
+        for (int k = 0; k < order.Count(); k++)
+        {
+            int i = order[k];
+            OZG_SeatRec r = s.m_R.Seats[i];
             vector at = r.Where();
             PlayerBase body = PlayerBase.Cast(GetGame().CreateObjectEx("SurvivorM_Mirek", at, ECE_PLACE_ON_SURFACE));
             if (!body)

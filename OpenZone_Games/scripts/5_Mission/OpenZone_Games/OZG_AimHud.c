@@ -178,7 +178,9 @@ class OZG_Marks
             if (!mark)
                 continue;
             mark.SetPosition(at);
-            mark.SetOrientation(Vector(s.Yaw, 0, 0));
+            // The mark's arrow head points along the model's back (seen on
+            // the stand 2026-11-24): half a turn makes it point to the mat.
+            mark.SetOrientation(Vector(s.Yaw + 180, 0, 0));
             m_Made.Insert(mark);
             OZG_Mine.s_MarkAt.Insert(at);
         }

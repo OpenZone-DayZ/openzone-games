@@ -37,6 +37,13 @@ class OZG_Module : CF_ModuleWorld
         // that came back from the world's storage were made before this
         // moment and have waited for the games to be known: Start restores
         // them.
+        // The settings first: the sessions that come back read them. The
+        // core's admin window edits the file where it is installed, and what
+        // a client needs of it rides in the core's sync packet.
+        OZG_Cfg.ServerLoad();
+        OZ_AdminCfg.Register(OZG_Cfg.ADMIN_NAME, OZG_Cfg.PATH, new OZG_SettingsApplier(), OZG_Cfg.ADMIN_OWNER);
+        OZ_SyncExtras.OnFill().Insert(OZG_Fill);
+
         OZ_ServiceRegistry.Register(OZG_Const.SERVICE, new OZG_Service());
         OZG_Sessions.Start();
         m_TickTimer = new Timer(CALL_CATEGORY_SYSTEM);
@@ -60,6 +67,11 @@ class OZG_Module : CF_ModuleWorld
         OZG_Sessions.Tick();
     }
 
+    void OZG_Fill(OZ_SyncPayload p)
+    {
+        OZG_Cfg.Fill(p);
+    }
+
     override void OnMissionFinish(Class sender, CF_EventArgs args)
     {
         super.OnMissionFinish(sender, args);
@@ -69,7 +81,11 @@ class OZG_Module : CF_ModuleWorld
         if (m_TickTimer)
             m_TickTimer.Stop();
         if (GetGame().IsServer())
+        {
             OZG_Sessions.Shutdown();
+            OZ_SyncExtras.OnFill().Remove(OZG_Fill);
+        }
+        OZG_Cfg.Reset();
         OZG_Aim.Reset();
         OZG_Who.Reset();
         OZG_Decks.Reset();
@@ -82,7 +98,8 @@ class OZG_Module : CF_ModuleWorld
     {
         string line = "games loaded: games=" + OZG_Games.Count().ToString();
         line = line + " places=" + OZG_Sessions.Count().ToString();
-        line = line + " problems=" + OZG_Log.Warned().ToString();
+        int problems = OZG_Log.Warned() + OZG_Cfg.Problems();
+        line = line + " problems=" + problems.ToString();
         return line;
     }
 }

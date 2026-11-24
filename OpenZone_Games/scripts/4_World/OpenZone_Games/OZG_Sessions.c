@@ -410,6 +410,28 @@ class OZG_Sessions
     }
 }
 
+// The core's admin window saves the settings through this: the text is read
+// and checked, the file written, the live settings read anew. A text that does
+// not read never reaches the disk.
+class OZG_SettingsApplier : OZ_AdminCfgApplier
+{
+    override bool Apply(string json)
+    {
+        OZG_Settings c = new OZG_Settings();
+        string err;
+        if (!JsonFileLoader<OZG_Settings>.LoadData(json, c, err))
+        {
+            OZG_Log.Warn("admin: the settings were not taken: " + err);
+            return false;
+        }
+        int warnings;
+        c.Validate(warnings);
+        OZ_ConfigLoader<OZG_Settings>.Save(OZG_Cfg.PATH, OZG_Cfg.TAG, c, true);
+        OZG_Cfg.ServerLoad();
+        return true;
+    }
+}
+
 // The service "games" of the core's registry: what a client's window asks.
 class OZG_Service : OZ_ServiceHandler
 {

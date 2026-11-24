@@ -921,6 +921,8 @@ class OZG_Session
     {
         if (m_R.St == OZG_Const.ST_PLAYING)
             return OZG_Const.SAY_PLAYING;
+        if (!OZG_Cfg.Get().GameOn(m_R.GameId))
+            return OZG_Const.NO_GAME;
         OZG_Game game = OZG_Games.Create(m_R.GameId);
         if (!game)
             return OZG_Const.NO_GAME;

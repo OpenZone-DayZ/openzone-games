@@ -41,7 +41,8 @@ class OZG_Log
 
     static void Dbg(string msg)
     {
-        if (!OZ_Log.IsDebug())
+        // The core's switch, or the mod's own (DebugLog in its settings).
+        if (!OZ_Log.IsDebug() && OZG_Cfg.Get().DebugLog != 1)
             return;
         Print(OZG_Const.LOG_PREFIX + "dbg: " + msg);
     }

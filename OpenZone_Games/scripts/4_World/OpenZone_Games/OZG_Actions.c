@@ -222,6 +222,36 @@ class OZG_ActionGather : OZG_ActionPlace
     }
 }
 
+// A seated player faces the mat. Where a body faces is its own client's word
+// (the server's SetOrientation does not turn a player), so the client turns it:
+// one frame of the heading model with the wanted angle.
+modded class PlayerBase
+{
+    protected bool m_OZG_Turn;
+    protected float m_OZG_TurnYaw;
+
+    // yaw in degrees, clockwise from north, as an orientation's first number.
+    void OZG_Face(float yaw)
+    {
+        m_OZG_Turn = true;
+        m_OZG_TurnYaw = yaw;
+    }
+
+    override bool HeadingModel(float pDt, SDayZPlayerHeadingModel pModel)
+    {
+        if (m_OZG_Turn)
+        {
+            m_OZG_Turn = false;
+            // The heading counts the other way round and in radians.
+            float heading = -m_OZG_TurnYaw * Math.DEG2RAD;
+            pModel.m_fHeadingAngle = heading;
+            pModel.m_fOrientationAngle = heading;
+            return true;
+        }
+        return super.HeadingModel(pDt, pModel);
+    }
+}
+
 // An action nobody registers is dropped without a word.
 modded class ActionConstructor
 {

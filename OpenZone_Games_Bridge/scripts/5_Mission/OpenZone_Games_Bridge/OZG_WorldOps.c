@@ -401,6 +401,66 @@ class OZG_WorldOps
         return true;
     }
 
+    // auto id= n=: up to n moves played for whoever the game waits for, people
+    // and bots alike -- a game played out to its end in one call.
+    static bool OpAuto(map<string, string> args, out string detail)
+    {
+        OZG_Session s = Sess(args, detail);
+        if (!s)
+            return false;
+        int n = OZG_VerbOps.Arg(args, "n", "20").ToInt();
+        int made = 0;
+        for (int i = 0; i < n; i++)
+        {
+            if (!s.m_Game || s.m_R.St != OZG_Const.ST_PLAYING)
+                break;
+            bool moved = false;
+            for (int k = 0; k < s.m_R.Seats.Count(); k++)
+            {
+                OZG_SeatRec seat = s.m_R.Seats[k];
+                if (seat.Uid == "" || !s.m_Game.Waits(k))
+                    continue;
+                string move = OZG_Bots.Choose(s.m_Game, k);
+                PlayerBase body = OZG_Sessions.PlayerOf(seat.Uid);
+                if (move == "" || !body)
+                    continue;
+                OZG_WAsk ask = new OZG_WAsk();
+                ask.PlaceId = s.Id();
+                ask.Move = move;
+                if (s.Ask(body, OZG_Const.OP_ACT, ask) == "")
+                {
+                    moved = true;
+                    made++;
+                    break;
+                }
+            }
+            if (!moved)
+                break;
+        }
+        detail = "played " + made.ToString() + "; " + s.Describe();
+        return true;
+    }
+
+    // face who= id=: where a player faces, and the facing of his seat.
+    static bool OpFace(map<string, string> args, out string detail)
+    {
+        string uid;
+        PlayerBase p = Who(args, uid);
+        if (!p)
+        {
+            detail = "face: nobody is '" + uid + "'";
+            return false;
+        }
+        detail = uid + " faces " + F2(p.GetOrientation()[0]) + " at " + P3(p.GetPosition());
+        OZG_Session s = OZG_Sessions.SeatedIn(uid);
+        if (s)
+        {
+            int no = s.SeatOf(uid);
+            detail = detail + "; seat " + no.ToString() + " faces " + F2(s.m_R.Seats[no].Yaw);
+        }
+        return true;
+    }
+
     // give who= [deck=class]: a deck into a player's hands.
     static bool OpGive(map<string, string> args, out string detail)
     {
