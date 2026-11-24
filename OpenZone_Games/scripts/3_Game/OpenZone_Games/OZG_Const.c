@@ -88,6 +88,11 @@ class OZG_Const
     static const string SLOT_HOLD   = "OZG_DeckHold";
     // The block of a card in the world's storage.
     static const int CARD_SAVE = 1;
+    // How long a place stays open to the session's own hand, ms.
+    static const int OPEN_MS = 5000;
+    // How long a place laid out by hand waits for its deck, seconds of the
+    // mod's clock. Shorter than OPEN_MS.
+    static const int DECK_WAIT = 4;
     static const float PLACE_LIFETIME = 3888000.0;
 
     // Lines of the log a view carries.

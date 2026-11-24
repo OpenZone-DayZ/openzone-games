@@ -241,7 +241,7 @@ class OZG_Deck_Base extends ItemBase
         super.OnPlacementComplete(player, position, orientation);
         if (!GetGame().IsServer())
             return;
-        OZG_Sessions.LayOut(PlayerBase.Cast(player), GetType(), position, orientation);
+        OZG_Sessions.LayOut(PlayerBase.Cast(player), this, position, orientation);
     }
 }
 
@@ -286,6 +286,7 @@ class OZG_Place extends ItemBase
     protected string m_OZG_DeckClass;
     protected int m_OZG_Mode;
     protected bool m_OZG_Loaded;
+    protected int m_OZG_OpenUntil;
 
     // Client only.
     protected int m_OZG_LookOf;
@@ -507,6 +508,116 @@ class OZG_Place extends ItemBase
     override bool CanPutIntoHands(EntityAI parent)
     {
         return false;
+    }
+
+    // ------------------------------------------------------------ the deck it holds
+
+    // Server: for a moment the session's own hand may put things in and take
+    // them out.
+    void OZG_Open()
+    {
+        m_OZG_OpenUntil = GetGame().GetTime() + OZG_Const.OPEN_MS;
+    }
+
+    // Whether a SERVER says no. A client never does: the deck comes out of
+    // the placer's hands by an event his own client has to agree with
+    // (hand_guards.c:302 asks LocationCanMoveEntity on both sides), and a
+    // client that refused would go on believing the deck is in its hands.
+    // What keeps players out on a client is that the place shows no
+    // inventory at all (IsInventoryVisible, DisableVicinityIcon above); what
+    // keeps a dishonest client out is this.
+    protected bool OZG_Shut()
+    {
+        if (!GetGame() || !GetGame().IsServer())
+            return false;
+        return GetGame().GetTime() >= m_OZG_OpenUntil;
+    }
+
+    override bool CanReceiveAttachment(EntityAI attachment, int slotId)
+    {
+        if (OZG_Shut())
+            return false;
+        if (!attachment || !attachment.IsInherited(OZG_Deck_Base))
+            return false;
+        return super.CanReceiveAttachment(attachment, slotId);
+    }
+
+    override bool CanReleaseAttachment(EntityAI attachment)
+    {
+        if (OZG_Shut())
+            return false;
+        return super.CanReleaseAttachment(attachment);
+    }
+
+    override bool CanReceiveItemIntoCargo(EntityAI item)
+    {
+        if (OZG_Shut())
+            return false;
+        if (!item || !item.IsInherited(OZG_Card_Base))
+            return false;
+        return super.CanReceiveItemIntoCargo(item);
+    }
+
+    override bool CanReleaseCargo(EntityAI cargo)
+    {
+        if (OZG_Shut())
+            return false;
+        return super.CanReleaseCargo(cargo);
+    }
+
+    OZG_Deck_Base OZG_Deck()
+    {
+        return OZG_Deck_Base.Cast(GetInventory().FindAttachmentByName(OZG_Const.SLOT_HOLD));
+    }
+
+    // Server: the deck is asked out of the placer's hands into the place, as
+    // the game's indoor fireplace takes its first stick
+    // (actioncreateindoorfireplace.c:95). The hands answer a tick or more
+    // later, and the call's own answer says nothing (humaninventory.c:228):
+    // whoever asks looks again (OZG_Session.AwaitDeck).
+    void OZG_TakeDeck(PlayerBase from, OZG_Deck_Base deck)
+    {
+        if (!from || !deck)
+            return;
+        OZG_Open();
+        from.ServerTakeEntityToTargetAttachmentEx(this, deck, InventorySlots.GetSlotIdFromString(OZG_Const.SLOT_HOLD));
+    }
+
+    // Server: a full deck of a class made inside the place: for a place made
+    // by script, and for one that lost its deck.
+    OZG_Deck_Base OZG_MakeDeck(string deckClass)
+    {
+        OZG_Deck_Base deck = OZG_Deck();
+        if (deck)
+            return deck;
+        if (deckClass == "")
+            deckClass = OZG_Decks.FirstClass();
+        OZG_Open();
+        deck = OZG_Deck_Base.Cast(GetInventory().CreateAttachment(deckClass));
+        if (deck)
+            deck.OZG_FillNow();
+        else
+            OZG_Log.Error("place " + OZG_Id() + " could not be given a deck " + deckClass);
+        return deck;
+    }
+
+    // Server: the deck out of the place onto the spot where the place lies,
+    // at once (inventory.c:1250, a move between two things that are no
+    // player's hands). Null when the place holds none.
+    OZG_Deck_Base OZG_Release()
+    {
+        OZG_Deck_Base deck = OZG_Deck();
+        if (!deck)
+            return null;
+        OZG_Open();
+        vector m4[4];
+        GetTransform(m4);
+        if (!GetInventory().DropEntityWithTransform(InventoryMode.SERVER, this, deck, m4))
+        {
+            OZG_Log.Error("the deck of place " + OZG_Id() + " did not leave it");
+            return null;
+        }
+        return deck;
     }
 
     // ------------------------------------------------------------ the look

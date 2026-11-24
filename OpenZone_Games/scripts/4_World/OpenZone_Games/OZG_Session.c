@@ -74,6 +74,11 @@ class OZG_Session
     protected bool m_HostWasFree;
     protected int m_Idle;
     protected string m_Note;
+    // Laid out by hand: the second of the mod's clock by which the deck must
+    // have come out of the placer's hands (0: nothing is waited for), and who
+    // placed it.
+    protected int m_DeckDue;
+    protected string m_DeckUid;
 
     void OZG_Session(OZG_Place place)
     {
@@ -586,6 +591,13 @@ class OZG_Session
         m_HostAway = 0;
     }
 
+    // Server: the deck was asked out of the placer's hands.
+    void AwaitDeck(PlayerBase by)
+    {
+        m_DeckDue = OZG_Sessions.Now() + OZG_Const.DECK_WAIT;
+        m_DeckUid = OZG_Who.Uid(by);
+    }
+
     bool Sit(PlayerBase player, int no, out string why)
     {
         why = OZG_Const.SAY_CANNOT;
@@ -934,6 +946,8 @@ class OZG_Session
     {
         if (m_R.St == OZG_Const.ST_PLAYING)
             return OZG_Const.SAY_PLAYING;
+        if (m_DeckDue > 0)
+            return OZG_Const.SAY_NOT_NOW;
         if (!OZG_Cfg.Get().GameOn(m_R.GameId))
             return OZG_Const.NO_GAME;
         OZG_Game game = OZG_Games.Create(m_R.GameId);
@@ -1104,6 +1118,19 @@ class OZG_Session
     {
         if (!m_Place)
             return;
+        // A place the deck has not reached in time is no game.
+        if (m_DeckDue > 0)
+        {
+            if (m_Place.OZG_Deck())
+            {
+                m_DeckDue = 0;
+            }
+            else if (OZG_Sessions.Now() >= m_DeckDue)
+            {
+                OZG_Sessions.Unlay(this, OZG_Sessions.PlayerOf(m_DeckUid));
+                return;
+            }
+        }
         OZG_Settings cfg = OZG_Cfg.Get();
         bool changed = false;
         bool anyone = false;

@@ -89,6 +89,22 @@ class OZG_ActionLayOut : ActionDeployObject
         if (mine && action_data && action_data.m_Player)
             OZG_Aim.ServerSetMode(action_data.m_Player, mine.m_OZG_Mode);
     }
+
+    // The game deletes a kit it has placed, here (actiondeployobject.c:230).
+    // A deck is not spent by being laid out: it is on its way into the place,
+    // or still in the placer's hands when the server refused the spot. For
+    // the length of this one call it is no kit.
+    override void OnEndServer(ActionData action_data)
+    {
+        OZG_Deck_Base deck;
+        if (action_data)
+            deck = OZG_Deck_Base.Cast(action_data.m_MainItem);
+        if (deck)
+            deck.OZG_Spare(true);
+        super.OnEndServer(action_data);
+        if (deck)
+            deck.OZG_Spare(false);
+    }
 }
 
 // One base for the three interactions with a place.

@@ -222,6 +222,8 @@ class OZG_WorldOps
             detail = "lay: no place was made";
             return false;
         }
+        // No hands lay this one out: its deck is made in it.
+        s.m_Place.OZG_MakeDeck(deck);
         s.Changed();
         detail = "laid " + s.Id() + " seats=" + ring.Count().ToString() + " kind=" + ring.Kind.ToString();
         return true;
@@ -672,6 +674,26 @@ class OZG_WorldOps
             }
         }
         detail = "undeck: " + gone.ToString() + " deck(s) of " + uid + " deleted";
+        return true;
+    }
+
+    // held id=: what the place holds: its deck, and the cards beside it.
+    static bool OpHeld(map<string, string> args, out string detail)
+    {
+        OZG_Session s = Sess(args, detail);
+        if (!s)
+            return false;
+        int beside = 0;
+        CargoBase cargo = s.m_Place.GetInventory().GetCargo();
+        if (cargo)
+            beside = cargo.GetItemCount();
+        OZG_Deck_Base deck = s.m_Place.OZG_Deck();
+        if (!deck)
+        {
+            detail = "held: no deck; beside=" + beside.ToString();
+            return true;
+        }
+        detail = "held: " + DeckLine(deck) + " beside=" + beside.ToString();
         return true;
     }
 

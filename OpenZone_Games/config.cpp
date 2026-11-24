@@ -333,6 +333,10 @@ class CfgVehicles
         model = "\OpenZone_Games\models\place\ozg_place.p3d";
         itemSize[] = {10, 10};
         weight = 400;
+        // The deck of the laid-out game, and room for cards the deck has no
+        // slot for. Neither is a player's to open (OZG_Place in the script).
+        attachments[] = {"OZG_DeckHold"};
+        itemsCargoSize[] = {10, 3};
         // The deck on the mat wears the sheet of the deck the place was laid
         // out from (OZG_Place.OZG_Look).
         hiddenSelections[] = {"deck"};

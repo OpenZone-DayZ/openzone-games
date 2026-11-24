@@ -79,7 +79,7 @@ class OZG_Sessions
             OZ_Rpc.Notice(id, op, false, why);
     }
 
-    // The deck goes back: into free hands, else onto the spot.
+    // A new deck of a class: into free hands, else onto the spot.
     protected static void GiveDeck(PlayerBase to, string deckClass, vector at)
     {
         if (deckClass == "")
@@ -97,10 +97,11 @@ class OZG_Sessions
     }
 
     // The deploy completed: the server decides again and makes the place.
-    static void LayOut(PlayerBase player, string deckClass, vector position, vector orientation)
+    static void LayOut(PlayerBase player, OZG_Deck_Base deck, vector position, vector orientation)
     {
-        if (!player)
+        if (!player || !deck)
             return;
+        string deckClass = deck.GetType();
         OZG_Settings cfg = OZG_Cfg.Get();
         int mode = OZG_Aim.ServerMode(player);
 
@@ -128,8 +129,8 @@ class OZG_Sessions
         }
         if (why != "")
         {
-            // The action deletes the kit it placed: the player gets another.
-            GiveDeck(null, deckClass, player.GetPosition());
+            // The deck is still in his hands: the action that placed it does
+            // not delete a deck (OZG_ActionLayOut.OnEndServer).
             Tell(player, OZG_Const.NOTICE_LAY, why);
             return;
         }
@@ -140,10 +141,13 @@ class OZG_Sessions
         OZG_Session s = Make(deckClass, laid, position, orientation, ring);
         if (!s)
         {
-            GiveDeck(null, deckClass, player.GetPosition());
             Tell(player, OZG_Const.NOTICE_LAY, OZG_Const.SAY_CANNOT);
             return;
         }
+
+        // The place asks for the deck, and what follows does not wait for it.
+        s.m_Place.OZG_TakeDeck(player, deck);
+        s.AwaitDeck(player);
 
         // The placer is the host, and sits at the seat nearest to him when one
         // is within a metre.
@@ -189,6 +193,45 @@ class OZG_Sessions
         return s;
     }
 
+    // A place its deck never reached is no game: it goes, and no deck is
+    // given, because the deck never left its owner.
+    static void Unlay(OZG_Session s, PlayerBase placer)
+    {
+        if (!s)
+            return;
+        string id = s.Id();
+        OZG_Place place = s.m_Place;
+        s.CloseAll(OZG_Const.SAY_CANNOT);
+        s.DropFans();
+        DeleteFile(OZG_Session.PathOf(id));
+        // Out of the table first: deleting the place looks for its session.
+        s.m_Place = null;
+        s_ById.Remove(id);
+        if (place)
+            GetGame().ObjectDelete(place);
+        Tell(placer, OZG_Const.NOTICE_LAY, OZG_Const.SAY_CANNOT);
+        OZG_Log.Warn("place " + id + " was unlaid: its deck did not reach it");
+    }
+
+    // The deck goes back. It leaves the place for the ground where the place
+    // lies, at once, so that the place can be deleted; then free hands are
+    // asked to take it up (man.c:197; the hands answer a tick later, and a
+    // deck they do not take lies where the place lay). A place that holds no
+    // deck gives a new one of its class.
+    protected static void ReturnDeck(OZG_Place place, PlayerBase to, string deckClass, vector at)
+    {
+        OZG_Deck_Base deck;
+        if (place)
+            deck = place.OZG_Release();
+        if (!deck)
+        {
+            GiveDeck(to, deckClass, at);
+            return;
+        }
+        if (to && to.IsAlive() && !to.GetItemInHands())
+            to.ServerTakeEntityToHands(deck);
+    }
+
     // ------------------------------------------------------------ the actions on a place
 
     static void SitAction(OZG_Place place, PlayerBase player)
@@ -221,8 +264,10 @@ class OZG_Sessions
             {
                 string deck = place.OZG_DeckClass();
                 vector at = place.GetPosition();
+                // The deck is out before the place goes: a thing deleted
+                // takes what it holds with it.
+                ReturnDeck(place, player, deck, at);
                 GetGame().ObjectDelete(place);
-                GiveDeck(player, deck, at);
             }
             return;
         }
@@ -255,9 +300,11 @@ class OZG_Sessions
         // Out of the table first: deleting the place looks for its session.
         s.m_Place = null;
         s_ById.Remove(id);
+        // The deck is out before the place goes: a thing deleted takes what
+        // it holds with it.
+        ReturnDeck(place, by, deck, at);
         if (place)
             GetGame().ObjectDelete(place);
-        GiveDeck(by, deck, at);
         OZG_Log.Info("place " + id + " folded: " + why);
     }
 

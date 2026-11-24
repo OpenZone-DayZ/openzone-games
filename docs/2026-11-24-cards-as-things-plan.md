@@ -1825,7 +1825,7 @@ Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 - Consumes: `OZG_Deck_Base.OZG_Spare(bool)`, `.OZG_FillNow()` (Task 3); `OZG_WorldOps.DeckLine` (Task 3); what Task 1 measured.
 - Produces: `OZG_Place.OZG_Deck() : OZG_Deck_Base`, `.OZG_Open()`, `.OZG_TakeDeck(PlayerBase from, OZG_Deck_Base deck)`, `.OZG_MakeDeck(string deckClass) : OZG_Deck_Base`, `.OZG_Release() : OZG_Deck_Base`; `OZG_Sessions.LayOut(PlayerBase player, OZG_Deck_Base deck, vector position, vector orientation)`, `OZG_Sessions.Unlay(OZG_Session s, PlayerBase placer)`; `OZG_Session.AwaitDeck(PlayerBase by)`; `OZG_Const.OPEN_MS`, `.DECK_WAIT`.
 
-- [ ] **Step 1: The place's slot and its holding; two numbers**
+- [x] **Step 1: The place's slot and its holding; two numbers**
 
 In `config.cpp`, `class OZG_Place`, after `weight = 400;`:
 
@@ -1846,7 +1846,7 @@ In `OZG_Const.c`, after the three constants Task 3 added:
     static const int DECK_WAIT = 4;
 ```
 
-- [ ] **Step 2: The action never deletes the deck**
+- [x] **Step 2: The action never deletes the deck**
 
 In `OZG_Actions.c`, `class OZG_ActionLayOut`, after `HandleReciveData`, add:
 
@@ -1869,7 +1869,7 @@ In `OZG_Actions.c`, `class OZG_ActionLayOut`, after `HandleReciveData`, add:
     }
 ```
 
-- [ ] **Step 3: The place takes, makes and releases a deck**
+- [x] **Step 3: The place takes, makes and releases a deck**
 
 In `OZG_Items.c`, `class OZG_Place`: beside `protected bool m_OZG_Loaded;` add
 
@@ -1991,7 +1991,7 @@ and after `CanPutIntoHands` (the end of the section "not an item") add:
     }
 ```
 
-- [ ] **Step 4: Laying out keeps the deck**
+- [x] **Step 4: Laying out keeps the deck**
 
 In `OZG_Items.c`, `OZG_Deck_Base.OnPlacementComplete`, replace the call
 
@@ -2174,7 +2174,7 @@ In `OZG_Sessions.c`:
 
    and change the comment above `GiveDeck` to `// A new deck of a class: into free hands, else onto the spot.`
 
-- [ ] **Step 5: A place made by script gets its deck; an op to look into a place**
+- [x] **Step 5: A place made by script gets its deck; an op to look into a place**
 
 In `OZG_WorldOps.c`, `OpLay`, after the `if (!s)` branch and before `s.Changed();`:
 
@@ -2208,7 +2208,7 @@ Before `// give who= [deck=class]` add (and route `held` in `OZG_Verb.c` like `c
 
 ```
 
-- [ ] **Step 6: Lint, a stand cycle with a client, the checks**
+- [x] **Step 6: Lint, a stand cycle with a client, the checks**
 
 `mod_lint`, the stand cycle, the client, `world_teleport "4699.56 339.02 10192.5"`.
 
@@ -2240,7 +2240,7 @@ Stand cycle (no build), client: `oz_games {"op":"held","id":"0"}`. Expected: the
 
 The spot refused by the server (another place within two metres, or no room for two seats) cannot be reached through the client, which refuses first; it is checked by reading: `LayOut`'s two refusals make no deck, and `OZG_ActionLayOut.OnEndServer` spares the one in the hands.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add OpenZone_Games OpenZone_Games_Bridge
@@ -2254,6 +2254,8 @@ place its deck never reached is unlaid.
 
 Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 ```
+
+**Done 2026-11-24.** By script: `laid ... seats=8 kind=1`, `held: deck OZG_Deck_Classic slots=52 cards=52 free=0 faces=52 looks=0:52 beside=0`; `gather` then `cards` two seconds later: the deck, fifty-two cards, in the hands (the client's state `hands=OZG_Deck_Classic`). By hand of the client, the deck short of its ace: `sessions=1 places=1 ... st=0 busy=1`, `held: deck OZG_Deck_Classic slots=52 cards=51 free=1 faces=51 looks=0:51 beside=0`, the client's state `hands=none`, the window open on the lobby, nothing unlaid in the log. After a restart the same `held` line, read before any client joined: a place that is shut takes its deck back out of the world's storage. The placer sits at the game he laid out, so `gather` answers busy and the last check was `ask fold` by him: `folded; sessions=0 places=0`, then `cards=51` and the client's `hands=OZG_Deck_Classic`.
 
 ---
 
