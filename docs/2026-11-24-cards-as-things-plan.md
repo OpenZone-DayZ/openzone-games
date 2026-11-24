@@ -4,7 +4,7 @@
 
 **Goal:** A deck becomes a container of fifty-two card items, a laid-out game keeps the deck inside its place, a deal is dealt from the cards the deck really holds (fewer, or with copies), and a player can count the deck.
 
-**Architecture:** A card in a game stays a two-character string; the alphabet its second character is written in says which copy of the face it is, so every fixed-width parser of moves and logs keeps working. The session reads the deck's card items at each deal and hands the game their names and the looks of their backs (`OZG_Game.TakeCards`); the game keeps what it was dealt from in its own state. Card items live in sixty universal slots (fifty-two on an ordinary deck, all sixty on a sharp's deck). The place holds the deck in one slot and overflow cards in a small cargo; the deck leaves the placer's hands the way the game's own indoor fireplace takes its first stick, and comes back by the ground.
+**Architecture:** A card in a game stays a two-character string; the letter its suit is written with says which copy of the face it is (thirteen letters a suit), so every fixed-width parser of moves and logs keeps working. The look of a card's back is a thing apart from its name and is kept beside it: two cards of one face may wear one back or two. The session reads the deck's card items at each deal and hands the game their names and the looks of their backs (`OZG_Game.TakeCards`); the game keeps what it was dealt from in its own state. Card items live in sixty-two universal slots (fifty-two on an ordinary deck, all sixty-two on a sharp's deck). The place holds the deck in one slot and overflow cards in a small cargo; the deck leaves the placer's hands the way the game's own indoor fireplace takes its first stick, and comes back by the ground.
 
 **Tech Stack:** Enforce Script (DayZ 1.30.164289, diag build), `config.cpp` written in part by a Python tool, the `dayz` MCP server (`mod_lint`, `mod_build`, `server_start`, `log_verdict`, `world_exec`, `client_*`), the stand's own verbs `oz_games` and `tgp`.
 
@@ -24,7 +24,7 @@
 - **A server holds the map only near players**: every check that reads the world needs the client connected and standing there.
 - **Stand calls** are written `oz_games {...}` and `tgp {...}`: the MCP tool `world_exec` with `verb="oz_games"` (or `"tgp"`) and those `args`. Every value of `args` is a string. What is compared is the answer's `detail`; the bridge cuts it at 400 characters. Several calls sent in one message run in the order sent.
 - **Screenshots**: every stand run that has something on screen ends with its key shots sent to the owner (`SendUserFile`).
-- The spec's numbers are copied here, not re-decided: 52 slots on an ordinary deck, 8 more on a sharp's, `CountSeconds` 6, `CountNamesCards` 0.
+- The spec's numbers are copied here, not re-decided: 52 slots on an ordinary deck, 62 on a sharp's (the owner's numbers, 2026-11-24), `CountSeconds` 6, `CountNamesCards` 0.
 
 ## What the game's own scripts say
 
@@ -412,11 +412,11 @@ Rules only, on the stand's bench: nothing of the world is touched, and no client
 - Modify: `OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_Bench.c` (`OpDeck`, `OpBegin`), `OZG_Bots.c:54-55`
 
 **Interfaces:**
-- Produces: `OZG_Cards.SuitOf(card) : string` (the suit itself, whichever copy), `OZG_Cards.CopyOf(card) : int`, `OZG_Cards.FaceOf(card) : string`, `OZG_Cards.CopyNamed(face, copy) : string`, `OZG_Cards.COPIES = 4`; `OZG_Game.TakeCards(array<string> cards, array<int> looks)`; `OZG_Const.NO_CARDS`; in durak's views `OZG_DurakSeatPublic.Backs`, `OZG_DurakPublic.TrumpLook`, `.StockTop`, `.AttackLooks`, `.DefenceLooks`, `OZG_DurakPrivate.HeldLooks`.
+- Produces: `OZG_Cards.SuitOf(card) : string` (the suit itself, whichever copy), `OZG_Cards.CopyOf(card) : int`, `OZG_Cards.FaceOf(card) : string`, `OZG_Cards.CopyNamed(face, copy) : string`, `OZG_Cards.COPIES = 13`; `OZG_Game.TakeCards(array<string> cards, array<int> looks)`; `OZG_Const.NO_CARDS`; in durak's views `OZG_DurakSeatPublic.Backs`, `OZG_DurakPublic.TrumpLook`, `.StockTop`, `.AttackLooks`, `.DefenceLooks`, `OZG_DurakPrivate.HeldLooks`.
 
 - [ ] **Step 1: The checks on the bench, written first**
 
-In `OZG_Bench.c`, `OpDeck`: the third of the five things that are no cards is `6x`, and `x` becomes a suit letter of a copy. Replace `if (!OZG_Cards.IsCard("6x"))` with `if (!OZG_Cards.IsCard("6q"))`. After the line `detail = detail + " suit(Th)=" + OZG_Cards.SuitOf("Th");` add:
+In `OZG_Bench.c`, `OpDeck`: the third of the five things that are no cards is `6x`, and every letter becomes a suit's letter of some copy. Replace `if (!OZG_Cards.IsCard("6x"))` with `if (!OZG_Cards.IsCard("6?"))`. After the line `detail = detail + " suit(Th)=" + OZG_Cards.SuitOf("Th");` add:
 
 ```c
         detail = detail + " suit(AS)=" + OZG_Cards.SuitOf("AS");
@@ -424,6 +424,8 @@ In `OZG_Bench.c`, `OpDeck`: the third of the five things that are no cards is `6
         detail = detail + " copy(AS)=" + OZG_Cards.CopyOf("AS").ToString();
         detail = detail + " face(Aw)=" + OZG_Cards.FaceOf("Aw");
         detail = detail + " named(As,3)=" + OZG_Cards.CopyNamed("As", 3);
+        detail = detail + " copy(AV)=" + OZG_Cards.CopyOf("AV").ToString();
+        detail = detail + " named(As,13)=[" + OZG_Cards.CopyNamed("As", 13) + "]";
 ```
 
 In `OpBegin`, after `OZG_VerbOps.Pairs(OZG_VerbOps.Arg(args, "opt", ""), options);`:
@@ -456,21 +458,30 @@ Replace `OZG_Cards.c` from its first line down to the end of `IsCard` (everythin
 // Cards. A card is two characters, a rank of RANKS and a suit: `6s` is the six
 // of spades, `Th` the ten of hearts (design §8).
 //
-// A COPY IS TOLD BY THE SUIT'S ALPHABET. Since cards are things, a game may
-// hold two cards of one face. The second character is the suit and, by the
-// alphabet it is written in, which copy this is: `As`, `AS`, `Aw`, `AW` are
-// four aces of spades. A card stays two characters, so every move and every
-// log line keeps its width; the rules ask SuitOf, which answers the suit
-// itself, and whoever needs the face for a picture or a name asks FaceOf.
+// A COPY IS TOLD BY THE LETTER OF ITS SUIT. Since cards are things, a game
+// may hold several cards of one face. The second character is the suit and,
+// by which of a suit's letters it is, which copy this is: `As`, `AS`, `Aw`,
+// `AW` are four aces of spades, and there are thirteen letters for each suit.
+// A card stays two characters, so every move and every log line keeps its
+// width; the rules ask SuitOf, which answers the suit itself, and whoever
+// needs the face for a picture or a name asks FaceOf.
+//
+// A COPY'S NUMBER SAYS NOTHING OF THE CARD'S BACK. The look of a back is kept
+// beside the card's name wherever cards are kept: two aces of spades may wear
+// one back or two, and both ways they are two cards.
 class OZG_Cards
 {
-    static const string RANKS   = "23456789TJQKA";
-    static const string SUITS   = "shdc";
-    static const string SUITS_B = "SHDC";
-    static const string SUITS_C = "wxyz";
-    static const string SUITS_D = "WXYZ";
-    // The most cards of one face a game holds.
-    static const int COPIES = 4;
+    static const string RANKS = "23456789TJQKA";
+    static const string SUITS = "shdc";
+    // Every letter a suit is written with: four a copy, in the order of
+    // SUITS, the suits themselves first. Fifty-two letters, thirteen copies.
+    static const string SUIT_LETTERS = "shdcSHDCwxyzWXYZabefgijklmnopqrtuvABEFGIJKLMNOPQRTUV";
+    // The most cards of one face a game can tell apart. No rule asks for it:
+    // it is where the letters end. A place holds ninety-two cards at the most
+    // (sixty-two in a sharp's deck, thirty beside it), so a fourteenth card of
+    // one face takes somebody who wants to see what happens: it is left out
+    // of the deal, and a count still counts it.
+    static const int COPIES = 13;
 
     // 0 for a two .. 12 for an ace; -1 for what is not a card.
     static int RankOf(string card)
@@ -488,33 +499,12 @@ class OZG_Cards
         copy = 0;
         if (card.Length() != 2)
             return -1;
-        string ch = card.Substring(1, 1);
-        string letters = SUITS;
-        int at = letters.IndexOf(ch);
-        if (at >= 0)
-            return at;
-        letters = SUITS_B;
-        at = letters.IndexOf(ch);
-        if (at >= 0)
-        {
-            copy = 1;
-            return at;
-        }
-        letters = SUITS_C;
-        at = letters.IndexOf(ch);
-        if (at >= 0)
-        {
-            copy = 2;
-            return at;
-        }
-        letters = SUITS_D;
-        at = letters.IndexOf(ch);
-        if (at >= 0)
-        {
-            copy = 3;
-            return at;
-        }
-        return -1;
+        string letters = SUIT_LETTERS;
+        int at = letters.IndexOf(card.Substring(1, 1));
+        if (at < 0)
+            return -1;
+        copy = at / 4;
+        return at % 4;
     }
 
     // "s", "h", "d" or "c", whichever copy the card is; "" for what is not a
@@ -529,7 +519,7 @@ class OZG_Cards
         return suits.Substring(at, 1);
     }
 
-    // 0 for the first card of a face, 1..3 for its copies; -1 for no card.
+    // 0 for the first card of a face, 1..12 for its copies; -1 for no card.
     static int CopyOf(string card)
     {
         int copy;
@@ -554,16 +544,10 @@ class OZG_Cards
         int at = SuitAt(face, had);
         if (at < 0 || RankOf(face) < 0)
             return "";
-        string letters = SUITS;
-        if (copy == 1)
-            letters = SUITS_B;
-        else if (copy == 2)
-            letters = SUITS_C;
-        else if (copy == 3)
-            letters = SUITS_D;
-        else if (copy != 0)
+        if (copy < 0 || copy >= COPIES)
             return "";
-        return face.Substring(0, 1) + letters.Substring(at, 1);
+        string letters = SUIT_LETTERS;
+        return face.Substring(0, 1) + letters.Substring(copy * 4 + at, 1);
     }
 
     static bool IsCard(string card)
@@ -860,8 +844,8 @@ Run `mod_lint`, then the stand cycle.
 ```
 oz_games {"op":"deck"}
 ```
-Expected to contain: `suit(Th)=h suit(AS)=s copy(As)=0 copy(AS)=1 face(Aw)=As named(As,3)=AW notcards=5/5`.
-If `copy(AS)` reads `0`, `IndexOf` does not tell the letters' case apart: replace `SUITS_B` with `"mnop"` and `SUITS_D` with `"efgj"`, make the bench's lines `AS` -> `Am`, `AW` -> `Ae`, and say so in the record and in this file (the checks of the later tasks that name `AS`, `Aw`, `AW` change with it).
+Expected to contain: `suit(Th)=h suit(AS)=s copy(As)=0 copy(AS)=1 face(Aw)=As named(As,3)=AW copy(AV)=12 named(As,13)=[] notcards=5/5`.
+If `copy(AS)` reads `0`, `IndexOf` does not tell the letters' case apart: make `SUIT_LETTERS` the thirty-two characters `"shdcwxyzabefgijklmnopqrt01234567"` and `COPIES` 8, change the bench's lines to names of that set and the numbers with them (`AS` -> `Aw` is copy 1, `Aw` -> `Aa`, `AW` -> `Ag`, `AV` -> `A7` is copy 7, `named(As,13)` -> `named(As,8)`), and say so in the record and in this file (the checks of the later tasks that name `AS`, `Aw`, `AW` change with it).
 
 ```
 oz_games {"op":"begin","seats":"0,1"}
@@ -905,7 +889,7 @@ Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 
 ---
 
-### Task 3: Card items, sixty slots, two kinds of deck that fill themselves
+### Task 3: Card items, sixty-two slots, two kinds of deck that fill themselves
 
 **Files:**
 - Create: `tools/make_card_items.py`
@@ -919,14 +903,14 @@ Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 
 **Interfaces:**
 - Consumes: `OZG_Cards.Whole`, `OZG_Cards.Parse` (exist).
-- Produces: slots `OZG_Card01`..`OZG_Card60` and `OZG_DeckHold`; config classes `OZG_Card_Base`, `OZG_Card_<face>` (`OZG_Card_As`), `OZG_Deck_Classic_Sharp`, `OZG_Deck_Zone_Sharp`; script `OZG_Card_Base.OZG_Face() : string`, `.OZG_Look() : int`, `.OZG_SetStyle(string style)`; `OZG_Decks.LookOfDeck(string deckClass) : int`, `.LookOfStyle(string style) : int`, `.StyleAt(int look) : string`, `.SheetAt(int look) : string`; `OZG_Deck_Base.OZG_FillNow()`, `.OZG_Spare(bool on)`, `.OZG_Slots() : int`, `.OZG_Free() : int`; `OZG_Const.CARD_PREFIX = "OZG_Card_"`, `.SLOT_HOLD = "OZG_DeckHold"`; in the bridge `OZG_WorldOps.DeckOf(PlayerBase) : OZG_Deck_Base`, `.DeckLine(OZG_Deck_Base) : string`, `.PullFrom(OZG_Deck_Base, string faces) : int`.
+- Produces: slots `OZG_Card01`..`OZG_Card62` and `OZG_DeckHold`; config classes `OZG_Card_Base`, `OZG_Card_<face>` (`OZG_Card_As`), `OZG_Deck_Classic_Sharp`, `OZG_Deck_Zone_Sharp`; script `OZG_Card_Base.OZG_Face() : string`, `.OZG_Look() : int`, `.OZG_SetStyle(string style)`; `OZG_Decks.LookOfDeck(string deckClass) : int`, `.LookOfStyle(string style) : int`, `.StyleAt(int look) : string`, `.SheetAt(int look) : string`; `OZG_Deck_Base.OZG_FillNow()`, `.OZG_Spare(bool on)`, `.OZG_Slots() : int`, `.OZG_Free() : int`; `OZG_Const.CARD_PREFIX = "OZG_Card_"`, `.SLOT_HOLD = "OZG_DeckHold"`; in the bridge `OZG_WorldOps.DeckOf(PlayerBase) : OZG_Deck_Base`, `.DeckLine(OZG_Deck_Base) : string`, `.PullFrom(OZG_Deck_Base, string faces) : int`.
 
 - [ ] **Step 1: The generator**
 
 Write `tools/make_card_items.py` with the Write tool:
 
 ```python
-# Writes what there is one of for every card: sixty slots, fifty-two card
+# Writes what there is one of for every card: sixty-two slots, fifty-two card
 # classes, the slot lists of the decks, the cards' names, and the cards' lines
 # for a server's economy.
 #
@@ -945,7 +929,7 @@ TYPES = os.path.join(ROOT, "docs", "examples", "types-openzone-games.xml")
 
 RANKS = "23456789TJQKA"
 SUITS = "shdc"
-SLOTS = 60
+SLOTS = 62
 PLAIN = 52
 
 RANK_UA = ["Двійка", "Трійка", "Четвірка", "П'ятірка", "Шістка", "Сімка", "Вісімка", "Дев'ятка",
@@ -1090,9 +1074,10 @@ In `OpenZone_Games/config.cpp`:
 2. Between the closing `};` of `class CfgMods` and `class CfgVehicles`, add:
 
 ```cpp
-// A slot for a card, any card: sixty of them, and every card names them all.
-// An ordinary deck has the first fifty-two, a sharp's deck all sixty. One more
-// slot is the place's, for the deck it holds. The sixty are written by
+// A slot for a card, any card: sixty-two of them, and every card names them
+// all. An ordinary deck has the first fifty-two, a sharp's deck all sixty-two.
+// One more slot is the place's, for the deck it holds. The sixty-two are
+// written by
 // tools/make_card_items.py.
 class CfgSlots
 {
@@ -1128,7 +1113,7 @@ class CfgSlots
 
 ```cpp
 
-    // A card sharp's deck: the same deck outside, eight empty slots more
+    // A card sharp's deck: the same deck outside, ten empty slots more
     // inside, for the cards mixed in.
     class OZG_Deck_Classic_Sharp: OZG_Deck_Classic
     {
@@ -1170,7 +1155,7 @@ STR_OZG_CARD_DESC,Гральна карта. Її місце в колоді.,A 
     <!-- <<< generated: cards -->
 ```
 
-Run `python -I tools/make_card_items.py`. Expected: `slots 60, names 52, types 52`.
+Run `python -I tools/make_card_items.py`. Expected: `slots 62, names 52, types 52`.
 Run `python -I tools/stringtable.py OpenZone_Games`. Expected: `stringtable.csv: 212 strings`.
 Run `grep -c "class OZG_Card_" OpenZone_Games/config.cpp`. Expected: `53`.
 Run the tool a second time, then `git diff --stat` before and after: the second run changes nothing.
@@ -1659,13 +1644,13 @@ a second later:
 ```
 oz_games {"op":"cards","who":"me"}
 ```
-Expected: `deck OZG_Deck_Zone_Sharp slots=60 cards=52 free=8 faces=52 looks=1:52`.
+Expected: `deck OZG_Deck_Zone_Sharp slots=62 cards=52 free=10 faces=52 looks=1:52`.
 
 ```
 oz_games {"op":"pull","who":"me","face":"As"}
 oz_games {"op":"cards","who":"me"}
 ```
-Expected: `pulled 1 of 'As'; ...`, then `... cards=51 free=9 faces=51 looks=1:51`.
+Expected: `pulled 1 of 'As'; ...`, then `... cards=51 free=11 faces=51 looks=1:51`.
 
 Open the inventory on the client (`client_key`, the Tab key) and `client_shot`: what a deck in the hands shows of its cards is written into the record as it is seen (the slots as icons, or nothing until the deck is looked at). This is the owner's to judge, not a pass or a fail of this step.
 
@@ -1674,15 +1659,15 @@ Stand cycle (no build), client:
 ```
 oz_games {"op":"cards","who":"me"}
 ```
-Expected: `... cards=51 free=9 faces=51 looks=1:51` (kept through the restart, the looks with it, and not filled again).
+Expected: `... cards=51 free=11 faces=51 looks=1:51` (kept through the restart, the looks with it, and not filled again).
 
 - [ ] **Step 8: Commit**
 
 ```bash
 git add tools OpenZone_Games OpenZone_Games_Bridge docs/examples
-git commit -m "Cards are things: fifty-two classes, sixty slots, two kinds of deck
+git commit -m "Cards are things: fifty-two classes, sixty-two slots, two kinds of deck
 
-A deck holds its cards in slots that take any card; a sharp's deck has eight
+A deck holds its cards in slots that take any card; a sharp's deck has ten
 more, empty. A new deck fills itself once with the cards of its own look; one
 that comes back from storage is left as it is. The slots, the card classes,
 the cards' names and their lines for the economy are written by
@@ -2149,7 +2134,7 @@ Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 
 **Interfaces:**
 - Consumes: `OZG_Place.OZG_Deck()`, `.OZG_MakeDeck`, `.OZG_Open` (Task 4); `OZG_Game.TakeCards`, `OZG_Cards.CopyNamed`, `.FaceOf`, `.COPIES` (Task 2); `OZG_Card_Base.OZG_Face()`, `.OZG_Look()`, `.OZG_SetStyle` (Task 3); `OZG_WorldOps.DeckOf`, `.PullFrom` (Task 3).
-- Produces: `OZG_DeckRead.ThingsOf(OZG_Place place, array<EntityAI> into)` (every card item a place holds: the deck's in the order of its slots, then those beside it); `OZG_DeckRead.CardsOf(OZG_Place place, array<string> cards, array<int> looks) : int` (the same cards as a game names them, with the looks of their backs; the answer is how many card items there are, those beyond four of a face included).
+- Produces: `OZG_DeckRead.ThingsOf(OZG_Place place, array<EntityAI> into)` (every card item a place holds: the deck's in the order of its slots, then those beside it); `OZG_DeckRead.CardsOf(OZG_Place place, array<string> cards, array<int> looks) : int` (the same cards as a game names them, with the looks of their backs; the answer is how many card items there are, those beyond thirteen of a face included).
 
 - [ ] **Step 1: Reading a place's cards**
 
@@ -2190,10 +2175,12 @@ class OZG_DeckRead
         }
     }
 
-    // The cards as a game names them: a face, and for a second, third and
-    // fourth card of that face its copies. A fifth is left out of every game.
-    // Beside each, the look of its back. Returns how many card items there
-    // are, the ones left out included.
+    // The cards as a game names them: a face, and for every further card of
+    // that face one of its copies. More than OZG_Cards.COPIES of one face
+    // cannot be told apart in two characters: those are left out of every
+    // game. Beside each, the look of its back, which a copy's number says
+    // nothing of: two aces of spades may wear one back or two. Returns how
+    // many card items there are, the ones left out included.
     static int CardsOf(OZG_Place place, array<string> cards, array<int> looks)
     {
         cards.Clear();
@@ -2360,7 +2347,7 @@ oz_games {"op":"lay","at":"4701.5 339.0 10196.0","mode":"2","deck":"OZG_Deck_Cla
 oz_games {"op":"stuff","id":"0","face":"As","style":"zone"}
 oz_games {"op":"held","id":"0"}
 ```
-Expected: `stuffed As: deck=1 beside=0`, then `held: deck OZG_Deck_Classic_Sharp slots=60 cards=53 free=7 faces=52 looks=0:52,1:1 beside=0`. Two new puppets, host, deal. Expected: `stock=25` (thirty-seven cards). `auto`, `sess`: `st=2`, no error: a copy plays.
+Expected: `stuffed As: deck=1 beside=0`, then `held: deck OZG_Deck_Classic_Sharp slots=62 cards=53 free=9 faces=52 looks=0:52,1:1 beside=0`. Two new puppets, host, deal. Expected: `stock=25` (thirty-seven cards). `auto`, `sess`: `st=2`, no error: a copy plays.
 
 **Too few.** After that game: one call takes twenty-four of the thirty-seven away and leaves the nines to the aces of diamonds and of clubs and the stuffed ace:
 
@@ -3008,13 +2995,13 @@ Expected of the second: `loose: 3 <face>/<look> <face>/<look> <face>/<look>`. Wr
 
 Do it twice more: the three that stay differ from run to run.
 
-**A sharp's deck takes eight of ten:**
+**A sharp's deck takes ten of twelve:**
 
 ```
 oz_games {"op":"lay","at":"4701.5 339.0 10196.0","mode":"2","deck":"OZG_Deck_Classic_Sharp"}
-oz_games {"op":"stuff","id":"0","face":"Kh","style":"zone","n":"10"}
+oz_games {"op":"stuff","id":"0","face":"Kh","style":"zone","n":"12"}
 ```
-Expected: `stuffed Kh: deck=8 beside=2`. `gather`, then `loose`: `loose: 2 ...`; two seconds later `cards`: `cards=60 free=0`. Sweep, `undeck`.
+Expected: `stuffed Kh: deck=10 beside=2`. `gather`, then `loose`: `loose: 2 ...`; two seconds later `cards`: `cards=62 free=0`. Sweep, `undeck`.
 
 **Room for all leaves nothing:** lay an ordinary deck, `pull id=0 face="2s 3s"`, a tick later `stuff id=0 face=Qd n=2`: `stuffed Qd: deck=2 beside=0`; `gather`; `loose`: `loose: 0`.
 
@@ -3051,7 +3038,7 @@ Then the same once on the other stand's terrain when that stand is free (NHChern
 
 - [ ] **Step 2: The slot table of a heavy pack**
 
-Sixty-one slots more against the slot table of a server with many mods (spec §12). **Ask the owner first**: which stand carries such a pack and whether it may be booted with this mod added (`E:\dayzmod\testserver\mirage1114` held the Mirage pack on 2026-11-14; that stand, its world and its profile are not this project's, and what was added is taken out again afterwards). On it: `oz_games {"op":"give","who":"me","deck":"OZG_Deck_Classic_Sharp"}`, a second later `{"op":"cards","who":"me"}`. Expected: `slots=60 cards=52 free=8 faces=52`. If the cards do not all go in, stop and report: the spec says a failure here comes back to the owner.
+Sixty-three slots more against the slot table of a server with many mods (spec §12). **Ask the owner first**: which stand carries such a pack and whether it may be booted with this mod added (`E:\dayzmod\testserver\mirage1114` held the Mirage pack on 2026-11-14; that stand, its world and its profile are not this project's, and what was added is taken out again afterwards). On it: `oz_games {"op":"give","who":"me","deck":"OZG_Deck_Classic_Sharp"}`, a second later `{"op":"cards","who":"me"}`. Expected: `slots=62 cards=52 free=10 faces=52`. If the cards do not all go in, stop and report: the spec says a failure here comes back to the owner.
 
 When the owner says "not now", the record says "not measured" in plain words and phase 1 is not called done.
 
@@ -3074,7 +3061,7 @@ When the owner says "not now", the record says "not measured" in plain words and
 
 The spec: its status line says phase 1 is built and names the record; every place where the build decided otherwise is amended (none is expected beyond what was amended when this plan was written: §3.1, §3.2, §3.3, §3.4, §9).
 
-Every engine fact measured since Task 1 goes into `dayz-modding` with neutral names (a card that names sixty slots goes into the first free one; whether `IndexOf` tells case apart; what a storage load asks of `CanReceiveAttachment`; what a deck in the hands shows of its attachments), the pointers to this repository's code into `openzone` (`references/networking-and-items.md`). `python -I openzone/scripts/check-generic.py` from `E:\dayzmod\dayz-modding-skill` must print nothing. Stage only this work's lines in both; commit; **do not push**.
+Every engine fact measured since Task 1 goes into `dayz-modding` with neutral names (a card that names sixty-two slots goes into the first free one; whether `IndexOf` tells case apart; what a storage load asks of `CanReceiveAttachment`; what a deck in the hands shows of its attachments), the pointers to this repository's code into `openzone` (`references/networking-and-items.md`). `python -I openzone/scripts/check-generic.py` from `E:\dayzmod\dayz-modding-skill` must print nothing. Stage only this work's lines in both; commit; **do not push**.
 
 ```bash
 cd /e/openzone/openzone-games
@@ -3091,8 +3078,8 @@ Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 | Spec | Task |
 |---|---|
 | §3.1 a card: a class a face, 1 by 1, fits every slot, a back of its deck's look | 3 |
-| §3.2 two kinds of deck, 52 and 52 + 8 slots; fills itself once; takes cards only | 3 |
-| §3.2 to be measured: sixty names on a card, the first free slot; a heavy pack | 3 (Step 7), 9 (Step 2) |
+| §3.2 two kinds of deck, 52 and 62 slots; fills itself once; takes cards only | 3 |
+| §3.2 to be measured: sixty-two names on a card, the first free slot; a heavy pack | 3 (Step 7), 9 (Step 2) |
 | §3.3 the place holds the deck; nobody opens it; the deck and its cards survive the move and a restart | 1, 4 |
 | §3.3 more cards than slots: random ones stay where the place lay | 8 |
 | §3.4 a deal from what the deck holds; copies; "not enough cards"; `Sound` | 2, 5 |
@@ -3111,8 +3098,8 @@ Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 
 ## Risks the plan knows of
 
-- **Task 1 says no**: the deck cannot be kept through its own placing. Then the place gets the sixty card slots itself; the kit is deleted as it is today; at laying out its cards are moved one by one into the place (`GetInventory().TakeToDst(InventoryMode.SERVER, src, dst)`: they are in no hands, so each move is done at once), and at gathering into a new, empty deck of the remembered class. Tasks 4, 5 and 8 are rewritten against "the place's own slots"; Tasks 2, 3, 6 and 7 stand. The owner is told before that is built.
+- **Task 1 says no**: the deck cannot be kept through its own placing. Then the place gets the sixty-two card slots itself; the kit is deleted as it is today; at laying out its cards are moved one by one into the place (`GetInventory().TakeToDst(InventoryMode.SERVER, src, dst)`: they are in no hands, so each move is done at once), and at gathering into a new, empty deck of the remembered class. Tasks 4, 5 and 8 are rewritten against "the place's own slots"; Tasks 2, 3, 6 and 7 stand. The owner is told before that is built.
 - **A storage load that asks the script.** If a place that is shut could not take its deck back at a restart, Task 4's restart check shows `held: no deck`. The way round: the place is open for the first seconds after `EEInit` on the server.
-- **`CreateAttachment` and sixty names**: Task 3's first check (`cards=52`) is where a card that will not go into "the first free slot" shows. The way round is `CreateAttachmentEx(type, slotId)` with the slot's own id, counted from `OZG_Card01`.
+- **`CreateAttachment` and sixty-two names**: Task 3's first check (`cards=52`) is where a card that will not go into "the first free slot" shows. The way round is `CreateAttachmentEx(type, slotId)` with the slot's own id, counted from `OZG_Card01`.
 - **A slow client.** The hands answer after a round trip; a placer whose answer takes longer than `DECK_WAIT` loses the place and keeps the deck. Four seconds is a guess until Task 1 says how long the hands take.
 - **The window's seat strip shows one back a seat**: a hand's strange backs are a number beside it, not pictures. The spec calls the traces schematic for now.
