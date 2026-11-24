@@ -6,15 +6,17 @@ or stand around it, and the game is played in a window while the characters sit 
 first game is durak, podkidnoy and perevodnoy. Class prefix `OZG_`; runs with
 `OpenZone_Core` alone.
 
-> **The stalkers' deck uses pictures from the S.T.A.L.K.E.R. games.** They are created and
-> fully owned by GSC Game World and are not covered by this mod's licence. OpenZone Games is
-> a fan-made mod, not official, with no affiliation with GSC Game World. The original games:
-> <https://store.steampowered.com/franchise/stalker>. Details in [NOTICE](NOTICE).
+> **The stalkers' deck and table use pictures from the S.T.A.L.K.E.R. games.** They are
+> created and fully owned by GSC Game World and are not covered by this mod's licence.
+> OpenZone Games is a fan-made mod, not official, with no affiliation with GSC Game World.
+> The original games: <https://store.steampowered.com/franchise/stalker>. Details in
+> [NOTICE](NOTICE).
 >
-> **Сталкерська колода містить зображення з ігор S.T.A.L.K.E.R.** Їх створила і повністю
-> ними володіє GSC Game World; ліцензія моду на них не поширюється. OpenZone Games --
-> фанатський неофіційний мод, не пов'язаний із GSC Game World. Оригінальні ігри:
-> <https://store.steampowered.com/franchise/stalker>. Подробиці в [NOTICE](NOTICE).
+> **Сталкерська колода і сталкерський стіл містять зображення з ігор S.T.A.L.K.E.R.** Їх
+> створила і повністю ними володіє GSC Game World; ліцензія моду на них не поширюється.
+> OpenZone Games -- фанатський неофіційний мод, не пов'язаний із GSC Game World.
+> Оригінальні ігри: <https://store.steampowered.com/franchise/stalker>. Подробиці в
+> [NOTICE](NOTICE).
 
 ## Status: a game can be played (2026-11-24); nothing is published
 
@@ -35,9 +37,13 @@ first game is durak, podkidnoy and perevodnoy. Class prefix `OZG_`; runs with
   the floor below a raised thing the mat lies on (a table, a wall's top, a crate), or
   sitting on the level of the mat itself. A player turns to the mat, is shown the free
   seats for a few seconds, stands on one and sits.
-- **The game** is held by the server and shown in a window: the table, the other seats,
-  the hand with the playable cards lit, the log, the host's tools. Durak in both variants,
-  two to six players. Others may watch.
+- **The game** is held by the server and shown in a window that is a card table in the
+  look of the deck: the classic deck's green felt in a dark green window, or for the
+  stalkers' deck a piece of a stalker's suit with an old loners' patch in frames of worn
+  rusty steel. The other seats sit round it as fans of backs to be counted by eye; the
+  stock lies with the trump turned under it, the discards as a heap; the hand fans out
+  along an arc, the playable cards lit; beside it the log and the host's tools. Durak in
+  both variants, two to six players. Others may watch.
 - **A seat** is kept for a player who walks off; whoever leaves in mid-game discards his
   cards or leaves the seat with them for another to play on. The host's role passes on.
 - **Everything survives a restart**: the place, the seats, the hands, whose move it is.
@@ -60,11 +66,11 @@ No key, no `mod.cpp`, no Workshop item: nothing is published without the owner's
 
 | Path | What |
 |---|---|
-| `OpenZone_Games/` | the mod: scripts, config, layouts, card imagesets, models |
-| `OpenZone_Games_Bridge/` | stand tool, server only: the `oz_games` verb, bots, the `!ozg` chat commands |
+| `OpenZone_Games/` | the mod: scripts, config, layouts, card imagesets, the table's textures and fonts, models |
+| `OpenZone_Games_Bridge/` | stand tool, server only: the `oz_games` verb, bots, the `!ozg` chat commands, `stage` (a table set out to be looked at) |
 | `TableGamesProbe/`, `TableGamesProbe_Bridge/` | stand tool of the first measurements ([docs/probe.md](docs/probe.md)) |
-| `tools/` | `make_cards.py` (the two decks' art), `make_card_items.py` (the card items, their slots and names), `make_layouts.py` (the window), `stringtable.py`, `analyze.py` |
-| `art/` | sources of the cards and the font of their letters (Oswald, SIL Open Font License) |
+| `tools/` | `make_cards.py` (the two decks' art), `make_card_items.py` (the card items, their slots and names), `make_table.py` (the window's tables, frames, plates, shadows; `steel.py` is the trade screen's steel), `build_fonts.py` (the window's own fonts), `make_layouts.py` (the window), `stringtable.py`, `analyze.py` |
+| `art/` | sources of the cards, of the tables (`art/table`) and the fonts (Oswald, PT Mono; SIL Open Font License; their list in `art/fonts/fonts.json`) |
 | `models/` | sources of the five models and how they are built ([models/README.md](models/README.md)) |
 | `docs/` | plans, records, measurements, an example for a server's economy |
 
@@ -96,8 +102,12 @@ OpenZone), колоду тримають у долоні, одну карту �
 отримує назад ту саму колоду. З нею в руках
 гравець обирає місце, голограма килимка показує, скільки там місць і яких, або чому місце
 не годиться. Місця навколо обчислює мод: стоячи біля столу або сидячи на землі. Партію
-тримає сервер, а вікно показує стіл, інших гравців, руку з підсвіченими картами, журнал
-та інструменти господаря. Місце чекає на гравця, який відійшов; хто йде посеред партії,
+тримає сервер, а вікно — картярський стіл у вигляді колоди: зелене сукно в темно-зеленому
+вікні для класичної, шматок тканини сталкерського костюма зі старою нашивкою вільних
+сталкерів у рамках потертої іржавої сталі — для сталкерської. Інші гравці сидять навколо
+віялами сорочок, які рахують оком; колода лежить із козирем упоперек під нею, відбій —
+купою; рука розкладена дугою, карти, якими можна ходити, підсвічені; поруч журнал та
+інструменти господаря. Місце чекає на гравця, який відійшов; хто йде посеред партії,
 скидає карти або лишає місце з картами іншому. Усе переживає рестарт сервера. Гравець у
 партії тримає віяло карт, пози задаються в налаштуваннях.
 

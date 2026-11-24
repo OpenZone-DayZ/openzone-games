@@ -171,4 +171,42 @@ class OZG_Text
             s = s + parts[i];
         return s;
     }
+
+    // A copy in capitals, Latin and Ukrainian: the stalkers' table writes its
+    // title, names and buttons so, as the mock-up's CSS did. The engine's
+    // ToUpper is left to the Latin letters (what it does with Cyrillic is not
+    // measured); each Ukrainian letter is replaced whole -- two bytes for two,
+    // and a lead byte never stands where a continuation byte does, so no
+    // replacement can land inside another letter (OpenZone Research's
+    // OZL_Text.Upper does the same). The small i becomes the Latin I, as the
+    // series' strings write the capital (vanilla fonts lack the Cyrillic one).
+    protected static ref array<string> s_Lower;
+    protected static ref array<string> s_Upper;
+
+    protected static void Pair(string lower, string upper)
+    {
+        s_Lower.Insert(lower);
+        s_Upper.Insert(upper);
+    }
+
+    static string Upper(string s)
+    {
+        if (!s_Lower)
+        {
+            s_Lower = new array<string>();
+            s_Upper = new array<string>();
+            Pair("а", "А"); Pair("б", "Б"); Pair("в", "В"); Pair("г", "Г"); Pair("ґ", "Ґ");
+            Pair("д", "Д"); Pair("е", "Е"); Pair("є", "Є"); Pair("ж", "Ж"); Pair("з", "З");
+            Pair("и", "И"); Pair("і", "I"); Pair("ї", "Ї"); Pair("й", "Й"); Pair("к", "К");
+            Pair("л", "Л"); Pair("м", "М"); Pair("н", "Н"); Pair("о", "О"); Pair("п", "П");
+            Pair("р", "Р"); Pair("с", "С"); Pair("т", "Т"); Pair("у", "У"); Pair("ф", "Ф");
+            Pair("х", "Х"); Pair("ц", "Ц"); Pair("ч", "Ч"); Pair("ш", "Ш"); Pair("щ", "Щ");
+            Pair("ь", "Ь"); Pair("ю", "Ю"); Pair("я", "Я"); Pair("І", "I");
+        }
+        string t = s;
+        t.ToUpper();
+        for (int i = 0; i < s_Lower.Count(); i++)
+            t.Replace(s_Lower[i], s_Upper[i]);
+        return t;
+    }
 }

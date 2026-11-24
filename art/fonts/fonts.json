@@ -1,0 +1,11 @@
+{
+  "comment": "The game window's own fonts, for the stalkers' table (the classic table draws in the game's own AmorSerifPro and etelkatextpro). tools/build_fonts.py turns each entry into OpenZone_Games/gui/fonts/<name>.fnt + .edds with the converter of OpenZone Research. cell = the atlas's cell height in pixels; a layout sets the size on screen with \"exact text size\" = the cell height in layout units, at most cell / 1.48 for a 3840x1600 screen.",
+  "output": "OpenZone_Games/gui/fonts",
+  "charsets": {
+    "text": "latin+latin1+cyrillic+punct+box"
+  },
+  "outputs": [
+    {"name": "ozg_oswaldb42", "kind": "bitmap", "face": "oswald/Oswald[wght].ttf", "wght": 600,  "cell": 42, "charset": "text", "for": "stalker: the title, headings, names, buttons; exact text size up to 28"},
+    {"name": "ozg_type30",    "kind": "bitmap", "face": "ptmono/PTM55FT.ttf",      "wght": null, "cell": 30, "charset": "text", "for": "stalker: the log; exact text size up to 20"}
+  ]
+}

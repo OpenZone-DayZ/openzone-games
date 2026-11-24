@@ -110,7 +110,6 @@ STR_OZG_WIN_VARIANT,Варіант: %1,Variant: %1
 STR_OZG_WIN_POSE,Поза: %1,Pose: %1
 STR_OZG_WIN_HOST,Господар: %1,Host: %1
 STR_OZG_WIN_NO_HOST,Господаря немає,No host
-STR_OZG_WIN_SEAT_FREE,вільне,free
 STR_OZG_WIN_SEAT_LEFT,карти чекають,cards waiting
 STR_OZG_WIN_SEAT_NO,місце %1,seat %1
 STR_OZG_WIN_YOU,ви,you
@@ -124,8 +123,8 @@ STR_OZG_WIN_ROLE_OUT,вийшов,out
 STR_OZG_WIN_ROLE_DROPPED,вибув,dropped out
 STR_OZG_WIN_ROLE_WATCH,не в партії,not in this game
 STR_OZG_WIN_ROLE_DURAK,дурень,the durak
-STR_OZG_WIN_DISCARDS,Відбій: %1,Discards: %1
-STR_OZG_WIN_LIMIT,Карт в атаці: до %1,Attack cards: up to %1
+STR_OZG_WIN_STOCK_LABEL,колода,deck
+STR_OZG_WIN_DISCARD_LABEL,відбій,discards
 STR_OZG_WIN_FOOT,"Esc — закрити вікно, місце лишається за вами","Esc closes the window, the seat stays yours"
 # -- whose move
 STR_OZG_ST_LOBBY_HOST,Оберіть варіант і роздавайте,Choose the variant and deal

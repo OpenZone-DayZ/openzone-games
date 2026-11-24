@@ -141,3 +141,21 @@ plan of phase 1; `begin` now takes `cards=` and `looks=`, the cards a deal is de
 from and the looks of their backs, as a session hands them over. `auto` plays fifteen
 to twenty moves a call (a session lets a player make so many a second): ask again
 until the session says `st=2`.
+
+## A table set out to be looked at
+
+`stage` (`OpenZone_Games_Bridge/.../OZG_Stage.c`) changes a running game so that the
+window shows what is wanted, without playing to it: `hand=n` (the seat `seat`, 0 by
+default, holds n cards), `fan=n fanseat=k` (another seat holds n, a fan of n backs),
+`table=n` (the bout is n cards: (n + 1) / 2 attack cards, n / 2 of them beaten). It goes
+through the game's own state (`SaveState`/`LoadState`): every card added is a further copy
+of a face written into the deal, every card taken away goes to the discards, so the
+game's soundness check holds. The rules' limit is not checked: `table=24` lays more than
+durak ever does. Fold the game after looking.
+
+    world_exec verb=oz_games args={"op":"stage","id":"<place>","table":"12"}
+    world_exec verb=oz_games args={"op":"stage","id":"<place>","hand":"24","fan":"24","fanseat":"2"}
+
+The bout of real play grows best from a deck of few ranks: `pull` every card from the
+nine up out of a laid-out game and `stuff` two more copies of each six, seven and eight;
+then almost every card can be thrown in (3, 6 and 9 cards were seen so, 2026-11-25).

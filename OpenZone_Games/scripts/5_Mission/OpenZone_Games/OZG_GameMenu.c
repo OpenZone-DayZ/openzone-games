@@ -1,16 +1,20 @@
 // The window of a game: one for players and watchers.
 //
-// Middle: the table -- the stock with the trump face up, the discards as a
-// count, the attack cards with the cards that beat them laid over. Top: the
-// seats in their order around the mat. Bottom: the player's hand, the cards
-// that can be played now lit, and the buttons of the moment. Right: the log,
-// and what the player and the host may do. A watcher sees the same without a
-// hand and without buttons.
+// It is the table of the design canvas of 2026-11-24 in the look of the deck
+// the game was laid out from (OZG_TableLook: classic or stalker). The other
+// seats sit round the table as fans of backs, to be counted by eye, every
+// back in its own look; the stock lies with the trump turned under it, the
+// discards as a heap, the bout as attack cards with the cards that beat them
+// laid over; the player's hand is fanned along an arc. Right: the log, and
+// what the player and the host may do. A watcher sees the same without a hand
+// and without buttons, from the side of the first seat.
 //
 // The window shows what the server last said (OZG_Table) and asks for
 // everything through the service: it decides nothing. A card is played with a
 // click; when a click could mean more than one move the card is picked up
-// first, and the next click says which.
+// first, and the next click says which. Cards are turned pictures that take
+// no pointer: the cloth under them is one button (OZG_Hit), and the window
+// finds the card under the pointer itself, turn and all.
 //
 // The table drawn here is durak's. Another game brings its own drawing of the
 // two halves of a view; the frame around it -- seats, log, host -- is the
@@ -19,22 +23,23 @@ class OZG_GameMenu : UIScriptedMenu
 {
     protected static OZG_GameMenu s_Current;
     protected static string s_ForId;
+    // Layout paths the engine mixed up once this session: they are asked for
+    // with backslashes from then on (MakeLayout).
+    protected static ref array<string> s_Reslashed;
 
     protected static const string LAYOUT = "OpenZone_Games/gui/layouts/ozg_game.layout";
     protected static const string LAYOUT_CARD = "OpenZone_Games/gui/layouts/ozg_card.layout";
-    protected static const string LAYOUT_SEAT = "OpenZone_Games/gui/layouts/ozg_seat.layout";
-
-    // Layout units of the things a script places itself.
-    protected static const float HAND_W = 110;
-    protected static const float HAND_H = 154;
-    protected static const float TABLE_W = 100;
-    protected static const float TABLE_H = 140;
-    protected static const float BOX_W = 1188;
-    protected static const float COL_X = 1256;
-    protected static const float STACK_Y = 410;
-    protected static const float STACK_STEP = 42;
+    // A turned picture is cut to its own unturned box (measured 2026-11-25:
+    // the trump under the stock showed only as wide as it stood, the fanned
+    // cards lost their corners). A card is therefore a square frame CARD_BOX
+    // diagonals of the card wide, turned whole, its shadow, glow and face
+    // inside it (tools/make_layouts.py, card()).
+    protected static const float CARD_BOX = 1.1;
+    protected static const float PLATE_PAD = 4;
 
     protected string m_PlaceId;
+    protected string m_Style;
+    protected ref OZG_TableLook m_Look;
     protected bool m_Claimed;
     protected bool m_Closing;
     protected int m_ShownRev;
@@ -44,23 +49,23 @@ class OZG_GameMenu : UIScriptedMenu
     protected float m_Recheck;
 
     protected Widget m_Win;
+    protected Widget m_TableBox;
     protected Widget m_SeatsBox;
-    protected Widget m_Bout;
-    protected Widget m_HandBox;
+    protected Widget m_Hit;
+    protected Widget m_MyPlate;
+    protected Widget m_MyEdge;
+    protected TextWidget m_MyName;
+    protected TextWidget m_MyRole;
     protected TextWidget m_Title;
     protected TextWidget m_Sub;
     protected TextWidget m_Status;
     protected TextWidget m_Said;
-    protected TextWidget m_Foot;
     protected TextWidget m_Hint;
-    protected TextWidget m_StockCount;
-    protected TextWidget m_Discards;
-    protected TextWidget m_Limit;
     protected TextWidget m_HostLine;
     protected TextWidget m_Result;
-    protected ImageWidget m_Trump;
-    protected ImageWidget m_StockBack;
-    protected ImageWidget m_TrumpSuit;
+    protected TextWidget m_LogTitle;
+    protected TextWidget m_StockLabel;
+    protected TextWidget m_DiscardLabel;
     protected ref array<TextWidget> m_LogLines;
 
     protected Widget m_BtnClose;
@@ -80,12 +85,25 @@ class OZG_GameMenu : UIScriptedMenu
     protected Widget m_BtnFold;
     protected Widget m_BtnFoldYes;
 
-    // What a script made, and what each of them stands for.
+    // What the script laid on the table, by the part that paints it.
+    protected ref array<Widget> m_FanPics;
+    protected ref array<Widget> m_TablePics;
+    protected ref array<Widget> m_HandPics;
+    protected ref array<Widget> m_SeatW;
+    protected ref array<int> m_SeatOf;
+    // The hand as drawn, for the pointer: each card's frame, where it rests
+    // and how it is turned.
     protected ref array<Widget> m_HandW;
     protected ref array<string> m_HandCodes;
-    protected ref array<Widget> m_AttackW;
-    protected ref array<Widget> m_DefenceW;
-    protected ref array<Widget> m_SeatW;
+    protected ref array<float> m_HandX;
+    protected ref array<float> m_HandY;
+    protected ref array<float> m_HandA;
+    protected int m_Hover;
+    // The bout's attack cards as drawn: middle and size.
+    protected ref array<float> m_AtkX;
+    protected ref array<float> m_AtkY;
+    protected ref array<float> m_AtkW;
+    protected ref array<float> m_AtkH;
 
     // What the server last said.
     protected ref OZG_WView m_V;
@@ -103,12 +121,24 @@ class OZG_GameMenu : UIScriptedMenu
         m_ShownRev = -1;
         m_K = 1;
         m_PickedSeat = -1;
+        m_Hover = -1;
         m_LogLines = new array<TextWidget>();
+        m_FanPics = new array<Widget>();
+        m_TablePics = new array<Widget>();
+        m_HandPics = new array<Widget>();
+        m_SeatW = new array<Widget>();
+        m_SeatOf = new array<int>();
         m_HandW = new array<Widget>();
         m_HandCodes = new array<string>();
-        m_AttackW = new array<Widget>();
-        m_DefenceW = new array<Widget>();
-        m_SeatW = new array<Widget>();
+        m_HandX = new array<float>();
+        m_HandY = new array<float>();
+        m_HandA = new array<float>();
+        m_AtkX = new array<float>();
+        m_AtkY = new array<float>();
+        m_AtkW = new array<float>();
+        m_AtkH = new array<float>();
+        if (!s_Reslashed)
+            s_Reslashed = new array<string>();
     }
 
     void ~OZG_GameMenu()
@@ -135,9 +165,33 @@ class OZG_GameMenu : UIScriptedMenu
 
     // ------------------------------------------------------------ open and close
 
+    // A layout's widgets under `parent`, checked by the root's name: the engine
+    // can hand back a layout made earlier in the session for another path, and
+    // asked again with backslashes it gives the right one (dayz-modding,
+    // gui-layouts §32). A path that was mixed up once is asked for with
+    // backslashes from then on.
+    protected Widget MakeLayout(string path, Widget parent, string root)
+    {
+        string asked = path;
+        if (s_Reslashed.Find(path) >= 0)
+            asked.Replace("/", "\\");
+        Widget w = GetGame().GetWorkspace().CreateWidgets(asked, parent);
+        if (w && w.GetName() != root && asked == path)
+        {
+            OZG_Log.Warn("layout " + path + " came back as " + w.GetName() + "; asked again with backslashes");
+            w.Unlink();
+            s_Reslashed.Insert(path);
+            asked.Replace("/", "\\");
+            w = GetGame().GetWorkspace().CreateWidgets(asked, parent);
+        }
+        if (!w)
+            OZG_Log.Error("the game window could not load " + path);
+        return w;
+    }
+
     protected Widget Find(string name)
     {
-        Widget w = layoutRoot.FindAnyWidget(name);
+        Widget w = m_Win.FindAnyWidget(name);
         if (!w)
             OZG_Log.Error("the game window has no widget " + name);
         return w;
@@ -152,27 +206,77 @@ class OZG_GameMenu : UIScriptedMenu
             return null;
         }
         m_PlaceId = s_ForId;
+        Build(StyleNow());
+        return layoutRoot;
+    }
 
-        m_Win = Find("OZG_Win");
+    // The look of the place's deck: from the last view of it, or from the deck
+    // that lies in the place while no view has come yet.
+    protected string StyleNow()
+    {
+        OZG_TableView view = OZG_Table.Of(m_PlaceId);
+        if (view && view.HeadPart && view.HeadPart.Style != "")
+            return view.HeadPart.Style;
+        array<OZG_Place> places = OZG_Place.All();
+        for (int i = 0; i < places.Count(); i++)
+        {
+            OZG_Place place = places[i];
+            if (!place || place.OZG_Id() != m_PlaceId)
+                continue;
+            OZG_Deck_Base deck = place.OZG_Deck();
+            if (deck)
+                return OZG_Decks.StyleOf(deck.GetType());
+        }
+        return "classic";
+    }
+
+    // The window in one look; a look already shown is put away first.
+    protected void Build(string style)
+    {
+        if (style != "stalker")
+            style = "classic";
+        ClearPictures();
+        ClearList(m_SeatW);
+        m_SeatOf.Clear();
+        m_LogLines.Clear();
+        if (m_Win)
+            m_Win.Unlink();
+        m_Win = null;
+        m_Style = style;
+        m_Look = OZG_TableLook.Of(style);
+
+        string root = "OZG_WinClassic";
+        if (style == "stalker")
+            root = "OZG_WinStalker";
+        m_Win = MakeLayout("OpenZone_Games/gui/layouts/ozg_win_" + style + ".layout", layoutRoot, root);
+        if (!m_Win)
+            return;
+
+        m_TableBox = Find("OZG_Table");
         m_SeatsBox = Find("OZG_Seats");
-        m_Bout = Find("OZG_Bout");
-        m_HandBox = Find("OZG_Hand");
+        m_Hit = Find("OZG_Hit");
+        m_MyPlate = Find("OZG_MyPlate");
+        m_MyEdge = Find("OZG_MyEdge");
+        m_MyName = TextWidget.Cast(Find("OZG_MyName"));
+        m_MyRole = TextWidget.Cast(Find("OZG_MyRole"));
         m_Title = TextWidget.Cast(Find("OZG_Title"));
         m_Sub = TextWidget.Cast(Find("OZG_Sub"));
         m_Status = TextWidget.Cast(Find("OZG_Status"));
         m_Said = TextWidget.Cast(Find("OZG_Said"));
-        m_Foot = TextWidget.Cast(Find("OZG_Foot"));
         m_Hint = TextWidget.Cast(Find("OZG_Hint"));
-        m_StockCount = TextWidget.Cast(Find("OZG_StockCount"));
-        m_Discards = TextWidget.Cast(Find("OZG_Discards"));
-        m_Limit = TextWidget.Cast(Find("OZG_Limit"));
         m_HostLine = TextWidget.Cast(Find("OZG_HostLine"));
         m_Result = TextWidget.Cast(Find("OZG_Result"));
-        m_Trump = ImageWidget.Cast(Find("OZG_Trump"));
-        m_StockBack = ImageWidget.Cast(Find("OZG_StockBack"));
-        m_TrumpSuit = ImageWidget.Cast(Find("OZG_TrumpSuit"));
-        for (int i = 0; i < 14; i++)
-            m_LogLines.Insert(TextWidget.Cast(Find("OZG_Log" + i.ToString())));
+        m_LogTitle = TextWidget.Cast(Find("OZG_LogTitle"));
+        m_StockLabel = TextWidget.Cast(Find("OZG_StockLabel"));
+        m_DiscardLabel = TextWidget.Cast(Find("OZG_DiscardLabel"));
+        // As many log lines as the look has.
+        for (int i = 0; i < 40; i++)
+        {
+            TextWidget line = TextWidget.Cast(m_Win.FindAnyWidget("OZG_Log" + i.ToString()));
+            if (!line)
+                break;
+            m_LogLines.Insert(line);
+        }
 
         m_BtnClose = Find("OZG_BtnClose");
         m_BtnPass = Find("OZG_BtnPass");
@@ -190,7 +294,29 @@ class OZG_GameMenu : UIScriptedMenu
         m_BtnStandLeave = Find("OZG_BtnStandLeave");
         m_BtnFold = Find("OZG_BtnFold");
         m_BtnFoldYes = Find("OZG_BtnFoldYes");
-        return layoutRoot;
+
+        // The stalkers' table writes its labels in capitals: what the layout
+        // wrote as a key is written again from the script.
+        if (m_Look.Caps)
+        {
+            SetCaps(m_LogTitle, "STR_OZG_WIN_LOG");
+            SetCaps(m_StockLabel, "STR_OZG_WIN_STOCK_LABEL");
+            SetCaps(m_DiscardLabel, "STR_OZG_WIN_DISCARD_LABEL");
+            SetLabel(m_BtnTake, Caps(Tr("STR_OZG_WIN_TAKE")));
+            SetLabel(m_BtnPass, Caps(Tr("STR_OZG_WIN_PASS")));
+            SetLabel(m_BtnMove, Caps(Tr("STR_OZG_WIN_MOVE_ON")));
+            SetLabel(m_BtnDeal, Caps(Tr("STR_OZG_WIN_DEAL")));
+            SetLabel(m_BtnTakeHost, Caps(Tr("STR_OZG_WIN_TAKE_HOST")));
+            SetLabel(m_BtnKickDiscard, Caps(Tr("STR_OZG_WIN_KICK_DISCARD")));
+            SetLabel(m_BtnKickLeave, Caps(Tr("STR_OZG_WIN_KICK_LEAVE")));
+            SetLabel(m_BtnDropLeft, Caps(Tr("STR_OZG_WIN_DROP_LEFT")));
+            SetLabel(m_BtnStand, Caps(Tr("STR_OZG_WIN_STAND")));
+            SetLabel(m_BtnStandDiscard, Caps(Tr("STR_OZG_WIN_STAND_DISCARD")));
+            SetLabel(m_BtnStandLeave, Caps(Tr("STR_OZG_WIN_STAND_LEAVE")));
+            SetLabel(m_BtnFold, Caps(Tr("STR_OZG_WIN_FOLD")));
+            SetLabel(m_BtnFoldYes, Caps(Tr("STR_OZG_WIN_FOLD_YES")));
+        }
+        Measure();
     }
 
     override void OnShow()
@@ -198,7 +324,7 @@ class OZG_GameMenu : UIScriptedMenu
         // The base locks the controls and shows the cursor; the excludes stop
         // the body from walking while the window is open.
         super.OnShow();
-        if (!layoutRoot)
+        if (!layoutRoot || !m_Win)
         {
             GetGame().GetUIManager().CloseMenu(OZG_Const.MENU_GAME);
             return;
@@ -228,11 +354,9 @@ class OZG_GameMenu : UIScriptedMenu
     {
         if (m_V && m_V.Mine < 0)
             Send(OZG_Const.OP_UNWATCH, "", -1, "", "", "", 0);
-        ClearList(m_HandW);
-        ClearList(m_AttackW);
-        ClearList(m_DefenceW);
+        ClearPictures();
         ClearList(m_SeatW);
-        m_HandCodes.Clear();
+        m_SeatOf.Clear();
         if (m_Claimed)
         {
             m_Claimed = false;
@@ -296,7 +420,7 @@ class OZG_GameMenu : UIScriptedMenu
     override void Update(float timeslice)
     {
         super.Update(timeslice);
-        if (!layoutRoot || m_Closing)
+        if (!layoutRoot || !m_Win || m_Closing)
             return;
 
         if (GetUApi().GetInputByID(UAUIBack).LocalPress())
@@ -323,6 +447,8 @@ class OZG_GameMenu : UIScriptedMenu
             Shut();
             return;
         }
+
+        TrackHover();
 
         // The pulse on the place says a newer revision than the one shown:
         // ask again. Looked at every two seconds, so a view that was lost, or
@@ -380,6 +506,28 @@ class OZG_GameMenu : UIScriptedMenu
         list.Clear();
     }
 
+    protected void ClearHandMarks()
+    {
+        m_HandW.Clear();
+        m_HandCodes.Clear();
+        m_HandX.Clear();
+        m_HandY.Clear();
+        m_HandA.Clear();
+        m_Hover = -1;
+    }
+
+    protected void ClearPictures()
+    {
+        ClearList(m_FanPics);
+        ClearList(m_TablePics);
+        ClearList(m_HandPics);
+        ClearHandMarks();
+        m_AtkX.Clear();
+        m_AtkY.Clear();
+        m_AtkW.Clear();
+        m_AtkH.Clear();
+    }
+
     // Real pixels in one layout unit, read off the window as it stands.
     protected void Measure()
     {
@@ -392,6 +540,19 @@ class OZG_GameMenu : UIScriptedMenu
         float k = w / 1600.0;
         if (k > 0.2 && k < 6)
             m_K = k;
+    }
+
+    // Where the pointer is, in the window's layout units.
+    protected void PointerAt(out float x, out float y)
+    {
+        int mx;
+        int my;
+        GetMousePos(mx, my);
+        float wx;
+        float wy;
+        m_Win.GetScreenPos(wx, wy);
+        x = (mx - wx) / m_K;
+        y = (my - wy) / m_K;
     }
 
     protected string Tr(string key)
@@ -414,20 +575,26 @@ class OZG_GameMenu : UIScriptedMenu
         return s;
     }
 
+    // Capitals where the look writes in capitals.
+    protected string Caps(string s)
+    {
+        if (m_Look && m_Look.Caps)
+            return OZG_Text.Upper(s);
+        return s;
+    }
+
+    protected void SetCaps(TextWidget w, string key)
+    {
+        if (w)
+            w.SetText(Caps(Tr(key)));
+    }
+
     protected string Picture(string name)
     {
-        string style = "classic";
+        string style = m_Style;
         if (m_V && m_V.Style != "")
             style = m_V.Style;
         return "set:ozg_cards_" + style + " image:" + name;
-    }
-
-    protected void SetPicture(ImageWidget img, string name)
-    {
-        if (!img)
-            return;
-        img.LoadImageFile(0, Picture(name));
-        img.SetImage(0);
     }
 
     // A picture in the art of a look: a card brought from another deck is
@@ -437,14 +604,6 @@ class OZG_GameMenu : UIScriptedMenu
         if (look < 0)
             return Picture(name);
         return "set:ozg_cards_" + OZG_Decks.StyleAt(look) + " image:" + name;
-    }
-
-    protected void SetPictureOf(ImageWidget img, string name, int look)
-    {
-        if (!img)
-            return;
-        img.LoadImageFile(0, PictureOf(name, look));
-        img.SetImage(0);
     }
 
     protected int LookAt(array<int> looks, int at)
@@ -542,6 +701,67 @@ class OZG_GameMenu : UIScriptedMenu
         return Playing() && m_V.Dealt.Find(m_V.Mine) >= 0;
     }
 
+    // ------------------------------------------------------------ pictures on the table
+
+    // The side of the square a card of w x h units turns in.
+    protected float BoxOf(float w, float h)
+    {
+        return CARD_BOX * Math.Sqrt(w * w + h * h);
+    }
+
+    // A card's frame laid with its middle at (cx, cy), `side` units square,
+    // turned clockwise by `turn` degrees about its middle.
+    protected void Place(Widget w, float cx, float cy, float side, float turn)
+    {
+        float half = side * 0.5;
+        w.SetSize(side * m_K, side * m_K);
+        w.SetPos((cx - half) * m_K, (cy - half) * m_K);
+        w.SetRotation(0, 0, turn);
+    }
+
+    // A card on the table: its picture with the middle at (cx, cy), w x h
+    // units, turned clockwise by `turn` degrees, with its shadow under it when
+    // `shadow`, and its glow in the colour `glow` when that is not 0.
+    protected Widget Card(array<Widget> into, string picture, float cx, float cy, float w, float h, float turn, int glow, bool shadow)
+    {
+        Widget card = MakeLayout(LAYOUT_CARD, m_TableBox, "OZG_Card");
+        if (!card)
+            return null;
+        ImageWidget face = ImageWidget.Cast(card.FindAnyWidget("OZG_CardFace"));
+        Widget halo = card.FindAnyWidget("OZG_CardGlow");
+        Widget shade = card.FindAnyWidget("OZG_CardShadow");
+        if (face)
+        {
+            face.LoadImageFile(0, picture);
+            face.SetImage(0);
+        }
+        if (halo)
+        {
+            halo.Show(glow != 0);
+            if (glow != 0)
+                halo.SetColor(glow);
+        }
+        if (shade)
+            shade.Show(shadow);
+        Place(card, cx, cy, BoxOf(w, h), turn);
+        into.Insert(card);
+        return card;
+    }
+
+    // Is (px, py) on a card of w x h units whose middle is (cx, cy), turned
+    // clockwise by `turn` degrees?
+    protected bool OnCard(float px, float py, float cx, float cy, float w, float h, float turn)
+    {
+        float r = turn * Math.DEG2RAD;
+        float c = Math.Cos(r);
+        float s = Math.Sin(r);
+        float dx = px - cx;
+        float dy = py - cy;
+        float along = dx * c + dy * s;
+        float across = dy * c - dx * s;
+        return Math.AbsFloat(along) <= w * 0.5 && Math.AbsFloat(across) <= h * 0.5;
+    }
+
     // ------------------------------------------------------------ drawing
 
     void Redraw()
@@ -561,6 +781,15 @@ class OZG_GameMenu : UIScriptedMenu
             JsonFileLoader<OZG_DurakPublic>.LoadData(view.Shared, m_Pub, err);
         if (durak && view.Own != "")
             JsonFileLoader<OZG_DurakPrivate>.LoadData(view.Own, m_Own, err);
+
+        // The deck's look decides the window's.
+        string style = m_V.Style;
+        if (style != "stalker")
+            style = "classic";
+        if (style != m_Style || !m_Win)
+            Build(style);
+        if (!m_Win)
+            return;
 
         if (m_Picked != "")
         {
@@ -618,215 +847,293 @@ class OZG_GameMenu : UIScriptedMenu
         string variant = VariantLabel();
         if (variant != "")
             title = title + " — " + variant;
-        m_Title.SetText(title);
+        m_Title.SetText(Caps(title));
 
         string sub = "";
         if (m_V.Mine < 0)
             sub = Tr("STR_OZG_ST_WATCHER");
         m_Sub.SetText(sub);
-        m_Foot.SetText(Tr("STR_OZG_WIN_FOOT"));
+    }
+
+    // The seat that sits at the bottom, where the hand is: the player's own;
+    // a watcher looks from the side of the first seat somebody holds (-1:
+    // nobody holds one).
+    protected int BottomSeat()
+    {
+        if (m_V.Mine >= 0)
+            return m_V.Mine;
+        for (int i = 0; i < m_V.Seats.Count(); i++)
+        {
+            if (m_V.Seats[i].St != OZG_Const.SEAT_FREE)
+                return i;
+        }
+        return -1;
+    }
+
+    // What the game says of a seat now, and whether it waits for that seat.
+    protected string RoleOf(int i, out bool turn)
+    {
+        turn = false;
+        string does = "";
+        OZG_WSeat s = m_V.Seats[i];
+        OZG_DurakSeatPublic g = GameSeat(i);
+        // A seat that is free now says nothing of a game that has ended.
+        if (g && m_Pub.Ended == 1 && s.St == OZG_Const.SEAT_FREE)
+            g = null;
+        if (g && m_V.St != OZG_Const.ST_LOBBY)
+        {
+            if (g.Gone == OZG_DurakConst.GONE_OUT)
+                does = Tr("STR_OZG_WIN_ROLE_OUT");
+            else if (g.Gone == OZG_DurakConst.GONE_DROPPED)
+                does = Tr("STR_OZG_WIN_ROLE_DROPPED");
+            else if (m_Pub.Ended == 1)
+                does = "";
+            else if (i == m_Pub.DefenderSeat && m_Pub.Taking == 1)
+                does = Tr("STR_OZG_WIN_ROLE_TAKES");
+            else if (i == m_Pub.DefenderSeat)
+                does = Tr("STR_OZG_WIN_ROLE_DEFEND");
+            else if (g.Passed == 1)
+                does = Tr("STR_OZG_WIN_ROLE_PASSED");
+            else if (i == m_Pub.OpenerSeat)
+                does = Tr("STR_OZG_WIN_ROLE_ATTACK");
+            if (m_Pub.Ended == 1 && m_Pub.DurakSeat == i)
+                does = Tr("STR_OZG_WIN_ROLE_DURAK");
+            if (m_Pub.Awaited && m_Pub.Awaited.Find(i) >= 0 && m_Pub.Ended != 1)
+                turn = true;
+        }
+        else if (Playing() && s.St != OZG_Const.SEAT_FREE)
+        {
+            does = Tr("STR_OZG_WIN_ROLE_WATCH");
+        }
+
+        // The host's mark and a seat kept for one who walked away.
+        if (i == m_V.HostSeat)
+            does = Joined(does, Tr("STR_OZG_WIN_HOST_MARK"));
+        if (s.St == OZG_Const.SEAT_KEPT)
+            does = Joined(does, Tr("STR_OZG_WIN_AWAY"));
+        return does;
+    }
+
+    protected string Joined(string a, string b)
+    {
+        if (a == "")
+            return b;
+        return a + " · " + b;
+    }
+
+    // The cards a seat holds in this game, by the look of each back; false when
+    // it holds none on the table now.
+    protected bool BacksOf(int i, out OZG_DurakSeatPublic g)
+    {
+        g = GameSeat(i);
+        if (!g || !m_Pub || m_V.St == OZG_Const.ST_LOBBY)
+            return false;
+        if (m_Pub.Ended == 1 && m_V.Seats[i].St == OZG_Const.SEAT_FREE)
+            return false;
+        return g.CardCount > 0;
     }
 
     protected void PaintSeats()
     {
+        ClearList(m_FanPics);
         ClearList(m_SeatW);
+        m_SeatOf.Clear();
         int n = m_V.Seats.Count();
         if (n == 0)
-            return;
-        float pitch = BOX_W / n;
-        if (pitch > 148)
-            pitch = 148;
-
-        for (int i = 0; i < n; i++)
         {
-            OZG_WSeat s = m_V.Seats[i];
-            Widget chip = GetGame().GetWorkspace().CreateWidgets(LAYOUT_SEAT, m_SeatsBox);
-            if (!chip)
-                continue;
-            chip.SetPos(i * pitch * m_K, 0);
-            m_SeatW.Insert(chip);
+            m_MyPlate.Show(false);
+            return;
+        }
 
-            TextWidget name = TextWidget.Cast(chip.FindAnyWidget("OZG_SeatName"));
-            TextWidget count = TextWidget.Cast(chip.FindAnyWidget("OZG_SeatCount"));
-            TextWidget role = TextWidget.Cast(chip.FindAnyWidget("OZG_SeatRole"));
-            TextWidget note = TextWidget.Cast(chip.FindAnyWidget("OZG_SeatNote"));
-            ImageWidget back = ImageWidget.Cast(chip.FindAnyWidget("OZG_SeatBack"));
-            Widget bg = chip.FindAnyWidget("OZG_SeatBg");
-            Widget sel = chip.FindAnyWidget("OZG_SeatSel");
+        // Round the table sit the seats somebody holds, in the ring's order
+        // from the bottom one's left; a free seat takes no place there (the
+        // world marks where one may sit).
+        int bottom = BottomSeat();
+        if (bottom < 0)
+        {
+            m_MyPlate.Show(false);
+            return;
+        }
+        array<int> round = new array<int>();
+        for (int k = 1; k < n; k++)
+        {
+            int no = (bottom + k) % n;
+            if (m_V.Seats[no].St != OZG_Const.SEAT_FREE)
+                round.Insert(no);
+        }
+        array<ref OZG_TableSpot> spots = new array<ref OZG_TableSpot>();
+        m_Look.Spots(round.Count(), spots);
+        for (int r = 0; r < round.Count(); r++)
+            PaintSeat(round[r], spots[r]);
+        PaintBottom(bottom);
+    }
 
-            string who = s.Name;
-            if (s.St == OZG_Const.SEAT_FREE)
-                who = Tr("STR_OZG_WIN_SEAT_FREE");
-            else if (s.St == OZG_Const.SEAT_LEFT)
-                who = Tr("STR_OZG_WIN_SEAT_LEFT");
-            name.SetText(who);
+    // One other seat: its fan of backs and its name plate.
+    protected void PaintSeat(int no, OZG_TableSpot spot)
+    {
+        OZG_WSeat s = m_V.Seats[no];
+        OZG_DurakSeatPublic g;
+        if (BacksOf(no, g))
+            PaintFan(spot.X, spot.Y, spot.Turn, spot.Scale, g.CardCount, g.Backs);
 
-            // What the game says of the seat.
-            string does = "";
-            string cards = "";
-            OZG_DurakSeatPublic g = GameSeat(i);
-            bool shown = false;
-            // A seat that is free now says nothing of a game that has ended.
-            if (g && m_Pub.Ended == 1 && s.St == OZG_Const.SEAT_FREE)
-                g = null;
-            if (g && m_V.St != OZG_Const.ST_LOBBY)
-            {
-                cards = g.CardCount.ToString();
-                // Backs of more than one look in a hand are there for all to
-                // see: schematic for now, a number beside the count.
-                int strange = 0;
-                for (int bk = 1; bk < g.Backs.Count(); bk++)
-                {
-                    if (g.Backs[bk] != g.Backs[0])
-                        strange++;
-                }
-                if (strange > 0)
-                    cards = cards + " (" + strange.ToString() + "*)";
-                shown = true;
-                if (g.Gone == OZG_DurakConst.GONE_OUT)
-                    does = Tr("STR_OZG_WIN_ROLE_OUT");
-                else if (g.Gone == OZG_DurakConst.GONE_DROPPED)
-                    does = Tr("STR_OZG_WIN_ROLE_DROPPED");
-                else if (m_Pub.Ended == 1)
-                    does = "";
-                else if (i == m_Pub.DefenderSeat && m_Pub.Taking == 1)
-                    does = Tr("STR_OZG_WIN_ROLE_TAKES");
-                else if (i == m_Pub.DefenderSeat)
-                    does = Tr("STR_OZG_WIN_ROLE_DEFEND");
-                else if (g.Passed == 1)
-                    does = Tr("STR_OZG_WIN_ROLE_PASSED");
-                else if (i == m_Pub.OpenerSeat)
-                    does = Tr("STR_OZG_WIN_ROLE_ATTACK");
-                if (m_Pub.Ended == 1 && m_Pub.DurakSeat == i)
-                    does = Tr("STR_OZG_WIN_ROLE_DURAK");
-                if (m_Pub.Awaited && m_Pub.Awaited.Find(i) >= 0 && m_Pub.Ended != 1)
-                    does = does + " ...";
-            }
-            else if (Playing() && s.St != OZG_Const.SEAT_FREE)
-            {
-                does = Tr("STR_OZG_WIN_ROLE_WATCH");
-            }
-            count.SetText(cards);
-            role.SetText(does);
-            back.Show(shown);
-            if (shown)
-                SetPictureOf(back, "back", LookAt(g.Backs, 0));
+        string root = "OZG_PlateClassic";
+        if (m_Style == "stalker")
+            root = "OZG_PlateStalker";
+        Widget plate = MakeLayout("OpenZone_Games/gui/layouts/ozg_plate_" + m_Style + ".layout", m_SeatsBox, root);
+        if (!plate)
+            return;
+        // The plate lies PLATE_PAD units inside its button, which leaves room
+        // for the ring of a seat the host picked (tools/make_layouts.py).
+        float h = 48;
+        if (m_Style == "stalker")
+            h = 46;
+        float bw = spot.PlateW + 2 * PLATE_PAD;
+        float bh = h + 2 * PLATE_PAD;
+        float left = spot.PlateX - bw * 0.5;
+        float top = spot.PlateY - PLATE_PAD;
+        plate.SetSize(bw * m_K, bh * m_K);
+        plate.SetPos(left * m_K, top * m_K);
+        m_SeatW.Insert(plate);
+        m_SeatOf.Insert(no);
 
-            string marks = "";
-            if (i == m_V.Mine)
-                marks = Tr("STR_OZG_WIN_YOU");
-            if (i == m_V.HostSeat)
-            {
-                if (marks != "")
-                    marks = marks + ", ";
-                marks = marks + Tr("STR_OZG_WIN_HOST_MARK");
-            }
-            if (s.St == OZG_Const.SEAT_KEPT)
-            {
-                if (marks != "")
-                    marks = marks + ", ";
-                marks = marks + Tr("STR_OZG_WIN_AWAY");
-            }
-            note.SetText(marks);
+        TextWidget name = TextWidget.Cast(plate.FindAnyWidget("OZG_PlateName"));
+        TextWidget role = TextWidget.Cast(plate.FindAnyWidget("OZG_PlateRole"));
+        Widget edge = plate.FindAnyWidget("OZG_PlateEdge");
+        Widget sel = plate.FindAnyWidget("OZG_PlateSel");
 
-            int tint = ARGB(235, 13, 31, 23);
-            if (i == m_V.Mine)
-                tint = ARGB(245, 28, 62, 44);
-            else if (s.St == OZG_Const.SEAT_LEFT)
-                tint = ARGB(245, 74, 60, 20);
-            else if (s.St == OZG_Const.SEAT_FREE)
-                tint = ARGB(160, 10, 20, 16);
-            else if (s.St == OZG_Const.SEAT_KEPT)
-                tint = ARGB(235, 30, 30, 30);
-            bg.SetColor(tint);
-            sel.Show(i == m_PickedSeat);
+        string who = s.Name;
+        if (s.St == OZG_Const.SEAT_LEFT)
+            who = Tr("STR_OZG_WIN_SEAT_LEFT");
+        name.SetText(Caps(who));
+
+        bool turn;
+        role.SetText(RoleOf(no, turn));
+        if (turn)
+        {
+            edge.SetColor(m_Look.EdgeTurn);
+            role.SetColor(m_Look.RoleTurn);
+        }
+        else
+        {
+            edge.SetColor(m_Look.EdgeIdle);
+            role.SetColor(m_Look.RoleIdle);
+        }
+        sel.Show(no == m_PickedSeat);
+    }
+
+    // A fan of backs: `count` cards about (x, y), turned by `turn`, the cards'
+    // own looks in `looks` (the lowest first).
+    protected void PaintFan(float x, float y, float turn, float scale, int count, array<int> looks)
+    {
+        float spread = m_Look.FanSpread;
+        if (count > 1 && spread * (count - 1) > m_Look.FanFan)
+            spread = m_Look.FanFan / (count - 1);
+        float r = m_Look.FanR * scale;
+        float w = m_Look.FanW * scale;
+        float h = m_Look.FanH * scale;
+        float tr = turn * Math.DEG2RAD;
+        float c = Math.Cos(tr);
+        float s = Math.Sin(tr);
+        float mid = (count - 1) * 0.5;
+        for (int i = 0; i < count; i++)
+        {
+            float a = (i - mid) * spread;
+            float ar = a * Math.DEG2RAD;
+            float lx = r * Math.Sin(ar);
+            float ly = r - r * Math.Cos(ar);
+            float cx = x + lx * c - ly * s;
+            float cy = y + lx * s + ly * c;
+            string back = PictureOf("back", LookAt(looks, i));
+            Card(m_FanPics, back, cx, cy, w, h, a + turn, 0, true);
         }
     }
 
-    protected Widget MakeCard(Widget parent, string picture, int look, float x, float y, float w, float h)
+    // The seat at the bottom: the player's own plate under the hand; a
+    // watcher sees the first seat there, its fan of backs where a hand would be.
+    protected void PaintBottom(int no)
     {
-        Widget card = GetGame().GetWorkspace().CreateWidgets(LAYOUT_CARD, parent);
-        if (!card)
-            return null;
-        card.SetPos(x * m_K, y * m_K);
-        card.SetSize(w * m_K, h * m_K);
-        SetPictureOf(ImageWidget.Cast(card.FindAnyWidget("OZG_CardFace")), picture, look);
-        return card;
+        m_MyPlate.Show(true);
+        string name = SeatName(no);
+        if (no == m_V.Mine)
+            name = name + " (" + Tr("STR_OZG_WIN_YOU") + ")";
+        m_MyName.SetText(Caps(name));
+        bool turn;
+        m_MyRole.SetText(RoleOf(no, turn));
+        if (turn)
+            m_MyEdge.SetColor(m_Look.EdgeTurn);
+        else
+            m_MyEdge.SetColor(m_Look.EdgeIdle);
+
+        OZG_DurakSeatPublic g;
+        if (m_V.Mine < 0 && BacksOf(no, g))
+            PaintFan(m_Look.HandX, m_Look.HandY + 20, 0, 1, g.CardCount, g.Backs);
     }
 
     protected void PaintTable()
     {
-        ClearList(m_AttackW);
-        ClearList(m_DefenceW);
+        ClearList(m_TablePics);
+        m_AtkX.Clear();
+        m_AtkY.Clear();
+        m_AtkW.Clear();
+        m_AtkH.Clear();
         m_Result.Show(false);
-        m_Trump.Show(false);
-        m_StockBack.Show(false);
-        m_TrumpSuit.Show(false);
-        m_StockCount.SetText("");
-        m_Discards.SetText("");
-        m_Limit.SetText("");
-        Widget trumpLabel = layoutRoot.FindAnyWidget("OZG_TrumpLabel");
         bool dealt = m_Pub && m_V.St != OZG_Const.ST_LOBBY;
-        if (trumpLabel)
-            trumpLabel.Show(dealt);
+        m_StockLabel.Show(dealt);
+        m_DiscardLabel.Show(dealt);
         if (!dealt)
             return;
 
-        // The stock: the trump face up under it; when the stock is gone the
+        float pw = m_Look.PileW;
+        float ph = m_Look.PileH;
+
+        // The stock, the trump turned under it; when the stock is gone the
         // trump's suit stays to be seen.
+        float tx = m_Look.TrumpX + pw * 0.5;
+        float ty = m_Look.TrumpY + ph * 0.5;
         if (m_Pub.TrumpCard != "")
         {
             if (m_Pub.StockCount > 0)
             {
-                m_Trump.Show(true);
-                SetPictureOf(m_Trump, "c_" + OZG_Cards.FaceOf(m_Pub.TrumpCard), m_Pub.TrumpLook);
+                string trump = "c_" + OZG_Cards.FaceOf(m_Pub.TrumpCard);
+                Card(m_TablePics, PictureOf(trump, m_Pub.TrumpLook), tx, ty, pw, ph, 90, 0, true);
             }
             else
             {
-                m_TrumpSuit.Show(true);
-                SetPicture(m_TrumpSuit, "suit_" + m_Pub.TrumpCard.Substring(1, 1));
+                string suit = "suit_" + m_Pub.TrumpCard.Substring(1, 1);
+                Card(m_TablePics, Picture(suit), tx, ty, 56, 78, 0, 0, false);
             }
         }
-        if (m_Pub.StockCount > 1)
+        int layers = m_Pub.StockCount - 1;
+        if (layers > 6)
+            layers = 6;
+        int k;
+        for (k = 0; k < layers; k++)
         {
-            m_StockBack.Show(true);
-            SetPictureOf(m_StockBack, "back", m_Pub.StockTop);
+            // The top card shows the look of the one drawn next.
+            int look = -1;
+            if (k == layers - 1)
+                look = m_Pub.StockTop;
+            float sx = m_Look.StockX - k * 1.2 + pw * 0.5;
+            float sy = m_Look.StockY - k * 1.6 + ph * 0.5;
+            Card(m_TablePics, PictureOf("back", look), sx, sy, pw, ph, 0, 0, true);
         }
-        m_StockCount.SetText(m_Pub.StockCount.ToString());
-        m_Discards.SetText(Tr1("STR_OZG_WIN_DISCARDS", m_Pub.DiscardCount.ToString()));
-        if (m_Pub.Ended != 1)
-            m_Limit.SetText(Tr1("STR_OZG_WIN_LIMIT", m_Pub.AttackLimit.ToString()));
 
-        // The bout: each attack card, and the card that beat it laid over.
-        array<string> picked = new array<string>();
-        if (m_Picked != "")
-            MovesOf(m_Picked, picked);
-        int n = m_Pub.AttackCards.Count();
-        float pitch = 142;
-        if (n > 6)
-            pitch = 852.0 / n;
-        for (int i = 0; i < n; i++)
+        // The discards: a careless heap, a back for every two cards.
+        int heap = (m_Pub.DiscardCount + 1) / 2;
+        if (heap > OZG_TableLook.HEAP)
+            heap = OZG_TableLook.HEAP;
+        float dx;
+        float dy;
+        float dt;
+        for (k = 0; k < heap; k++)
         {
-            // One step at a time: a long expression does not compile.
-            string attackFace = "c_" + OZG_Cards.FaceOf(m_Pub.AttackCards[i]);
-            int attackLook = LookAt(m_Pub.AttackLooks, i);
-            Widget attack = MakeCard(m_Bout, attackFace, attackLook, i * pitch, 16, TABLE_W, TABLE_H);
-            m_AttackW.Insert(attack);
-            int number = i + 1;
-            bool target = picked.Find("d:" + m_Picked + ":" + number.ToString()) >= 0;
-            if (attack && target)
-                attack.FindAnyWidget("OZG_CardGlow").Show(true);
-
-            string beaten = "";
-            if (i < m_Pub.DefenceCards.Count())
-                beaten = m_Pub.DefenceCards[i];
-            if (beaten != "")
-            {
-                string beatenFace = "c_" + OZG_Cards.FaceOf(beaten);
-                int beatenLook = LookAt(m_Pub.DefenceLooks, i);
-                m_DefenceW.Insert(MakeCard(m_Bout, beatenFace, beatenLook, i * pitch + 30, 70, TABLE_W, TABLE_H));
-            }
+            OZG_TableLook.HeapAt(k, dx, dy, dt);
+            float hx = m_Look.DiscardX + dx;
+            float hy = m_Look.DiscardY + dy;
+            Card(m_TablePics, PictureOf("back", -1), hx, hy, m_Look.DiscardW, m_Look.DiscardH, dt, 0, true);
         }
+
+        PaintBout();
 
         if (m_Pub.Ended == 1)
         {
@@ -835,8 +1142,84 @@ class OZG_GameMenu : UIScriptedMenu
                 over = Tr("STR_OZG_ST_OVER_TIE");
             else if (m_Pub.DurakSeat >= 0)
                 over = Tr1("STR_OZG_ST_OVER_DURAK", SeatName(m_Pub.DurakSeat));
-            m_Result.SetText(over);
+            m_Result.SetText(Caps(over));
             m_Result.Show(true);
+        }
+    }
+
+    // The bout: each attack card and the card that beat it laid over, turned a
+    // little. One row of up to three; more go into two rows of smaller cards.
+    protected void PaintBout()
+    {
+        int n = m_Pub.AttackCards.Count();
+        if (n == 0)
+            return;
+        array<string> picked = new array<string>();
+        if (m_Picked != "")
+            MovesOf(m_Picked, picked);
+
+        float scale = 1;
+        float pitch = 150;
+        int perRow = n;
+        int rows = 1;
+        if (n == 3)
+            pitch = 116;
+        if (n >= 4)
+        {
+            rows = 2;
+            perRow = (n + 1) / 2;
+            scale = 0.82;
+            pitch = 104;
+            if (perRow > 3)
+                pitch = 312.0 / (perRow - 1);
+        }
+        float w = m_Look.BoutW * scale;
+        float h = m_Look.BoutH * scale;
+        float ox = 18 * scale;
+        float oy = 22 * scale;
+
+        for (int i = 0; i < n; i++)
+        {
+            int row = 0;
+            int col = i;
+            int inRow = perRow;
+            if (rows == 2 && i >= perRow)
+            {
+                row = 1;
+                col = i - perRow;
+                inRow = n - perRow;
+            }
+            float span = pitch * (inRow - 1) + w + ox;
+            float left = m_Look.BoutX - span * 0.5 + col * pitch;
+            float top = m_Look.BoutY;
+            if (rows == 2)
+                top = m_Look.BoutY - 66 + row * 118;
+            float cx = left + w * 0.5;
+            float cy = top + h * 0.5;
+
+            int number = i + 1;
+            string target = "d:" + m_Picked + ":" + number.ToString();
+            int glow = 0;
+            if (picked.Find(target) >= 0)
+                glow = m_Look.TargetGlow;
+            // One step at a time: a long expression does not compile.
+            string attackFace = "c_" + OZG_Cards.FaceOf(m_Pub.AttackCards[i]);
+            int attackLook = LookAt(m_Pub.AttackLooks, i);
+            Card(m_TablePics, PictureOf(attackFace, attackLook), cx, cy, w, h, 0, glow, true);
+            m_AtkX.Insert(cx);
+            m_AtkY.Insert(cy);
+            m_AtkW.Insert(w);
+            m_AtkH.Insert(h);
+
+            string beaten = "";
+            if (i < m_Pub.DefenceCards.Count())
+                beaten = m_Pub.DefenceCards[i];
+            if (beaten != "")
+            {
+                string beatenFace = "c_" + OZG_Cards.FaceOf(beaten);
+                int beatenLook = LookAt(m_Pub.DefenceLooks, i);
+                Card(m_TablePics, PictureOf(beatenFace, beatenLook), cx + ox, cy + oy, w, h, 12, 0, true);
+            }
         }
     }
 
@@ -852,8 +1235,8 @@ class OZG_GameMenu : UIScriptedMenu
 
     protected void PaintHand()
     {
-        ClearList(m_HandW);
-        m_HandCodes.Clear();
+        ClearList(m_HandPics);
+        ClearHandMarks();
         if (!m_Own || !m_Own.Held || m_V.St == OZG_Const.ST_LOBBY)
             return;
 
@@ -879,41 +1262,118 @@ class OZG_GameMenu : UIScriptedMenu
             cards[j + 1] = moved;
         }
 
-        float step = HAND_W + 8;
-        if (n > 1)
-        {
-            float fit = (BOX_W - HAND_W) / (n - 1);
-            if (fit < step)
-                step = fit;
-        }
-        float span = HAND_W;
-        if (n > 1)
-            span = step * (n - 1) + HAND_W;
-        float x0 = (BOX_W - span) * 0.5;
-
+        float spread = m_Look.HandSpread;
+        if (n > 1 && spread * (n - 1) > m_Look.HandFan)
+            spread = m_Look.HandFan / (n - 1);
+        float r = m_Look.HandR;
+        float mid = (n - 1) * 0.5;
         array<string> moves = new array<string>();
         for (i = 0; i < n; i++)
         {
             string card = cards[i];
             MovesOf(card, moves);
-            float y = 22;
+            float a = (i - mid) * spread;
+            float ar = a * Math.DEG2RAD;
+            float x = m_Look.HandX + r * Math.Sin(ar);
+            float y = m_Look.HandY + r - r * Math.Cos(ar);
+
+            // A card that can be played glows; the card picked up glows
+            // brighter and stands out of the fan.
+            int glow = 0;
             if (card == m_Picked)
-                y = 2;
+                glow = m_Look.PickGlow;
+            else if (Playing() && moves.Count() > 0)
+                glow = m_Look.Glow;
+
             // The hand is drawn sorted: a card's look is found by the card,
             // not by its place in the row.
             string cardFace = "c_" + OZG_Cards.FaceOf(card);
             int cardLook = LookAt(m_Own.HeldLooks, m_Own.Held.Find(card));
-            Widget w = MakeCard(m_HandBox, cardFace, cardLook, x0 + i * step, y, HAND_W, HAND_H);
-            if (!w)
+            Widget pic = Card(m_HandPics, PictureOf(cardFace, cardLook), x, y, m_Look.CardW, m_Look.CardH, a, glow, true);
+            if (!pic)
                 continue;
-            // A card that cannot be played now is dimmed by its own colour.
-            bool lit = moves.Count() > 0;
-            if (!lit && Playing())
-                w.FindAnyWidget("OZG_CardFace").SetColor(ARGB(255, 150, 150, 150));
-            w.FindAnyWidget("OZG_CardGlow").Show(card == m_Picked);
-            m_HandW.Insert(w);
+            m_HandW.Insert(pic);
             m_HandCodes.Insert(card);
+            m_HandX.Insert(x);
+            m_HandY.Insert(y);
+            m_HandA.Insert(a);
         }
+        for (i = 0; i < m_HandW.Count(); i++)
+            PlaceHand(i);
+    }
+
+    // How far a hand card stands out of the fan, along its own length.
+    protected float LiftOf(int i)
+    {
+        if (m_HandCodes[i] == m_Picked)
+            return m_Look.PickLift;
+        if (i == m_Hover)
+            return m_Look.HoverLift;
+        return 0;
+    }
+
+    protected void HandMiddle(int i, out float x, out float y)
+    {
+        float lift = LiftOf(i);
+        float ar = m_HandA[i] * Math.DEG2RAD;
+        x = m_HandX[i] + lift * Math.Sin(ar);
+        y = m_HandY[i] - lift * Math.Cos(ar);
+    }
+
+    protected void PlaceHand(int i)
+    {
+        float x;
+        float y;
+        HandMiddle(i, x, y);
+        Place(m_HandW[i], x, y, BoxOf(m_Look.CardW, m_Look.CardH), m_HandA[i]);
+    }
+
+    // The hand card under (x, y), the uppermost first; -1 for none.
+    protected int HandAt(float x, float y)
+    {
+        for (int i = m_HandW.Count() - 1; i >= 0; i--)
+        {
+            float cx;
+            float cy;
+            HandMiddle(i, cx, cy);
+            if (OnCard(x, y, cx, cy, m_Look.CardW, m_Look.CardH, m_HandA[i]))
+                return i;
+        }
+        return -1;
+    }
+
+    protected int AttackAt(float x, float y)
+    {
+        for (int i = m_AtkX.Count() - 1; i >= 0; i--)
+        {
+            if (OnCard(x, y, m_AtkX[i], m_AtkY[i], m_AtkW[i], m_AtkH[i], 0))
+                return i;
+        }
+        return -1;
+    }
+
+    // The card under the pointer rises a little out of the fan.
+    protected void TrackHover()
+    {
+        if (m_HandW.Count() == 0)
+        {
+            m_Hover = -1;
+            return;
+        }
+        float x;
+        float y;
+        PointerAt(x, y);
+        // Asked with the card under the pointer standing out: a card raised
+        // keeps the pointer while the pointer stays on its raised place.
+        int at = HandAt(x, y);
+        if (at == m_Hover)
+            return;
+        int was = m_Hover;
+        m_Hover = at;
+        if (was >= 0 && was < m_HandW.Count())
+            PlaceHand(was);
+        if (at >= 0)
+            PlaceHand(at);
     }
 
     // The buttons of the moment, and the line that says whose move it is.
@@ -922,9 +1382,27 @@ class OZG_GameMenu : UIScriptedMenu
         bool pass = CanPlay("pass");
         bool take = CanPlay("take");
         bool moveOn = m_Picked != "" && CanPlay("t:" + m_Picked);
-        m_BtnPass.Show(pass);
-        m_BtnTake.Show(take);
-        m_BtnMove.Show(moveOn);
+        array<Widget> shown = new array<Widget>();
+        if (take)
+            shown.Insert(m_BtnTake);
+        if (pass)
+            shown.Insert(m_BtnPass);
+        if (moveOn)
+            shown.Insert(m_BtnMove);
+        array<Widget> all = new array<Widget>();
+        all.Insert(m_BtnTake);
+        all.Insert(m_BtnPass);
+        all.Insert(m_BtnMove);
+        for (int b = 0; b < all.Count(); b++)
+        {
+            Widget btn = all[b];
+            if (!btn)
+                continue;
+            int at = shown.Find(btn);
+            btn.Show(at >= 0);
+            if (at >= 0)
+                btn.SetPos(m_Look.MomentX * m_K, (m_Look.MomentY - at * m_Look.MomentStep) * m_K);
+        }
 
         string hint = "";
         if (m_Picked != "")
@@ -983,7 +1461,7 @@ class OZG_GameMenu : UIScriptedMenu
                 status = Tr1("STR_OZG_ST_WAIT", names);
             }
         }
-        m_Status.SetText(status);
+        m_Status.SetText(Caps(status));
     }
 
     // One line of the log, worded.
@@ -1075,9 +1553,9 @@ class OZG_GameMenu : UIScriptedMenu
         string hostLine = Tr("STR_OZG_WIN_NO_HOST");
         if (m_V.HostName != "")
             hostLine = Tr1("STR_OZG_WIN_HOST", m_V.HostName);
-        m_HostLine.SetText(hostLine);
+        m_HostLine.SetText(Caps(hostLine));
 
-        // The seat the host picked on the strip.
+        // The seat the host picked by its plate.
         bool pickTaken = false;
         bool pickLeft = false;
         bool pickInGame = false;
@@ -1090,7 +1568,7 @@ class OZG_GameMenu : UIScriptedMenu
         }
 
         array<Widget> shown = new array<Widget>();
-        SetLabel(m_BtnVariant, Tr1("STR_OZG_WIN_VARIANT", VariantLabel()));
+        SetLabel(m_BtnVariant, Caps(Tr1("STR_OZG_WIN_VARIANT", VariantLabel())));
         if (host && !playing)
         {
             shown.Insert(m_BtnVariant);
@@ -1111,7 +1589,7 @@ class OZG_GameMenu : UIScriptedMenu
             string pose = OZG_PoseDriver.LabelNow(m_V);
             if (pose != "")
             {
-                SetLabel(m_BtnPose, Tr1("STR_OZG_WIN_POSE", pose));
+                SetLabel(m_BtnPose, Caps(Tr1("STR_OZG_WIN_POSE", pose)));
                 shown.Insert(m_BtnPose);
             }
             if (m_AskStand)
@@ -1153,7 +1631,7 @@ class OZG_GameMenu : UIScriptedMenu
             int at = shown.Find(b);
             b.Show(at >= 0);
             if (at >= 0)
-                b.SetPos(COL_X * m_K, (STACK_Y + at * STACK_STEP) * m_K);
+                b.SetPos(m_Look.StackX * m_K, (m_Look.StackY + at * m_Look.StackStep) * m_K);
         }
     }
 
@@ -1201,11 +1679,38 @@ class OZG_GameMenu : UIScriptedMenu
         PaintMoment();
     }
 
+    // A click on the cloth: the card under the pointer, if any.
+    protected void ClickTable()
+    {
+        float x;
+        float y;
+        PointerAt(x, y);
+        int at = HandAt(x, y);
+        if (at >= 0)
+        {
+            ClickHand(m_HandCodes[at]);
+            return;
+        }
+        at = AttackAt(x, y);
+        if (at >= 0 && m_Picked != "")
+        {
+            int number = at + 1;
+            string move = "d:" + m_Picked + ":" + number.ToString();
+            if (CanPlay(move))
+                Play(move);
+        }
+    }
+
     override bool OnClick(Widget w, int x, int y, int button)
     {
         if (!w || button != MouseState.LEFT || !m_V)
             return false;
 
+        if (w == m_Hit)
+        {
+            ClickTable();
+            return true;
+        }
         if (w == m_BtnClose)
         {
             Shut();
@@ -1310,32 +1815,17 @@ class OZG_GameMenu : UIScriptedMenu
             return true;
         }
 
-        int at = m_HandW.Find(w);
-        if (at >= 0)
-        {
-            ClickHand(m_HandCodes[at]);
-            return true;
-        }
-
-        at = m_AttackW.Find(w);
-        if (at >= 0 && m_Picked != "")
-        {
-            int number = at + 1;
-            string move = "d:" + m_Picked + ":" + number.ToString();
-            if (CanPlay(move))
-                Play(move);
-            return true;
-        }
-
-        at = m_SeatW.Find(w);
+        // A seat's plate: the host picks the seat to remove or clear.
+        int at = m_SeatW.Find(w);
         if (at >= 0)
         {
             if (m_V.IsHost == 1)
             {
-                if (m_PickedSeat == at)
+                int no = m_SeatOf[at];
+                if (m_PickedSeat == no)
                     m_PickedSeat = -1;
                 else
-                    m_PickedSeat = at;
+                    m_PickedSeat = no;
                 PaintSeats();
                 PaintColumn();
             }
