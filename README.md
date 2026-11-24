@@ -19,7 +19,8 @@ first game is durak, podkidnoy and perevodnoy. Class prefix `OZG_`; runs with
 ## Status: a game can be played (2026-11-24); nothing is published
 
 - **A deck** is a container of its cards, fifty-two items in fifty-two slots, in three
-  looks; a card sharp's deck of either look has ten empty slots more. A game is dealt
+  looks (classic, worn, and the stalkers' deck with stalkers and mutants on its picture
+  cards); a card sharp's deck of either look has ten empty slots more. A game is dealt
   from the cards the deck really holds: fewer, or with further cards of a face. Gathering
   the game gives the very deck back. With it in hands a player takes "Choose placement":
   a hologram of a mat follows the aim, a panel says how many seats the spot has and of
@@ -83,7 +84,7 @@ the lines for `types.xml`, with a nominal of 0 for an admin to raise.
 перевідний.
 
 Стан на 2026-11-24: у гру можна грати. Колода — вмістище своїх карт: п'ятдесят дві
-карти-предмети у п'ятдесяти двох слотах (три вигляди; шулерська колода має ще десять
+карти-предмети у п'ятдесяти двох слотах (три вигляди: класична, потерта і сталкерська, зі сталкерами та мутантами на картах; шулерська колода має ще десять
 порожніх слотів). Роздають з того, що в колоді справді є, а зібравши гру, гравець
 отримує назад ту саму колоду. З нею в руках
 гравець обирає місце, голограма килимка показує, скільки там місць і яких, або чому місце
