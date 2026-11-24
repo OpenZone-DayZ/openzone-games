@@ -86,8 +86,8 @@ class OZG_Const
     static const string CARD_PREFIX = "OZG_Card_";
     // The place's slot for the deck of its game.
     static const string SLOT_HOLD   = "OZG_DeckHold";
-    // The block of a card in the world's storage.
-    static const int CARD_SAVE = 1;
+    // The block of a card in the world's storage: 1 its style; 2 its mark too.
+    static const int CARD_SAVE = 2;
     // How long a place stays open to the session's own hand, ms.
     static const int OPEN_MS = 5000;
     // How long a place laid out by hand waits for its deck, seconds of the

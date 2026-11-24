@@ -96,6 +96,10 @@ class OZG_VerbOps
             return OZG_WorldOps.OpHeld(args, detail);
         if (op == "stuff")
             return OZG_WorldOps.OpStuff(args, detail);
+        if (op == "mark")
+            return OZG_WorldOps.OpMark(args, detail);
+        if (op == "markof")
+            return OZG_WorldOps.OpMarkOf(args, detail);
         if (op == "loose")
             return OZG_WorldOps.OpLoose(args, detail);
         if (op == "stage")
@@ -108,7 +112,7 @@ class OZG_VerbOps
     static string KnownOps()
     {
         string known = "status, deck, names, games, begin, act, play, outcome, brief, all, can, drop, away, view, save, load, fuzz";
-        known = known + ", ring, level, cards, pull, undeck, held, stuff, loose, lay, places, sess, seats, puppet, move, ask, sit, ticks, gather, hand, give, chat, bots, auto, face, stage";
+        known = known + ", ring, level, cards, pull, undeck, held, stuff, loose, lay, places, sess, seats, puppet, move, ask, sit, ticks, gather, hand, give, chat, bots, auto, face, stage, mark, markof";
         return known;
     }
 

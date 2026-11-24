@@ -10,11 +10,22 @@ class OZG_Card_Base extends ItemBase
     protected int m_OZG_Look;
     protected int m_OZG_Painted;
 
+    // The mark (design §4.1): kept on the server with the item and written
+    // to the world's storage, never synchronised to a client. Sign 0 is no
+    // mark; 1..99 is the fault drawn into the back, its number picking the
+    // kind and the place. The marker is the first reader and never gives way.
+    protected int m_OZG_Sign;
+    protected string m_OZG_By;
+    protected ref array<string> m_OZG_Readers;
+    protected ref array<string> m_OZG_Noticers;
+
     void OZG_Card_Base()
     {
         m_OZG_Style = "classic";
         m_OZG_Look = 0;
         m_OZG_Painted = -1;
+        m_OZG_Readers = new array<string>();
+        m_OZG_Noticers = new array<string>();
         RegisterNetSyncVariableInt("m_OZG_Look", 0, 30);
     }
 
@@ -35,6 +46,93 @@ class OZG_Card_Base extends ItemBase
         m_OZG_Look = OZG_Decks.LookOfStyle(style);
         SetSynchDirty();
         OZG_Paint();
+    }
+
+    bool OZG_Marked()
+    {
+        return m_OZG_Sign > 0;
+    }
+
+    int OZG_Sign()
+    {
+        return m_OZG_Sign;
+    }
+
+    string OZG_MarkedBy()
+    {
+        return m_OZG_By;
+    }
+
+    bool OZG_Reads(string uid)
+    {
+        if (uid == "" || m_OZG_Sign <= 0)
+            return false;
+        return m_OZG_Readers.Find(uid) >= 0;
+    }
+
+    // Server: `uid` marks the card. A clean card takes the sign, and `uid`
+    // as its marker and first reader; a marked one keeps its sign and takes
+    // `uid` as one more reader (design §4.1).
+    void OZG_MarkBy(string uid, int sign)
+    {
+        if (uid == "" || sign <= 0)
+            return;
+        if (m_OZG_Sign <= 0)
+        {
+            m_OZG_Sign = sign;
+            m_OZG_By = uid;
+            m_OZG_Readers.Clear();
+            m_OZG_Noticers.Clear();
+        }
+        OZG_AddReader(uid);
+    }
+
+    // Server: one more reader of a marked card. The list keeps at most
+    // MarkKnowers ids; the oldest reader who is not the marker gives way.
+    void OZG_AddReader(string uid)
+    {
+        if (uid == "" || m_OZG_Sign <= 0)
+            return;
+        if (m_OZG_Readers.Find(uid) >= 0)
+            return;
+        m_OZG_Readers.Insert(uid);
+        // MarkKnowers of the design; Task 2 makes it a setting.
+        int most = 16;
+        while (m_OZG_Readers.Count() > most)
+        {
+            int gone = 0;
+            if (m_OZG_Readers[0] == m_OZG_By)
+                gone = 1;
+            if (gone >= m_OZG_Readers.Count())
+                break;
+            m_OZG_Readers.RemoveOrdered(gone);
+        }
+    }
+
+    protected void OZG_WriteIds(ParamsWriteContext ctx, array<string> ids)
+    {
+        int n = ids.Count();
+        ctx.Write(n);
+        for (int i = 0; i < n; i++)
+            ctx.Write(ids[i]);
+    }
+
+    protected bool OZG_ReadIds(ParamsReadContext ctx, array<string> into)
+    {
+        into.Clear();
+        int n;
+        if (!ctx.Read(n))
+            return false;
+        if (n < 0 || n > 1000)
+            return false;
+        for (int i = 0; i < n; i++)
+        {
+            string one;
+            if (!ctx.Read(one))
+                return false;
+            into.Insert(one);
+        }
+        return true;
     }
 
     override void OnVariablesSynchronized()
@@ -75,6 +173,10 @@ class OZG_Card_Base extends ItemBase
         super.OnStoreSave(ctx);
         ctx.Write(OZG_Const.CARD_SAVE);
         ctx.Write(m_OZG_Style);
+        ctx.Write(m_OZG_Sign);
+        ctx.Write(m_OZG_By);
+        OZG_WriteIds(ctx, m_OZG_Readers);
+        OZG_WriteIds(ctx, m_OZG_Noticers);
     }
 
     override bool OnStoreLoad(ParamsReadContext ctx, int version)
@@ -88,7 +190,20 @@ class OZG_Card_Base extends ItemBase
         if (!ctx.Read(style))
             return false;
         m_OZG_Style = style;
-        return true;
+        // A card stored before marks: clean.
+        if (v < 2)
+            return true;
+        int sign;
+        if (!ctx.Read(sign))
+            return false;
+        string by;
+        if (!ctx.Read(by))
+            return false;
+        m_OZG_Sign = sign;
+        m_OZG_By = by;
+        if (!OZG_ReadIds(ctx, m_OZG_Readers))
+            return false;
+        return OZG_ReadIds(ctx, m_OZG_Noticers);
     }
 
     override void EEOnAfterLoad()

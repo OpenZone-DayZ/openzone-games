@@ -788,4 +788,96 @@ class OZG_WorldOps
         detail = "give " + deck + " to " + uid + ": " + B(given);
         return true;
     }
+
+    // The cards `mark` and `markof` look at: in=me those the first player
+    // carries, at any depth; otherwise those of the laid-out game id=.
+    protected static bool CardsIn(map<string, string> args, array<EntityAI> into, out string detail)
+    {
+        into.Clear();
+        if (OZG_VerbOps.Arg(args, "in", "place") == "me")
+        {
+            PlayerBase me = FirstPlayer();
+            if (!me)
+            {
+                detail = "nobody is connected";
+                return false;
+            }
+            me.GetInventory().EnumerateInventory(InventoryTraversalType.PREORDER, into);
+            return true;
+        }
+        OZG_Session s = Sess(args, detail);
+        if (!s)
+            return false;
+        OZG_DeckRead.ThingsOf(s.m_Place, into);
+        return true;
+    }
+
+    // mark [id=<place> | in=me] face=<face>|all [who=me|<id>] [n=1] [sign=0]:
+    // n cards of that face (all: every card) marked by `who`, as the marking
+    // tool would; sign 0 draws a sign by chance. Only for the stand: a player
+    // cannot mark a card that lies in a place (design §4.2).
+    static bool OpMark(map<string, string> args, out string detail)
+    {
+        array<EntityAI> things = new array<EntityAI>();
+        if (!CardsIn(args, things, detail))
+            return false;
+        string uid;
+        Who(args, uid);
+        if (uid == "")
+        {
+            detail = "mark: nobody to mark it";
+            return true;
+        }
+        string face = OZG_VerbOps.Arg(args, "face", "As");
+        int n = OZG_VerbOps.Arg(args, "n", "1").ToInt();
+        if (face == "all")
+            n = things.Count();
+        int sign = OZG_VerbOps.Arg(args, "sign", "0").ToInt();
+        OZG_Random dice = new OZG_Random();
+        int done = 0;
+        for (int i = 0; i < things.Count() && done < n; i++)
+        {
+            OZG_Card_Base card = OZG_Card_Base.Cast(things[i]);
+            if (!card)
+                continue;
+            if (face != "all" && card.OZG_Face() != face)
+                continue;
+            int drawn = sign;
+            if (drawn <= 0)
+                drawn = 1 + dice.Below(99);
+            card.OZG_MarkBy(uid, drawn);
+            done++;
+        }
+        detail = "marked " + done.ToString() + " of " + face;
+        return true;
+    }
+
+    // markof [id=<place> | in=me] face=<face>|all [who=me|<id>]: each card of
+    // that face (all: each marked card) as its face, its sign, and whether
+    // `who` marked it and reads it.
+    static bool OpMarkOf(map<string, string> args, out string detail)
+    {
+        array<EntityAI> things = new array<EntityAI>();
+        if (!CardsIn(args, things, detail))
+            return false;
+        string uid;
+        Who(args, uid);
+        string face = OZG_VerbOps.Arg(args, "face", "As");
+        detail = face + ":";
+        for (int i = 0; i < things.Count(); i++)
+        {
+            OZG_Card_Base card = OZG_Card_Base.Cast(things[i]);
+            if (!card)
+                continue;
+            if (face == "all" && !card.OZG_Marked())
+                continue;
+            if (face != "all" && card.OZG_Face() != face)
+                continue;
+            string one = " " + card.OZG_Face() + " sign=" + card.OZG_Sign().ToString();
+            one = one + " by_who=" + B(card.OZG_MarkedBy() == uid);
+            one = one + " reads=" + B(card.OZG_Reads(uid));
+            detail = detail + one + ";";
+        }
+        return true;
+    }
 }
