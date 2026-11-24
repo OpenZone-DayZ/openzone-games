@@ -7,6 +7,12 @@
 	Controls. `loc` is a BARE stringtable key: no leading # and no $.
 	Input names are global across every loaded mod, so they are prefixed.
 
+	ONE TAB FOR THE SERIES (owner, 2026-11-24): the group is `openzone`, the
+	one the radio declares, and not a group of this mod's own. Every OpenZone
+	mod that has keys names this group and carries `oz_input_group` in its own
+	string table, so the tab has its title whichever of them is loaded; a key
+	says in its own label which mod it belongs to.
+
 	UAOZGMode steps through the seat modes (auto, standing, on the ground)
 	while a deck's hologram is out. It defaults to J: unbound in the game, and
 	not a key of the other OpenZone mods.
@@ -16,7 +22,7 @@
 		<actions>
 			<input name="UAOZGMode" loc="STR_OZG_INPUT_MODE"/>
 		</actions>
-		<sorting name="openzone_games" loc="STR_OZG_INPUT_GROUP">
+		<sorting name="openzone" loc="oz_input_group">
 			<input name="UAOZGMode"/>
 		</sorting>
 	</inputs>

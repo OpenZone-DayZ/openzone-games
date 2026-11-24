@@ -58,7 +58,7 @@ STR_OZG_AIM_GUESSED,визначено автоматично,guessed
 STR_OZG_AIM_CHOSEN,обрано вручну,chosen
 STR_OZG_AIM_KEY,%1 — змінити режим місць,%1 — change the seat mode
 STR_OZG_INPUT_MODE,Ігри: режим місць (розкладання) / вікно гри,Games: seat mode (laying out) / game window
-STR_OZG_INPUT_GROUP,OpenZone Games,OpenZone Games
+oz_input_group,OpenZone,OpenZone
 # -- what the server says
 STR_OZG_SAY_OTHER_SEAT,Ви вже маєте місце за іншою грою,You already hold a seat at another game
 STR_OZG_SAY_NOT_NOW,Це місце зараз зайняти не можна,This seat cannot be taken now
