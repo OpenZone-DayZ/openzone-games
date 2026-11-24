@@ -20,3 +20,5 @@ desktop.ini
 
 # the machine half of the MCP profile: this machine's paths, never committed
 dayz-mcp.local.toml
+# and the launchers of this machine's stand
+*.local.cmd

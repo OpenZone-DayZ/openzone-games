@@ -4,6 +4,15 @@ One person can see a whole game: the stand's mod (`OpenZone_Games_Bridge`, serve
 never published) makes characters that play by themselves and takes a few chat commands.
 A real server has neither.
 
+## Joining the stand
+
+The stand is world 83 on port 2302, the diag build, with CF, the core and this
+repository's four mods. Through the MCP it is `server_start` and `client_start`. On the
+series' own machine two launchers in this repository's root, kept out of git, run the
+same two lines by hand: `stand-server.local.cmd` (only when no server is up) and
+`stand-client.local.cmd` (`ua` or `en` after it sets the client's language first; the
+engine's "Russian" slot carries the Ukrainian texts).
+
 ## The chat commands
 
 Typed in the game's chat. The server is told only the sender's name, so a command runs
@@ -19,6 +28,8 @@ when exactly one connected player bears it.
 | `!ozg pause` | the bots wait, or play again |
 | `!ozg clear` | every bot stands up and goes; the tables made by `!ozg table` are removed |
 | `!ozg noon` | the clock set to noon |
+| `!ozg day` | noon, and daylight kept until the server stops (the stand's clock runs twelve times faster than a watch); again to let the night come |
+| `!ozg feed` | your character fed, watered and whole (a stand's character starves while you look at a window) |
 
 A bot moves once every two and a half seconds, so a person can follow the game. It beats
 with its cheapest card, opens with its cheapest card, throws in cheap cards only and never

@@ -287,6 +287,58 @@ class OZG_Bots
         return true;
     }
 
+    // Fed, watered and whole again. A stand's character is logged in for
+    // hours and starves while its owner looks at a window.
+    static void Feed(PlayerBase player)
+    {
+        if (!player)
+            return;
+        // The diag build's own reset: agents, modifiers, bleeding. A retail
+        // build compiles it to nothing.
+        player.ResetPlayer(true);
+        player.GetStatWater().Set(player.GetStatWater().GetMax());
+        player.GetStatEnergy().Set(player.GetStatEnergy().GetMax());
+        player.SetHealth("", "", player.GetMaxHealth("", ""));
+        player.SetHealth("", "Blood", player.GetMaxHealth("", "Blood"));
+        player.SetHealth("", "Shock", player.GetMaxHealth("", "Shock"));
+    }
+
+    // Noon, whatever the hour.
+    static void SetNoon()
+    {
+        int year;
+        int month;
+        int day;
+        int hour;
+        int minute;
+        GetGame().GetWorld().GetDate(year, month, day, hour, minute);
+        GetGame().GetWorld().SetDate(year, month, day, 12, 0);
+    }
+
+    // Daylight kept, once asked for: a stand's clock runs twelve times faster
+    // than a watch, and a tester who comes back an hour later finds the table
+    // in the dark.
+    static bool s_KeepDay;
+    protected static float s_DayWait;
+
+    static void DayTick(float timeslice)
+    {
+        if (!s_KeepDay)
+            return;
+        s_DayWait = s_DayWait + timeslice;
+        if (s_DayWait < 30)
+            return;
+        s_DayWait = 0;
+        int year;
+        int month;
+        int day;
+        int hour;
+        int minute;
+        GetGame().GetWorld().GetDate(year, month, day, hour, minute);
+        if (hour < 9 || hour >= 16)
+            GetGame().GetWorld().SetDate(year, month, day, 12, 0);
+    }
+
     static int ClearTables()
     {
         int n = 0;
@@ -422,18 +474,34 @@ class OZG_Bots
 
         if (cmd == "noon")
         {
-            int year;
-            int month;
-            int day;
-            int hour;
-            int minute;
-            GetGame().GetWorld().GetDate(year, month, day, hour, minute);
-            GetGame().GetWorld().SetDate(year, month, day, 12, 0);
+            SetNoon();
             Reply(player, "it is noon");
             return;
         }
 
-        Reply(player, "!ozg deck [zone] | table | bots [n] | pause | clear | noon");
+        if (cmd == "day")
+        {
+            s_KeepDay = !s_KeepDay;
+            if (s_KeepDay)
+            {
+                SetNoon();
+                Reply(player, "it is noon, and daylight is kept until the server stops");
+            }
+            else
+            {
+                Reply(player, "the night may come");
+            }
+            return;
+        }
+
+        if (cmd == "feed")
+        {
+            Feed(player);
+            Reply(player, "fed, watered and whole");
+            return;
+        }
+
+        Reply(player, "!ozg deck [zone] | table | bots [n] | pause | clear | noon | day | feed");
     }
 }
 
@@ -454,5 +522,6 @@ modded class MissionServer
     {
         super.OnUpdate(timeslice);
         OZG_Bots.Tick(timeslice);
+        OZG_Bots.DayTick(timeslice);
     }
 }

@@ -55,6 +55,21 @@ The stand's mod gained the world's ops, bots and chat commands (`OZG_WorldOps.c`
    contract): the fan in hands needs a number and nothing else.
 10. **The models are made by scripts**, Blender to MLOD to binarize, through the MCP's
     asset tools; the cards are drawn by a script too. Both are in the repository.
+11. **The mod's key opens the window for a seated player.** The game allows no action
+    while a gesture plays, so a player sitting cross-legged at a mat could not reach "To
+    the game" without standing up first. The key that steps the seat mode while aiming
+    (**J** by default) opens the window at any other time for a player who is seated and
+    within the acting radius of his place; a small panel says so ("You are at the game /
+    [J] — open the game window").
+12. **A hit closes the window through the player's own hook.** Health cannot be read on a
+    client (below), so the window does not watch it: `PlayerBase.OnPlayerRecievedHit`, the
+    call on which the game closes its own map, tells the mission and the window shuts. The
+    seat stays the player's.
+13. **A seated player faces the mat.** The client turns its own body for one frame of the
+    heading model when the server seats it; the server alone cannot (below).
+14. **"No seat now" is said in words.** With a game running and no seat left with cards
+    there is nothing to mark: the player who asks for the seats is told that seats open
+    when the game ends and that he may watch.
 
 ## Where the build differs from the design
 
@@ -68,6 +83,7 @@ The stand's mod gained the world's ops, bots and chat commands (`OZG_WorldOps.c`
 | "more than ten moves a second are dropped" (§10) | refused with a word ("too fast") | a dropped move with no word looks like a broken window |
 | the fan: "look at the thing in hand" gesture (§12) | not built | off by default in the design; the fan is held in the lowered hand |
 | settings re-sent to clients when an admin saves them | sent when a client connects | the core's sync packet is filled on connection; a changed radius reaches a client at its next connection |
+| the window opened by the place's action alone (§7) | by the action, and by the mod's key for a seated player | no action is offered while a gesture plays (decision 11) |
 
 ## Measured on the stand, 2026-11-24 (DayZ diag 1.30.164289, world 83)
 
@@ -109,6 +125,28 @@ hand, backs outwards; gone when its holder stood up.
 **The second deck.** A game laid out from `OZG_Deck_Zone`: the worn cards and the olive
 back in the window, the same back on the deck on the mat.
 
+**Folding.** By the host from the window: the place gone, the deck back in his hands. By
+the idle rule, with the mod's clock run forward (`ticks n=1900`, nobody seated): the place
+folded by itself and the deck lay where the place had lain. A bot counts as somebody
+seated, so a table of bots does not fold.
+
+**The key for a seated player.** Seated on the ground in a gesture, the window closed:
+the panel "You are at the game / [J] — open the game window", and **J** opened it. The
+client's script log of that run held no exception.
+
+**A player who left and came back.** The client stopped in mid-bout with the move his:
+his seat went from taken to kept, the game waited (`waits=0`), the bots stood where they
+were. The client started again: the seat taken, the fan back in his hands, the panel "You
+are at the game", and **J** opened the window on the same hand and the same card to beat.
+
+**The last boots** of the night (the mod as committed, the stand's mod with `!ozg feed`
+and `!ozg day`): the verdict `games loaded: games=1 places=0 problems=0`, no error and no
+warning in the server's log; the live client's script log held one stack trace, the diag
+build's own (`PluginConfigDebugProfile is not Registred`), and nothing of the mod's. The
+whole path once more on that build: the deck, the hologram on the table ("Seats: 8 —
+standing, guessed"), a hold of five seconds, the window, two bots, the deal. The first
+deal of two boots in a row differed (trump K of hearts, then Q of spades).
+
 ## Engine facts found (written into the skill)
 
 - **A class of scope 1 is never written to the world's storage.** Three things made by
@@ -129,6 +167,16 @@ back in the window, the same back on the deck on the mat.
 - **A hidden selection blanked before its texture was ever set stays blank**: a fan whose
   selections were emptied at `EEInit` and filled on the first synchronisation drew
   nothing; left as the config made it until the server's number came, it drew.
+- **Health cannot be read on a client.** `GetHealth` in the window's `Update` threw a VM
+  exception on every frame (76,000 lines of the client's script log in three minutes) and
+  ended the function at that line. The live client's script log is a file of its own
+  beside its RPT; the verdict on a client reads the RPT alone, so it said nothing.
+- **No action while a gesture plays**: `ActionPossibilityCheck` refuses every action of a
+  player whose emote is playing, the place's own included.
+- **A character logged in on a stand for hours starves**: the stand's bots stood at a
+  table until hunger took them, and the tester's own character lost a twentieth of a
+  health point a second. Bots are made with `SetAllowDamage(false)`; the tester has
+  `!ozg feed`.
 
 ## What is not done
 
@@ -142,6 +190,9 @@ back in the window, the same back on the deck on the mat.
   moved for: the same server code, but no second client.
 - **The live hologram on furniture inside houses** (§15.6): tried on a table set on the
   runway, not indoors.
-- **The idle rule** was not waited for: thirty minutes with nobody seated fold the place
-  into its deck; the code path is the fold's, which was seen.
+- **A click with two meanings, seen live.** A card that could beat one of two cards, or
+  beat and move the attack on, is picked up first and the player says which; the rules
+  behind it were played by script, the picking itself was not met in a live game.
+- **The retail build.** Everything was seen on the diag build, client and server; the
+  mod has not been loaded by a retail server or beside any mod but CF and the core.
 - **Chairs and benches, other games, stakes**: later specs (§16).
