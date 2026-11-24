@@ -430,6 +430,30 @@ class OZG_GameMenu : UIScriptedMenu
         img.SetImage(0);
     }
 
+    // A picture in the art of a look: a card brought from another deck is
+    // drawn as it is. A look of -1 (none said) is the deck's own.
+    protected string PictureOf(string name, int look)
+    {
+        if (look < 0)
+            return Picture(name);
+        return "set:ozg_cards_" + OZG_Decks.StyleAt(look) + " image:" + name;
+    }
+
+    protected void SetPictureOf(ImageWidget img, string name, int look)
+    {
+        if (!img)
+            return;
+        img.LoadImageFile(0, PictureOf(name, look));
+        img.SetImage(0);
+    }
+
+    protected int LookAt(array<int> looks, int at)
+    {
+        if (!looks || at < 0 || at >= looks.Count())
+            return -1;
+        return looks[at];
+    }
+
     protected void SetLabel(Widget button, string text)
     {
         if (!button)
@@ -501,7 +525,7 @@ class OZG_GameMenu : UIScriptedMenu
         for (int i = 0; i < m_Own.CanPlay.Count(); i++)
         {
             string move = m_Own.CanPlay[i];
-            if (move.IndexOf(":" + card) >= 0)
+            if (OZG_Cards.OfMove(move) == card)
                 into.Insert(move);
         }
     }
@@ -648,6 +672,16 @@ class OZG_GameMenu : UIScriptedMenu
             if (g && m_V.St != OZG_Const.ST_LOBBY)
             {
                 cards = g.CardCount.ToString();
+                // Backs of more than one look in a hand are there for all to
+                // see: schematic for now, a number beside the count.
+                int strange = 0;
+                for (int bk = 1; bk < g.Backs.Count(); bk++)
+                {
+                    if (g.Backs[bk] != g.Backs[0])
+                        strange++;
+                }
+                if (strange > 0)
+                    cards = cards + " (" + strange.ToString() + "*)";
                 shown = true;
                 if (g.Gone == OZG_DurakConst.GONE_OUT)
                     does = Tr("STR_OZG_WIN_ROLE_OUT");
@@ -676,7 +710,7 @@ class OZG_GameMenu : UIScriptedMenu
             role.SetText(does);
             back.Show(shown);
             if (shown)
-                SetPicture(back, "back");
+                SetPictureOf(back, "back", LookAt(g.Backs, 0));
 
             string marks = "";
             if (i == m_V.Mine)
@@ -709,14 +743,14 @@ class OZG_GameMenu : UIScriptedMenu
         }
     }
 
-    protected Widget MakeCard(Widget parent, string picture, float x, float y, float w, float h)
+    protected Widget MakeCard(Widget parent, string picture, int look, float x, float y, float w, float h)
     {
         Widget card = GetGame().GetWorkspace().CreateWidgets(LAYOUT_CARD, parent);
         if (!card)
             return null;
         card.SetPos(x * m_K, y * m_K);
         card.SetSize(w * m_K, h * m_K);
-        SetPicture(ImageWidget.Cast(card.FindAnyWidget("OZG_CardFace")), picture);
+        SetPictureOf(ImageWidget.Cast(card.FindAnyWidget("OZG_CardFace")), picture, look);
         return card;
     }
 
@@ -745,7 +779,7 @@ class OZG_GameMenu : UIScriptedMenu
             if (m_Pub.StockCount > 0)
             {
                 m_Trump.Show(true);
-                SetPicture(m_Trump, "c_" + m_Pub.TrumpCard);
+                SetPictureOf(m_Trump, "c_" + OZG_Cards.FaceOf(m_Pub.TrumpCard), m_Pub.TrumpLook);
             }
             else
             {
@@ -756,7 +790,7 @@ class OZG_GameMenu : UIScriptedMenu
         if (m_Pub.StockCount > 1)
         {
             m_StockBack.Show(true);
-            SetPicture(m_StockBack, "back");
+            SetPictureOf(m_StockBack, "back", m_Pub.StockTop);
         }
         m_StockCount.SetText(m_Pub.StockCount.ToString());
         m_Discards.SetText(Tr1("STR_OZG_WIN_DISCARDS", m_Pub.DiscardCount.ToString()));
@@ -773,7 +807,10 @@ class OZG_GameMenu : UIScriptedMenu
             pitch = 852.0 / n;
         for (int i = 0; i < n; i++)
         {
-            Widget attack = MakeCard(m_Bout, "c_" + m_Pub.AttackCards[i], i * pitch, 16, TABLE_W, TABLE_H);
+            // One step at a time: a long expression does not compile.
+            string attackFace = "c_" + OZG_Cards.FaceOf(m_Pub.AttackCards[i]);
+            int attackLook = LookAt(m_Pub.AttackLooks, i);
+            Widget attack = MakeCard(m_Bout, attackFace, attackLook, i * pitch, 16, TABLE_W, TABLE_H);
             m_AttackW.Insert(attack);
             int number = i + 1;
             bool target = picked.Find("d:" + m_Picked + ":" + number.ToString()) >= 0;
@@ -784,7 +821,11 @@ class OZG_GameMenu : UIScriptedMenu
             if (i < m_Pub.DefenceCards.Count())
                 beaten = m_Pub.DefenceCards[i];
             if (beaten != "")
-                m_DefenceW.Insert(MakeCard(m_Bout, "c_" + beaten, i * pitch + 30, 70, TABLE_W, TABLE_H));
+            {
+                string beatenFace = "c_" + OZG_Cards.FaceOf(beaten);
+                int beatenLook = LookAt(m_Pub.DefenceLooks, i);
+                m_DefenceW.Insert(MakeCard(m_Bout, beatenFace, beatenLook, i * pitch + 30, 70, TABLE_W, TABLE_H));
+            }
         }
 
         if (m_Pub.Ended == 1)
@@ -817,8 +858,8 @@ class OZG_GameMenu : UIScriptedMenu
             return;
 
         string trumpSuit = "";
-        if (m_Pub && m_Pub.TrumpCard.Length() == 2)
-            trumpSuit = m_Pub.TrumpCard.Substring(1, 1);
+        if (m_Pub)
+            trumpSuit = OZG_Cards.SuitOf(m_Pub.TrumpCard);
 
         array<string> cards = new array<string>();
         cards.Copy(m_Own.Held);
@@ -858,7 +899,11 @@ class OZG_GameMenu : UIScriptedMenu
             float y = 22;
             if (card == m_Picked)
                 y = 2;
-            Widget w = MakeCard(m_HandBox, "c_" + card, x0 + i * step, y, HAND_W, HAND_H);
+            // The hand is drawn sorted: a card's look is found by the card,
+            // not by its place in the row.
+            string cardFace = "c_" + OZG_Cards.FaceOf(card);
+            int cardLook = LookAt(m_Own.HeldLooks, m_Own.Held.Find(card));
+            Widget w = MakeCard(m_HandBox, cardFace, cardLook, x0 + i * step, y, HAND_W, HAND_H);
             if (!w)
                 continue;
             // A card that cannot be played now is dimmed by its own colour.
@@ -989,10 +1034,10 @@ class OZG_GameMenu : UIScriptedMenu
             return Tr1("STR_OZG_LOG_TAKE", who);
         if (rest == "pass")
             return Tr1("STR_OZG_LOG_PASS", who);
-        if (rest.Length() >= 4)
+        string card = OZG_Cards.OfMove(rest);
+        if (card != "")
         {
             string kind = rest.Substring(0, 1);
-            string card = rest.Substring(2, 2);
             if (kind == "a")
                 return Tr2("STR_OZG_LOG_ATTACK", who, CardWord(card));
             if (kind == "d")

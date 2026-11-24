@@ -2523,7 +2523,7 @@ Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 **Interfaces:**
 - Consumes: `OZG_DurakSeatPublic.Backs`, `OZG_DurakPublic.TrumpLook`, `.StockTop`, `.AttackLooks`, `.DefenceLooks`, `OZG_DurakPrivate.HeldLooks` (Task 2); `OZG_Decks.StyleAt` (Task 3); `OZG_Cards.FaceOf`, `.SuitOf`, `.OfMove` (Task 2).
 
-- [ ] **Step 1: A picture by look**
+- [x] **Step 1: A picture by look**
 
 After `SetPicture`, add:
 
@@ -2553,7 +2553,7 @@ After `SetPicture`, add:
     }
 ```
 
-- [ ] **Step 2: `MakeCard` takes the look**
+- [x] **Step 2: `MakeCard` takes the look**
 
 `MakeCard(Widget parent, string picture, float x, float y, float w, float h)` becomes `MakeCard(Widget parent, string picture, int look, float x, float y, float w, float h)`, and its line
 
@@ -2567,7 +2567,7 @@ becomes
         SetPictureOf(ImageWidget.Cast(card.FindAnyWidget("OZG_CardFace")), picture, look);
 ```
 
-- [ ] **Step 3: Every caller says the face and the look; nothing cuts a name by position**
+- [x] **Step 3: Every caller says the face and the look; nothing cuts a name by position**
 
 | Now | Becomes |
 |---|---|
@@ -2647,7 +2647,7 @@ with
 
 Run Grep in `OpenZone_Games/scripts/5_Mission`: for `"c_" +` (every hit is followed by `OZG_Cards.FaceOf(`), for `Length() == 2` (no hit), for `IndexOf(":" +` (no hit), for `Substring(2, 2)` (no hit).
 
-- [ ] **Step 4: Lint, a stand cycle with a client, the picture**
+- [x] **Step 4: Lint, a stand cycle with a client, the picture**
 
 `mod_lint`, the stand cycle, the client, `world_teleport "4699.56 339.02 10192.5"`.
 
@@ -2664,7 +2664,7 @@ oz_games {"op":"ask","id":"0","who":"me","ask":"deal"}
 
 `client_shot`: the window as it was for a clean deck, the trump and the stock drawn. `oz_games {"op":"hand","id":"0","seat":"0"}` says the hand: which of its aces of spades are worn is in `HeldLooks` beside `Held` (a 1 is the worn look; the name does not say: the worn ace may be the one named `As`), the shot shows one ace in the worn art among the classic ones. When it does not, end the game (`auto`) and deal again: three strange aces among thirty-nine cards come into a hand of six within a few deals. Send the shot with the strange ace, and one where the bot's seat says `(1*)`. When the hand holds two aces of spades at once, click one of them: that one alone rises, and the move goes through with it (`sess` names the card on the table, `As` or `As.<n>`).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add OpenZone_Games
@@ -2676,6 +2676,8 @@ is drawn as the face.
 
 Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 ```
+
+**Done 2026-11-24.** The three card-drawing lines were split into steps (a face and a look in locals, then `MakeCard`): one long expression does not compile. On the client: a clean deal draws as before; with three worn aces and seven worn kings of hearts in a sharp's deck a hand `['7h','Td','As.3','Qd','Ac','Ks']`, `HeldLooks [0,0,1,0,0,0]`, shows its ace of spades in the worn art among the classic cards, and the strip says `6 (1*)` for that seat and `6 (2*)` for the bot's (`Kh.7`, `Kh.5`); the log words the moves. A deck of aces alone: a hand of six aces of spades, one worn, the trump an ace of spades. In perevodnoy, after the bot's `As.17`, the hand `As.4 As.1 As.22 As.10 As.23 As.11` could `t:` each card: a click on the second card played `t:As.1` at once (`table=As.17/-,As.1/-`), not `As.10` or `As.11`, whose names begin with its name.
 
 ---
 
