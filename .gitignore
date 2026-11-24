@@ -19,6 +19,7 @@ Thumbs.db
 desktop.ini
 
 # the machine half of the MCP profile: this machine's paths, never committed
-dayz-mcp.local.toml
+# (the active one and its variants, one per terrain)
+dayz-mcp.local*.toml
 # and the launchers of this machine's stand
 *.local.cmd

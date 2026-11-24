@@ -70,6 +70,12 @@ The stand's mod gained the world's ops, bots and chat commands (`OZG_WorldOps.c`
 14. **"No seat now" is said in words.** With a game running and no seat left with cards
     there is nothing to mark: the player who asks for the seats is told that seats open
     when the game ends and that he may watch.
+15. **The key sits in the series' one tab** (the owner, 2026-11-24, on seeing a tab
+    "OpenZone Games" in Settings -> Controls: "no tab for every mod, one tab where the mods
+    put their settings when they are loaded"). The key's group in `data/inputs.xml` is
+    `openzone`, the group the radio declares, titled by `oz_input_group` ("OpenZone"), which
+    every mod with keys carries in its own string table; the mod's own group and its title
+    are gone. The key's label already says "Games: ...".
 
 ## Where the build differs from the design
 
@@ -152,6 +158,20 @@ whole path once more on that build: the deck, the hologram on the table ("Seats:
 standing, guessed"), a hold of five seconds, the window, two bots, the deal. The first
 deal of two boots in a row differed (trump K of hearts, then Q of spades).
 
+**A second terrain, the same day** (the owner: "start it on the nchernobyl map"). The
+world of "STALKER NewHorizon ChernobylZone" is `NHChernobyl`; a scan of its `.wrp` for
+model paths found 4588 models, every one answered by the game or by "STALKER NewHorizon
+Objects (Legacy)". The stand got a world of its own there (instance 84, the map mod's own
+mission with an economy that spawns nothing) and a stand root of its own: the mod deletes
+a session file whose place is not in the world (`OZG_Sessions`), so a boot of the new
+world on the shared profile would have thrown away the game dealt on Chernarus. Three
+boots, the last two beside VPP Admin Tools and the core's window in it: ready in 40 to
+48 s, the verdict `games=1 places=0 problems=0` with no error and no warning on the first
+and on the last (the second was not judged); the client was in the world 30 to 46 s after
+its start, and VPP greeted the owner as an admin.
+Nothing was laid out there by script: the owner took the stand over at once. How to
+start it is in `docs/test-commands.md`.
+
 ## Engine facts found (written into the skill)
 
 - **A class of scope 1 is never written to the world's storage.** Three things made by
@@ -183,6 +203,13 @@ deal of two boots in a row differed (trump K of hearts, then Q of spades).
   half an hour from full health to none. `!ozg feed` ended it: health read 100 for the
   seven minutes it was watched after. The bots are made with `SetAllowDamage(false)`, so
   that hours at a table cost them nothing (a precaution: no bot was seen to die).
+- **Home on the diag client is the game's own key**: `PluginKeyBinding` binds it, under
+  `DIAG_DEVELOPER`, to "toggle free camera and teleport player to its position", and
+  Insert to "teleport player to cursor position". The owner pressed Home for VPP's panel
+  on a stand without VPP and found his character moved: not a mod's doing.
+- **A group of keys gets a tab only while it holds a key**: the game's keybinding menu
+  adds a tab for a sorting group whose list of inputs is not empty
+  (`keybindingsmenu.c:91`).
 
 ## What is not done
 
@@ -200,5 +227,10 @@ deal of two boots in a row differed (trump K of hearts, then Q of spades).
   beat and move the attack on, is picked up first and the player says which; the rules
   behind it were played by script, the picking itself was not met in a live game.
 - **The retail build.** Everything was seen on the diag build, client and server; the
-  mod has not been loaded by a retail server or beside any mod but CF and the core.
+  mod has not been loaded by a retail server. Beside it so far: CF, the core, and on the
+  second terrain the map, its objects (which carry scripts) and VPP Admin Tools.
+- **The one tab, seen.** The tab's title after the change ("OpenZone") was not looked at
+  in the client: the owner had the stand. And whether the engine joins two groups of one
+  name from two mods into one tab was not measured: the radio, the other mod that names
+  `openzone`, was not loaded beside this one.
 - **Chairs and benches, other games, stakes**: later specs (§16).

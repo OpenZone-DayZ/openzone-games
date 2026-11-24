@@ -13,6 +13,33 @@ same two lines by hand: `stand-server.local.cmd` (only when no server is up) and
 `stand-client.local.cmd` (`ua` or `en` after it sets the client's language first; the
 engine's "Russian" slot carries the Ukrainian texts).
 
+### The stand on the NHChernobyl terrain
+
+Since 2026-11-24 the stand has a second world, on the terrain of "STALKER NewHorizon
+ChernobylZone" (Workshop 2727569951; its world is `NHChernobyl`). The terrain's `.wrp`
+names models of the game and of "STALKER NewHorizon Objects (Legacy)" (2673371735) only,
+so those two Workshop items are all the map needs.
+
+- **The world**: mission `ozgames.NHChernobyl` in the stand's `mpmissions` (the map mod's
+  own `MapFiles\mission.NHChernobyl`, with `db\economy.xml` switched to spawn nothing: no
+  loot, no infected, no animals, no vehicles), instance 84, the clock at 10:00 on every
+  start and running at a watch's pace.
+- **A stand root of its own**, `testserver\games-nh`, with its own server profile. The mod
+  deletes a session file whose place is not in the world, so two worlds sharing one
+  `-profiles` directory would each throw away the other's games.
+- **The mods**: this repository's four, the terrain and its objects, CF, the core, VPP
+  Admin Tools with the core's window in it, and the MCP bridge.
+- **Switching**: the machine half of the MCP profile has two variants beside it,
+  `dayz-mcp.local.chernarus.toml` and `dayz-mcp.local.nh.toml`; copy the wanted one over
+  `dayz-mcp.local.toml` and call `project_open` again. By hand: `stand-server-nh.local.cmd`
+  and `stand-client-nh.local.cmd [ua|en]`.
+- **Home on the diag client is the game's own key**: it toggles the free camera, and
+  leaving the free camera moves the character to where the camera was (`Insert` moves it
+  to the point under the crosshair). With VPP loaded the same press opens VPP's panel too.
+- **Places with furniture** (from the terrain's own names): Rostok with the bar at
+  5979 5878, Yanov 5297 15715, Skadovsk 2974 19089, the village of the Cordon 5197 902.
+  A fresh character appears in the south of the map.
+
 ## The chat commands
 
 Typed in the game's chat. The server is told only the sender's name, so a command runs
