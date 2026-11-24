@@ -222,7 +222,12 @@ class OZG_Sessions
     {
         OZG_Deck_Base deck;
         if (place)
+        {
+            int left = place.OZG_Tidy();
+            if (left > 0)
+                OZG_Log.Info("place " + place.OZG_Id() + ": " + left.ToString() + " card(s) found no slot and stay where it lay");
             deck = place.OZG_Release();
+        }
         if (!deck)
         {
             GiveDeck(to, deckClass, at);

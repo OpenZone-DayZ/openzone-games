@@ -3013,7 +3013,7 @@ Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 - Consumes: `OZG_Place.OZG_Open`, `.OZG_Deck` (Task 4); `OZG_Deck_Base.OZG_Free` (Task 3); the op `stuff` (Task 5).
 - Produces: `OZG_Place.OZG_Tidy() : int` (the cards beside the deck go into it; as many as do not fit are left on the ground where the place lies, chosen by chance among ALL the cards; the answer is how many were left).
 
-- [ ] **Step 1: Tidying**
+- [x] **Step 1: Tidying**
 
 In `class OZG_Place`, after `OZG_Release`:
 
@@ -3142,7 +3142,7 @@ In `OZG_WorldOps.c`, before `// give who= [deck=class]` (and route `loose` in `O
 
 ```
 
-- [ ] **Step 2: Lint, a stand cycle with a client, the checks**
+- [x] **Step 2: Lint, a stand cycle with a client, the checks**
 
 `mod_lint`, the stand cycle, the client, `world_teleport "4699.56 339.02 10192.5"`, `undeck`.
 
@@ -3177,7 +3177,7 @@ Expected: `stuffed Kh: deck=10 beside=2`. `gather`, then `loose`: `loose: 2 ...`
 
 **A restart keeps what lies beside the deck:** lay, `stuff ... n=3` (`beside=3`), stand cycle (no build), client, `held`: `beside=3`.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add OpenZone_Games OpenZone_Games_Bridge
@@ -3189,6 +3189,16 @@ left on the ground there, and which ones is chance among all of them.
 
 Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"
 ```
+
+**Done 2026-11-24.** Every line below is from the stand, on this task's build, with a client.
+
+- An ordinary deck, three runs. Each time `stuffed As: deck=0 beside=3` and `held: deck OZG_Deck_Classic slots=52 cards=52 free=0 faces=52 looks=0:52 beside=3`. What gathering left: `loose: 3 5d/0 Qs/0 Ad/0` (the deck then `cards=52 free=0 faces=49 looks=0:49,1:3`); `loose: 3 Ad/0 7c/0 As/1` (`faces=50 looks=0:50,1:2`); `loose: 3 4d/0 9c/0 3s/0` (`faces=49 looks=0:49,1:3`). The three differ from run to run, and once one of them was a stuffed ace itself.
+- A sharp's deck: `stuffed Kh: deck=10 beside=2`, `held: deck OZG_Deck_Classic_Sharp slots=62 cards=62 free=0 faces=52 looks=0:52,1:10 beside=2`, after gathering `loose: 2 Ah/0 Kc/0` and `cards=62 free=0 faces=50 looks=0:50,1:12`.
+- Room for all: `pulled 2 of '2s 3s'`, `stuffed Qd: deck=2 beside=0`, `held: ... cards=52 free=0 faces=50 looks=0:52 beside=0`, after gathering `loose: 0` and `cards=52 free=0 faces=50 looks=0:52`.
+- A restart, two places at once (the ordinary deck with three aces beside it, and ten metres away the sharp's deck with ten strange kings in it and two beside it): `held` read the same before the stop and after the boot, `... OZG_Deck_Classic slots=52 cards=52 free=0 faces=52 looks=0:52 beside=3` and `... OZG_Deck_Classic_Sharp slots=62 cards=62 free=0 faces=52 looks=0:52,1:10 beside=2`. A card of another deck's look keeps it through a restart, in the deck and beside it: gathering the first place after the boot left `loose: 3 As/0 2c/0 Kd/0`, and the deck read `faces=50 looks=0:49,1:3`, the three worn aces that had lain beside it.
+- A gatherer out of the hands' reach, which this plan did not ask for: the second place was gathered by the verb with the character twelve metres away. `loose: 2 2c/0 2d/0`, the hands stayed empty (`cards: ... carries no deck`), and the deck lay where the place had lain (`OZG_Deck_Classic_Sharp` at the place's own position). That is `ReturnDeck`'s second half as written: the take into the hands is the game's own hand event, and it reaches 2.5 m (`GameInventory.c_MaxItemDistanceRadius`, inventory.c:815; `HandEventTake.CheckRequestSrc`, hand_events.c:222-224). "Gather the deck" reaches 3.2 m, so by these two numbers a gatherer between 2.5 and 3.2 m finds the deck on the ground at the place and not in the hands; that band itself was not measured.
+- Task 7's other mode, on this boot with `"CountNamesCards": 1` and a sharp's deck short of `As` and `Kd`: the window's line read `Cards in the deck: 50. Missing for this game: 2. Copies: 0. Missing: A of spades, K of diamonds`. The stand's file was set back to 0.
+- What a loose card looks like: the deck's model seen edge-on, a white bar on the ground; the cursor names it ("Two of Clubs", "Take"). A card's own model is not part of this phase.
 
 ---
 

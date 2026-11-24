@@ -620,6 +620,80 @@ class OZG_Place extends ItemBase
         return deck;
     }
 
+    // Server: before the deck leaves. Cards the place kept beside the deck go
+    // back into it. When there are more cards than slots, as many as do not
+    // fit are left lying where the place lies, and WHICH is chance among all
+    // of them, the deck's own included: the owner's word is "random extra
+    // cards", not "the ones that were brought in". Returns how many were
+    // left.
+    int OZG_Tidy()
+    {
+        array<EntityAI> beside = new array<EntityAI>();
+        CargoBase cargo = GetInventory().GetCargo();
+        int i;
+        if (cargo)
+        {
+            for (i = 0; i < cargo.GetItemCount(); i++)
+                beside.Insert(cargo.GetItem(i));
+        }
+        if (beside.Count() == 0)
+            return 0;
+
+        OZG_Deck_Base deck = OZG_Deck();
+        int room = 0;
+        array<EntityAI> all = new array<EntityAI>();
+        if (deck)
+        {
+            room = deck.OZG_Free();
+            int held = deck.GetInventory().AttachmentCount();
+            for (i = 0; i < held; i++)
+                all.Insert(deck.GetInventory().GetAttachmentFromIndex(i));
+        }
+        for (i = 0; i < beside.Count(); i++)
+            all.Insert(beside[i]);
+
+        int over = beside.Count() - room;
+        if (over < 0)
+            over = 0;
+
+        OZG_Open();
+        vector m4[4];
+
+        // Chance picks the ones that stay behind.
+        for (i = 0; i < over; i++)
+        {
+            int pick = Math.RandomInt(0, all.Count());
+            EntityAI stray = all[pick];
+            all.Remove(pick);
+            beside.RemoveItem(stray);
+            if (!stray)
+                continue;
+            EntityAI holder = stray.GetHierarchyParent();
+            if (!holder)
+                continue;
+            GetTransform(m4);
+            float dx = Math.RandomFloat(-0.25, 0.25);
+            float dz = Math.RandomFloat(-0.25, 0.25);
+            m4[3] = m4[3] + Vector(dx, 0, dz);
+            holder.GetInventory().DropEntityWithTransform(InventoryMode.SERVER, holder, stray, m4);
+        }
+
+        // Each of the others beside the deck now has a slot.
+        for (i = 0; i < beside.Count(); i++)
+        {
+            EntityAI card = beside[i];
+            if (!card || !deck)
+                continue;
+            InventoryLocation src = new InventoryLocation;
+            InventoryLocation dst = new InventoryLocation;
+            if (!card.GetInventory().GetCurrentInventoryLocation(src))
+                continue;
+            if (deck.GetInventory().FindFreeLocationFor(card, FindInventoryLocationType.ATTACHMENT, dst))
+                GetInventory().TakeToDst(InventoryMode.SERVER, src, dst);
+        }
+        return over;
+    }
+
     // ------------------------------------------------------------ the look
 
     override void OnVariablesSynchronized()

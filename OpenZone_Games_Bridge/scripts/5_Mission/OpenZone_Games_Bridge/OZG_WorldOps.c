@@ -745,6 +745,31 @@ class OZG_WorldOps
         return true;
     }
 
+    // loose at="x y z" [r=2] [sweep=1]: the cards that lie on the ground near
+    // a point, each as face/look; with sweep they are deleted.
+    static bool OpLoose(map<string, string> args, out string detail)
+    {
+        vector at = At(args, "at");
+        float r = OZG_VerbOps.Arg(args, "r", "2").ToFloat();
+        bool sweep = OZG_VerbOps.Arg(args, "sweep", "0") == "1";
+        array<Object> found = new array<Object>();
+        GetGame().GetObjectsAtPosition(at, r, found, null);
+        int n = 0;
+        string faces = "";
+        for (int i = 0; i < found.Count(); i++)
+        {
+            OZG_Card_Base card = OZG_Card_Base.Cast(found[i]);
+            if (!card || card.GetHierarchyParent())
+                continue;
+            n++;
+            faces = faces + " " + card.OZG_Face() + "/" + card.OZG_Look().ToString();
+            if (sweep)
+                GetGame().ObjectDelete(card);
+        }
+        detail = "loose: " + n.ToString() + faces;
+        return true;
+    }
+
     // give who= [deck=class]: a deck into a player's hands.
     static bool OpGive(map<string, string> args, out string detail)
     {
