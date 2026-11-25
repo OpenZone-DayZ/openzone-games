@@ -205,6 +205,48 @@ log says what flew (`dbg: flights rev 12: laid 1, swept 4, drawn 3`).
 
 The regions of a shake are `seat<n>`, `discards` and `stock`.
 
+## Sleights (the card sharp's phase 4)
+
+With `Cheating` 1 a player dealt into the deal in play sees, under the log, the panel
+"Sleight of hand" and, on the table, the strip "In your pockets" (the cards he carries
+outside any deck). Three sleights a deal (`SleightsPerDeal`):
+
+1. **Slip in from a pocket**: the button, then a card of the strip: it flies into the hand.
+2. **Swap a card**: the button, a card of the strip (it gets a ring), then a card of the
+   hand: they change places.
+3. **Throw to the discards**: the button (it reads "Done" now), then one or two cards of the
+   hand; "Done" ends it. One sleight however many cards.
+
+Before a deal the host on his seat (the dealer) sees his frame on the table instead: "Put
+into the deck from a pocket" (then a card of the strip), "Draw out of the deck into a
+pocket" (then the deck for a card by chance, or a card of the row he reads), and a tick
+under each card he reads to deal it to himself (`DealerPicks`, 2). Each act is one
+sleight; the ticks together are one. "Deal" does them all.
+
+Every sleight rolls (`Caught<kind>`): if it shows, every other seated player present rolls
+`SpotPercent`; who saw it is shaken that part of the table with the sound, and nobody's log
+says anything. The server's log has a line for every sleight with the player's id
+(`sleight: <id> seat <n> <kind> <what>, place <id>, deal <n>: <the rolls>`).
+
+The stand's ops (the place's id `id=`, a player `who=me|<id>`; a puppet holds cards in jeans):
+
+    oz_games {"op":"sleightcfg","all":"100","spot":"100"}               every sleight shows and everybody sees it (all=0: nobody)
+    oz_games {"op":"sleightcfg","per":"10"}                             ten a deal (the file is not written: a restart reads it again)
+    oz_games {"op":"give","what":"OZG_Card_Qh","style":"stalker"}       a card of a look into the pockets (hands=1: into the hands)
+    oz_games {"op":"pockets"}                                           what you carry: face/look/sign and where
+    oz_games {"op":"sleight","kind":"slip","face":"Th"}                 slip the ten of hearts you carry into your hand
+    oz_games {"op":"sleight","kind":"swap","face":"Ks","card":"Tc"}     your king of spades for the ten of clubs of your hand
+    oz_games {"op":"sleight","kind":"throw","card":"Ad"}                a card of your hand to the discards
+    oz_games {"op":"sleight","kind":"throw","card":"Ac","more":"1"}     its second card
+    oz_games {"op":"sleight","who":"bot1","kind":"throw","card":"Jh","after":"1500"}   a puppet's, in 1.5 s
+    oz_games {"op":"stack","in":"6c","out":"1","picks":"As Ah"}          deal with the dealer's three
+    oz_games {"op":"deckreads"}                                         what the dealer may choose or draw by name
+    oz_games {"op":"sleights"}                                          the deal's number and everybody's count
+    oz_games {"op":"ask","ask":"act","move":"a:6c","after":"2500"}      a move in 2.5 s (for a shot of a card in the air)
+
+A dealer only ever chooses cards he reads (marked by him or studied closely), never one he
+only noticed.
+
 ## The verb for scripts
 
 The same and more through the MCP bridge, `world_exec(verb="oz_games", args={"op": ...})`:

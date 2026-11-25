@@ -44,6 +44,15 @@ first game is durak, podkidnoy and perevodnoy. Class prefix `OZG_`; runs with
   nothing: from then on that card's back shows him its mark in the pattern, and its face a
   small dark speck near the edge. What he noticed stays on the card; the count of deals
   starts again with every restart and every game laid out anew.
+- **Sleights**: a seated player may cheat, three times a deal: slip a card from his
+  pockets into his hand, swap one for a card of his hand, throw one or two cards of his
+  hand to the discards; the dealer, before his deal, puts a card of his pockets into the
+  deck, draws one out of it, and deals himself cards he reads. A sleight may show, and then
+  each other player at the table may see it: his own window shakes that part of the table
+  with a sound, and nobody is told anything else; the server's log keeps every sleight with
+  the player's id. In the window: the strip "In your pockets", the panel "Sleight of hand"
+  under the log, the dealer's frame on the table; the cards fly. A game bears what sleights
+  leave: copies, hands of any length, a short stock, and survives a restart with them.
 - **Sounds and flights**: a game is heard by everybody near it, players, watchers and
   passers-by: the deck put down and gathered up, the shuffle, the deal's quick run,
   the trump turned up, a card laid and a card laid over it, the table taken or swept
@@ -76,9 +85,10 @@ checked by script and by chance in phase 1 ([docs/measurements](docs/measurement
 design note lives beside the repositories of the series, in
 `docs/specs/2026-11-23-openzone-games-design.md`; the cards as items are the first phase of
 `docs/specs/2026-11-24-openzone-games-cardsharp-design.md`; its second phase, marks, is
-built ([docs/2026-11-25-marks-record.md](docs/2026-11-25-marks-record.md)), and its third,
-noticing ([docs/2026-11-25-noticing-record.md](docs/2026-11-25-noticing-record.md));
-sleights are not. The table's sounds and the cards in the air:
+built ([docs/2026-11-25-marks-record.md](docs/2026-11-25-marks-record.md)), its third,
+noticing ([docs/2026-11-25-noticing-record.md](docs/2026-11-25-noticing-record.md)), and its
+fourth, sleights ([docs/2026-11-25-sleights-record.md](docs/2026-11-25-sleights-record.md)).
+The table's sounds and the cards in the air:
 [docs/2026-11-25-sounds-and-flights-record.md](docs/2026-11-25-sounds-and-flights-record.md).
 
 No key, no `mod.cpp`, no Workshop item: nothing is published without the owner's word.
@@ -105,7 +115,10 @@ so an animation mod's gestures can be added), the radii, the spacing of seats an
 places, how long a place may stand idle, which games are on; whether cards may be
 marked at all (`Cheating`), the pen's uses and how long marking and studying take, and
 how soon and how fast a player begins to notice marks he does not read (`NoticeGrace`,
-`NoticeStep`, `NoticeMax`).
+`NoticeStep`, `NoticeMax`); how many sleights a deal (`SleightsPerDeal`), the chance each
+kind shows (`CaughtSlip`, `CaughtReplace`, `CaughtThrow`, `CaughtDeckIn`, `CaughtDeckOut`,
+`CaughtPick`), the chance a player sees one that showed (`SpotPercent`) and how many cards
+a dealer may deal himself (`DealerPicks`). `Cheating` 0 stops every sleight too.
 
 The decks and the cards are not in any loot table: [docs/examples](docs/examples) has
 the lines for `types.xml`, with a nominal of 0 for an admin to raise.
@@ -132,7 +145,16 @@ OpenZone), колоду тримають у долоні, одну карту �
 карті й випадково, і йому про це нічого не кажуть: відтоді на сорочці такої карти він
 бачить мітку в узорі, а на її лиці — маленьку темну цятку біля краю. Помічене лишається
 на карті, а лік роздач починається знову після кожного рестарту й кожної нової
-розкладки. Гру чути всім поруч — гравцям, глядачам і перехожим: колоду кладуть на
+розкладки. Гравець за столом може шахраювати, тричі на роздачу: підкинути карту з кишені
+собі в руку, підмінити карту руки картою з кишені, скинути одну-дві карти руки у відбій;
+той, хто роздає, перед роздачею кладе в колоду карту з кишені, витягає з колоди карту в
+кишеню і здає собі карти, які читає. Хитрість може попастися на очі, і тоді кожен інший
+гравець за столом може її помітити: у його вікні здригається та частина столу і чути
+звук, і більше нікому нічого не кажуть; журнал сервера зберігає кожну хитрість з
+ідентифікатором гравця. У вікні — смуга «У кишенях», панель «Спритність рук» під журналом і
+рамка того, хто роздає, на столі; карти летять. Гра витримує те, що лишають хитрощі:
+копії, руки будь-якої довжини, коротку колоду, — і переживає з ними рестарт. Гру чути всім
+поруч — гравцям, глядачам і перехожим: колоду кладуть на
 килимок і збирають, тасують, швидко роздають, відкривають козир, карту кладуть на стіл і
 б'ють іншою, стіл забирає той, хто відбивався, або його змітають у відбій, добирають
 карти з колоди. Кожен звук — власний: його робить скрипт моду з чисел, без жодного

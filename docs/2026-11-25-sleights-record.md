@@ -383,3 +383,73 @@ deal, a six of spades and a seven of diamonds beaten:
 - the pencils of read backs in six-card fans, classic (`client-1795617824978.png`,
   `marks-classic-fan-pencils.png`) and stalkers' (`client-1795617879650.png`,
   `marks-stalker-fan-pencils.png`): every one in the seen strip, faint as drawn.
+
+## White cards in the dealer's choice (the owner's word, 2026-11-25)
+
+The owner saw the dealer's choice of cards as white backs he could not tell apart. Every
+build of the frame drew those cards with the deck's own back picture (`PictureOfBack` of the
+card's look; the shots of 15:31, 16:01, 16:13 and 16:26 show red, and in the stalkers' look
+salmon, backs), so a white picture was not found; what could not be told apart was the
+face: the first build wrote it as the table's faint pencil in the corner of a 58-unit card,
+which no one reads at a glance. Since the window's commit each of those cards carries the
+face on a pale label in its corner (the rank in the suit's colour and the suit's own
+picture), as the deal's mock-up drew it, and the choice offers only cards the dealer reads.
+No card of a deal's flights was white in the shots of both looks (`client-1795615479884.png`,
+`client-1795615881159.png`, `client-1795611467125.png`).
+
+## The design's checks (§11.4)
+
+- **Every sleight at 0 and at 100**: slip, swap, throw (one card and two), put-in, draw-out,
+  the dealer's choice, each at 100 (shown, every other present player rolled, a shake to
+  each who saw it) and at 0 (`not shown`, no shake) -- tasks 4 to 6; from the window too
+  (task 7).
+- **Durak played to its end with a copy**: the game with its copies and strange backs played
+  out by `auto` (`over durak=6 ... gone=2`, tasks 4 to 6); the fuzz with sleights, 600 games
+  and 0 defects (task 3).
+- **The items end where §6.6 says**: a card slipped in lies in a free slot of the deck, else
+  beside it; a card swapped out goes to the player's pockets, else to the ground at his
+  feet; a thrown card stays in the deck; a card drawn out goes to his pockets; every move
+  counted on the stand (`held` before and after: `cards=52 free=0`, then `cards=51 free=1
+  beside=5`; tasks 4 to 6, and the restart above).
+
+## Otherwise than the design, and decisions where it is silent
+
+- The deal's own frame (§10) follows the deal's earlier mock-up; its "Deal" stays in the
+  host's column, the panel of sleights is not shown between deals (task 7).
+- A throw is one sleight however many cards (up to two), the second sent straight after the
+  first; anything else that happens closes it.
+- A card the dealer draws "by chance" is picked among all the cards of the place.
+- Spotters are the other seated players present, bots too; the dealer's three give one shake
+  of the stock to each who saw any of them.
+- The doer is told what came in and went out (`sleight`), never who saw it.
+- A card of the game is found again by its face, look, sign and readers, not by the names
+  of the deal's walk (tasks 4 to 6).
+- The panel's hint is two lines of plain text: the window's multi-line text needs fonts the
+  series does not ship.
+
+## Engine facts measured (for the skill; the coordinator writes them)
+
+- A card item loaded with a character from the players' database did not have its
+  `EEOnAfterLoad` set its state: a field computed there (the look's number from a stored
+  name) kept the constructor's value after a restart and a reconnect, while the same item
+  loaded from the world's storage had it. Measured: a stalkers' card in the pockets read look
+  1 before the restart, 0 after; computing the value in `OnStoreLoad` fixed it.
+- The game's input exclude group `menu` (`bin\specific.xml` in `dta\bin.pbo`) holds
+  `UAVoiceOverNet`, `UAVoiceOverNetToggle`, `UAVoiceOverNetMute` and `UAVoiceLevel`; a menu
+  that adds it silences push-to-talk. `inventory`, `hotkey`, `movement` and the single input
+  `UAGear` together shut out the same without the voice; `AddActiveInputExcludes` takes a
+  single input's name beside group names (the game's script console does). Measured with
+  the mission's `IsVoNActive` and Caps Lock held 1.5 s: nothing with "menu", on and off with
+  the four.
+- A server-side synchronous move (`LocationSyncMoveEntity` + `SendServerMove`) takes a card
+  out of a player's pockets into another item's attachment slot or cargo, and back, and the
+  items stay where they were moved through a restart.
+- A class field named `Step` fails the Mission module again (`Variable name 'Step' already
+  used as type name`), as the skill says.
+
+## Not done
+
+- No live durak with several people; bots and the stand's ops stood in for them.
+- The stand keeps plates of seats kept for bots that are gone; with three such seats and
+  three new bots the plates crowd the table (seen on the stalkers' table, a plate over the
+  deck) -- phase 1's drawing of kept seats, not changed here.
