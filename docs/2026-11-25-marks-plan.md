@@ -1,5 +1,7 @@
 # Marks (the card sharp's design, phase 2) Implementation Plan
 
+Carried out on 2026-11-25 in the session that wrote it; where the run went otherwise than written, `docs/2026-11-25-marks-record.md` says so.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** A marking tool and a loupe as items; a card keeps its mark on the server (its sign, its marker, its readers and noticers) and through restarts; in a game a reader sees, on every back they read in the other players' fans and on top of the stock, the sign drawn into the back's pattern and the face pencilled faintly in a corner, and nobody else is told anything.
@@ -97,7 +99,7 @@ A card keeps its mark itself (spec §4.1): the sign, the marker, who reads it, w
 - Consumes: `OZG_Cfg.Get().MarkKnowers` (Task 2; until Task 2 lands, the literal 16 of the spec stands in its place, Step 2 says where).
 - Produces, on `OZG_Card_Base` (server): `bool OZG_Marked()`, `int OZG_Sign()`, `string OZG_MarkedBy()`, `bool OZG_Reads(string uid)`, `void OZG_MarkBy(string uid, int sign)`, `void OZG_AddReader(string uid)`. Stand ops `mark` and `markof`, on the deck of a laid-out game (`id=`) or on the cards the first player carries (`in=me`), and the helper `OZG_WorldOps.CardsIn` they share.
 
-- [ ] **Step 1: The card's store gains a version**
+- [x] **Step 1: The card's store gains a version**
 
 In `OZG_Const.c` replace
 
@@ -112,7 +114,7 @@ with
     static const int CARD_SAVE = 2;
 ```
 
-- [ ] **Step 2: The mark's fields, its server methods, its store**
+- [x] **Step 2: The mark's fields, its server methods, its store**
 
 In `OZG_CardThings.c`, in `class OZG_Card_Base`, after the line `protected int m_OZG_Painted;` add:
 
@@ -269,7 +271,7 @@ Replace the whole `OnStoreSave` and `OnStoreLoad` with:
     }
 ```
 
-- [ ] **Step 3: The stand marks a card and reads a card's mark**
+- [x] **Step 3: The stand marks a card and reads a card's mark**
 
 In `OZG_WorldOps.c`, at the end of `class OZG_WorldOps` (before its closing brace), add:
 
@@ -378,7 +380,7 @@ In `OZG_Verb.c`, after the two lines of `op == "stuff"`, add:
 
 and in `KnownOps()` append `, mark, markof` to the second line of the list.
 
-- [ ] **Step 4: Lint, build, and the first check**
+- [x] **Step 4: Lint, build, and the first check**
 
 Run `mod_lint`: no refusals. Run a stand cycle (Global Constraints), then `client_start(language="English")`, `job_wait`, `world_ready`, `world_teleport "6095.4 107.65 6028.9"`. Then:
 
@@ -400,7 +402,7 @@ oz_games {"op":"markof","id":"<id>","face":"all"}
 
 Expected, in order: `As: As sign=0 by_who=0 reads=0;`; `marked 1 of As`; `As: As sign=12 by_who=1 reads=1;`; `marked 1 of As` (an id that is no player still marks); `As: As sign=12 by_who=0 reads=1;` (it became a second reader, and the card kept its sign); `As: As sign=12 by_who=1 reads=1;` (the marker stays); `all: As sign=12 by_who=1 reads=1;` (the one marked card of the deck).
 
-- [ ] **Step 5: The mark survives a restart**
+- [x] **Step 5: The mark survives a restart**
 
 `server_stop` (it saves), `server_start(timeout=600)`, `job_wait`, `log_verdict` = `pass`, `client_start`, `job_wait`, `world_ready`, `world_teleport "6095.4 107.65 6028.9"`, then:
 
@@ -408,9 +410,9 @@ Expected, in order: `As: As sign=0 by_who=0 reads=0;`; `marked 1 of As`; `As: As
 oz_games {"op":"markof","id":"<id>","face":"As"}
 ```
 
-Expected: `As: As sign=12 by_who=1 reads=1;` (the place, its deck and the card came back from the world's storage; spec §8). Fold the game: `oz_games {"op":"ask","id":"<id>","ask":"fold"}`.
+Expected: `As: As sign=12 by_who=1 reads=1;` (the place, its deck and the card came back from the world's storage; spec §8). Gather the game: `oz_games {"op":"gather","id":"<id>"}` (a place the stand lays has no host to fold it; the deck then goes into free hands, and `oz_games {"op":"undeck"}` deletes the decks the player carries).
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Const.c OpenZone_Games/scripts/4_World/OpenZone_Games/OZG_CardThings.c OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_WorldOps.c OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_Verb.c
@@ -430,7 +432,7 @@ Five settings of the spec (§7), a settings file of version 2, and what a client
 **Interfaces:**
 - Produces: `OZG_Settings.Cheating`, `MarkUses`, `MarkSeconds2`, `LoupeSeconds`, `MarkKnowers` (ints), on the server from the file and on a client from the sync packet (`Cheating`, `MarkSeconds2`, `LoupeSeconds` only).
 
-- [ ] **Step 1: The fields and their defaults**
+- [x] **Step 1: The fields and their defaults**
 
 In `class OZG_Settings`, after `int   DebugLog;` add:
 
@@ -500,7 +502,7 @@ In `Validate`, before `if (DebugLog != 0)`, add:
         }
 ```
 
-- [ ] **Step 2: What a client is told**
+- [x] **Step 2: What a client is told**
 
 In `class OZG_ClientCfg`, after `int   PoseCount;` add:
 
@@ -526,15 +528,15 @@ In `OZG_Cfg.TakeSync`, after `fresh.MarkSeconds = c.MarkSeconds;` add:
         fresh.LoupeSeconds = c.LoupeSeconds;
 ```
 
-- [ ] **Step 3: The card's cap comes from the settings**
+- [x] **Step 3: The card's cap comes from the settings**
 
 In `OZG_CardThings.c`, in `OZG_AddReader`, replace the line `int most = 16;` and its comment with `int most = OZG_Cfg.Get().MarkKnowers;`.
 
-- [ ] **Step 4: Check**
+- [x] **Step 4: Check**
 
 `mod_lint`, a stand cycle. Then read the server's settings file: `$profile:OpenZone\OZ_Games_Settings.json` in the stand's `profiles` folder (`E:\dayzmod\testserver\games-nh\profiles\OpenZone\OZ_Games_Settings.json`). Expected: `"Version": 2`, `"Cheating": 1`, `"MarkUses": 20`, `"MarkSeconds2": 8`, `"LoupeSeconds": 5`, `"MarkKnowers": 16`, and every value it held before kept. `log_verdict` says `pass` with no settings warning.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Settings.c OpenZone_Games/scripts/4_World/OpenZone_Games/OZG_CardThings.c
@@ -558,7 +560,7 @@ An item that marks a card through a recipe of the game's own crafting (spec §4.
 - Consumes: `OZG_Card_Base.OZG_MarkBy`, `OZG_Sign`, `OZG_Reads`, `OZG_Face` and `OZG_WorldOps.CardsIn` (Task 1); `OZG_Cfg.Get().Cheating`, `MarkUses`, `MarkSeconds2` (Task 2).
 - Produces: the config class `OZG_MarkTool`; in `OZG_Recipes.c`: `class OZG_Recipes` with `static RecipeBase MarkRecipe()`, `static RecipeBase MakeMark()`, `static bool Carried(EntityAI item, PlayerBase player)`, `static void Spend(ItemBase tool)`; `class OZG_RecipeMark extends RecipeBase`; the registration (`modded class PluginRecipesManagerBase`). Stand op `craft what=mark [face=<face>] [in=me | in=place id=<place>]`; `give` takes `what=<class>`.
 
-- [ ] **Step 1: The tool as an item**
+- [x] **Step 1: The tool as an item**
 
 In `OpenZone_Games/config.cpp` (CRLF in the working tree: edit it with the Edit tool), in `CfgPatches`, replace
 
@@ -602,7 +604,7 @@ and after the line `// <<< generated: cards` add:
     };
 ```
 
-- [ ] **Step 2: Its words**
+- [x] **Step 2: Its words**
 
 At the end of `OpenZone_Games/strings.csv` add:
 
@@ -615,7 +617,7 @@ STR_OZG_MARKTOOL_ACT,Позначити карту,Mark the card
 
 Run `python -I tools/stringtable.py OpenZone_Games`. Expected: `stringtable.csv: <n> strings`, three more than before the change.
 
-- [ ] **Step 3: The recipe**
+- [x] **Step 3: The recipe**
 
 Create `OpenZone_Games/scripts/4_World/OpenZone_Games/OZG_Recipes.c`:
 
@@ -640,6 +642,21 @@ class OZG_Recipes
     {
         s_Mark = new OZG_RecipeMark();
         return s_Mark;
+    }
+
+    // An item the base recipe takes: none with attachments (recipebase.c:
+    // 551-561). Checked here, not through super.CanDo: an override that
+    // handed its `ingredients` on to super found the array empty afterwards,
+    // "Index out of range (0 >= 0)", and the virtual machine's exception
+    // left its answer to chance (measured 2026-11-25). The game's own
+    // recipes that override CanDo do not call super either.
+    static bool NoAttachments(ItemBase item)
+    {
+        if (!item)
+            return false;
+        if (item.GetInventory() && item.GetInventory().AttachmentCount() > 0)
+            return false;
+        return true;
     }
 
     // Does `player` carry `item`, at any depth of the inventory?
@@ -714,15 +731,17 @@ class OZG_RecipeMark extends RecipeBase
 
     override bool CanDo(ItemBase ingredients[], PlayerBase player)
     {
-        if (!super.CanDo(ingredients, player))
+        ItemBase tool = ingredients[0];
+        ItemBase card = ingredients[1];
+        if (!OZG_Recipes.NoAttachments(tool) || !OZG_Recipes.NoAttachments(card))
             return false;
         if (OZG_Cfg.Get().Cheating != 1)
             return false;
-        if (!OZG_Recipes.Carried(ingredients[0], player))
+        if (!OZG_Recipes.Carried(tool, player))
             return false;
-        if (!OZG_Recipes.Carried(ingredients[1], player))
+        if (!OZG_Recipes.Carried(card, player))
             return false;
-        return ingredients[0].GetQuantity() > 0;
+        return tool.GetQuantity() > 0;
     }
 
     override void Do(ItemBase ingredients[], PlayerBase player, array<ItemBase> results, float specialty_weight)
@@ -757,7 +776,7 @@ modded class PluginRecipesManagerBase
 
 Before the build, `knowledge_find(kind="class", name=...)` for `Spend` and `Carried`: neither may be a class of the game or of a loaded mod (Global Constraints).
 
-- [ ] **Step 4: The economy's line**
+- [x] **Step 4: The economy's line**
 
 In `docs/examples/types-openzone-games.xml`, before `    <!-- A card out of its deck is a thing of its own; one entry a face. -->`, add:
 
@@ -778,7 +797,7 @@ In `docs/examples/types-openzone-games.xml`, before `    <!-- A card out of its 
     </type>
 ```
 
-- [ ] **Step 5: The stand gives any thing and crafts as a gesture ends**
+- [x] **Step 5: The stand gives any thing and crafts as a gesture ends**
 
 In `OZG_WorldOps.c`, replace
 
@@ -847,7 +866,24 @@ After `OpMarkOf`, add:
         // check does not ask what the two things are.
         if (!recipe.CheckIngredientMatch(hands, card) || !recipe.CheckRecipe(hands, card, me))
         {
-            detail = "craft " + what + ": refused";
+            // Which check said no: the recipe's, one at a time.
+            ItemBase both[2];
+            both[0] = hands;
+            both[1] = card;
+            bool match = recipe.CheckIngredientMatch(hands, card);
+            bool can = recipe.CanDo(both, me);
+            bool fits = recipe.CheckConditions(both);
+            detail = "craft " + what + ": refused (hands " + hands.GetType();
+            detail = detail + " q=" + F2(hands.GetQuantity()) + " hl=" + hands.GetHealthLevel().ToString();
+            detail = detail + " match=" + B(match) + " cando=" + B(can) + " cond=" + B(fits);
+            detail = detail + " tool=" + B(OZG_Recipes.Carried(hands, me)) + " card=" + B(OZG_Recipes.Carried(card, me));
+            EntityAI up = card.GetHierarchyParent();
+            string parentType = "none";
+            if (up)
+                parentType = up.GetType();
+            Man root = card.GetHierarchyRootPlayer();
+            detail = detail + " in=" + parentType + " root=" + B(root != null);
+            detail = detail + " att=" + card.GetInventory().AttachmentCount().ToString() + ")";
             return true;
         }
         PluginRecipesManager plugin;
@@ -871,7 +907,7 @@ In `OZG_Verb.c`, after the two lines of `op == "markof"`, add:
 
 and append `, craft` to the second line of `KnownOps()`.
 
-- [ ] **Step 6: Lint, build, the server's half**
+- [x] **Step 6: Lint, build, the server's half**
 
 `mod_lint`: no refusals. A stand cycle, `client_start(language="English")`, `job_wait`, `world_ready`, `world_teleport "6095.4 107.65 6028.9"`. Then, in order:
 
@@ -888,10 +924,10 @@ Expected: `give OZG_MarkTool to <uid>: 1` (into the hands); `give OZG_Card_As to
 The uses (`MarkUses` 20): `oz_games {"op":"craft","what":"mark","face":"As"}` nineteen times more. Expected: `left=` falls by 5 each time down to `left=0` on the twentieth, and the sign stays `<s>` every time (a card marked again keeps its sign); one more answers `craft mark: hands=0 card=1` (the empty tool is gone).
 
 The refusals:
-1. A card in a place: `oz_games {"op":"lay","at":"6097.4 107.65 6028.9","from":"6095.4 107.65 6028.9","mode":"2","deck":"OZG_Deck_Classic"}` (`laid <id> ...`); `give what=OZG_MarkTool`; `oz_games {"op":"craft","what":"mark","face":"Ks","in":"place","id":"<id>"}` → `craft mark: refused`. Fold the game: `oz_games {"op":"ask","id":"<id>","ask":"fold"}`.
+1. A card in a place: `oz_games {"op":"lay","at":"6097.4 107.65 6028.9","from":"6095.4 107.65 6028.9","mode":"2","deck":"OZG_Deck_Classic"}` (`laid <id> ...`); `give what=OZG_MarkTool`; `oz_games {"op":"craft","what":"mark","face":"Ks","in":"place","id":"<id>"}` → `craft mark: refused (... card=0 in=OZG_Deck_Classic root=0 ...)`. Gather the game: `oz_games {"op":"gather","id":"<id>"}` (anyone gathers a game nobody sits at; `ask fold` is the host's, and a place the stand lays has no host).
 2. `Cheating` 0: `server_stop`; in `E:\dayzmod\testserver\games-nh\profiles\OpenZone\OZ_Games_Settings.json` set `"Cheating": 0`; `server_start(timeout=600)`, `job_wait`, `log_verdict` = `pass`, the client again (`give what=OZG_MarkTool` if its hands came back empty); `give what=OZG_Card_Kh`; `craft what=mark face=Kh` → `craft mark: refused`. Set `"Cheating": 1` back and restart.
 
-- [ ] **Step 7: The real gesture (the design's measurement, §4.2)**
+- [x] **Step 7: The real gesture (the design's measurement, §4.2)**
 
 The client in a window, moved clear of the taskbar (Global Constraints, "The real mouse on the stand"):
 1. `give what=OZG_MarkTool` (into the hands), `give what=OZG_Card_Kh`, `give what=OZG_Deck_Classic` (both into the inventory).
@@ -904,7 +940,7 @@ The client in a window, moved clear of the taskbar (Global Constraints, "The rea
 
 The answers of 4 to 6 go into the record (Task 8). Send the key shots to the owner (`SendUserFile`).
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add OpenZone_Games/config.cpp OpenZone_Games/scripts/4_World/OpenZone_Games/OZG_Recipes.c OpenZone_Games/strings.csv OpenZone_Games/stringtable.csv docs/examples/types-openzone-games.xml OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_WorldOps.c OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_Verb.c
@@ -929,7 +965,7 @@ An item, not used up, that tells the one who studies a card with it, and nobody 
 - Consumes: `OZG_Card_Base.OZG_Marked`, `OZG_AddReader` (Task 1); `OZG_Cfg.Get().LoupeSeconds`, `Cheating` (Task 2); `OZG_Recipes.Carried` (Task 3); the core's `OZ_Rpc.Notice(PlayerIdentity to, string op, bool ok, string why)` (`openzone-core/OpenZone_Core/scripts/3_Game/OpenZone/OZ_Rpc.c:391`), which a client shows in the game's window when it is open and as a notification otherwise (`OZG_MissionGameplay.OZG_Notice`).
 - Produces: the config class `OZG_Loupe`; `class OZG_RecipeLoupe extends RecipeBase`; `static RecipeBase OZG_Recipes.LoupeRecipe()`, `MakeLoupe()`; `OZG_Const.NOTICE_LOUPE`, `SAY_LOUPE_MARKED`, `SAY_LOUPE_NOTHING`; `craft what=loupe`.
 
-- [ ] **Step 1: The loupe as an item**
+- [x] **Step 1: The loupe as an item**
 
 In `config.cpp`, in `units[]`, replace `"OZG_MarkTool"}` with `"OZG_MarkTool", "OZG_Loupe"}`, and after the class `OZG_MarkTool` add:
 
@@ -951,7 +987,7 @@ In `config.cpp`, in `units[]`, replace `"OZG_MarkTool"}` with `"OZG_MarkTool", "
     };
 ```
 
-- [ ] **Step 2: Its words**
+- [x] **Step 2: Its words**
 
 After the marking tool's lines in `strings.csv` add:
 
@@ -979,7 +1015,7 @@ and after `static const string SAY_BAD_OPTION  = "STR_OZG_SAY_BAD_OPTION";` add
     static const string SAY_LOUPE_NOTHING = "STR_OZG_LOUPE_NOTHING";
 ```
 
-- [ ] **Step 3: The recipe**
+- [x] **Step 3: The recipe**
 
 In `OZG_Recipes.c`, in `class OZG_Recipes`, after `protected static ref RecipeBase s_Mark;` add `protected static ref RecipeBase s_Loupe;`, and after `MakeMark()` add:
 
@@ -1044,13 +1080,16 @@ class OZG_RecipeLoupe extends RecipeBase
 
     override bool CanDo(ItemBase ingredients[], PlayerBase player)
     {
-        if (!super.CanDo(ingredients, player))
+        // The two items into locals and no super.CanDo (OZG_Recipes.NoAttachments).
+        ItemBase loupe = ingredients[0];
+        ItemBase card = ingredients[1];
+        if (!OZG_Recipes.NoAttachments(loupe) || !OZG_Recipes.NoAttachments(card))
             return false;
         if (OZG_Cfg.Get().Cheating != 1)
             return false;
-        if (!OZG_Recipes.Carried(ingredients[0], player))
+        if (!OZG_Recipes.Carried(loupe, player))
             return false;
-        return OZG_Recipes.Carried(ingredients[1], player);
+        return OZG_Recipes.Carried(card, player);
     }
 
     override void Do(ItemBase ingredients[], PlayerBase player, array<ItemBase> results, float specialty_weight)
@@ -1077,7 +1116,7 @@ class OZG_RecipeLoupe extends RecipeBase
 
 In `RegisterRecipies`, after `RegisterRecipe(OZG_Recipes.MakeMark());` add `RegisterRecipe(OZG_Recipes.MakeLoupe());`.
 
-- [ ] **Step 4: The economy's line**
+- [x] **Step 4: The economy's line**
 
 In `docs/examples/types-openzone-games.xml`, after the `OZG_MarkTool` entry, add:
 
@@ -1097,7 +1136,7 @@ In `docs/examples/types-openzone-games.xml`, after the `OZG_MarkTool` entry, add
     </type>
 ```
 
-- [ ] **Step 5: The stand studies as a gesture ends**
+- [x] **Step 5: The stand studies as a gesture ends**
 
 In `OZG_WorldOps.c`, in `OpCraft`, replace its first comment line `// craft what=mark [face=As] [in=me | in=place id=<place>]: the server's` with `// craft what=mark|loupe [face=As] [in=me | in=place id=<place>]: the server's`, and after `string recipeName = "OZG_RecipeMark";` add:
 
@@ -1109,7 +1148,7 @@ In `OZG_WorldOps.c`, in `OpCraft`, replace its first comment line `// craft what
         }
 ```
 
-- [ ] **Step 6: Lint, build, check (spec §11.2: "the loupe says 'marked' and makes a reader; marks survive a restart")**
+- [x] **Step 6: Lint, build, check (spec §11.2: "the loupe says 'marked' and makes a reader; marks survive a restart")**
 
 `mod_lint`, a stand cycle, `client_start(language="English")`, `job_wait`, `world_ready`, `world_teleport "6095.4 107.65 6028.9"`. Then, emptying the hands first if they hold something (`give` puts into the hands only when they are free):
 
@@ -1138,7 +1177,7 @@ The real gesture once, the client in a window moved clear of the taskbar (Global
 
 Send the key shots to the owner (`SendUserFile`).
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add OpenZone_Games/config.cpp OpenZone_Games/scripts/4_World/OpenZone_Games/OZG_Recipes.c OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Const.c OpenZone_Games/strings.csv OpenZone_Games/stringtable.csv docs/examples/types-openzone-games.xml OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_WorldOps.c
@@ -1162,7 +1201,7 @@ At every deal the session reads each card's mark into the card's record, and the
 - Consumes: `OZG_Card_Base.OZG_Sign()`, its readers and noticers (Task 1).
 - Produces: `OZG_DealCard.Sign` (int), `Readers`, `Noticers` (`ref array<string>`), `OZG_DealCard Copy()`, `bool ReadBy(string uid)`; `OZG_DurakConst.VERSION` 3.
 
-- [ ] **Step 1: The record keeps the mark**
+- [x] **Step 1: The record keeps the mark**
 
 In `OZG_Cards.c` replace the whole `class OZG_DealCard` with:
 
@@ -1217,7 +1256,7 @@ class OZG_DealCard
 }
 ```
 
-- [ ] **Step 2: The game keeps what it was handed, mark and all**
+- [x] **Step 2: The game keeps what it was handed, mark and all**
 
 In `OZG_Game.c`, in `TakeCards`, replace `m_Given.Insert(OZG_DealCard.Make(c.Name, c.Look));` with `m_Given.Insert(c.Copy());`.
 
@@ -1259,7 +1298,7 @@ and after the check `if (!s.Dealt) return false;` add:
 
 The block for version 1 sets `s.Version = OZG_DurakConst.VERSION`, which is now 3: a game of version 1 gets records made by `Make`, clean. Nothing else changes there.
 
-- [ ] **Step 3: The deal reads the marks off the items**
+- [x] **Step 3: The deal reads the marks off the items**
 
 In `OZG_CardThings.c`, in `class OZG_Card_Base`, after `OZG_AddReader` add:
 
@@ -1291,7 +1330,7 @@ with
 
 and in the comment above `CardsOf` replace "the next phase reads the card's mark here too" with "and the card's mark".
 
-- [ ] **Step 4: Lint, build, check**
+- [x] **Step 4: Lint, build, check**
 
 Before the build, leave a game of version 2 on the stand: lay a place, `sit`, `bots` (`n` 1, `on` 0), `ask` `deal` (Task 1's calls, with the build before this task). Then `mod_lint`, a stand cycle with this task's build, and:
 
@@ -1299,7 +1338,7 @@ Before the build, leave a game of version 2 on the stand: lay a place, `sit`, `b
 2. A new deal carries the mark: fold the old game; lay a new one; `mark` `As` with `sign` `12`; `sit`, `bots`, `deal`; `server_stop` (it saves the session file); read `E:\dayzmod\testserver\games-nh\profiles\OpenZone\Games\<id>.json`. Expected: the game's state in it has `Version` 3 and the record of `As` has `Sign` 12. The state sits in that file as JSON strings, its quotes escaped (`\"Sign\":12`), cut into parts of 900 bytes: search for `Sign` and read the parts on both sides of an edge together. Exactly one record has a sign that is not 0.
 3. `server_start`: the session of version 3 loads, `log_verdict` = `pass`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Cards.c OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Game.c OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Durak.c OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_DurakState.c OpenZone_Games/scripts/4_World/OpenZone_Games/OZG_CardThings.c
@@ -1326,7 +1365,7 @@ The design names the seat's private half of the view for this (§4.6, §9). The 
 - Consumes: `OZG_DealCard.ReadBy`, `Look`, `Sign` (Task 5).
 - Produces: `class OZG_WRead { int Seat; int Look; string Face; int Sign; static OZG_WRead Make(int seat, int look, string face, int sign); }`; `OZG_WView.Reads` (`ref array<ref OZG_WRead>`, never null on a client after `OZG_Table.Take`); `void OZG_Game.ReadsFor(int seat, string uid, array<ref OZG_WRead> into)`. `Seat` is the place's seat number of the hand the card is in, or -1 for the top of the stock.
 
-- [ ] **Step 1: A read on the wire**
+- [x] **Step 1: A read on the wire**
 
 In `OZG_Wire.c`, before `// The head of a view.`, add:
 
@@ -1364,7 +1403,7 @@ In `class OZG_WView`, after `float  Reach;` add:
 
 and in its constructor, after `Log = new array<string>();`, add `Reads = new array<ref OZG_WRead>();`.
 
-- [ ] **Step 2: The game says what a seat reads**
+- [x] **Step 2: The game says what a seat reads**
 
 In `OZG_Game.c`, after `SeatView(int seat)`, add:
 
@@ -1422,7 +1461,7 @@ In `OZG_Durak.c`, after `SeatView`, add:
     }
 ```
 
-- [ ] **Step 3: The session puts them into the player's own view**
+- [x] **Step 3: The session puts them into the player's own view**
 
 In `OZG_Session.c`, in `ViewBody`, after `v.Note = m_Note;` add:
 
@@ -1436,7 +1475,7 @@ In `OZG_Session.c`, in `ViewBody`, after `v.Note = m_Note;` add:
             m_Game.ReadsFor(seat, uid, v.Reads);
 ```
 
-- [ ] **Step 4: The client keeps the list whatever came**
+- [x] **Step 4: The client keeps the list whatever came**
 
 In `OZG_Table.c`, in `Take`, after `if (!v.Log) v.Log = new array<string>();` (two lines), add:
 
@@ -1445,7 +1484,7 @@ In `OZG_Table.c`, in `Take`, after `if (!v.Log) v.Log = new array<string>();` (t
             v.Reads = new array<ref OZG_WRead>();
 ```
 
-- [ ] **Step 5: The stand says what a seat reads**
+- [x] **Step 5: The stand says what a seat reads**
 
 In `OZG_WorldOps.c`, after `OpMarkOf`, add:
 
@@ -1486,7 +1525,7 @@ In `OZG_Verb.c`, after the `markof` lines, add:
 
 and append `, reads` to `KnownOps()`.
 
-- [ ] **Step 6: Check the reads (spec §11.2: "a marker reads his card in a bot's hand and on the stock and no other seat's view holds it")**
+- [x] **Step 6: Check the reads (spec §11.2: "a marker reads his card in a bot's hand and on the stock and no other seat's view holds it")**
 
 `mod_lint`, a stand cycle, a client, `world_teleport "6095.4 107.65 6028.9"`. Then, `<id>` the place laid:
 
@@ -1509,7 +1548,7 @@ Then one marked card: fold the game; lay a new one; `mark` with `face` `As`; `si
 
 Then `Cheating` 0 sends nothing: `server_stop`; in `E:\dayzmod\testserver\games-nh\profiles\OpenZone\OZ_Games_Settings.json` set `"Cheating": 0`; `server_start`, the client, `world_teleport`. The stand's `reads` asks the game and not the view, so it still lists them; the view is seen in the window (Task 7, Step 7). Set `"Cheating": 1` back and restart.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Wire.c OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Game.c OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Durak.c OpenZone_Games/scripts/4_World/OpenZone_Games/OZG_Session.c OpenZone_Games/scripts/5_Mission/OpenZone_Games/OZG_Table.c OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_WorldOps.c OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_Verb.c
@@ -1533,7 +1572,7 @@ The window draws, on every back a reader reads, the sign as a fault in the back'
 - Consumes: `OZG_WView.Reads`, `OZG_WRead.Seat`, `Look`, `Face`, `Sign` (Task 6); `OZG_Decks.StyleAt(int look)`; the back pictures `art/cards/<style>/back.png` (200 x 280, `tools/make_cards.py`).
 - Produces: `class OZG_MarkPlaces` with `static bool SignBox(string style, int sign, out int x, out int y, out int w, out int h)`, `static bool PencilBox(out int x, out int y, out int w, out int h)`, `static string SignImage(string style, int sign)`, `static string PencilImage(string face)`, `CARD_W` 200, `CARD_H` 280; the widgets `OZG_CardSign` and `OZG_CardPencil` in every card's frame; in the menu `ReadAt` and `MarkBack`.
 
-- [ ] **Step 1: The script that draws the marks**
+- [x] **Step 1: The script that draws the marks**
 
 Create `tools/make_marks.py` with the Write tool (it holds backslashes):
 
@@ -2022,7 +2061,7 @@ if __name__ == "__main__":
     main()
 ```
 
-- [ ] **Step 2: Where the pictures come from**
+- [x] **Step 2: Where the pictures come from**
 
 Create `art/marks/SOURCES.md`:
 
@@ -2037,7 +2076,7 @@ pencil with two fonts of Windows, Segoe Print (the ranks) and Segoe UI Symbol
 this repository; the script reads them from `C:\Windows\Fonts`.
 ```
 
-- [ ] **Step 3: Draw them, and hold them against the mock-up**
+- [x] **Step 3: Draw them, and hold them against the mock-up**
 
 Run `python -I tools/make_marks.py`. Expected output (the plan's script was run so, its outputs pointed at a scratch folder, when the plan was written):
 
@@ -2050,7 +2089,7 @@ ozg_marks_ca.paa: <n> KB
 
 An `error: ... only <k> places for a <kind>` means the lattice left too little room: lower that kind's `GAP` by 2 and run again (say so in the record). Then run the mock-up's own `make_marks.py` in its `canvas` folder (`python -I make_marks.py`; it reads this repository's backs and writes only its own `out` folder) and look at `art/marks/_view.png` beside its `out\_marks_view.png`: the dot, the block-out, the cut-out and the read back (a cut-out and `K♥` pencilled) must look alike in both, at full size and small; the shade and the nick show only to an eye that looks for them. Look through `art/marks/classic_signs.png` and `stalker_signs.png`: no fault on the emblem, none across the border, none under the pencil's corner.
 
-- [ ] **Step 4: The imageset is the mod's**
+- [x] **Step 4: The imageset is the mod's**
 
 In `OpenZone_Games/config.cpp` (with the Edit tool), replace
 
@@ -2086,7 +2125,7 @@ with
             };
 ```
 
-- [ ] **Step 5: A card's frame gains its sign and its pencil**
+- [x] **Step 5: A card's frame gains its sign and its pencil**
 
 In `tools/make_layouts.py`, in `card()`, replace
 
@@ -2109,7 +2148,7 @@ with
 
 Run `python -I tools/make_layouts.py`; `git status --short OpenZone_Games/gui/layouts` lists `ozg_card.layout` alone (the other layouts are written again the same).
 
-- [ ] **Step 6: The window draws the reads**
+- [x] **Step 6: The window draws the reads**
 
 In `OZG_GameMenu.c`, after the method `OnCard`, add:
 
@@ -2241,7 +2280,7 @@ with
 
 Before the build, `knowledge_find(kind="class", name=...)` for `ReadAt`, `MarkBack`, `BoxOf`, `PutBox`, `FillBoxes`, `SignBox`, `PencilBox`: none may be a class of the game or of a loaded mod.
 
-- [ ] **Step 7: Lint, build, look (spec §11.2: "a marker reads his card in a bot's hand and on the stock")**
+- [x] **Step 7: Lint, build, look (spec §11.2: "a marker reads his card in a bot's hand and on the stock")**
 
 `mod_lint`, a stand cycle, `client_start(language="English")`, `job_wait`, `world_ready`, `world_teleport "6095.4 107.65 6028.9"`. Then:
 
@@ -2267,7 +2306,7 @@ Then:
 
 Send the key shots to the owner (`SendUserFile`): a whole table, the crops, the crowded stalkers' table.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add tools/make_marks.py art/marks OpenZone_Games/gui/imagesets/ozg_marks.imageset OpenZone_Games/gui/imagesets/ozg_marks_ca.paa OpenZone_Games/scripts/5_Mission/OpenZone_Games/OZG_MarkPlaces.c OpenZone_Games/config.cpp tools/make_layouts.py OpenZone_Games/gui/layouts/ozg_card.layout OpenZone_Games/scripts/5_Mission/OpenZone_Games/OZG_GameMenu.c
@@ -2285,7 +2324,7 @@ What was built and measured goes where the next reader looks for it: the record,
 - Modify: `docs/test-commands.md`, `README.md`, this plan (its ticks)
 - Outside the repository: `E:\openzone\docs\specs\2026-11-24-openzone-games-cardsharp-design.md`; the skills `E:\dayzmod\dayz-agentic-modding-mcp\skills\dayz-modding` and `E:\dayzmod\dayz-modding-skill\openzone`; the memory `project-table-games.md`
 
-- [ ] **Step 1: The record**
+- [x] **Step 1: The record**
 
 Create `docs/2026-11-25-marks-record.md` in the shape of `docs/2026-11-25-table-window-record.md`: a heading `# Marks (the card sharp's phase 2): what was built and measured`, the date, and these sections, each filled from the steps' answers and never from this plan's expectations:
 - **Built**: a line a task, with its commit.
@@ -2293,7 +2332,7 @@ Create `docs/2026-11-25-marks-record.md` in the shape of `docs/2026-11-25-table-
 - **Where the build differs from the design**: the stand-in models (the pen, the pistol scope), with the sizes and the weights this plan chose; the reads in the head of a player's view, not in the seat's private half (§4.6, §9; Task 6 says why); the loupe's studies written to the server's log beside the markings (§6.1 asks it of the markings only); a read drawn on the first back of its look in a fan, the fan being in look order; what else came up.
 - **Not done**: noticing (phase 3), the sleights and the dealer's choice (phase 4), the tool's and the loupe's own models (§12).
 
-- [ ] **Step 2: What a person tries**
+- [x] **Step 2: What a person tries**
 
 In `docs/test-commands.md`, before `## The verb for scripts`, add:
 
@@ -2321,7 +2360,7 @@ the stock carries its fault and your pencil:
     oz_games {"op":"reads","id":"<id>","seat":"0"}      what seat 0's player reads now
 ```
 
-- [ ] **Step 3: The README**
+- [x] **Step 3: The README**
 
 In `README.md`, in the status list, after the bullet `- **A card is a thing too**: ...` (the whole bullet), add:
 
@@ -2342,19 +2381,19 @@ and in `## Українською`, after the line on the cards as things (the s
   нічого не кажуть. Ручка й лупа поки що мають моделі самої гри.
 ```
 
-- [ ] **Step 4: The design's status**
+- [x] **Step 4: The design's status**
 
 In `E:\openzone\docs\specs\2026-11-24-openzone-games-cardsharp-design.md` (not a repository): the status line says phase 2 is built and checked on the stand, with the date and the record's path; §4.2's two "to be measured" get their answers from the record; §12's line on the models says the stand-ins.
 
-- [ ] **Step 5: The skills**
+- [x] **Step 5: The skills**
 
 Each fact measured here about the engine goes into the public skill with neutral names (`MyMod_`, "a stand mod"): into `references/items-and-processing.md`, by the recipes, what Task 3 measured (a recipe that makes nothing and changes an ingredient in `Do`; `GetLengthInSecs` overridden for a length from settings, and the gesture it gave; whether an ingredient in an attachment slot of a container in a pocket can be dragged onto the item in the hands); into `references/gui-layouts.md`, by §38, that children of exact flags placed by `SetPos`/`SetSize` in pixels turn with their frame too (Task 7). The private `openzone` skill gets the pointers to our code (`OZG_Recipes.c`, `tools/make_marks.py`, `OZG_GameMenu.MarkBack`), in `references/ui.md` and `references/networking-and-items.md`. Then `python -I openzone/scripts/check-generic.py` from `E:\dayzmod\dayz-modding-skill` prints nothing. The skill repositories hold other people's uncommitted changes: stage only this task's hunks, commit each repository once, do NOT push.
 
-- [ ] **Step 6: The memory**
+- [x] **Step 6: The memory**
 
 `C:\Users\56869\.claude\projects\E--openzone\memory\project-table-games.md` gains a paragraph: phase 2 built (the date, the commits), what was measured, what is open; its `description` line says so. `MEMORY.md` stays under 17.1 KB.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add docs/2026-11-25-marks-record.md docs/test-commands.md README.md docs/2026-11-25-marks-plan.md

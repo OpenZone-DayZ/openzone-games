@@ -124,6 +124,32 @@ fills itself again): take a new one with `!ozg deck`.
 | a restart | stop the server in mid-bout and start it: the place, the seats, the hands and whose move it is are as they were |
 | gathering the deck | "Gather the deck" on a mat where no seat is taken, kept or left with cards; the host folds at any time from the window. The deck that was laid out comes back, into free hands or onto the spot |
 
+## Marks and the loupe
+
+The pen marks a card, the loupe tells whether a card is marked; both through the
+game's crafting: the tool in your hands, a card you carry dragged onto it, then hold
+the left button (the pen 8 s, the loupe 5 s; `MarkSeconds2`, `LoupeSeconds`; the gesture
+takes about 2 s more). A card in a deck cannot be dragged: take it out first.
+
+    oz_games {"op":"give","what":"OZG_MarkTool"}        the pen, into the hands
+    oz_games {"op":"give","what":"OZG_Loupe"}           the loupe, into the hands
+    oz_games {"op":"give","what":"OZG_Card_As"}         a card, into the inventory when the hands are full
+
+Without the gesture, the server's half of it:
+
+    oz_games {"op":"craft","what":"mark","face":"As"}   the thing in the hands on the ace of spades you carry
+    oz_games {"op":"craft","what":"loupe","face":"As"}
+    oz_games {"op":"markof","in":"me","face":"all"}     every marked card you carry: sign, by you, read by you
+
+At the table, with the window open, every back you read in another seat's fan and on
+the stock carries its fault and your pencil:
+
+    oz_games {"op":"mark","id":"<id>","face":"all"}     every card of a laid-out game marked by you
+    oz_games {"op":"reads","id":"<id>","seat":"0"}      what seat 0's player reads now
+
+`Cheating` 0 in `OZ_Games_Settings.json` switches all of it off: nothing is marked,
+studied or drawn.
+
 ## The verb for scripts
 
 The same and more through the MCP bridge, `world_exec(verb="oz_games", args={"op": ...})`:
