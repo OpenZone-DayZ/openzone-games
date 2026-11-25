@@ -235,3 +235,8 @@ STR_OZG_LOUPE_DESC,"Покаже, чи мічена карта; мічену в�
 STR_OZG_LOUPE_ACT,Роздивитися карту,Study the card
 STR_OZG_LOUPE_MARKED,Карта мічена,The card is marked
 STR_OZG_LOUPE_NOTHING,Нічого не знайдено,Nothing found
+STR_OZG_SAY_SLEIGHT_OFF,Хитрощі на цьому сервері вимкнено,Sleights are switched off on this server
+STR_OZG_SAY_SLEIGHT_NO_MORE,У цій роздачі хитрощів більше не можна,No more sleights in this deal
+STR_OZG_SAY_SLEIGHT_NO_CARD,Такої карти тут немає,There is no such card here
+STR_OZG_SAY_SLEIGHT_NOT_GAME,Ця карта не для цієї гри,That card is not of this game
+STR_OZG_SAY_SLEIGHT_NO_ROOM,"У колоді й поруч немає місця","There is no room in the deck or beside it"

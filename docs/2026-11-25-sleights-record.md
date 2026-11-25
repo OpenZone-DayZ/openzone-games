@@ -100,3 +100,84 @@ Seen in passing: the bench's `load swap=<a>><b>` (phase 1's tool to show a broke
 refused) fails even for `Transfer>Transfer`, a swap that changes nothing, with `JSON ERROR` in
 the log, while the same text loads without a swap; it only ever showed refusals. A state of
 version 3 is loaded in the restart check instead (task 6).
+
+## Tasks 4 to 6: the server does the sleights, the dealer's three, a restart
+
+Built in one pass, the three sharing the session's code, and checked one after the other on
+one stand:
+
+- **In play** (§6.1 to §6.4, §6.6): ops `slip`, `swap`, `throw` of the service. A sleight is
+  open to a seated player dealt into the deal in play, present, with `Cheating` 1 and fewer
+  than `SleightsPerDeal` done this deal; the second card of one throw comes as `throw` with
+  How `more` straight after the first (nothing else changed since) and is not counted
+  again. The card of the pockets is named by its item's network id (`OZG_Keys`) and must be
+  a card the player carries outside any deck; the server moves it into a free slot of the
+  deck in the place, else into the place's own holding, and a card of the hand going out to
+  his inventory, else to the ground at his feet -- the synchronous server move
+  (`LocationCanAddEntity`, `LocationSyncMoveEntity`, `SendServerMove`), the place opened for
+  it. A thrown card stays in the deck. A card of the game is found again by its record's
+  face, look, sign and readers (`OZG_DeckRead.MatchDeal`), never by the names a deal gave
+  by the walk of the place, which shift once a sleight takes a card out. Then the two rolls
+  (`Caught<kind>`, a roll a card; then every other seated player present, `SpotPercent`
+  each), the server's log line with the player's id and every roll, the views, a `shake`
+  to each who saw it (his hand's region for slip and swap, the discards for throw) and to
+  the doer the message `sleight` (what came into his hand and went out, the sound). Nothing
+  goes into the game's log.
+- **The dealer's three** (§6.5): the deal carries `Stack` ("in=..;out=..;pick=.."). The
+  dealer is the host on his own seat; the stack is checked whole (sleights open, no more
+  than `SleightsPerDeal` sleights -- a card in one, a card out one, the picks one -- and
+  `DealerPicks` picks; a card put in in his pockets; a card taken out or chosen in the place
+  and read by him; a chosen card of the game's set; nothing named twice; `*` a card out by
+  chance, picked now among the rest), and the deal is first tried on a game of paper with
+  the deck as the stack will leave it: a deal it would leave short is refused with nothing
+  moved. Then the cards out to his pockets, the cards in into the deck, the deal read anew,
+  the chosen cards dealt to him first, the counts of the deal set (his three belong to it),
+  and after everybody was sent the deal the rolls of each of his sleights and one shake of
+  the stock for each who saw any. The head of the view tells the dealer between deals the
+  cards of the deck he reads (`DeckReads`: key, face, look, sign), how many sleights and
+  picks he may; in play every dealt player how many he did and may.
+- **A restart** (§8): the session file keeps the deal's number and every player's sleights
+  in it; the game's state keeps the cards sleights brought in and the names they took out;
+  a game in mid-play loads only when every card of its deal is found in the place, the
+  deck and its holding, else it is a broken game, made an empty lobby as before.
+- Stand ops: `pockets`, `sleight` (a sleight asked for a player, a puppet too, by the face
+  he carries), `stack` (a deal with the dealer's three, by faces), `deckreads` (the head's
+  sleight fields), `sleights` (the counts), `give ... style=` (a card of a look, into the
+  pockets).
+
+The stand (NHChernobyl, the client's player and two puppets in jeans at a classic table,
+`sleightcfg all=100`):
+
+- `slip As` by a puppet holding six: his hand `[... As.1]`, seven cards (the deck's own ace
+  was in the client's hand); the deck full, the item beside it (`beside=1`); his pockets
+  without the ace; the log `sleight: puppet1 seat 0 slip As, place <id>, deal 1: at 100%
+  rolled 80: shown; spot at 100% <the client's id>=16 puppet2=45; seen by <the client's
+  id>,puppet2`; the client's log a view at 15:14:29.275, then `op=shake`, `sound slip on
+  local: started=1` and `shake seat0: 7 cards` 3 ms later; the puppet's fan in the world
+  seven cards a second later;
+- `swap Kh` (a stalkers' card) for his `9h`: `Kh.1` in the nine's place, `gone[9h]`, the nine
+  in his pockets (`(pocket)` in the log line), the king beside the deck; the client shaken
+  at `seat0` with `swap`;
+- `throw 6d`, then `throw Jd more=1`: the discards 1, 2; the count stayed 3 (`used 3`); two
+  log lines `(card 1)`, `(card 2)`; the client shaken twice at `discards` with `toss`; a
+  fourth sleight refused `STR_OZG_SAY_SLEIGHT_NO_MORE`;
+- at `all=0`: `slip Ad`, `throw 8s` by the other puppet and `swap` of `6c` for `Qd` by the
+  client's player: `at 0% rolled 83: not shown` and alike, no shake; the client, the doer
+  of the swap, sent `op=sleight`;
+- the game with its copies and its strange backs played to its end by the stand (`auto`):
+  `over durak=6 ... dis=35 ... gone=2`;
+- with every card of the place marked by the client's player, the head between deals: `sleights
+  0 of 3 picks 2 deckreads 38` (the 36 of durak's set and the copies the sleights left
+  there, the stalkers' king `Kh/1`); a puppet's head `0 of 0 picks 0 deckreads 0`;
+- `stack in=6c out=1 picks=As Ah` at `all=100`: `used 3`; the client's hand dealt `[As Ah 7c
+  Ad.1 7d Qs]`; his six of clubs dealt to seat 0; the card by chance out of the deck a
+  `3d`, now in his pockets; the deck `cards=51 free=1 beside=3` before and after (one out of
+  a slot, one into it); three log lines `deckin 6c`, `deckout 3d`, `pick As,Ah ... rolled
+  20,80: shown`, each seen by both puppets;
+- a restart in mid-play (deal 2, after a slip and a swap by the puppets, the game's state
+  rewritten by hand to version 3 with no `Gone`): the game came back, the hands, the stock
+  and the counts (`deal 2 sleights: <the client's id>=3 puppet1=1 puppet2=1`), the place
+  `cards=51 free=1 ... beside=4` as before;
+- a card of that game deleted from the deck (`pull Kc`) and the server restarted: `WARNING:
+  session <id>: the game does not add up (1 of its 40 cards are not in the place)`, the
+  place an empty lobby (`st=0 rev=1`).

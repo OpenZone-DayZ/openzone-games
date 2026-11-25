@@ -128,6 +128,16 @@ class OZG_VerbOps
             return OZG_WorldOps.OpSleightCfg(args, detail);
         if (op == "cheat")
             return OZG_Bench.OpCheat(args, detail);
+        if (op == "pockets")
+            return OZG_WorldOps.OpPockets(args, detail);
+        if (op == "sleight")
+            return OZG_WorldOps.OpSleight(args, detail);
+        if (op == "stack")
+            return OZG_WorldOps.OpStack(args, detail);
+        if (op == "deckreads")
+            return OZG_WorldOps.OpDeckReads(args, detail);
+        if (op == "sleights")
+            return OZG_WorldOps.OpSleights(args, detail);
         // -- ops of the later phases go above this line --
         detail = "unknown op '" + op + "'; known: " + KnownOps();
         return false;
@@ -137,7 +147,7 @@ class OZG_VerbOps
     {
         string known = "status, deck, names, games, begin, act, play, outcome, brief, all, can, drop, away, view, save, load, fuzz, heard";
         known = known + ", ring, level, cards, pull, undeck, held, stuff, loose, lay, places, sess, seats, puppet, move, ask, sit, ticks, gather, hand, give, chat, bots, auto, face, stage, mark, markof, craft, reads, noticecfg, noticer, whole, redeal, notices, shake, sound";
-        known = known + ", sleightcfg, cheat";
+        known = known + ", sleightcfg, cheat, pockets, sleight, stack, deckreads, sleights";
         return known;
     }
 

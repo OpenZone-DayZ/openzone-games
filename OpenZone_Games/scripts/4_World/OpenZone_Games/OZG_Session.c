@@ -47,6 +47,12 @@ class OZG_SessionRec
     ref array<int> Dealt;
     ref array<string> GameParts;
     ref array<string> Log;
+    // Sleights (card sharp's design §6.1): the deals dealt at this place, and
+    // how many sleights each player did in the deal in play, by id -- kept
+    // with the game, so a restart in mid-deal does not give them back.
+    int    DealNo;
+    ref array<string> SleightUids;
+    ref array<int> SleightCounts;
 
     void OZG_SessionRec()
     {
@@ -57,6 +63,8 @@ class OZG_SessionRec
         Dealt = new array<int>();
         GameParts = new array<string>();
         Log = new array<string>();
+        SleightUids = new array<string>();
+        SleightCounts = new array<int>();
     }
 }
 
@@ -84,6 +92,12 @@ class OZG_Session
     // nor noticed it. Kept while the session lives and never written: a
     // restart, or a game laid out anew, starts every count again (§8).
     protected ref map<string, int> m_NoticeDeals;
+    // A throw of up to two cards (card sharp's design §6.4) comes as two
+    // asks: for each player, the revision his first card left the session at
+    // and how many cards the throw has sent. A second card that comes after
+    // anything else changed is a throw of its own.
+    protected ref map<string, int> m_ThrowRev;
+    protected ref map<string, int> m_ThrowCards;
 
     void OZG_Session(OZG_Place place)
     {
@@ -93,6 +107,8 @@ class OZG_Session
         m_Asked = new map<string, int>();
         m_Moves = new map<string, int>();
         m_NoticeDeals = new map<string, int>();
+        m_ThrowRev = new map<string, int>();
+        m_ThrowCards = new map<string, int>();
     }
 
     string Id()
@@ -218,6 +234,16 @@ class OZG_Session
             rec.GameParts = new array<string>();
         if (!rec.Log)
             rec.Log = new array<string>();
+        // A file written before sleights: none done.
+        array<string> uids = new array<string>();
+        array<int> counts = new array<int>();
+        if (rec.SleightUids && rec.SleightCounts)
+        {
+            uids.Copy(rec.SleightUids);
+            counts.Copy(rec.SleightCounts);
+        }
+        rec.SleightUids = uids;
+        rec.SleightCounts = counts;
 
         OZG_Game game;
         if (rec.St != OZG_Const.ST_LOBBY)
@@ -228,6 +254,22 @@ class OZG_Session
             bool good = game && game.LoadState(state);
             if (good)
                 good = game.Sound(why);
+            // Every card of the game is found again in the place, the deck
+            // and its holding (card sharp's design §8): sleights moved items,
+            // and a card the file names that the place no longer holds is a
+            // broken game.
+            if (good)
+            {
+                array<ref OZG_DealCard> deal = new array<ref OZG_DealCard>();
+                game.DealtRecords(deal);
+                array<OZG_Card_Base> things = new array<OZG_Card_Base>();
+                int missing = OZG_DeckRead.MatchDeal(m_Place, deal, things);
+                if (missing > 0)
+                {
+                    why = missing.ToString() + " of its " + deal.Count().ToString() + " cards are not in the place";
+                    good = false;
+                }
+            }
             if (!good)
             {
                 OZG_Log.Warn("session " + id + ": the game does not add up (" + why + ")");
@@ -424,6 +466,11 @@ class OZG_Session
             m_Game.ReadsFor(seat, uid, v.Reads);
             m_Game.NoticesFor(seat, uid, v.Notices);
         }
+        // Sleights (card sharp's design §6, §10): in play, for a player dealt
+        // in; between deals, for the dealer, who is the host on his seat, with
+        // the cards of the deck he reads. Each head is made for its player
+        // alone, as the reads are.
+        SleightHead(v, uid, seat, dealt);
 
         string head;
         string err;
@@ -880,6 +927,13 @@ class OZG_Session
         if (op == OZG_Const.OP_ACT)
             return Act(player, uid, mine, ask.Move);
 
+        if (op == OZG_Const.OP_SLIP)
+            return Slip(player, uid, mine, ask);
+        if (op == OZG_Const.OP_SWAP)
+            return Swap(player, uid, mine, ask);
+        if (op == OZG_Const.OP_THROW)
+            return Throw(player, uid, mine, ask);
+
         if (op == OZG_Const.OP_POSE)
         {
             if (mine < 0)
@@ -911,7 +965,7 @@ class OZG_Session
             return Opt(ask.OptId, ask.OptValue);
 
         if (op == OZG_Const.OP_DEAL)
-            return Deal();
+            return Deal(player, uid, ask.Stack);
 
         if (op == OZG_Const.OP_KICK)
         {
@@ -985,7 +1039,7 @@ class OZG_Session
         return OZG_Const.SAY_BAD_OPTION;
     }
 
-    protected string Deal()
+    protected string Deal(PlayerBase player, string uid, string stackText)
     {
         if (m_R.St == OZG_Const.ST_PLAYING)
             return OZG_Const.SAY_PLAYING;
@@ -1043,8 +1097,26 @@ class OZG_Session
         // deck gets one of its class.
         if (m_Place && !m_Place.OZG_Deck())
             m_Place.OZG_MakeDeck(m_R.DeckClass);
+
+        // The dealer's three (card sharp's design §6.5): checked whole and
+        // the deal tried on paper before a single item moves, so that a deal
+        // the stack would leave short is refused with nothing done.
+        OZG_Stack stack = new OZG_Stack();
+        stack.Read(stackText);
+        int dealer = SeatOf(uid);
+        if (!stack.Empty())
+        {
+            string why = StackCheck(player, uid, stack, game, seats, options, hint);
+            if (why != "")
+                return why;
+            StackApply(player, stack);
+        }
+
+        array<EntityAI> things = new array<EntityAI>();
+        OZG_DeckRead.ThingsOf(m_Place, things);
         array<ref OZG_DealCard> all = new array<ref OZG_DealCard>();
-        OZG_DeckRead.CardsOf(m_Place, all);
+        array<string> keys = new array<string>();
+        OZG_DeckRead.RecordsOf(things, all, keys);
         array<string> ofGame = new array<string>();
         game.CardsUsed(ofGame);
         array<ref OZG_DealCard> cards = new array<ref OZG_DealCard>();
@@ -1054,6 +1126,9 @@ class OZG_Session
                 cards.Insert(all[i]);
         }
         game.TakeCards(cards);
+        // The cards the dealer chose, by their names in this deal.
+        if (stack.PickCards.Count() > 0)
+            game.DealFirst(dealer, NamesOf(stack.PickCards, all, keys));
 
         string refusal;
         OZG_Random chance = new OZG_Random();
@@ -1065,6 +1140,15 @@ class OZG_Session
         m_R.Dealt.Copy(seats);
         m_R.Hint = "";
         m_R.HintUid = "";
+        // A new deal: every player's sleights counted anew; the dealer's own
+        // three belong to it.
+        m_R.DealNo = m_R.DealNo + 1;
+        m_R.SleightUids.Clear();
+        m_R.SleightCounts.Clear();
+        m_ThrowRev.Clear();
+        m_ThrowCards.Clear();
+        if (!stack.Empty())
+            CountSleight(uid, stack.Sleights());
         AddLog("deal");
         Settle();
         // Noticing (design §5): after the deal and before anybody is sent it,
@@ -1072,7 +1156,497 @@ class OZG_Session
         NoticeAfterDeal(seats, cards, chance);
         Changed();
         OZG_Log.Dbg("session " + m_R.PlaceId + " deal: " + m_Game.Brief());
+        if (!stack.Empty())
+            StackRolls(uid, dealer, stack);
         return "";
+    }
+
+    // The names a deal gave the cards `chosen`: each item's key looked up
+    // beside the records the deal was read into.
+    protected array<string> NamesOf(array<OZG_Card_Base> chosen, array<ref OZG_DealCard> all, array<string> keys)
+    {
+        array<string> names = new array<string>();
+        for (int i = 0; i < chosen.Count(); i++)
+        {
+            int at = keys.Find(OZG_Keys.Of(chosen[i]));
+            if (at >= 0 && at < all.Count())
+                names.Insert(all[at].Name);
+        }
+        return names;
+    }
+
+    // ------------------------------------------------------------ the dealer's three
+
+    // The stack, checked whole (card sharp's design §6.5): sleights open to
+    // the dealer, no more than his sleights and picks allow, every card where
+    // the stack says -- a card put in in his pockets, a card taken out or
+    // chosen in the place and read by him, a chosen card of the game's set --
+    // no card named twice; a card out by chance picked now among the rest;
+    // and the deal, with the deck as the stack will leave it, tried on a game
+    // of paper. "" or the refusal.
+    protected string StackCheck(PlayerBase player, string uid, OZG_Stack stack, OZG_Game game, array<int> seats, map<string, string> options, string hint)
+    {
+        OZG_Settings cfg = OZG_Cfg.Get();
+        if (cfg.Cheating != 1)
+            return OZG_Const.SAY_SLEIGHT_OFF;
+        int mine = SeatOf(uid);
+        if (mine < 0 || seats.Find(mine) < 0)
+            return OZG_Const.SAY_NOT_SEATED;
+        if (!Present(player))
+            return OZG_Const.SAY_TOO_FAR;
+        if (stack.Sleights() > cfg.SleightsPerDeal)
+            return OZG_Const.SAY_SLEIGHT_NO_MORE;
+        if (stack.PickKeys.Count() > cfg.DealerPicks)
+            return OZG_Const.SAY_SLEIGHT_NO_MORE;
+
+        array<string> ofGame = new array<string>();
+        game.CardsUsed(ofGame);
+        array<EntityAI> placed = new array<EntityAI>();
+        OZG_DeckRead.ThingsOf(m_Place, placed);
+        array<OZG_Card_Base> named = new array<OZG_Card_Base>();
+        stack.InCards.Clear();
+        stack.OutCards.Clear();
+        stack.PickCards.Clear();
+        int i;
+        OZG_Card_Base card;
+        for (i = 0; i < stack.InKeys.Count(); i++)
+        {
+            card = OZG_DeckRead.PocketCard(player, stack.InKeys[i]);
+            if (!card || named.Find(card) >= 0)
+                return OZG_Const.SAY_SLEIGHT_NO_CARD;
+            named.Insert(card);
+            stack.InCards.Insert(card);
+        }
+        for (i = 0; i < stack.PickKeys.Count(); i++)
+        {
+            card = OZG_Card_Base.Cast(OZG_Keys.Find(stack.PickKeys[i]));
+            bool chosen = card && placed.Find(card) >= 0 && card.OZG_Reads(uid);
+            if (!chosen || named.Find(card) >= 0)
+                return OZG_Const.SAY_SLEIGHT_NO_CARD;
+            if (ofGame.Find(card.OZG_Face()) < 0)
+                return OZG_Const.SAY_SLEIGHT_NOT_GAME;
+            named.Insert(card);
+            stack.PickCards.Insert(card);
+        }
+        int byChance = 0;
+        for (i = 0; i < stack.OutKeys.Count(); i++)
+        {
+            if (stack.OutKeys[i] == OZG_Const.ANY_CARD)
+            {
+                byChance++;
+                continue;
+            }
+            card = OZG_Card_Base.Cast(OZG_Keys.Find(stack.OutKeys[i]));
+            bool known = card && placed.Find(card) >= 0 && card.OZG_Reads(uid);
+            if (!known || named.Find(card) >= 0)
+                return OZG_Const.SAY_SLEIGHT_NO_CARD;
+            named.Insert(card);
+            stack.OutCards.Insert(card);
+        }
+        // Cards out by chance: any of the place's the stack does not name.
+        array<OZG_Card_Base> rest = new array<OZG_Card_Base>();
+        for (i = 0; i < placed.Count(); i++)
+        {
+            card = OZG_Card_Base.Cast(placed[i]);
+            if (card && named.Find(card) < 0)
+                rest.Insert(card);
+        }
+        OZG_Random dice = new OZG_Random();
+        for (i = 0; i < byChance; i++)
+        {
+            if (rest.Count() == 0)
+                return OZG_Const.SAY_SLEIGHT_NO_CARD;
+            int at = dice.Below(rest.Count());
+            stack.OutCards.Insert(rest[at]);
+            rest.Remove(at);
+        }
+
+        // The deal on paper: the place's cards less those coming out, with
+        // those going in.
+        array<EntityAI> after = new array<EntityAI>();
+        for (i = 0; i < placed.Count(); i++)
+        {
+            card = OZG_Card_Base.Cast(placed[i]);
+            if (card && stack.OutCards.Find(card) < 0)
+                after.Insert(card);
+        }
+        for (i = 0; i < stack.InCards.Count(); i++)
+            after.Insert(stack.InCards[i]);
+        array<ref OZG_DealCard> paperAll = new array<ref OZG_DealCard>();
+        array<string> paperKeys = new array<string>();
+        OZG_DeckRead.RecordsOf(after, paperAll, paperKeys);
+        array<ref OZG_DealCard> paperCards = new array<ref OZG_DealCard>();
+        for (i = 0; i < paperAll.Count(); i++)
+        {
+            if (ofGame.Find(OZG_Cards.FaceOf(paperAll[i].Name)) >= 0)
+                paperCards.Insert(paperAll[i]);
+        }
+        OZG_Game paper = game.Fresh();
+        paper.TakeCards(paperCards);
+        if (stack.PickCards.Count() > 0)
+            paper.DealFirst(mine, NamesOf(stack.PickCards, paperAll, paperKeys));
+        string refusal;
+        if (!paper.Begin(seats, options, new OZG_Random(), hint, refusal))
+            return refusal;
+        return "";
+    }
+
+    // The items the stack moves (§6.6): the cards taken out into the
+    // dealer's pockets (the ground at his feet when they are full), the cards
+    // put in into the deck (or the place's own holding).
+    protected void StackApply(PlayerBase player, OZG_Stack stack)
+    {
+        int i;
+        for (i = 0; i < stack.OutCards.Count(); i++)
+            OZG_DeckRead.ToPlayer(stack.OutCards[i], player);
+        for (i = 0; i < stack.InCards.Count(); i++)
+        {
+            if (!OZG_DeckRead.IntoPlace(m_Place, stack.InCards[i]))
+                OZG_Log.Warn("sleight: a card put into the deck of place " + m_R.PlaceId + " found no room");
+        }
+    }
+
+    // The rolls of the dealer's sleights, after everybody was sent the deal:
+    // a card put in is a sleight of its own, a card taken out one, the cards
+    // chosen one with a roll a card (§6.5, §7). Whoever saw any of them is
+    // shown the deck shaken once, with the sound of the first he saw.
+    protected void StackRolls(string uid, int dealer, OZG_Stack stack)
+    {
+        OZG_Random dice = new OZG_Random();
+        map<string, string> shaken = new map<string, string>();
+        int i;
+        for (i = 0; i < stack.InCards.Count(); i++)
+            StackRoll(uid, dealer, OZG_Const.SLEIGHT_DECK_IN, 1, stack.InCards[i].OZG_Face(), "deckin", dice, shaken);
+        for (i = 0; i < stack.OutCards.Count(); i++)
+            StackRoll(uid, dealer, OZG_Const.SLEIGHT_DECK_OUT, 1, stack.OutCards[i].OZG_Face(), "deckout", dice, shaken);
+        if (stack.PickCards.Count() > 0)
+            StackRoll(uid, dealer, OZG_Const.SLEIGHT_PICK, stack.PickCards.Count(), OZG_Stack.Faces(stack.PickCards), "pick", dice, shaken);
+        array<string> one = new array<string>();
+        for (i = 0; i < shaken.Count(); i++)
+        {
+            one.Clear();
+            one.Insert(shaken.GetKey(i));
+            ShakeFor(one, OZG_Regions.STOCK, shaken.GetElement(i));
+        }
+    }
+
+    protected void StackRoll(string uid, int dealer, string kind, int cards, string what, string sound, OZG_Random dice, map<string, string> shaken)
+    {
+        array<string> seen = new array<string>();
+        string said = Rolls(uid, kind, cards, dice, seen);
+        SleightLine(uid, dealer, kind, what, said);
+        for (int i = 0; i < seen.Count(); i++)
+        {
+            if (!shaken.Contains(seen[i]))
+                shaken.Set(seen[i], sound);
+        }
+    }
+
+    // ------------------------------------------------------------ sleights in play
+
+    // How many sleights the player `uid` did in this deal.
+    int SleightsOf(string uid)
+    {
+        int at = m_R.SleightUids.Find(uid);
+        if (at < 0 || at >= m_R.SleightCounts.Count())
+            return 0;
+        return m_R.SleightCounts[at];
+    }
+
+    protected void CountSleight(string uid, int n)
+    {
+        int at = m_R.SleightUids.Find(uid);
+        if (at < 0 || at >= m_R.SleightCounts.Count())
+        {
+            m_R.SleightUids.Insert(uid);
+            m_R.SleightCounts.Insert(n);
+            return;
+        }
+        m_R.SleightCounts[at] = m_R.SleightCounts[at] + n;
+    }
+
+    // What a head says of sleights to its player (card sharp's design §10):
+    // in play, how many he did and may, when he was dealt in; between deals,
+    // to the dealer -- the host on his own seat -- the same, how many cards he
+    // may choose, and the cards of the deck he reads.
+    protected void SleightHead(OZG_WView v, string uid, int seat, bool dealt)
+    {
+        v.SleightsUsed = 0;
+        v.SleightsMost = 0;
+        v.PicksMost = 0;
+        v.DeckReads.Clear();
+        OZG_Settings cfg = OZG_Cfg.Get();
+        if (cfg.Cheating != 1 || seat < 0 || uid == "")
+            return;
+        if (m_R.St == OZG_Const.ST_PLAYING)
+        {
+            if (!dealt || !m_Game)
+                return;
+            v.SleightsUsed = SleightsOf(uid);
+            v.SleightsMost = cfg.SleightsPerDeal;
+            return;
+        }
+        if (!IsHost(uid) || m_R.Seats[seat].St != OZG_Const.SEAT_TAKEN)
+            return;
+        v.SleightsMost = cfg.SleightsPerDeal;
+        v.PicksMost = cfg.DealerPicks;
+        DeckReadsFor(uid, v.DeckReads);
+    }
+
+    // The cards of the place the player reads and the game deals: what a
+    // dealer may choose for his hand, or take out by name (§6.5).
+    protected void DeckReadsFor(string uid, array<ref OZG_WDeckCard> into)
+    {
+        into.Clear();
+        OZG_Game sample = OZG_Games.Sample(m_R.GameId);
+        array<string> ofGame = new array<string>();
+        if (sample)
+            sample.CardsUsed(ofGame);
+        array<EntityAI> things = new array<EntityAI>();
+        OZG_DeckRead.ThingsOf(m_Place, things);
+        for (int i = 0; i < things.Count(); i++)
+        {
+            OZG_Card_Base card = OZG_Card_Base.Cast(things[i]);
+            if (!card || !card.OZG_Reads(uid))
+                continue;
+            if (ofGame.Find(card.OZG_Face()) < 0)
+                continue;
+            into.Insert(OZG_WDeckCard.Make(OZG_Keys.Of(card), card.OZG_Face(), card.OZG_Look(), card.OZG_Sign()));
+        }
+    }
+
+    // May this player do a sleight in play now (card sharp's design §6.1):
+    // sleights on, a seat dealt into the deal in play, present, and sleights
+    // left -- unless this is the second card of one throw. "" or the refusal.
+    protected string SleightOpen(PlayerBase player, string uid, int mine, bool more)
+    {
+        OZG_Settings cfg = OZG_Cfg.Get();
+        if (cfg.Cheating != 1)
+            return OZG_Const.SAY_SLEIGHT_OFF;
+        if (mine < 0)
+            return OZG_Const.SAY_NOT_SEATED;
+        if (m_R.St != OZG_Const.ST_PLAYING || !m_Game)
+            return OZG_Const.NO_OVER;
+        if (m_R.Dealt.Find(mine) < 0)
+            return OZG_Const.NO_SEAT;
+        if (!Present(player))
+            return OZG_Const.SAY_TOO_FAR;
+        if (!more && SleightsOf(uid) >= cfg.SleightsPerDeal)
+            return OZG_Const.SAY_SLEIGHT_NO_MORE;
+        return "";
+    }
+
+    // slip (§6.2): a card of his pockets joins his hand, the item into the
+    // deck in the place.
+    protected string Slip(PlayerBase player, string uid, int mine, OZG_WAsk ask)
+    {
+        string why = SleightOpen(player, uid, mine, false);
+        if (why != "")
+            return why;
+        OZG_Card_Base card = OZG_DeckRead.PocketCard(player, ask.CardKey);
+        if (!card)
+            return OZG_Const.SAY_SLEIGHT_NO_CARD;
+        string face = card.OZG_Face();
+        if (!m_Game.SleightTakes(face))
+            return OZG_Const.SAY_SLEIGHT_NOT_GAME;
+        OZG_DealCard rec = OZG_DealCard.Make(m_Game.SleightName(face), card.OZG_Look());
+        card.OZG_MarkInto(rec);
+        if (!OZG_DeckRead.IntoPlace(m_Place, card))
+            return OZG_Const.SAY_SLEIGHT_NO_ROOM;
+        string refusal;
+        if (!m_Game.SleightIn(mine, rec, refusal))
+        {
+            OZG_DeckRead.ToPlayer(card, player);
+            return refusal;
+        }
+        m_ThrowRev.Remove(uid);
+        Did(player, uid, mine, OZG_Const.SLEIGHT_SLIP, true, OZG_Regions.OfSeat(mine), "slip", rec.Name, "", face);
+        return "";
+    }
+
+    // swap (§6.3): a card of his hand to his pockets, a card of his pockets
+    // in its place; the count stays.
+    protected string Swap(PlayerBase player, string uid, int mine, OZG_WAsk ask)
+    {
+        string why = SleightOpen(player, uid, mine, false);
+        if (why != "")
+            return why;
+        OZG_Card_Base card = OZG_DeckRead.PocketCard(player, ask.CardKey);
+        if (!card)
+            return OZG_Const.SAY_SLEIGHT_NO_CARD;
+        string face = card.OZG_Face();
+        if (!m_Game.SleightTakes(face))
+            return OZG_Const.SAY_SLEIGHT_NOT_GAME;
+        // A local is never named `out`: the compiler takes it for the
+        // keyword (dayz-modding, the language's iron rules).
+        string leaving = ask.Move;
+        if (!m_Game.SleightHolds(mine, leaving))
+            return OZG_Const.NO_CARD;
+        // The item of the card going out, found before the one coming in
+        // lies beside it.
+        OZG_Card_Base gone = OZG_DeckRead.ThingFor(m_Place, m_Game, leaving);
+        if (!gone)
+        {
+            OZG_Log.Warn("sleight: the card " + leaving + " of place " + m_R.PlaceId + " is not in it");
+            return OZG_Const.SAY_CANNOT;
+        }
+        OZG_DealCard rec = OZG_DealCard.Make(m_Game.SleightName(face), card.OZG_Look());
+        card.OZG_MarkInto(rec);
+        if (!OZG_DeckRead.IntoPlace(m_Place, card))
+            return OZG_Const.SAY_SLEIGHT_NO_ROOM;
+        string refusal;
+        if (!m_Game.SleightSwap(mine, leaving, rec, refusal))
+        {
+            OZG_DeckRead.ToPlayer(card, player);
+            return refusal;
+        }
+        string where = OZG_DeckRead.ToPlayer(gone, player);
+        m_ThrowRev.Remove(uid);
+        string what = OZG_Cards.FaceOf(leaving) + " for " + face + " (" + where + ")";
+        Did(player, uid, mine, OZG_Const.SLEIGHT_SWAP, true, OZG_Regions.OfSeat(mine), "swap", rec.Name, leaving, what);
+        return "";
+    }
+
+    // throw (§6.4): a card of his hand to the discards; one throw is up to
+    // two cards, the second sent with How "more" straight after the first.
+    // The item stays in the deck.
+    protected string Throw(PlayerBase player, string uid, int mine, OZG_WAsk ask)
+    {
+        bool more = ask.How == OZG_Const.HOW_MORE && ThrowGoesOn(uid);
+        string why = SleightOpen(player, uid, mine, more);
+        if (why != "")
+            return why;
+        string card = ask.Move;
+        if (!m_Game.SleightHolds(mine, card))
+            return OZG_Const.NO_CARD;
+        string refusal;
+        if (!m_Game.SleightDiscard(mine, card, refusal))
+            return refusal;
+        int thrown = 1;
+        if (more)
+        {
+            m_ThrowCards.Find(uid, thrown);
+            thrown++;
+        }
+        string what = OZG_Cards.FaceOf(card) + " (card " + thrown.ToString() + ")";
+        Did(player, uid, mine, OZG_Const.SLEIGHT_THROW, !more, OZG_Regions.DISCARDS, "toss", "", card, what);
+        m_ThrowRev.Set(uid, m_R.Rev);
+        m_ThrowCards.Set(uid, thrown);
+        return "";
+    }
+
+    // Is a throw of this player still open for its second card: nothing has
+    // changed since its first, and it threw fewer than two.
+    protected bool ThrowGoesOn(string uid)
+    {
+        int rev;
+        int cards;
+        if (!m_ThrowRev.Find(uid, rev) || !m_ThrowCards.Find(uid, cards))
+            return false;
+        return rev == m_R.Rev && cards < OZG_Const.THROW_MOST;
+    }
+
+    // A sleight in play was done: counted, rolled (§6.1), written to the
+    // server's log with the player's id -- never to the game's -- and every
+    // view sent; then the shake to those who saw it, and the doer told what
+    // his window flies, with its sound.
+    protected void Did(PlayerBase player, string uid, int mine, string kind, bool counts, string region, string sound, string cameIn, string wentOut, string what)
+    {
+        if (counts)
+            CountSleight(uid, 1);
+        array<string> seen = new array<string>();
+        string said = Rolls(uid, kind, 1, new OZG_Random(), seen);
+        SleightLine(uid, mine, kind, what, said);
+        Settle();
+        Changed();
+        ShakeFor(seen, region, sound);
+        TellDoer(player, kind, cameIn, wentOut, sound);
+    }
+
+    // The two rolls of a sleight (§6.1): did it show at all, a roll a card at
+    // its kind's percent; and when it did, every other seated player present
+    // rolls his own SpotPercent. `seen` gets the ids that saw it; the answer
+    // is the rolls, for the server's log.
+    protected string Rolls(string uid, string kind, int cards, OZG_Random dice, array<string> seen)
+    {
+        seen.Clear();
+        OZG_Settings cfg = OZG_Cfg.Get();
+        int caught = cfg.CaughtOf(kind);
+        bool showed = false;
+        string rolled = "";
+        for (int c = 0; c < cards; c++)
+        {
+            int r = dice.Below(100);
+            if (c > 0)
+                rolled = rolled + ",";
+            rolled = rolled + r.ToString();
+            if (r < caught)
+                showed = true;
+        }
+        string said = "at " + caught.ToString() + "% rolled " + rolled;
+        if (!showed)
+            return said + ": not shown";
+        said = said + ": shown; spot at " + cfg.SpotPercent.ToString() + "%";
+        string who = "";
+        for (int i = 0; i < m_R.Seats.Count(); i++)
+        {
+            OZG_SeatRec s = m_R.Seats[i];
+            if (s.St != OZG_Const.SEAT_TAKEN || s.Uid == "" || s.Uid == uid)
+                continue;
+            int spot = dice.Below(100);
+            said = said + " " + s.Uid + "=" + spot.ToString();
+            if (spot >= cfg.SpotPercent)
+                continue;
+            seen.Insert(s.Uid);
+            if (who != "")
+                who = who + ",";
+            who = who + s.Uid;
+        }
+        if (who == "")
+            who = "nobody";
+        return said + "; seen by " + who;
+    }
+
+    // Every sleight, caught or not, in the server's log with the player's id
+    // (§6.1): an admin can always find out who did what.
+    protected void SleightLine(string uid, int seat, string kind, string what, string said)
+    {
+        string line = "sleight: " + uid + " seat " + seat.ToString() + " " + kind + " " + what;
+        line = line + ", place " + m_R.PlaceId + ", deal " + m_R.DealNo.ToString();
+        OZG_Log.Info(line + ": " + said);
+    }
+
+    // The shake (§6.1, §9): to each who saw the sleight, and to him alone.
+    protected void ShakeFor(array<string> seen, string region, string sound)
+    {
+        if (seen.Count() == 0)
+            return;
+        OZG_WShake w = new OZG_WShake();
+        w.PlaceId = m_R.PlaceId;
+        w.RegionName = region;
+        w.SoundName = sound;
+        string body;
+        string err;
+        JsonFileLoader<OZG_WShake>.MakeData(w, body, err, false);
+        for (int i = 0; i < seen.Count(); i++)
+            SendTo(OZG_Sessions.PlayerOf(seen[i]), OZG_Const.OP_SHAKE, body);
+    }
+
+    // The doer's own word (§9): what came into his hand and went out of it,
+    // and the sound his client plays. Never who saw.
+    protected void TellDoer(PlayerBase player, string kind, string cameIn, string wentOut, string sound)
+    {
+        OZG_WSleight w = new OZG_WSleight();
+        w.PlaceId = m_R.PlaceId;
+        w.Rev = m_R.Rev;
+        w.Kind = kind;
+        w.CameIn = cameIn;
+        w.WentOut = wentOut;
+        w.SoundName = sound;
+        string body;
+        string err;
+        JsonFileLoader<OZG_WSleight>.MakeData(w, body, err, false);
+        SendTo(player, OZG_Const.OP_SLEIGHT, body);
     }
 
     protected string Act(PlayerBase player, string uid, int mine, string move)

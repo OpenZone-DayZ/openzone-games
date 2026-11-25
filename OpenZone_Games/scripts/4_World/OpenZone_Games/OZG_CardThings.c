@@ -70,6 +70,13 @@ class OZG_Card_Base extends ItemBase
         return m_OZG_Readers.Find(uid) >= 0;
     }
 
+    // Server: the ids that read it, copied into `into`.
+    void OZG_ReadersInto(array<string> into)
+    {
+        into.Clear();
+        into.Copy(m_OZG_Readers);
+    }
+
     // Server: `uid` marks the card. A clean card takes the sign, and `uid`
     // as its marker and first reader; a marked one keeps its sign and takes
     // `uid` as one more reader (design §4.1).
@@ -297,13 +304,26 @@ class OZG_DeckRead
     // Returns how many cards there are.
     static int CardsOf(OZG_Place place, array<ref OZG_DealCard> into)
     {
-        into.Clear();
         array<EntityAI> things = new array<EntityAI>();
         ThingsOf(place, things);
+        array<string> keys = new array<string>();
+        RecordsOf(things, into, keys);
+        return things.Count();
+    }
+
+    // Records of these card items, named as CardsOf names them, and beside
+    // each record its item's key (OZG_Keys): what the dealer's stack names a
+    // card by.
+    static void RecordsOf(array<EntityAI> things, array<ref OZG_DealCard> into, array<string> keys)
+    {
+        into.Clear();
+        keys.Clear();
         map<string, int> seen = new map<string, int>();
         for (int i = 0; i < things.Count(); i++)
         {
             OZG_Card_Base card = OZG_Card_Base.Cast(things[i]);
+            if (!card)
+                continue;
             string face = card.OZG_Face();
             int had = 0;
             seen.Find(face, had);
@@ -314,8 +334,219 @@ class OZG_DeckRead
             OZG_DealCard rec = OZG_DealCard.Make(named, card.OZG_Look());
             card.OZG_MarkInto(rec);
             into.Insert(rec);
+            keys.Insert(OZG_Keys.Of(card));
         }
-        return things.Count();
+    }
+
+    // ------------------------------------------------------------ the cards of a game in play
+    //
+    // A card of the game in play is found again by what the deal's record
+    // keeps of it (card sharp's design §8): its face, the look of its back,
+    // its mark and the mark's readers. Nothing in a place changes those while
+    // it lies laid out (the place is shut; marking and the loupe need the card
+    // out of any deck), and two items alike in all of them are the same card
+    // to the game. The names a deal gave by the walk of the place shift when
+    // a sleight takes a card out, so they are never used to find an item
+    // after the deal's own frame.
+
+    protected static bool Alike(OZG_Card_Base card, OZG_DealCard rec, bool readers)
+    {
+        if (!card || !rec)
+            return false;
+        if (card.OZG_Face() != OZG_Cards.FaceOf(rec.Name))
+            return false;
+        if (card.OZG_Look() != rec.Look || card.OZG_Sign() != rec.Sign)
+            return false;
+        if (!readers || rec.Sign <= 0)
+            return true;
+        array<string> theirs = new array<string>();
+        card.OZG_ReadersInto(theirs);
+        if (theirs.Count() != rec.Readers.Count())
+            return false;
+        for (int i = 0; i < theirs.Count(); i++)
+        {
+            if (rec.Readers.Find(theirs[i]) < 0)
+                return false;
+        }
+        return true;
+    }
+
+    // Every record of the deal matched with an item of the place, each item
+    // once: an item alike in everything first, then one alike but for its
+    // readers. `things` comes back beside `deal`, null where no item matched.
+    // Returns how many records found none.
+    static int MatchDeal(OZG_Place place, array<ref OZG_DealCard> deal, array<OZG_Card_Base> things)
+    {
+        things.Clear();
+        array<EntityAI> all = new array<EntityAI>();
+        ThingsOf(place, all);
+        array<OZG_Card_Base> free = new array<OZG_Card_Base>();
+        int i;
+        for (i = 0; i < all.Count(); i++)
+        {
+            OZG_Card_Base one = OZG_Card_Base.Cast(all[i]);
+            if (one)
+                free.Insert(one);
+        }
+        int missing = 0;
+        for (i = 0; i < deal.Count(); i++)
+        {
+            OZG_Card_Base found = null;
+            for (int pass = 0; pass < 2 && !found; pass++)
+            {
+                for (int k = 0; k < free.Count(); k++)
+                {
+                    if (Alike(free[k], deal[i], pass == 0))
+                    {
+                        found = free[k];
+                        free.Remove(k);
+                        break;
+                    }
+                }
+            }
+            if (!found)
+                missing++;
+            things.Insert(found);
+        }
+        return missing;
+    }
+
+    // The item a card of the game in play stands for; null when the place
+    // holds none that matches.
+    static OZG_Card_Base ThingFor(OZG_Place place, OZG_Game game, string name)
+    {
+        if (!place || !game || name == "")
+            return null;
+        array<ref OZG_DealCard> deal = new array<ref OZG_DealCard>();
+        game.DealtRecords(deal);
+        array<OZG_Card_Base> things = new array<OZG_Card_Base>();
+        MatchDeal(place, deal, things);
+        for (int i = 0; i < deal.Count(); i++)
+        {
+            if (deal[i].Name == name)
+                return things[i];
+        }
+        return null;
+    }
+
+    // ------------------------------------------------------------ a player's pockets
+    //
+    // A card a player carries (card sharp's design §9): anywhere in his
+    // inventory, his hands too, but not in a deck -- a deck is a box of its
+    // own, and a deck in a backpack is not fifty-two cards in the pockets.
+
+    static bool Pocketed(OZG_Card_Base card, PlayerBase player)
+    {
+        if (!card || !player)
+            return false;
+        if (card.GetHierarchyRootPlayer() != player)
+            return false;
+        EntityAI up = card.GetHierarchyParent();
+        while (up && up != player)
+        {
+            if (up.IsInherited(OZG_Deck_Base) || up.IsInherited(OZG_Place))
+                return false;
+            up = up.GetHierarchyParent();
+        }
+        return true;
+    }
+
+    // The cards a player carries, in the order of his inventory.
+    static void PocketCards(PlayerBase player, array<OZG_Card_Base> into)
+    {
+        into.Clear();
+        if (!player)
+            return;
+        array<EntityAI> items = new array<EntityAI>();
+        player.GetInventory().EnumerateInventory(InventoryTraversalType.PREORDER, items);
+        EntityAI held = player.GetHumanInventory().GetEntityInHands();
+        if (held && items.Find(held) < 0)
+            items.Insert(held);
+        for (int i = 0; i < items.Count(); i++)
+        {
+            OZG_Card_Base card = OZG_Card_Base.Cast(items[i]);
+            if (card && Pocketed(card, player))
+                into.Insert(card);
+        }
+    }
+
+    // The card of a player's pockets a key names; null when the key names no
+    // card, or one he does not carry.
+    static OZG_Card_Base PocketCard(PlayerBase player, string key)
+    {
+        OZG_Card_Base card = OZG_Card_Base.Cast(OZG_Keys.Find(key));
+        if (!Pocketed(card, player))
+            return null;
+        return card;
+    }
+
+    // ------------------------------------------------------------ moving a card
+    //
+    // The synchronous server move (dayz-modding, items-and-processing.md):
+    // the destination asked first, the item moved inside the call, and the
+    // clients told. A player's own TakeToDst would be a juncture, late and
+    // gate-bound; this moves at once, and the place is opened for it.
+
+    protected static bool MoveTo(EntityAI item, InventoryLocation dst)
+    {
+        InventoryLocation src = new InventoryLocation;
+        if (!item.GetInventory().GetCurrentInventoryLocation(src))
+            return false;
+        if (!GameInventory.LocationCanAddEntity(dst))
+            return false;
+        if (!GameInventory.LocationSyncMoveEntity(src, dst))
+            return false;
+        InventoryInputUserData.SendServerMove(null, InventoryCommandType.SYNC_MOVE, src, dst);
+        return true;
+    }
+
+    // A card into the place (card sharp's design §6.6): a free slot of its
+    // deck, else the place's own holding beside it. False when neither has
+    // room.
+    static bool IntoPlace(OZG_Place place, OZG_Card_Base card)
+    {
+        if (!place || !card)
+            return false;
+        place.OZG_Open();
+        OZG_Deck_Base deck = place.OZG_Deck();
+        InventoryLocation dst = new InventoryLocation;
+        if (deck && deck.GetInventory().FindFreeLocationFor(card, FindInventoryLocationType.ATTACHMENT, dst))
+        {
+            if (MoveTo(card, dst))
+                return true;
+        }
+        dst = new InventoryLocation;
+        if (place.GetInventory().FindFreeLocationFor(card, FindInventoryLocationType.CARGO, dst))
+        {
+            if (MoveTo(card, dst))
+                return true;
+        }
+        return false;
+    }
+
+    // A card to a player (§6.6): into his inventory, else onto the ground at
+    // his feet. Returns "pocket", "ground" or "" when it did not move.
+    static string ToPlayer(OZG_Card_Base card, PlayerBase player)
+    {
+        if (!card || !player)
+            return "";
+        EntityAI holder = card.GetHierarchyParent();
+        OZG_Place place = OZG_Place.Cast(card.GetHierarchyRoot());
+        if (place)
+            place.OZG_Open();
+        InventoryLocation dst = new InventoryLocation;
+        if (player.GetInventory().FindFreeLocationFor(card, FindInventoryLocationType.ANY_CARGO, dst))
+        {
+            if (MoveTo(card, dst))
+                return "pocket";
+        }
+        if (!holder)
+            return "";
+        vector m4[4];
+        player.GetTransform(m4);
+        if (holder.GetInventory().DropEntityWithTransform(InventoryMode.SERVER, holder, card, m4))
+            return "ground";
+        return "";
     }
 
     // The card item a deal's name stands for: the walk and the naming of

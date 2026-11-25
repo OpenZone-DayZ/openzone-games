@@ -33,6 +33,20 @@ class OZG_WAsk
     }
 }
 
+// The parts of the table a shake moves (card sharp's design §6.1): a seat's
+// hand, the discards, the stock (the design's "deck"). The server names them
+// in a `shake`, the window draws its cards under them.
+class OZG_Regions
+{
+    static const string STOCK = "stock";
+    static const string DISCARDS = "discards";
+
+    static string OfSeat(int seat)
+    {
+        return "seat" + seat.ToString();
+    }
+}
+
 // An item's network id as a text both sides read the same: the key a client
 // names a card by in a sleight, and the server finds it by.
 class OZG_Keys

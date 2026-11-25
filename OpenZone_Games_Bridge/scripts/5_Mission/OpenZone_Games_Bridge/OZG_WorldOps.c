@@ -819,11 +819,316 @@ class OZG_WorldOps
         string deck = OZG_VerbOps.Arg(args, "what", "");
         if (deck == "")
             deck = OZG_VerbOps.Arg(args, "deck", "OZG_Deck_Classic");
-        EntityAI made = p.GetHumanInventory().CreateInHands(deck);
+        // A card goes into the pockets unless hands=1; style= its look.
+        bool cardThing = deck.IndexOf(OZG_Const.CARD_PREFIX) == 0;
+        bool toHands = !cardThing || OZG_VerbOps.Arg(args, "hands", "0") == "1";
+        EntityAI made;
+        if (toHands)
+            made = p.GetHumanInventory().CreateInHands(deck);
         if (!made)
             made = p.GetInventory().CreateInInventory(deck);
+        if (!made && cardThing)
+            made = p.GetHumanInventory().CreateInHands(deck);
+        OZG_Card_Base madeCard = OZG_Card_Base.Cast(made);
+        string style = OZG_VerbOps.Arg(args, "style", "");
+        if (madeCard && style != "")
+            madeCard.OZG_SetStyle(style);
         bool given = made != null;
         detail = "give " + deck + " to " + uid + ": " + B(given);
+        if (made)
+        {
+            string where = "inventory";
+            if (made == p.GetHumanInventory().GetEntityInHands())
+                where = "hands";
+            detail = detail + " (" + where + ")";
+        }
+        return true;
+    }
+
+    // ---------------------------------------------------------------- sleights
+
+    // The first card of a face a player carries (OZG_DeckRead.PocketCards);
+    // null for none.
+    protected static OZG_Card_Base PocketOf(PlayerBase p, string face)
+    {
+        array<OZG_Card_Base> cards = new array<OZG_Card_Base>();
+        OZG_DeckRead.PocketCards(p, cards);
+        for (int i = 0; i < cards.Count(); i++)
+        {
+            if (cards[i].OZG_Face() == face)
+                return cards[i];
+        }
+        return null;
+    }
+
+    // pockets [who=me|<id>]: the cards a player carries, outside any deck,
+    // each as face/look/sign and where (h: in the hands, p: in the pockets),
+    // with how many there are.
+    static bool OpPockets(map<string, string> args, out string detail)
+    {
+        string uid;
+        PlayerBase p = Who(args, uid);
+        if (!p)
+        {
+            detail = "pockets: nobody is '" + uid + "'";
+            return false;
+        }
+        array<OZG_Card_Base> cards = new array<OZG_Card_Base>();
+        OZG_DeckRead.PocketCards(p, cards);
+        EntityAI hands = p.GetHumanInventory().GetEntityInHands();
+        detail = "pockets of " + uid + ": " + cards.Count().ToString();
+        for (int i = 0; i < cards.Count(); i++)
+        {
+            OZG_Card_Base c = cards[i];
+            string where = "p";
+            if (c == hands)
+                where = "h";
+            string one = " " + c.OZG_Face() + "/" + c.OZG_Look().ToString() + "/" + c.OZG_Sign().ToString();
+            detail = detail + one + "/" + where;
+        }
+        return true;
+    }
+
+    // sleight id=<place> [who=me|<id>] kind=slip|swap|throw [face=<face>]
+    // [card=<name>] [more=1] [after=<ms>]: a sleight asked for as a window
+    // asks it (card sharp's design §9): slip the card of `face` the player
+    // carries into his hand; swap it for the card `card` of his hand; throw
+    // the card `card` to the discards (more=1: the second card of the same
+    // throw). The answer is the session's: ok, or the refusal.
+    static bool OpSleight(map<string, string> args, out string detail)
+    {
+        OZG_Session s = Sess(args, detail);
+        if (!s)
+            return false;
+        string uid;
+        PlayerBase p = Who(args, uid);
+        if (!p)
+        {
+            detail = "sleight: nobody is '" + uid + "'";
+            return false;
+        }
+        string kind = OZG_VerbOps.Arg(args, "kind", "slip");
+        string face = OZG_VerbOps.Arg(args, "face", "");
+        OZG_WAsk ask = new OZG_WAsk();
+        ask.PlaceId = s.Id();
+        ask.Move = OZG_VerbOps.Arg(args, "card", "");
+        if (OZG_VerbOps.Arg(args, "more", "0") == "1")
+            ask.How = OZG_Const.HOW_MORE;
+        if (face != "")
+        {
+            OZG_Card_Base card = PocketOf(p, face);
+            if (!card)
+            {
+                detail = "sleight: " + uid + " carries no " + face;
+                return true;
+            }
+            ask.CardKey = OZG_Keys.Of(card);
+        }
+        string op = OZG_Const.OP_SLIP;
+        if (kind == "swap")
+            op = OZG_Const.OP_SWAP;
+        else if (kind == "throw")
+            op = OZG_Const.OP_THROW;
+        int after = OZG_VerbOps.Arg(args, "after", "0").ToInt();
+        if (after > 0)
+        {
+            GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(SleightLater, after, false, s.Id(), uid, op, ask.Move, ask.How, ask.CardKey);
+            detail = "sleight " + op + " by " + uid + " in " + after.ToString() + " ms";
+            return true;
+        }
+        string why = s.Ask(p, op, ask);
+        if (why != "")
+        {
+            detail = "sleight " + op + " refused " + why;
+            return true;
+        }
+        detail = "sleight " + op + " ok; used " + s.SleightsOf(uid).ToString() + "; " + s.Describe();
+        return true;
+    }
+
+    static void SleightLater(string placeId, string uid, string op, string move, string how, string key)
+    {
+        OZG_Session s = OZG_Sessions.ById(placeId);
+        PlayerBase p = OZG_Sessions.PlayerOf(uid);
+        if (!s || !p)
+            return;
+        OZG_WAsk ask = new OZG_WAsk();
+        ask.PlaceId = placeId;
+        ask.Move = move;
+        ask.How = how;
+        ask.CardKey = key;
+        string why = s.Ask(p, op, ask);
+        if (why == "")
+            why = "ok";
+        OZG_Log.Info("stand: a later sleight " + op + " by " + uid + ": " + why);
+    }
+
+    // The key of the first card of a face in a laid-out game that `uid`
+    // reads and that `taken` does not hold yet; "" for none.
+    protected static string ReadKey(OZG_Session s, string uid, string face, array<string> taken)
+    {
+        array<EntityAI> things = new array<EntityAI>();
+        OZG_DeckRead.ThingsOf(s.m_Place, things);
+        for (int i = 0; i < things.Count(); i++)
+        {
+            OZG_Card_Base card = OZG_Card_Base.Cast(things[i]);
+            if (!card || card.OZG_Face() != face || !card.OZG_Reads(uid))
+                continue;
+            string key = OZG_Keys.Of(card);
+            if (taken.Find(key) >= 0)
+                continue;
+            return key;
+        }
+        return "";
+    }
+
+    // stack id=<place> [who=me|<id>] [in=<faces>] [out=<n>|<faces>]
+    // [picks=<faces>] [after=<ms>]: the dealer deals with his three (card
+    // sharp's design §6.5), as the window sends them with "Deal": the cards
+    // of those faces he carries put into the deck, n cards out of it by
+    // chance or the cards of those faces he reads, the cards of those faces
+    // he reads dealt to him first. Faces are parted by spaces.
+    static bool OpStack(map<string, string> args, out string detail)
+    {
+        OZG_Session s = Sess(args, detail);
+        if (!s)
+            return false;
+        string uid;
+        PlayerBase p = Who(args, uid);
+        if (!p)
+        {
+            detail = "stack: nobody is '" + uid + "'";
+            return false;
+        }
+        array<string> taken = new array<string>();
+        array<string> faces = new array<string>();
+        string inList = "";
+        int i;
+        OZG_Cards.Parse(OZG_VerbOps.Arg(args, "in", ""), faces);
+        for (i = 0; i < faces.Count(); i++)
+        {
+            OZG_Card_Base pocket = PocketOf(p, faces[i]);
+            if (!pocket)
+            {
+                detail = "stack: " + uid + " carries no " + faces[i];
+                return true;
+            }
+            string pocketKey = OZG_Keys.Of(pocket);
+            if (inList != "")
+                inList = inList + ",";
+            inList = inList + pocketKey;
+        }
+        string outList = "";
+        string outArg = OZG_VerbOps.Arg(args, "out", "");
+        int byChance = outArg.ToInt();
+        if (byChance > 0 && byChance.ToString() == outArg)
+        {
+            for (i = 0; i < byChance; i++)
+            {
+                if (outList != "")
+                    outList = outList + ",";
+                outList = outList + OZG_Const.ANY_CARD;
+            }
+        }
+        else
+        {
+            faces.Clear();
+            OZG_Cards.Parse(outArg, faces);
+            for (i = 0; i < faces.Count(); i++)
+            {
+                string outKey = ReadKey(s, uid, faces[i], taken);
+                if (outKey == "")
+                {
+                    detail = "stack: " + uid + " reads no " + faces[i] + " there";
+                    return true;
+                }
+                taken.Insert(outKey);
+                if (outList != "")
+                    outList = outList + ",";
+                outList = outList + outKey;
+            }
+        }
+        string pickList = "";
+        faces.Clear();
+        OZG_Cards.Parse(OZG_VerbOps.Arg(args, "picks", ""), faces);
+        for (i = 0; i < faces.Count(); i++)
+        {
+            string pickKey = ReadKey(s, uid, faces[i], taken);
+            if (pickKey == "")
+            {
+                detail = "stack: " + uid + " reads no " + faces[i] + " there";
+                return true;
+            }
+            taken.Insert(pickKey);
+            if (pickList != "")
+                pickList = pickList + ",";
+            pickList = pickList + pickKey;
+        }
+        string stack = "in=" + inList + ";out=" + outList + ";pick=" + pickList;
+        int after = OZG_VerbOps.Arg(args, "after", "0").ToInt();
+        if (after > 0)
+        {
+            GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(AskLater, after, false, s.Id(), uid, OZG_Const.OP_DEAL, "", "", stack);
+            detail = "deal with a stack by " + uid + " in " + after.ToString() + " ms";
+            return true;
+        }
+        OZG_WAsk ask = new OZG_WAsk();
+        ask.PlaceId = s.Id();
+        ask.Stack = stack;
+        string why = s.Ask(p, OZG_Const.OP_DEAL, ask);
+        if (why != "")
+        {
+            detail = "stack refused " + why;
+            return true;
+        }
+        detail = "dealt with a stack; used " + s.SleightsOf(uid).ToString() + "; " + s.Describe();
+        return true;
+    }
+
+    // deckreads id=<place> [who=me|<id>]: the cards of the deck the head of
+    // that player's view names for him to choose or take out (design §6.5),
+    // each as face/look/sign, with how many sleights the head says he did
+    // and may, and how many cards he may choose.
+    static bool OpDeckReads(map<string, string> args, out string detail)
+    {
+        OZG_Session s = Sess(args, detail);
+        if (!s)
+            return false;
+        string uid;
+        Who(args, uid);
+        string head = s.HeadFor(uid);
+        OZG_WView v;
+        string err;
+        if (!JsonFileLoader<OZG_WView>.LoadData(head, v, err) || !v)
+        {
+            detail = "deckreads: the head did not read: " + err;
+            return true;
+        }
+        int n = 0;
+        if (v.DeckReads)
+            n = v.DeckReads.Count();
+        detail = "head of " + uid + ": sleights " + v.SleightsUsed.ToString() + " of " + v.SleightsMost.ToString();
+        detail = detail + " picks " + v.PicksMost.ToString() + " deckreads " + n.ToString() + ":";
+        for (int i = 0; i < n; i++)
+        {
+            OZG_WDeckCard c = v.DeckReads[i];
+            detail = detail + " " + c.Face + "/" + c.Look.ToString() + "/" + c.Sign.ToString();
+        }
+        return true;
+    }
+
+    // sleights id=<place>: the deal's number and every player's sleights in
+    // it.
+    static bool OpSleights(map<string, string> args, out string detail)
+    {
+        OZG_Session s = Sess(args, detail);
+        if (!s)
+            return false;
+        detail = "deal " + s.m_R.DealNo.ToString() + " sleights:";
+        if (s.m_R.SleightUids.Count() == 0)
+            detail = detail + " none";
+        for (int i = 0; i < s.m_R.SleightUids.Count(); i++)
+            detail = detail + " " + s.m_R.SleightUids[i] + "=" + s.SleightsOf(s.m_R.SleightUids[i]).ToString();
         return true;
     }
 
