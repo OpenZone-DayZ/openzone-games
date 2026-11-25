@@ -770,7 +770,8 @@ class OZG_WorldOps
         return true;
     }
 
-    // give who= [deck=class]: a deck into a player's hands.
+    // give who= [what=class | deck=class]: a thing into a player's hands,
+    // else into the inventory.
     static bool OpGive(map<string, string> args, out string detail)
     {
         string uid;
@@ -780,7 +781,9 @@ class OZG_WorldOps
             detail = "give: nobody is '" + uid + "'";
             return false;
         }
-        string deck = OZG_VerbOps.Arg(args, "deck", "OZG_Deck_Classic");
+        string deck = OZG_VerbOps.Arg(args, "what", "");
+        if (deck == "")
+            deck = OZG_VerbOps.Arg(args, "deck", "OZG_Deck_Classic");
         EntityAI made = p.GetHumanInventory().CreateInHands(deck);
         if (!made)
             made = p.GetInventory().CreateInInventory(deck);
@@ -878,6 +881,78 @@ class OZG_WorldOps
             one = one + " reads=" + B(card.OZG_Reads(uid));
             detail = detail + one + ";";
         }
+        return true;
+    }
+
+    // craft what=mark [face=As] [in=me | in=place id=<place>]: the server's
+    // half of a finished gesture, as the game's crafting action ends one
+    // (PerformRecipeServer): the thing in the first player's hands on the
+    // first card of that face the player carries (in=place: in the laid-out
+    // game's deck, which the recipe must refuse). The recipe's own check
+    // comes first, so a refusal is an answer and no script error.
+    static bool OpCraft(map<string, string> args, out string detail)
+    {
+        PlayerBase me = FirstPlayer();
+        if (!me)
+        {
+            detail = "craft: nobody is connected";
+            return false;
+        }
+        string uid = OZG_Who.Uid(me);
+        string what = OZG_VerbOps.Arg(args, "what", "mark");
+        RecipeBase recipe = OZG_Recipes.MarkRecipe();
+        string recipeName = "OZG_RecipeMark";
+        if (OZG_VerbOps.Arg(args, "in", "") == "")
+            args.Set("in", "me");
+        array<EntityAI> things = new array<EntityAI>();
+        if (!CardsIn(args, things, detail))
+            return false;
+        string face = OZG_VerbOps.Arg(args, "face", "As");
+        OZG_Card_Base card = null;
+        for (int i = 0; i < things.Count() && !card; i++)
+        {
+            OZG_Card_Base one = OZG_Card_Base.Cast(things[i]);
+            if (one && one.OZG_Face() == face)
+                card = one;
+        }
+        ItemBase hands = me.GetItemInHands();
+        if (!recipe || !hands || !card)
+        {
+            detail = "craft " + what + ": hands=" + B(hands != null) + " card=" + B(card != null);
+            return true;
+        }
+        // The thing in the hands must be this recipe's tool: the recipe's own
+        // check does not ask what the two things are.
+        if (!recipe.CheckIngredientMatch(hands, card) || !recipe.CheckRecipe(hands, card, me))
+        {
+            // Which check said no: the recipe's, one at a time.
+            ItemBase both[2];
+            both[0] = hands;
+            both[1] = card;
+            bool match = recipe.CheckIngredientMatch(hands, card);
+            bool can = recipe.CanDo(both, me);
+            bool fits = recipe.CheckConditions(both);
+            detail = "craft " + what + ": refused (hands " + hands.GetType();
+            detail = detail + " q=" + F2(hands.GetQuantity()) + " hl=" + hands.GetHealthLevel().ToString();
+            detail = detail + " match=" + B(match) + " cando=" + B(can) + " cond=" + B(fits);
+            detail = detail + " tool=" + B(OZG_Recipes.Carried(hands, me)) + " card=" + B(OZG_Recipes.Carried(card, me));
+            EntityAI up = card.GetHierarchyParent();
+            string parentType = "none";
+            if (up)
+                parentType = up.GetType();
+            Man root = card.GetHierarchyRootPlayer();
+            detail = detail + " in=" + parentType + " root=" + B(root != null);
+            detail = detail + " att=" + card.GetInventory().AttachmentCount().ToString() + ")";
+            return true;
+        }
+        PluginRecipesManager plugin;
+        Class.CastTo(plugin, GetPlugin(PluginRecipesManager));
+        int id = PluginRecipesManager.RecipeIDFromClassname(recipeName);
+        plugin.PerformRecipeServer(id, hands, card, me);
+        detail = "craft " + what + " on " + card.OZG_Face() + ": sign=" + card.OZG_Sign().ToString();
+        detail = detail + " reads=" + B(card.OZG_Reads(uid));
+        if (hands.HasQuantity())
+            detail = detail + " left=" + F2(hands.GetQuantity());
         return true;
     }
 }

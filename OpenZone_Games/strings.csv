@@ -224,3 +224,7 @@ STR_OZG_CARD_QC,Дама треф,Queen of clubs
 STR_OZG_CARD_KC,Король треф,King of clubs
 STR_OZG_CARD_AC,Туз треф,Ace of clubs
 # <<< generated: cards
+# -- the card sharp's tools
+STR_OZG_MARKTOOL_NAME,Ручка шулера,Card sharp's pen
+STR_OZG_MARKTOOL_DESC,"Мітить карту так, що ви впізнаєте її лице з сорочки. Візьміть ручку в руки й перетягніть на неї карту, яку несете.","Marks a card so that you know its face by its back. Take the pen in your hands and drag a card you carry onto it."
+STR_OZG_MARKTOOL_ACT,Позначити карту,Mark the card

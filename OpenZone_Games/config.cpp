@@ -12,7 +12,7 @@ class CfgPatches
 {
     class OpenZone_Games
     {
-        units[] = {"OZG_Deck_Classic", "OZG_Deck_Stalker", "OZG_Deck_Classic_Sharp", "OZG_Deck_Stalker_Sharp"};
+        units[] = {"OZG_Deck_Classic", "OZG_Deck_Stalker", "OZG_Deck_Classic_Sharp", "OZG_Deck_Stalker_Sharp", "OZG_MarkTool"};
         weapons[] = {};
         requiredVersion = 0.1;
         // Hard dependencies: a blocking window before the game loads rather
@@ -330,6 +330,31 @@ class CfgVehicles
     class OZG_Card_Kc: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_KC"; ozgFace = "Kc"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_Kc_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
     class OZG_Card_Ac: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_AC"; ozgFace = "Ac"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_Ac_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
 // <<< generated: cards
+
+    // ------------------------------------------------------------ the card sharp's tools
+    //
+    // Each works through a recipe of the game's own crafting (OZG_Recipes.c):
+    // the tool in the hands and a card the player carries. Their models are
+    // the game's own, stand-ins until art of their own (card sharp's design
+    // §12): the pen and the pistol scope.
+    class OZG_MarkTool: Inventory_Base
+    {
+        scope = 2;
+        displayName = "$STR_OZG_MARKTOOL_NAME";
+        descriptionShort = "$STR_OZG_MARKTOOL_DESC";
+        model = "\dz\gear\tools\Pen.p3d";
+        animClass = "Knife";
+        itemSize[] = {1, 1};
+        rotationFlags = 17;
+        weight = 12;
+        // Its uses as the sewing kit counts them, a percentage: a use is
+        // 100 / MarkUses of it, and an empty tool is gone (OZG_Recipes.Spend).
+        stackedUnit = "percentage";
+        quantityBar = 1;
+        varQuantityInit = 100;
+        varQuantityMin = 0;
+        varQuantityMax = 100;
+    };
 
     // ------------------------------------------------------------ the place
     //
