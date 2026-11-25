@@ -67,6 +67,20 @@ class OZG_Settings : OZ_ConfigBase
     int   NoticeGrace;
     int   NoticeStep;
     int   NoticeMax;
+    // Sleights (card sharp's design §6, §7): how many a player may do in one
+    // deal; for each kind the percent of the first roll, whether it showed at
+    // all; the percent of the second, each other seated player's own, whether
+    // he saw one that showed; and how many cards a dealer may choose for his
+    // own hand. Cheating 0 stops every sleight.
+    int   SleightsPerDeal;
+    int   CaughtSlip;
+    int   CaughtReplace;
+    int   CaughtThrow;
+    int   CaughtDeckIn;
+    int   CaughtDeckOut;
+    int   CaughtPick;
+    int   SpotPercent;
+    int   DealerPicks;
 
     void OZG_Settings()
     {
@@ -74,9 +88,23 @@ class OZG_Settings : OZ_ConfigBase
     }
 
     // 2: the marks. 3: squatting is SFP's squat where SFP runs. 4: noticing.
+    // 5: sleights.
     override int LatestVersion()
     {
-        return 4;
+        return 5;
+    }
+
+    protected void DefaultSleights()
+    {
+        SleightsPerDeal = 3;
+        CaughtSlip = 30;
+        CaughtReplace = 25;
+        CaughtThrow = 30;
+        CaughtDeckIn = 20;
+        CaughtDeckOut = 20;
+        CaughtPick = 25;
+        SpotPercent = 50;
+        DealerPicks = 2;
     }
 
     protected void DefaultPoses()
@@ -113,6 +141,7 @@ class OZG_Settings : OZ_ConfigBase
         NoticeGrace = 5;
         NoticeStep = 4;
         NoticeMax = 40;
+        DefaultSleights();
     }
 
     override bool Migrate(int from)
@@ -144,8 +173,16 @@ class OZG_Settings : OZ_ConfigBase
             NoticeStep = 4;
             NoticeMax = 40;
         }
+        // Version 4 had no sleights: their defaults.
+        if (from < 5)
+            DefaultSleights();
         Version = LatestVersion();
         return true;
+    }
+
+    protected static bool IsPercent(int value)
+    {
+        return value >= 0 && value <= 100;
     }
 
     // Called by the loader straight after the read, and by whoever builds a
@@ -277,8 +314,75 @@ class OZG_Settings : OZ_ConfigBase
             NoticeMax = 40;
             warnings++;
         }
+        // Sleights: none below none, every chance a percent. 0 sleights a
+        // deal is sleights switched off with marking left on; a chance of 0
+        // is a sleight nobody ever sees, 100 one that always shows.
+        if (SleightsPerDeal < 0)
+        {
+            SleightsPerDeal = 3;
+            warnings++;
+        }
+        if (!IsPercent(CaughtSlip))
+        {
+            CaughtSlip = 30;
+            warnings++;
+        }
+        if (!IsPercent(CaughtReplace))
+        {
+            CaughtReplace = 25;
+            warnings++;
+        }
+        if (!IsPercent(CaughtThrow))
+        {
+            CaughtThrow = 30;
+            warnings++;
+        }
+        if (!IsPercent(CaughtDeckIn))
+        {
+            CaughtDeckIn = 20;
+            warnings++;
+        }
+        if (!IsPercent(CaughtDeckOut))
+        {
+            CaughtDeckOut = 20;
+            warnings++;
+        }
+        if (!IsPercent(CaughtPick))
+        {
+            CaughtPick = 25;
+            warnings++;
+        }
+        if (!IsPercent(SpotPercent))
+        {
+            SpotPercent = 50;
+            warnings++;
+        }
+        if (DealerPicks < 0)
+        {
+            DealerPicks = 2;
+            warnings++;
+        }
         if (DebugLog != 0)
             DebugLog = 1;
+    }
+
+    // The first roll of a sleight's kind (OZG_Const.SLEIGHT_*): the percent
+    // that it showed at all.
+    int CaughtOf(string kind)
+    {
+        if (kind == OZG_Const.SLEIGHT_SLIP)
+            return CaughtSlip;
+        if (kind == OZG_Const.SLEIGHT_SWAP)
+            return CaughtReplace;
+        if (kind == OZG_Const.SLEIGHT_THROW)
+            return CaughtThrow;
+        if (kind == OZG_Const.SLEIGHT_DECK_IN)
+            return CaughtDeckIn;
+        if (kind == OZG_Const.SLEIGHT_DECK_OUT)
+            return CaughtDeckOut;
+        if (kind == OZG_Const.SLEIGHT_PICK)
+            return CaughtPick;
+        return 0;
     }
 
     // The poses of one kind, in the order of the file.

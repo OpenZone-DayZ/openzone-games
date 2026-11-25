@@ -127,8 +127,44 @@ class OZG_Const
     static const string OP_CLOSED = "closed";  // this place is no longer yours to look at
     // A sleight was seen (card sharp's design §6.1, §9): a sound for this
     // player alone and a small shake of the part of the table where the cards
-    // changed. The fourth phase sends it; the stand sends it now.
+    // changed.
     static const string OP_SHAKE  = "shake";
+    // A sleight was done (to the one who did it): which cards came into his
+    // hand and went out of it, for his window to fly them, and its sound.
+    static const string OP_SLEIGHT = "sleight";
+
+    // ---------------------------------------------------------------- sleights
+    //
+    // From a client (card sharp's design §9): a card of the pockets slipped
+    // into the hand, a card of the hand swapped for one of the pockets, up to
+    // two cards of the hand thrown to the discards. The dealer's three ride
+    // in the deal itself (OZG_WAsk.Stack).
+    static const string OP_SLIP  = "slip";
+    static const string OP_SWAP  = "swap";
+    static const string OP_THROW = "throw";
+
+    // The kinds of sleight, as the server's log, the settings (CaughtOf) and
+    // the doer's message name them.
+    static const string SLEIGHT_SLIP     = "slip";
+    static const string SLEIGHT_SWAP     = "swap";
+    static const string SLEIGHT_THROW    = "throw";
+    static const string SLEIGHT_DECK_IN  = "deckin";
+    static const string SLEIGHT_DECK_OUT = "deckout";
+    static const string SLEIGHT_PICK     = "pick";
+
+    // How a throw's second card says it belongs to the first (OZG_WAsk.How).
+    static const string HOW_MORE = "more";
+    // Cards one throw may send to the discards.
+    static const int THROW_MOST = 2;
+    // A card taken out of the deck by chance, in a stack's "out=" list.
+    static const string ANY_CARD = "*";
+
+    // Why a sleight was refused: keys of the string table.
+    static const string SAY_SLEIGHT_OFF     = "STR_OZG_SAY_SLEIGHT_OFF";
+    static const string SAY_SLEIGHT_NO_MORE = "STR_OZG_SAY_SLEIGHT_NO_MORE";
+    static const string SAY_SLEIGHT_NO_CARD = "STR_OZG_SAY_SLEIGHT_NO_CARD";
+    static const string SAY_SLEIGHT_NOT_GAME = "STR_OZG_SAY_SLEIGHT_NOT_GAME";
+    static const string SAY_SLEIGHT_NO_ROOM = "STR_OZG_SAY_SLEIGHT_NO_ROOM";
 
     // The server's word to open the window (OZ_Rpc.Show), followed by the
     // place's id.

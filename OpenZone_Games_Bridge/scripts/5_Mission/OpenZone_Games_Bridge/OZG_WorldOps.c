@@ -1023,6 +1023,65 @@ class OZG_WorldOps
         return true;
     }
 
+    // sleightcfg [per=] [slip=] [swap=] [throw=] [deckin=] [deckout=] [pick=]
+    // [spot=] [picks=] [all=]: the sleights' settings (card sharp's design §7)
+    // set on the running server, through the settings' own bounds, for a
+    // check; all= sets the seven chances at once. The file is not written,
+    // and a restart reads it again. Answers the nine as they stand and how
+    // many the bounds put right.
+    static bool OpSleightCfg(map<string, string> args, out string detail)
+    {
+        OZG_Settings cfg = OZG_Cfg.Get();
+        string all = OZG_VerbOps.Arg(args, "all", "");
+        if (all != "")
+        {
+            int every = all.ToInt();
+            cfg.CaughtSlip = every;
+            cfg.CaughtReplace = every;
+            cfg.CaughtThrow = every;
+            cfg.CaughtDeckIn = every;
+            cfg.CaughtDeckOut = every;
+            cfg.CaughtPick = every;
+            cfg.SpotPercent = every;
+        }
+        string v = OZG_VerbOps.Arg(args, "per", "");
+        if (v != "")
+            cfg.SleightsPerDeal = v.ToInt();
+        v = OZG_VerbOps.Arg(args, "slip", "");
+        if (v != "")
+            cfg.CaughtSlip = v.ToInt();
+        v = OZG_VerbOps.Arg(args, "swap", "");
+        if (v != "")
+            cfg.CaughtReplace = v.ToInt();
+        v = OZG_VerbOps.Arg(args, "throw", "");
+        if (v != "")
+            cfg.CaughtThrow = v.ToInt();
+        v = OZG_VerbOps.Arg(args, "deckin", "");
+        if (v != "")
+            cfg.CaughtDeckIn = v.ToInt();
+        v = OZG_VerbOps.Arg(args, "deckout", "");
+        if (v != "")
+            cfg.CaughtDeckOut = v.ToInt();
+        v = OZG_VerbOps.Arg(args, "pick", "");
+        if (v != "")
+            cfg.CaughtPick = v.ToInt();
+        v = OZG_VerbOps.Arg(args, "spot", "");
+        if (v != "")
+            cfg.SpotPercent = v.ToInt();
+        v = OZG_VerbOps.Arg(args, "picks", "");
+        if (v != "")
+            cfg.DealerPicks = v.ToInt();
+        int putRight;
+        cfg.Validate(putRight);
+        detail = "sleights per=" + cfg.SleightsPerDeal.ToString() + " slip=" + cfg.CaughtSlip.ToString();
+        detail = detail + " swap=" + cfg.CaughtReplace.ToString() + " throw=" + cfg.CaughtThrow.ToString();
+        detail = detail + " deckin=" + cfg.CaughtDeckIn.ToString() + " deckout=" + cfg.CaughtDeckOut.ToString();
+        detail = detail + " pick=" + cfg.CaughtPick.ToString() + " spot=" + cfg.SpotPercent.ToString();
+        detail = detail + " picks=" + cfg.DealerPicks.ToString() + " cheating=" + cfg.Cheating.ToString();
+        detail = detail + " putright=" + putRight.ToString();
+        return true;
+    }
+
     // noticer [id=<place> | in=me] face=<face>|all [who=me|<id>] [many=0]:
     // `who` made a noticer of each marked card of that face (all: of every
     // marked card), as a won roll would (design §5); with many=k the ids
