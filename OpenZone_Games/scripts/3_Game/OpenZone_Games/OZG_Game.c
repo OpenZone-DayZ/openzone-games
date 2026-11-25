@@ -159,6 +159,14 @@ class OZG_Game
         into.Clear();
     }
 
+    // From now on the player `uid` notices the card `card` of this deal: the
+    // session rolled it (card sharp's design §5). False when the deal has no
+    // such marked card.
+    bool AddNoticer(string card, string uid)
+    {
+        return false;
+    }
+
     bool IsOver()
     {
         return true;

@@ -112,6 +112,10 @@ class OZG_VerbOps
             return OZG_WorldOps.OpNoticeCfg(args, detail);
         if (op == "noticer")
             return OZG_WorldOps.OpNoticer(args, detail);
+        if (op == "whole")
+            return OZG_WorldOps.OpWhole(args, detail);
+        if (op == "redeal")
+            return OZG_WorldOps.OpRedeal(args, detail);
         // -- ops of the later phases go above this line --
         detail = "unknown op '" + op + "'; known: " + KnownOps();
         return false;
@@ -120,7 +124,7 @@ class OZG_VerbOps
     static string KnownOps()
     {
         string known = "status, deck, names, games, begin, act, play, outcome, brief, all, can, drop, away, view, save, load, fuzz";
-        known = known + ", ring, level, cards, pull, undeck, held, stuff, loose, lay, places, sess, seats, puppet, move, ask, sit, ticks, gather, hand, give, chat, bots, auto, face, stage, mark, markof, craft, reads, noticecfg, noticer";
+        known = known + ", ring, level, cards, pull, undeck, held, stuff, loose, lay, places, sess, seats, puppet, move, ask, sit, ticks, gather, hand, give, chat, bots, auto, face, stage, mark, markof, craft, reads, noticecfg, noticer, whole, redeal";
         return known;
     }
 

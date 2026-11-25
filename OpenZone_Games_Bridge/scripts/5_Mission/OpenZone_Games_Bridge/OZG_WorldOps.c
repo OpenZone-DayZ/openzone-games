@@ -1062,4 +1062,142 @@ class OZG_WorldOps
         detail = detail + " on " + done.ToString() + " card(s) of " + face;
         return true;
     }
+
+    // whole id=<place>: every hidden card of the game in play, in one line:
+    // each hand as <seat>[cards], the table, the stock from the card drawn
+    // next to the trump at its end (the game's Everything; never sent to a
+    // client).
+    static bool OpWhole(map<string, string> args, out string detail)
+    {
+        OZG_Session s = Sess(args, detail);
+        if (!s)
+            return false;
+        if (!s.m_Game)
+        {
+            detail = "whole: no game";
+            return true;
+        }
+        detail = s.m_Game.Everything();
+        return true;
+    }
+
+    // How many cards of a place the id `uid` notices.
+    protected static int NoticedIn(OZG_Place place, string uid)
+    {
+        array<EntityAI> things = new array<EntityAI>();
+        OZG_DeckRead.ThingsOf(place, things);
+        int n = 0;
+        for (int i = 0; i < things.Count(); i++)
+        {
+            OZG_Card_Base card = OZG_Card_Base.Cast(things[i]);
+            if (card && card.OZG_Notices(uid))
+                n++;
+        }
+        return n;
+    }
+
+    // redeal id=<place> [n=10]: n deals in a row, as fast as the server runs
+    // them. The game in play is ended where it stands (the stand's shortcut:
+    // no move is played, nothing is said) and the host deals the next, as
+    // "Deal" in the window does; the last deal is left in play. For every
+    // seated player a deal that counted towards noticing is a trial at the
+    // chance his count gives, and one more card he notices is a hit (design
+    // §5). Answers the trials and hits at no chance (the grace), between, and
+    // at the most, with the hits to expect (the sum of the chances) and their
+    // spread (the root of the sum of p(1 - p)), overall and for the two.
+    static bool OpRedeal(map<string, string> args, out string detail)
+    {
+        OZG_Session s = Sess(args, detail);
+        if (!s)
+            return false;
+        PlayerBase host = OZG_Sessions.PlayerOf(s.m_R.HostUid);
+        if (!host)
+        {
+            detail = "redeal: the host is not here";
+            return true;
+        }
+        int n = OZG_VerbOps.Arg(args, "n", "10").ToInt();
+        OZG_Settings cfg = OZG_Cfg.Get();
+        int top = cfg.NoticeMax;
+        int graceTrials = 0;
+        int graceHits = 0;
+        int rampTrials = 0;
+        int rampHits = 0;
+        int topTrials = 0;
+        int topHits = 0;
+        float rampExpect = 0;
+        float topExpect = 0;
+        float spread = 0;
+        array<string> uids = new array<string>();
+        array<int> counts = new array<int>();
+        array<int> seen = new array<int>();
+        int k;
+        for (int d = 0; d < n; d++)
+        {
+            uids.Clear();
+            counts.Clear();
+            seen.Clear();
+            for (k = 0; k < s.m_R.Seats.Count(); k++)
+            {
+                OZG_SeatRec seat = s.m_R.Seats[k];
+                if (seat.St != OZG_Const.SEAT_TAKEN || seat.Uid == "")
+                    continue;
+                uids.Insert(seat.Uid);
+                counts.Insert(s.NoticeDeals(seat.Uid));
+                seen.Insert(NoticedIn(s.m_Place, seat.Uid));
+            }
+            if (s.m_R.St == OZG_Const.ST_PLAYING)
+                s.m_R.St = OZG_Const.ST_FINISHED;
+            OZG_WAsk ask = new OZG_WAsk();
+            ask.PlaceId = s.Id();
+            string why = s.Ask(host, OZG_Const.OP_DEAL, ask);
+            if (why != "")
+            {
+                detail = "redeal: deal " + d.ToString() + " refused " + why;
+                return true;
+            }
+            for (k = 0; k < uids.Count(); k++)
+            {
+                int now = s.NoticeDeals(uids[k]);
+                if (now == counts[k])
+                    continue;
+                int chance = cfg.NoticeChance(now);
+                bool hit = NoticedIn(s.m_Place, uids[k]) > seen[k];
+                float p = chance / 100.0;
+                spread = spread + p * (1 - p);
+                if (chance <= 0)
+                {
+                    graceTrials++;
+                    if (hit)
+                        graceHits++;
+                }
+                else if (chance >= top)
+                {
+                    topTrials++;
+                    topExpect = topExpect + p;
+                    if (hit)
+                        topHits++;
+                }
+                else
+                {
+                    rampTrials++;
+                    rampExpect = rampExpect + p;
+                    if (hit)
+                        rampHits++;
+                }
+            }
+        }
+        int trials = graceTrials + rampTrials + topTrials;
+        int hits = graceHits + rampHits + topHits;
+        float expect = rampExpect + topExpect;
+        detail = "redeal " + n.ToString() + ": trials=" + trials.ToString();
+        detail = detail + " hits=" + hits.ToString() + " expect=" + F2(expect);
+        detail = detail + " sd=" + F2(Math.Sqrt(spread));
+        detail = detail + " | grace " + graceTrials.ToString() + "/" + graceHits.ToString();
+        detail = detail + " | ramp " + rampTrials.ToString() + "/" + rampHits.ToString();
+        detail = detail + " of " + F2(rampExpect);
+        detail = detail + " | top " + topTrials.ToString() + "/" + topHits.ToString();
+        detail = detail + " of " + F2(topExpect);
+        return true;
+    }
 }

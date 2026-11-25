@@ -1012,6 +1012,16 @@ class OZG_Durak : OZG_Game
         return null;
     }
 
+    override bool AddNoticer(string card, string uid)
+    {
+        OZG_DealCard rec = DealtCard(card);
+        if (!rec || rec.Sign <= 0 || uid == "")
+            return false;
+        if (rec.Noticers.Find(uid) < 0)
+            rec.Noticers.Insert(uid);
+        return true;
+    }
+
     override string SaveState()
     {
         if (!m_S)

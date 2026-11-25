@@ -79,6 +79,11 @@ class OZG_Session
     // placed it.
     protected int m_DeckDue;
     protected string m_DeckUid;
+    // Noticing (card sharp's design §5): for each player id, the deals he was
+    // dealt in while one of the deal's cards was marked and he neither read
+    // nor noticed it. Kept while the session lives and never written: a
+    // restart, or a game laid out anew, starts every count again (§8).
+    protected ref map<string, int> m_NoticeDeals;
 
     void OZG_Session(OZG_Place place)
     {
@@ -87,6 +92,7 @@ class OZG_Session
         m_Watchers = new array<string>();
         m_Asked = new map<string, int>();
         m_Moves = new map<string, int>();
+        m_NoticeDeals = new map<string, int>();
     }
 
     string Id()
@@ -1031,6 +1037,9 @@ class OZG_Session
         m_R.HintUid = "";
         AddLog("deal");
         Settle();
+        // Noticing (design §5): after the deal and before anybody is sent it,
+        // so that a card noticed now is in the first view of this deal.
+        NoticeAfterDeal(seats, cards, chance);
         Changed();
         OZG_Log.Dbg("session " + m_R.PlaceId + " deal: " + m_Game.Brief());
         return "";
@@ -1069,6 +1078,81 @@ class OZG_Session
         Settle();
         Changed();
         return "";
+    }
+
+    // ------------------------------------------------------------ noticing
+
+    // The deals that counted towards noticing for a player so far.
+    int NoticeDeals(string uid)
+    {
+        int n = 0;
+        m_NoticeDeals.Find(uid, n);
+        return n;
+    }
+
+    // After a deal (design §5): each player dealt in counts it when one of
+    // the deal's cards is marked and he neither reads nor notices it, then
+    // rolls the chance the settings give his count; on a success one such
+    // card, picked at random, gets him as a noticer. Nothing is said to him
+    // and nothing goes into the game's log.
+    protected void NoticeAfterDeal(array<int> seats, array<ref OZG_DealCard> cards, OZG_Random dice)
+    {
+        OZG_Settings cfg = OZG_Cfg.Get();
+        if (cfg.Cheating != 1 || !m_Game)
+            return;
+        array<int> unseen = new array<int>();
+        int i;
+        int k;
+        for (i = 0; i < seats.Count(); i++)
+        {
+            int no = seats[i];
+            if (no < 0 || no >= m_R.Seats.Count())
+                continue;
+            string uid = m_R.Seats[no].Uid;
+            if (uid == "")
+                continue;
+            unseen.Clear();
+            for (k = 0; k < cards.Count(); k++)
+            {
+                OZG_DealCard c = cards[k];
+                if (!c || c.Sign <= 0)
+                    continue;
+                if (c.ReadBy(uid) || c.NoticedBy(uid))
+                    continue;
+                unseen.Insert(k);
+            }
+            if (unseen.Count() == 0)
+                continue;
+            int deals = NoticeDeals(uid) + 1;
+            m_NoticeDeals.Set(uid, deals);
+            int chance = cfg.NoticeChance(deals);
+            int rolled = dice.Below(100);
+            string roll = "notice roll: " + uid + " deal " + deals.ToString();
+            roll = roll + " at " + chance.ToString() + "% rolled " + rolled.ToString();
+            OZG_Log.Dbg(roll);
+            if (rolled >= chance)
+                continue;
+            OZG_DealCard picked = cards[unseen[dice.Below(unseen.Count())]];
+            NoticeOne(uid, picked, deals, chance);
+        }
+    }
+
+    // The player `uid` notices `picked`: on the card item, which keeps him
+    // through restarts and games (§4.1), and on the game's record of it, so
+    // that his view shows it at once. The server's log says so, with his id,
+    // for the admin.
+    protected void NoticeOne(string uid, OZG_DealCard picked, int deals, int chance)
+    {
+        OZG_Card_Base thing = OZG_DeckRead.CardNamed(m_Place, picked.Name);
+        if (thing)
+            thing.OZG_AddNoticer(uid);
+        else
+            OZG_Log.Warn("notice: the card " + picked.Name + " of place " + m_R.PlaceId + " is not in it");
+        m_Game.AddNoticer(picked.Name, uid);
+        string line = "notice: " + uid + " noticed " + OZG_Cards.FaceOf(picked.Name);
+        line = line + ", sign " + picked.Sign.ToString() + ", deal " + deals.ToString();
+        line = line + " at " + chance.ToString() + "%, place " + m_R.PlaceId;
+        OZG_Log.Info(line);
     }
 
     // ------------------------------------------------------------ cards in hands
