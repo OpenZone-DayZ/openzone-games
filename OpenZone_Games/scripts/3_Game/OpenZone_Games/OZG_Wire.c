@@ -159,6 +159,17 @@ class OZG_WMine
     }
 }
 
+// What a client is told when its player saw a sleight (card sharp's design
+// §6.1, §9): where the cards changed, as a region of the window
+// (OZG_GameMenu.RegionOfSeat(n), "discards", "stock"), and the sound to play
+// for him alone (a name of OZG_SoundIds, "" for none).
+class OZG_WShake
+{
+    string PlaceId;
+    string RegionName;
+    string SoundName;
+}
+
 class OZG_Text
 {
     static const string CUT = "\n";

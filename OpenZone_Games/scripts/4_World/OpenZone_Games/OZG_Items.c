@@ -428,6 +428,21 @@ class OZG_Place extends ItemBase
         return s_All;
     }
 
+    // The place of an id on this side, or null (a client has the places near
+    // its player).
+    static OZG_Place OZG_ById(string id)
+    {
+        if (id == "")
+            return null;
+        for (int i = 0; i < s_All.Count(); i++)
+        {
+            OZG_Place p = s_All[i];
+            if (p && p.OZG_Id() == id)
+                return p;
+        }
+        return null;
+    }
+
     // Another place closer than `spacing` to a point.
     static bool NearOther(vector at, float spacing, OZG_Place self)
     {

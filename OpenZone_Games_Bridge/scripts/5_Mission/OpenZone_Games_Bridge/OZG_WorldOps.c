@@ -1257,4 +1257,34 @@ class OZG_WorldOps
         }
         return true;
     }
+
+    // shake [id=<place>] [region=seat<n>|discards|stock] [sound=<name>]
+    // [who=me|<id>]: the card sharp's message to a player who saw a sleight
+    // (card sharp's design §9), sent as the fourth phase will send it: his
+    // client plays the sound for him alone and, when his window is open on
+    // that place, shakes the region.
+    static bool OpShake(map<string, string> args, out string detail)
+    {
+        OZG_Session s = Sess(args, detail);
+        if (!s)
+            return false;
+        string uid;
+        PlayerBase p = Who(args, uid);
+        if (!p || !p.GetIdentity())
+        {
+            detail = "shake: nobody is '" + uid + "'";
+            return false;
+        }
+        OZG_WShake w = new OZG_WShake();
+        w.PlaceId = s.Id();
+        w.RegionName = OZG_VerbOps.Arg(args, "region", "");
+        w.SoundName = OZG_VerbOps.Arg(args, "sound", "");
+        string body;
+        string err;
+        JsonFileLoader<OZG_WShake>.MakeData(w, body, err, false);
+        OZ_Rpc.ServiceRespond(p.GetIdentity(), OZG_Const.SERVICE, OZG_Const.OP_SHAKE, true, body, "");
+        detail = "shake sent to " + uid + ": region=" + w.RegionName;
+        detail = detail + " sound=" + w.SoundName;
+        return true;
+    }
 }

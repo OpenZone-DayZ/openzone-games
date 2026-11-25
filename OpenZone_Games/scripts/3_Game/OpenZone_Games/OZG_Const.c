@@ -125,6 +125,10 @@ class OZG_Const
     static const string OP_VIEW   = "view";    // the table as it stands
     static const string OP_SEATS  = "seats";   // the seats to mark in the world
     static const string OP_CLOSED = "closed";  // this place is no longer yours to look at
+    // A sleight was seen (card sharp's design §6.1, §9): a sound for this
+    // player alone and a small shake of the part of the table where the cards
+    // changed. The fourth phase sends it; the stand sends it now.
+    static const string OP_SHAKE  = "shake";
 
     // The server's word to open the window (OZ_Rpc.Show), followed by the
     // place's id.

@@ -153,6 +153,20 @@ modded class MissionGameplay
             return;
         }
 
+        if (op == OZG_Const.OP_SHAKE)
+        {
+            OZG_WShake shake;
+            string wrong;
+            if (!JsonFileLoader<OZG_WShake>.LoadData(json, shake, wrong) || !shake)
+                return;
+            // Heard by this player alone: played here, on the place when this
+            // client has it, never through the place's own number.
+            OZG_Place where = OZG_Place.OZG_ById(shake.PlaceId);
+            if (shake.SoundName != "")
+                OZG_Sounds.PlayLocal(shake.SoundName, where);
+            return;
+        }
+
         if (op == OZG_Const.OP_SEATS || op == OZG_Const.OP_VIEW)
         {
             OZG_TableView view = OZG_Table.Take(json);
