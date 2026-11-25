@@ -108,6 +108,16 @@ class OZG_Card_Base extends ItemBase
         }
     }
 
+    // What a deal keeps of the mark.
+    void OZG_MarkInto(OZG_DealCard rec)
+    {
+        if (!rec)
+            return;
+        rec.Sign = m_OZG_Sign;
+        rec.Readers.Copy(m_OZG_Readers);
+        rec.Noticers.Copy(m_OZG_Noticers);
+    }
+
     protected void OZG_WriteIds(ParamsWriteContext ctx, array<string> ids)
     {
         int n = ids.Count();
@@ -254,7 +264,7 @@ class OZG_DeckRead
     // a face found is named by the face, every further one by the face and
     // its number (OZG_Cards.CopyNamed), however many there are: a deck of
     // aces alone is as many names as it has cards. Beside the name, the look
-    // of the card's back; the next phase reads the card's mark here too.
+    // of the card's back, and the card's mark.
     // Returns how many cards there are.
     static int CardsOf(OZG_Place place, array<ref OZG_DealCard> into)
     {
@@ -272,7 +282,9 @@ class OZG_DeckRead
             string named = OZG_Cards.CopyNamed(face, had);
             if (named == "")
                 continue;
-            into.Insert(OZG_DealCard.Make(named, card.OZG_Look()));
+            OZG_DealCard rec = OZG_DealCard.Make(named, card.OZG_Look());
+            card.OZG_MarkInto(rec);
+            into.Insert(rec);
         }
         return things.Count();
     }

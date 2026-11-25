@@ -9,7 +9,7 @@ class OZG_DurakConst
     static const string VARIANT_TRANSFER = "perevodnoy";
 
     // The format of a saved game.
-    static const int VERSION = 2;
+    static const int VERSION = 3;
     // Cards dealt to a seat, and drawn up to after a bout.
     static const int HAND = 6;
     // Attack cards in one bout, and in the first bout of a game.
@@ -64,6 +64,7 @@ class OZG_DurakSeat
 // The whole state of a game, hidden cards included. It is what SaveState
 // writes, so a field here is a field of the saved game: a change of meaning is
 // a change of VERSION.
+// 3: a dealt card keeps its mark (Sign, Readers, Noticers).
 class OZG_DurakState
 {
     int Version;

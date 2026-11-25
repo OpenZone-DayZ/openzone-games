@@ -82,7 +82,7 @@ class OZG_Durak : OZG_Game
         {
             for (f = 0; f < m_Given.Count(); f++)
             {
-                s.Dealt.Insert(OZG_DealCard.Make(m_Given[f].Name, m_Given[f].Look));
+                s.Dealt.Insert(m_Given[f].Copy());
                 deck.Insert(m_Given[f].Name);
             }
         }
@@ -1002,10 +1002,32 @@ class OZG_Durak : OZG_Game
                 s.Dealt.Insert(OZG_DealCard.Make(whole[old], 0));
             s.Version = OZG_DurakConst.VERSION;
         }
+        // A game saved before marks: its records carry the name and the look
+        // and nothing more, and a member the file did not carry is raw memory.
+        if (s.Version == 2 && s.Dealt)
+        {
+            array<ref OZG_DealCard> plain = new array<ref OZG_DealCard>();
+            for (int was = 0; was < s.Dealt.Count(); was++)
+            {
+                if (s.Dealt[was])
+                    plain.Insert(OZG_DealCard.Make(s.Dealt[was].Name, s.Dealt[was].Look));
+            }
+            s.Dealt = plain;
+            s.Version = OZG_DurakConst.VERSION;
+        }
         if (s.Version != OZG_DurakConst.VERSION)
             return false;
         if (!s.Dealt)
             return false;
+        // Every record made anew by script (the core's rule for what the JSON
+        // loader filled).
+        array<ref OZG_DealCard> made = new array<ref OZG_DealCard>();
+        for (int rec = 0; rec < s.Dealt.Count(); rec++)
+        {
+            if (s.Dealt[rec])
+                made.Insert(s.Dealt[rec].Copy());
+        }
+        s.Dealt = made;
         if (!s.SeatList || !s.StockCards || !s.DiscardCards)
             return false;
         if (!s.AttackCards || !s.DefenceCards)

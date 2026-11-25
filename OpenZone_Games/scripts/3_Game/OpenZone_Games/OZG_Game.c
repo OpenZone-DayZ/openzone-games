@@ -80,7 +80,7 @@ class OZG_Game
         {
             OZG_DealCard c = cards[i];
             if (c && OZG_Cards.IsCard(c.Name))
-                m_Given.Insert(OZG_DealCard.Make(c.Name, c.Look));
+                m_Given.Insert(c.Copy());
         }
     }
 

@@ -10,7 +10,7 @@
 // out of a move asks OfMove.
 //
 // THE NAME ONLY TELLS CARDS APART. What a card is besides its face (the look
-// of its back, and from the next phase its mark and who sees it) is kept
+// of its back, its mark and who sees it) is kept
 // beside the name, a record a card (OZG_DealCard below): two aces of spades
 // may wear one back or two, be marked or clean, and both ways they are two
 // cards.
@@ -171,9 +171,9 @@ class OZG_Cards
 }
 
 // One card of a deal, as a game is handed it. The name tells it apart from
-// every other card of the deal; the rest is what the card is like. The next
-// phases add what else a card carries into a game: the sign of its mark, and
-// which seats read it and which notice it (design §4).
+// every other card of the deal; the rest is what the card is like: the look
+// of its back and its mark as it was when the deal began (design §3.4, §4.1).
+// Server only: no record goes into a view.
 class OZG_DealCard
 {
     // A face, or for a further card of that face the face, a dot and its
@@ -181,12 +181,40 @@ class OZG_DealCard
     string Name;
     // The look of its back (OZG_Decks.StyleAt).
     int Look;
+    // 0: a clean card; 1..99 the sign of its mark.
+    int Sign;
+    // The ids that read it and that notice it.
+    ref array<string> Readers;
+    ref array<string> Noticers;
 
     static OZG_DealCard Make(string name, int look)
     {
         OZG_DealCard c = new OZG_DealCard();
         c.Name = name;
         c.Look = look;
+        c.Sign = 0;
+        c.Readers = new array<string>();
+        c.Noticers = new array<string>();
         return c;
+    }
+
+    // A record made by script from one the JSON loader filled, or from one
+    // a game was handed: every member of a record written since VERSION 3.
+    OZG_DealCard Copy()
+    {
+        OZG_DealCard c = Make(Name, Look);
+        c.Sign = Sign;
+        if (Readers)
+            c.Readers.Copy(Readers);
+        if (Noticers)
+            c.Noticers.Copy(Noticers);
+        return c;
+    }
+
+    bool ReadBy(string uid)
+    {
+        if (Sign <= 0 || uid == "" || !Readers)
+            return false;
+        return Readers.Find(uid) >= 0;
     }
 }
