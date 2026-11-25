@@ -198,7 +198,9 @@ class OZG_Sessions
         OZ_Json.EnsureTree();
         MakeDirectory(OZG_Const.DIR_GAMES);
 
-        OZG_Place place = OZG_Place.Cast(GetGame().CreateObjectEx("OZG_Place", position, ECE_PLACE_ON_SURFACE));
+        // A board lies as a place of its own class (boards and dice design §4).
+        string placeClass = OZG_Decks.PlaceOf(deckClass);
+        OZG_Place place = OZG_Place.Cast(GetGame().CreateObjectEx(placeClass, position, ECE_PLACE_ON_SURFACE));
         if (!place)
         {
             OZG_Log.Error("no place could be made at " + position.ToString(false));

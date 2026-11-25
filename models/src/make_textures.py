@@ -472,11 +472,12 @@ def flat(size, colour):
     return Image.new("RGB", (size, size), colour)
 
 
-def save(img, *parts):
-    path = os.path.join(MODELS, *parts)
+def save(img, *parts, root=MODELS):
+    path = os.path.join(root, *parts)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     img.save(path, optimize=True)
-    print("%-48s %4d x %-4d %s" % ("/".join(("models",) + parts), img.width, img.height, img.mode))
+    shown = os.path.relpath(root, REPO).replace(os.sep, "/")
+    print("%-48s %4d x %-4d %s" % ("/".join((shown,) + parts), img.width, img.height, img.mode))
 
 
 # ------------------------------------------------------------ the card sharp's kit
@@ -958,8 +959,188 @@ def draw_sharpkit():
     save(shine, "sharpkit", "data", "ozg_sharpkit_smdi.png")
 
 
+# ------------------------------------------------------- the "3 in 1" board and its pieces
+# Boards and dice design §3: the board (one picture for the folded item and the
+# laid-out place), the chess pieces in light and dark wood, the checkers, the die.
+BOARD_SIZE = 512
+BOARD_MM = 320.0                 # the unfolded board: 320 x 320 mm
+FIELD_MM = 280.0                 # the 8 x 8 field, 35 mm a square, a border of 20 mm round it
+MAPLE = ((206, 172, 120), (232, 204, 156))
+WALNUT = ((92, 56, 30), (134, 88, 52))
+FRAME = ((58, 34, 20), (94, 60, 36))
+BOXWOOD = ((212, 180, 128), (238, 214, 170))
+EBONY = ((26, 20, 17), (66, 50, 40))
+IVORY = ((214, 204, 180), (238, 232, 214))
+JET = ((20, 19, 18), (52, 48, 44))
+
+
+def wood(rng, size, tones, grain_px=3.0, rings=18):
+    """Wood of `tones` with its grain running down the picture."""
+    w, h = size
+    streaks = Image.new("L", size, 0)
+    draw = ImageDraw.Draw(streaks)
+    for _ in range(rings * 3):
+        x = rng.uniform(0, w)
+        wobble = rng.uniform(1.0, 4.0)
+        period = rng.uniform(30.0, 90.0)
+        pts = [(x + math.sin(y / period + x) * wobble, y) for y in range(0, h + 6, 6)]
+        draw.line(pts, fill=int(rng.uniform(60, 200)), width=int(rng.choice((1, 1, 2))))
+    streaks = px_blur(streaks, grain_px * 0.4)
+    base = fbm(rng, size, (max(8, w // 6), max(4, w // 24)), (1.0, 0.5))
+    shade = ImageChops.add(scale(base, 0.75), scale(streaks, 0.45))
+    return tint(ImageOps.autocontrast(shade, cutoff=1), tones[0], tones[1]), streaks
+
+
+def board_picture(rng, n=BOARD_SIZE, turned=False):
+    """The board's one picture: the field with its frame and the files and
+    ranks; the frame's wood is where the sides and the underside look. `n`
+    pixels a side; `turned` writes the files and ranks the way Black reads
+    them (the field itself reads the same turned)."""
+    px = n / BOARD_MM
+    k = n / 512.0
+    picture, _ = wood(rng, (n, n), FRAME, 2.0 * k, 10)
+    light, _ = wood(rng, (n, n), MAPLE, 2.0 * k, 24)
+    dark, _ = wood(rng, (n, n), WALNUT, 2.0 * k, 24)
+    edge = int(round((BOARD_MM - FIELD_MM) / 2.0 * px))
+    side = int(round(FIELD_MM / 8.0 * px))
+    field = Image.new("L", (n, n), 0)
+    draw = ImageDraw.Draw(field)
+    for rank in range(8):
+        for file in range(8):
+            if (rank + file) % 2 == 1:      # a1 is dark; h1 light
+                x0 = edge + file * side
+                y0 = edge + (7 - rank) * side
+                draw.rectangle([x0, y0, x0 + side - 1, y0 + side - 1], fill=255)
+    squares = Image.new("L", (n, n), 0)
+    ImageDraw.Draw(squares).rectangle([edge, edge, edge + 8 * side - 1, edge + 8 * side - 1], fill=255)
+    picture = Image.composite(dark, picture, squares)
+    picture = Image.composite(light, picture, field)
+    # A light line inlaid round the field, and the files and ranks in the frame.
+    inlay = Image.new("L", (n, n), 0)
+    d = int(round(4 * k))
+    ImageDraw.Draw(inlay).rectangle([edge - d, edge - d, edge + 8 * side + d - 1, edge + 8 * side + d - 1],
+                                    outline=255, width=max(2, int(round(2 * k))))
+    picture = Image.composite(Image.new("RGB", (n, n), MAPLE[1]), picture, inlay)
+    font = ImageFont.truetype(KIT_FONT, int(edge * 0.62))
+    try:
+        font.set_variation_by_axes([500])
+    except (OSError, AttributeError):
+        pass
+    letters = Image.new("L", (n, n), 0)
+    draw = ImageDraw.Draw(letters)
+    files = "hgfedcba" if turned else "abcdefgh"
+    for i in range(8):
+        file_letter = files[i]
+        rank_number = str(8 - i) if turned else str(i + 1)
+        cx = edge + i * side + side / 2.0
+        for cy in (edge / 2.0, n - edge / 2.0):
+            draw.text((cx, cy), file_letter, font=font, fill=255, anchor="mm")
+        cy = edge + (7 - i) * side + side / 2.0
+        for cx in (edge / 2.0, n - edge / 2.0):
+            draw.text((cx, cy), rank_number, font=font, fill=255, anchor="mm")
+    picture = Image.composite(Image.new("RGB", (n, n), MAPLE[1]), picture, letters)
+    relief = Image.new("L", (n, n), KIT_LEVEL)
+    relief = ImageChops.subtract(relief, scale(px_blur(inlay, 0.6 * k), 30 / 255.0))
+    strong, tight = kit_shine((n, n), "bakelite", (letters, "paper"))
+    return picture, relief, strong, tight
+
+
+def piece_wood(rng, tones):
+    picture, streaks = wood(rng, (256, 256), tones, 2.5, 20)
+    relief = ImageChops.subtract(Image.new("L", (256, 256), KIT_LEVEL), scale(streaks, 10 / 255.0))
+    return picture, relief
+
+
+def disc_picture(rng, tones):
+    """A checker: the top face in the middle with its turned rings, the rest the
+    colour of its edge."""
+    n = 256
+    base = tint(fbm(rng, (n, n), (40, 10), (1.0, 0.5)), tones[0], tones[1])
+    rings = Image.new("L", (n, n), 0)
+    draw = ImageDraw.Draw(rings)
+    for r in (110, 96, 70, 44, 20):
+        draw.ellipse([n / 2 - r, n / 2 - r, n / 2 + r, n / 2 + r], outline=255, width=3)
+    lighter = tuple(min(255, c + 26) for c in tones[1])
+    darker = tuple(max(0, c - 26) for c in tones[0])
+    shadow = ImageChops.offset(rings, 1, 1)
+    base = Image.composite(Image.new("RGB", (n, n), darker), base, scale(shadow, 0.8))
+    base = Image.composite(Image.new("RGB", (n, n), lighter), base, scale(rings, 0.8))
+    relief = ImageChops.add(Image.new("L", (n, n), KIT_LEVEL), scale(px_blur(rings, 1.0), 40 / 255.0))
+    return base, relief
+
+
+# A die's six faces on a picture of 256 x 128: four across, two down, 64 px a
+# face; the seventh and eighth cells are the plain bone of the rounded edges.
+DIE_CELLS = {1: (0, 0), 2: (1, 0), 3: (2, 0), 4: (3, 0), 5: (0, 1), 6: (1, 1)}
+DIE_PIPS = {1: [(0.5, 0.5)], 2: [(0.25, 0.25), (0.75, 0.75)], 3: [(0.25, 0.25), (0.5, 0.5), (0.75, 0.75)],
+            4: [(0.25, 0.25), (0.75, 0.25), (0.25, 0.75), (0.75, 0.75)],
+            5: [(0.25, 0.25), (0.75, 0.25), (0.5, 0.5), (0.25, 0.75), (0.75, 0.75)],
+            6: [(0.25, 0.22), (0.75, 0.22), (0.25, 0.5), (0.75, 0.5), (0.25, 0.78), (0.75, 0.78)]}
+
+
+def die_picture(rng):
+    w, h = 256, 128
+    bone = tint(fbm(rng, (w, h), (24, 6), (1.0, 0.5)), (222, 214, 192), (242, 238, 224))
+    pips = Image.new("L", (w, h), 0)
+    draw = ImageDraw.Draw(pips)
+    for face, (cx, cy) in DIE_CELLS.items():
+        for fx, fy in DIE_PIPS[face]:
+            x = cx * 64 + fx * 64
+            y = cy * 64 + fy * 64
+            r = 6.5 if face != 1 else 9.0
+            draw.ellipse([x - r, y - r, x + r, y + r], fill=255)
+    bone = Image.composite(Image.new("RGB", (w, h), (24, 22, 20)), bone, pips)
+    relief = ImageChops.subtract(Image.new("L", (w, h), KIT_LEVEL), scale(px_blur(pips, 1.0), 60 / 255.0))
+    return bone, relief
+
+
+def draw_board():
+    rng = random.Random(1126)
+    picture, relief, strong, tight = board_picture(rng)
+    n = BOARD_SIZE
+    save(picture, "board", "data", "ozg_board_co.png")
+    save(normal_map(relief, (n, n), 1.0, KIT_LEVELS_PER_MM, n / BOARD_MM), "board", "data", "ozg_board_nohq.png")
+    out = (256, 256)
+    save(Image.merge("RGB", (Image.new("L", out, 255), strong.resize(out, BOX), tight.resize(out, BOX))),
+         "board", "data", "ozg_board_smdi.png")
+    # The table window's pictures of the field (boards and dice design §7): the same
+    # wood twice the size, the files and ranks as White reads them and as Black does.
+    for side, turned in (("white", False), ("black", True)):
+        big = board_picture(random.Random(1126), 1024, turned)[0]
+        save(big, "boards", "ozg_board_win_%s_co.png" % side, root=os.path.join(REPO, "art"))
+
+
+def draw_chess():
+    rng = random.Random(1127)
+    relief = None
+    for name, tones in (("white", BOXWOOD), ("black", EBONY)):
+        picture, relief = piece_wood(rng, tones)
+        save(picture, "chess", "data", "ozg_chess_%s_co.png" % name)
+    save(normal_map(relief, (256, 256), 0.8, KIT_LEVELS_PER_MM, 6.0), "chess", "data", "ozg_chess_nohq.png")
+    save(flat(64, (255, 120, 150)), "chess", "data", "ozg_chess_smdi.png")
+
+
+def draw_disc():
+    rng = random.Random(1128)
+    relief = None
+    for name, tones in (("white", IVORY), ("black", JET)):
+        picture, relief = disc_picture(rng, tones)
+        save(picture, "disc", "data", "ozg_disc_%s_co.png" % name)
+    save(normal_map(relief, (256, 256), 1.0, KIT_LEVELS_PER_MM, 8.0), "disc", "data", "ozg_disc_nohq.png")
+    save(flat(64, (255, 110, 140)), "disc", "data", "ozg_disc_smdi.png")
+
+
+def draw_die():
+    rng = random.Random(1129)
+    picture, relief = die_picture(rng)
+    save(picture, "die", "data", "ozg_die_co.png")
+    save(normal_map(relief, (256, 128), 1.0, KIT_LEVELS_PER_MM, 4.0), "die", "data", "ozg_die_nohq.png")
+    save(flat(64, (255, 130, 160)), "die", "data", "ozg_die_smdi.png")
+
+
 DRAWN = {"place": draw_place, "deck": draw_deck, "mark": draw_mark, "card": draw_card,
-         "sharpkit": draw_sharpkit}
+         "sharpkit": draw_sharpkit, "board": draw_board, "chess": draw_chess, "disc": draw_disc,
+         "die": draw_die}
 
 
 def main():

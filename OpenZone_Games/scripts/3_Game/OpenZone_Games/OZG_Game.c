@@ -49,8 +49,23 @@ class OZG_Game
         return 2;
     }
 
-    // Which of the deck's 52 cards the game plays with.
+    // What the game is played with (boards and dice design §2): a deck, a
+    // board or a can of dice (OZG_Const.SET_*).
+    string SetKind()
+    {
+        return OZG_Const.SET_CARDS;
+    }
+
+    // Which of the deck's 52 cards the game plays with; for a board game, the
+    // faces of the pieces it plays with.
     void CardsUsed(array<string> into)
+    {
+    }
+
+    // Before Begin, for a game of a board: the faces of the pieces the board
+    // holds that the game plays with, one entry a piece. A game nobody hands
+    // pieces to plays with a whole set (the stand's checks).
+    void TakePieces(array<string> faces)
     {
     }
 

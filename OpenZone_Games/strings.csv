@@ -587,3 +587,55 @@ STR_OZG_VPP_F_C_THROW,скинути у відбій,throw to the discards
 STR_OZG_VPP_F_C_DECKIN,покласти в колоду з кишені,put into the deck from a pocket
 STR_OZG_VPP_F_C_DECKOUT,витягти з колоди в кишеню,draw out of the deck into a pocket
 STR_OZG_VPP_F_C_PICK,здати собі,deal to yourself
+# -- the board games (boards and dice design)
+STR_OZG_GAME_CHESS,Шахи,Chess
+STR_OZG_BOARD_NAME,Дошка «3 в 1»,3-in-1 board
+STR_OZG_BOARD_DESC,"Складна дерев'яна дошка: зовні поле для шахів і шашок, усередині — для нард. У ній шахові фігури, по п'ятнадцять білих і чорних шашок і дві гральні кістки. Розкладіть її на столі, як колоду.","A folding wooden board: the field for chess and draughts outside, nardy inside. It holds the chess pieces, fifteen white and fifteen black checkers and two dice. Lay it out on a table as a deck."
+STR_OZG_BOARD_PLACE_NAME,Розкладена дошка,Board laid out
+STR_OZG_PIECE_SLOT,Місце фігури,A piece's place
+STR_OZG_PIECE_DESC,Шахова фігура з дошки «3 в 1».,A chess piece of the 3-in-1 board.
+STR_OZG_DISC_DESC,"Шашка з дошки «3 в 1», для шашок і нард.","A checker of the 3-in-1 board, for draughts and nardy."
+STR_OZG_DIE_DESC,"Гральна кістка: шість граней, від одного до шести очок.","A die: six faces, one to six pips."
+STR_OZG_BOARD_MISSING,На дошці бракує фігур: партію не почати.,The board lacks pieces: the game cannot begin.
+STR_OZG_CHESS_END_MATE,Мат,Checkmate
+STR_OZG_CHESS_END_STALEMATE,Пат: нічия,Stalemate: a draw
+STR_OZG_CHESS_END_RESIGN,Партію здано,Resigned
+STR_OZG_CHESS_END_AGREED,Нічия за згодою,Draw by agreement
+STR_OZG_CHESS_END_REPETITION,Нічия: позиція повторилася тричі,Draw: the position came three times
+STR_OZG_CHESS_END_FIFTY,"Нічия: п'ятдесят ходів без взяття й ходу пішака","Draw: fifty moves with no capture and no pawn move"
+STR_OZG_CHESS_END_MATERIAL,Нічия: замало сил для мату,Draw: too little to mate
+STR_OZG_CHESS_END_LEFT,Гравець пішов з-за дошки,A player left the board
+STR_OZG_CHESS_WHITE,Білі,White
+STR_OZG_CHESS_BLACK,Чорні,Black
+STR_OZG_CHESS_OFFERS,пропонує нічию,offers a draw
+STR_OZG_CHESS_RESULT,"%1, %2","%1, %2"
+STR_OZG_CHESS_STATUS_MOVE,Хід: %1,%1 to move
+STR_OZG_CHESS_STATUS_CHECK,Шах! Хід: %1,Check! %1 to move
+STR_OZG_CHESS_YOUR_MOVE,Ваш хід,Your move
+STR_OZG_CHESS_BTN_RESIGN,Здатися,Resign
+STR_OZG_CHESS_BTN_DRAW,Запропонувати нічию,Offer a draw
+STR_OZG_CHESS_BTN_ACCEPT,Погодитися на нічию,Accept the draw
+STR_OZG_CHESS_BTN_DECLINE,Відмовитися,Decline
+STR_OZG_CHESS_LOG_MOVE,%1: %2,%1: %2
+STR_OZG_CHESS_LOG_RESIGN,%1 здається,%1 resigns
+STR_OZG_CHESS_LOG_DRAW,%1 пропонує нічию,%1 offers a draw
+STR_OZG_CHESS_LOG_ACCEPT,%1 погоджується на нічию,%1 accepts the draw
+STR_OZG_CHESS_LOG_DECLINE,%1 відмовляється від нічиєї,%1 declines the draw
+STR_OZG_CHESS_PROMOTE,Пішак стає:,The pawn becomes:
+# >>> generated: board
+STR_OZG_PIECE_WK,Білий король,White king
+STR_OZG_PIECE_WQ,Білий ферзь,White queen
+STR_OZG_PIECE_WR,Біла тура,White rook
+STR_OZG_PIECE_WB,Білий слон,White bishop
+STR_OZG_PIECE_WN,Білий кінь,White knight
+STR_OZG_PIECE_WP,Білий пішак,White pawn
+STR_OZG_PIECE_WD,Біла шашка,White checker
+STR_OZG_PIECE_BK,Чорний король,Black king
+STR_OZG_PIECE_BQ,Чорний ферзь,Black queen
+STR_OZG_PIECE_BR,Чорна тура,Black rook
+STR_OZG_PIECE_BB,Чорний слон,Black bishop
+STR_OZG_PIECE_BN,Чорний кінь,Black knight
+STR_OZG_PIECE_BP,Чорний пішак,Black pawn
+STR_OZG_PIECE_BD,Чорна шашка,Black checker
+STR_OZG_PIECE_DI,Гральна кістка,Die
+# <<< generated: board

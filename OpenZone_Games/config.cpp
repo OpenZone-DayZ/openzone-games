@@ -12,7 +12,7 @@ class CfgPatches
 {
     class OpenZone_Games
     {
-        units[] = {"OZG_Deck_Classic", "OZG_Deck_Stalker", "OZG_Deck_Classic_Sharp", "OZG_Deck_Stalker_Sharp", "OZG_MarkTool"};
+        units[] = {"OZG_Deck_Classic", "OZG_Deck_Stalker", "OZG_Deck_Classic_Sharp", "OZG_Deck_Stalker_Sharp", "OZG_MarkTool", "OZG_Board_Classic", "OZG_Die"};
         weapons[] = {};
         requiredVersion = 0.1;
         // Hard dependencies: a blocking window before the game loads rather
@@ -66,7 +66,8 @@ class CfgMods
                 {
                     "OpenZone_Games/gui/imagesets/ozg_cards_classic.imageset",
                     "OpenZone_Games/gui/imagesets/ozg_cards_stalker.imageset",
-                    "OpenZone_Games/gui/imagesets/ozg_marks.imageset"
+                    "OpenZone_Games/gui/imagesets/ozg_marks.imageset",
+                    "OpenZone_Games/gui/imagesets/ozg_pieces_classic.imageset"
                 };
             };
         };
@@ -146,6 +147,73 @@ class CfgSlots
     class Slot_OZG_Card63 { name = "OZG_Card63"; displayName = "$STR_OZG_CARD_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
     class Slot_OZG_Card64 { name = "OZG_Card64"; displayName = "$STR_OZG_CARD_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
 // <<< generated: slots
+    // The "3 in 1" board's insert: a slot for every piece (tools/make_board_items.py).
+// >>> generated: board slots
+    class Slot_OZG_Bd_wK { name = "OZG_Bd_wK"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wQ { name = "OZG_Bd_wQ"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wR1 { name = "OZG_Bd_wR1"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wR2 { name = "OZG_Bd_wR2"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wB1 { name = "OZG_Bd_wB1"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wB2 { name = "OZG_Bd_wB2"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wN1 { name = "OZG_Bd_wN1"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wN2 { name = "OZG_Bd_wN2"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wP1 { name = "OZG_Bd_wP1"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wP2 { name = "OZG_Bd_wP2"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wP3 { name = "OZG_Bd_wP3"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wP4 { name = "OZG_Bd_wP4"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wP5 { name = "OZG_Bd_wP5"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wP6 { name = "OZG_Bd_wP6"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wP7 { name = "OZG_Bd_wP7"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wP8 { name = "OZG_Bd_wP8"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bK { name = "OZG_Bd_bK"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bQ { name = "OZG_Bd_bQ"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bR1 { name = "OZG_Bd_bR1"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bR2 { name = "OZG_Bd_bR2"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bB1 { name = "OZG_Bd_bB1"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bB2 { name = "OZG_Bd_bB2"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bN1 { name = "OZG_Bd_bN1"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bN2 { name = "OZG_Bd_bN2"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bP1 { name = "OZG_Bd_bP1"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bP2 { name = "OZG_Bd_bP2"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bP3 { name = "OZG_Bd_bP3"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bP4 { name = "OZG_Bd_bP4"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bP5 { name = "OZG_Bd_bP5"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bP6 { name = "OZG_Bd_bP6"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bP7 { name = "OZG_Bd_bP7"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bP8 { name = "OZG_Bd_bP8"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wD01 { name = "OZG_Bd_wD01"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wD02 { name = "OZG_Bd_wD02"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wD03 { name = "OZG_Bd_wD03"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wD04 { name = "OZG_Bd_wD04"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wD05 { name = "OZG_Bd_wD05"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wD06 { name = "OZG_Bd_wD06"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wD07 { name = "OZG_Bd_wD07"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wD08 { name = "OZG_Bd_wD08"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wD09 { name = "OZG_Bd_wD09"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wD10 { name = "OZG_Bd_wD10"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wD11 { name = "OZG_Bd_wD11"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wD12 { name = "OZG_Bd_wD12"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wD13 { name = "OZG_Bd_wD13"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wD14 { name = "OZG_Bd_wD14"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_wD15 { name = "OZG_Bd_wD15"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bD01 { name = "OZG_Bd_bD01"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bD02 { name = "OZG_Bd_bD02"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bD03 { name = "OZG_Bd_bD03"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bD04 { name = "OZG_Bd_bD04"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bD05 { name = "OZG_Bd_bD05"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bD06 { name = "OZG_Bd_bD06"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bD07 { name = "OZG_Bd_bD07"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bD08 { name = "OZG_Bd_bD08"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bD09 { name = "OZG_Bd_bD09"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bD10 { name = "OZG_Bd_bD10"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bD11 { name = "OZG_Bd_bD11"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bD12 { name = "OZG_Bd_bD12"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bD13 { name = "OZG_Bd_bD13"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bD14 { name = "OZG_Bd_bD14"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_bD15 { name = "OZG_Bd_bD15"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_Die1 { name = "OZG_Bd_Die1"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Bd_Die2 { name = "OZG_Bd_Die2"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+// <<< generated: board slots
 };
 
 class CfgVehicles
@@ -395,6 +463,104 @@ class CfgVehicles
         varQuantityMax = 100;
     };
 
+    // ------------------------------------------------------------ the board
+    //
+    // The "3 in 1" board (boards and dice design §3): a set as a deck is one,
+    // and in script a deck (OZG_Board_Base extends OZG_Deck_Base), so laying it
+    // out, its place and its way back are the deck's. It holds its pieces in
+    // slots of their own and is laid out as a place of its own class.
+    class OZG_Board_Base: Inventory_Base
+    {
+        scope = 0;
+        displayName = "$STR_OZG_BOARD_NAME";
+        descriptionShort = "$STR_OZG_BOARD_DESC";
+        model = "\OpenZone_Games\models\board\ozg_board.p3d";
+        itemSize[] = {5, 3};
+        weight = 1500;
+        rotationFlags = 0;
+        hiddenSelections[] = {"camo"};
+        hiddenSelectionsTextures[] = {"OpenZone_Games\models\board\data\ozg_board_co.paa"};
+        projectionTypename = "OZG_BoardPlacePlacing";
+        ozgStyle = "classic";
+        ozgSetKind = "board";
+        ozgPlace = "OZG_BoardPlace";
+        // A laid-out game keeps its board in this slot of the place.
+        inventorySlot[] = {"OZG_DeckHold"};
+// >>> generated: board attachments
+        attachments[] =
+        {
+            "OZG_Bd_wK", "OZG_Bd_wQ", "OZG_Bd_wR1", "OZG_Bd_wR2", "OZG_Bd_wB1", "OZG_Bd_wB2", "OZG_Bd_wN1", "OZG_Bd_wN2",
+            "OZG_Bd_wP1", "OZG_Bd_wP2", "OZG_Bd_wP3", "OZG_Bd_wP4", "OZG_Bd_wP5", "OZG_Bd_wP6", "OZG_Bd_wP7", "OZG_Bd_wP8",
+            "OZG_Bd_bK", "OZG_Bd_bQ", "OZG_Bd_bR1", "OZG_Bd_bR2", "OZG_Bd_bB1", "OZG_Bd_bB2", "OZG_Bd_bN1", "OZG_Bd_bN2",
+            "OZG_Bd_bP1", "OZG_Bd_bP2", "OZG_Bd_bP3", "OZG_Bd_bP4", "OZG_Bd_bP5", "OZG_Bd_bP6", "OZG_Bd_bP7", "OZG_Bd_bP8",
+            "OZG_Bd_wD01", "OZG_Bd_wD02", "OZG_Bd_wD03", "OZG_Bd_wD04", "OZG_Bd_wD05", "OZG_Bd_wD06", "OZG_Bd_wD07", "OZG_Bd_wD08",
+            "OZG_Bd_wD09", "OZG_Bd_wD10", "OZG_Bd_wD11", "OZG_Bd_wD12", "OZG_Bd_wD13", "OZG_Bd_wD14", "OZG_Bd_wD15", "OZG_Bd_bD01",
+            "OZG_Bd_bD02", "OZG_Bd_bD03", "OZG_Bd_bD04", "OZG_Bd_bD05", "OZG_Bd_bD06", "OZG_Bd_bD07", "OZG_Bd_bD08", "OZG_Bd_bD09",
+            "OZG_Bd_bD10", "OZG_Bd_bD11", "OZG_Bd_bD12", "OZG_Bd_bD13", "OZG_Bd_bD14", "OZG_Bd_bD15", "OZG_Bd_Die1", "OZG_Bd_Die2"
+        };
+// <<< generated: board attachments
+    };
+    class OZG_Board_Classic: OZG_Board_Base
+    {
+        scope = 2;
+    };
+
+    // The pieces: one model a kind, the colour put on through the hidden
+    // selection; every class names the board's slots it goes into.
+    class OZG_Piece_Base: Inventory_Base
+    {
+        scope = 0;
+        itemSize[] = {1, 1};
+        weight = 20;
+        rotationFlags = 0;
+        hiddenSelections[] = {"camo"};
+    };
+    class OZG_Chess_Base: OZG_Piece_Base
+    {
+        scope = 0;
+        descriptionShort = "$STR_OZG_PIECE_DESC";
+        hiddenSelectionsMaterials[] = {"OpenZone_Games\models\chess\data\ozg_chess.rvmat"};
+    };
+    class OZG_Chess_K: OZG_Chess_Base { scope = 0; model = "\OpenZone_Games\models\chess\ozg_chess_k.p3d"; weight = 35; };
+    class OZG_Chess_Q: OZG_Chess_Base { scope = 0; model = "\OpenZone_Games\models\chess\ozg_chess_q.p3d"; weight = 30; };
+    class OZG_Chess_R: OZG_Chess_Base { scope = 0; model = "\OpenZone_Games\models\chess\ozg_chess_r.p3d"; weight = 25; };
+    class OZG_Chess_B: OZG_Chess_Base { scope = 0; model = "\OpenZone_Games\models\chess\ozg_chess_b.p3d"; weight = 22; };
+    class OZG_Chess_N: OZG_Chess_Base { scope = 0; model = "\OpenZone_Games\models\chess\ozg_chess_n.p3d"; weight = 22; };
+    class OZG_Chess_P: OZG_Chess_Base { scope = 0; model = "\OpenZone_Games\models\chess\ozg_chess_p.p3d"; weight = 15; };
+    class OZG_Disc_Base: OZG_Piece_Base
+    {
+        scope = 0;
+        descriptionShort = "$STR_OZG_DISC_DESC";
+        model = "\OpenZone_Games\models\disc\ozg_disc.p3d";
+        weight = 10;
+        hiddenSelectionsMaterials[] = {"OpenZone_Games\models\disc\data\ozg_disc.rvmat"};
+    };
+    class OZG_Die_Base: OZG_Piece_Base
+    {
+        scope = 0;
+        descriptionShort = "$STR_OZG_DIE_DESC";
+        model = "\OpenZone_Games\models\die\ozg_die.p3d";
+        weight = 5;
+        hiddenSelectionsTextures[] = {"OpenZone_Games\models\die\data\ozg_die_co.paa"};
+    };
+// >>> generated: board pieces
+    class OZG_Chess_Classic_wK: OZG_Chess_K { scope = 2; displayName = "$STR_OZG_PIECE_WK"; ozgFace = "wK"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess\data\ozg_chess_white_co.paa"}; inventorySlot[] = {"OZG_Bd_wK"}; };
+    class OZG_Chess_Classic_wQ: OZG_Chess_Q { scope = 2; displayName = "$STR_OZG_PIECE_WQ"; ozgFace = "wQ"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess\data\ozg_chess_white_co.paa"}; inventorySlot[] = {"OZG_Bd_wQ"}; };
+    class OZG_Chess_Classic_wR: OZG_Chess_R { scope = 2; displayName = "$STR_OZG_PIECE_WR"; ozgFace = "wR"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess\data\ozg_chess_white_co.paa"}; inventorySlot[] = {"OZG_Bd_wR1", "OZG_Bd_wR2"}; };
+    class OZG_Chess_Classic_wB: OZG_Chess_B { scope = 2; displayName = "$STR_OZG_PIECE_WB"; ozgFace = "wB"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess\data\ozg_chess_white_co.paa"}; inventorySlot[] = {"OZG_Bd_wB1", "OZG_Bd_wB2"}; };
+    class OZG_Chess_Classic_wN: OZG_Chess_N { scope = 2; displayName = "$STR_OZG_PIECE_WN"; ozgFace = "wN"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess\data\ozg_chess_white_co.paa"}; inventorySlot[] = {"OZG_Bd_wN1", "OZG_Bd_wN2"}; };
+    class OZG_Chess_Classic_wP: OZG_Chess_P { scope = 2; displayName = "$STR_OZG_PIECE_WP"; ozgFace = "wP"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess\data\ozg_chess_white_co.paa"}; inventorySlot[] = {"OZG_Bd_wP1", "OZG_Bd_wP2", "OZG_Bd_wP3", "OZG_Bd_wP4", "OZG_Bd_wP5", "OZG_Bd_wP6", "OZG_Bd_wP7", "OZG_Bd_wP8"}; };
+    class OZG_Disc_Classic_W: OZG_Disc_Base { scope = 2; displayName = "$STR_OZG_PIECE_WD"; ozgFace = "wD"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\disc\data\ozg_disc_white_co.paa"}; inventorySlot[] = {"OZG_Bd_wD01", "OZG_Bd_wD02", "OZG_Bd_wD03", "OZG_Bd_wD04", "OZG_Bd_wD05", "OZG_Bd_wD06", "OZG_Bd_wD07", "OZG_Bd_wD08", "OZG_Bd_wD09", "OZG_Bd_wD10", "OZG_Bd_wD11", "OZG_Bd_wD12", "OZG_Bd_wD13", "OZG_Bd_wD14", "OZG_Bd_wD15"}; };
+    class OZG_Chess_Classic_bK: OZG_Chess_K { scope = 2; displayName = "$STR_OZG_PIECE_BK"; ozgFace = "bK"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess\data\ozg_chess_black_co.paa"}; inventorySlot[] = {"OZG_Bd_bK"}; };
+    class OZG_Chess_Classic_bQ: OZG_Chess_Q { scope = 2; displayName = "$STR_OZG_PIECE_BQ"; ozgFace = "bQ"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess\data\ozg_chess_black_co.paa"}; inventorySlot[] = {"OZG_Bd_bQ"}; };
+    class OZG_Chess_Classic_bR: OZG_Chess_R { scope = 2; displayName = "$STR_OZG_PIECE_BR"; ozgFace = "bR"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess\data\ozg_chess_black_co.paa"}; inventorySlot[] = {"OZG_Bd_bR1", "OZG_Bd_bR2"}; };
+    class OZG_Chess_Classic_bB: OZG_Chess_B { scope = 2; displayName = "$STR_OZG_PIECE_BB"; ozgFace = "bB"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess\data\ozg_chess_black_co.paa"}; inventorySlot[] = {"OZG_Bd_bB1", "OZG_Bd_bB2"}; };
+    class OZG_Chess_Classic_bN: OZG_Chess_N { scope = 2; displayName = "$STR_OZG_PIECE_BN"; ozgFace = "bN"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess\data\ozg_chess_black_co.paa"}; inventorySlot[] = {"OZG_Bd_bN1", "OZG_Bd_bN2"}; };
+    class OZG_Chess_Classic_bP: OZG_Chess_P { scope = 2; displayName = "$STR_OZG_PIECE_BP"; ozgFace = "bP"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess\data\ozg_chess_black_co.paa"}; inventorySlot[] = {"OZG_Bd_bP1", "OZG_Bd_bP2", "OZG_Bd_bP3", "OZG_Bd_bP4", "OZG_Bd_bP5", "OZG_Bd_bP6", "OZG_Bd_bP7", "OZG_Bd_bP8"}; };
+    class OZG_Disc_Classic_B: OZG_Disc_Base { scope = 2; displayName = "$STR_OZG_PIECE_BD"; ozgFace = "bD"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\disc\data\ozg_disc_black_co.paa"}; inventorySlot[] = {"OZG_Bd_bD01", "OZG_Bd_bD02", "OZG_Bd_bD03", "OZG_Bd_bD04", "OZG_Bd_bD05", "OZG_Bd_bD06", "OZG_Bd_bD07", "OZG_Bd_bD08", "OZG_Bd_bD09", "OZG_Bd_bD10", "OZG_Bd_bD11", "OZG_Bd_bD12", "OZG_Bd_bD13", "OZG_Bd_bD14", "OZG_Bd_bD15"}; };
+    class OZG_Die: OZG_Die_Base { scope = 2; displayName = "$STR_OZG_PIECE_DI"; ozgFace = "Di"; inventorySlot[] = {"OZG_Bd_Die1", "OZG_Bd_Die2"}; };
+// <<< generated: board pieces
+
     // ------------------------------------------------------------ the place
     //
     // scope 2, and not for the spawn lists' sake: a class of scope 1 is never
@@ -436,6 +602,26 @@ class CfgVehicles
         hiddenSelections[] = {"camo"};
         hologramMaterial = "ozg_place";
         hologramMaterialPath = "OpenZone_Games\models\place\data";
+    };
+
+    // The board laid out (boards and dice design §4): the unfolded board on
+    // the table, the chess side up. A place in everything (OZG_Place's script,
+    // slot and cargo); only the model is its own.
+    class OZG_BoardPlace: OZG_Place
+    {
+        scope = 2;
+        displayName = "$STR_OZG_BOARD_PLACE_NAME";
+        model = "\OpenZone_Games\models\board\ozg_board_open.p3d";
+        hiddenSelections[] = {"camo"};
+        hiddenSelectionsTextures[] = {"OpenZone_Games\models\board\data\ozg_board_co.paa"};
+        hiddenSelectionsMaterials[] = {"OpenZone_Games\models\board\data\ozg_board.rvmat"};
+    };
+    class OZG_BoardPlacePlacing: OZG_PlacePlacing
+    {
+        scope = 1;
+        model = "\OpenZone_Games\models\board\ozg_board_open.p3d";
+        hologramMaterial = "ozg_board";
+        hologramMaterialPath = "OpenZone_Games\models\board\data";
     };
 
     // ------------------------------------------------------------ the fan in hands

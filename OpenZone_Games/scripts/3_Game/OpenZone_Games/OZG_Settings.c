@@ -91,12 +91,14 @@ class OZG_Settings : OZ_ConfigBase
     // 5: sleights. 6: the loupe gone, its LoupeSeconds the StudySeconds of
     // studying a card closely. 7: the later games (stakes-and-games design).
     // 8: the pen became the card sharp's kit, good for three marks.
+    // 9: the board games (boards and dice design), chess first.
     override int LatestVersion()
     {
-        return 8;
+        return 9;
     }
 
-    // Every game of the mod, the order the host steps through them in.
+    // Every game of the mod, the order the host steps through them in (only
+    // the games of a place's own set are offered there).
     static void AllGames(array<string> into)
     {
         into.Clear();
@@ -105,6 +107,7 @@ class OZG_Settings : OZ_ConfigBase
         into.Insert("poker");
         into.Insert("preferans");
         into.Insert("bridge");
+        into.Insert("chess");
     }
 
     // The loupe's length as a file of version 5 or older wrote it, read off
@@ -250,6 +253,14 @@ class OZG_Settings : OZ_ConfigBase
         // its place is good for three. A number an admin chose stays his.
         if (from < 8 && MarkUses == 20)
             MarkUses = 3;
+        // Version 8 knew the card games alone: the board games join the list.
+        if (from < 9)
+        {
+            if (!GameIds)
+                GameIds = new array<string>();
+            if (GameIds.Find("chess") < 0)
+                GameIds.Insert("chess");
+        }
         Version = LatestVersion();
         return true;
     }

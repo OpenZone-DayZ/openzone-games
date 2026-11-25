@@ -220,13 +220,23 @@ class OZG_Session
         m_R.GameId = "";
         for (int i = 0; i < cfg.GameIds.Count(); i++)
         {
-            if (OZG_Games.Sample(cfg.GameIds[i]))
+            if (FitsSet(cfg.GameIds[i]))
             {
                 m_R.GameId = cfg.GameIds[i];
                 break;
             }
         }
         DefaultOptions();
+    }
+
+    // Is the game one the place's set is played with (boards and dice design
+    // §2): a game of cards on a deck, a board game on a board?
+    protected bool FitsSet(string id)
+    {
+        OZG_Game sample = OZG_Games.Sample(id);
+        if (!sample)
+            return false;
+        return sample.SetKind() == OZG_Decks.KindOf(m_R.DeckClass);
     }
 
     protected void DefaultOptions()
@@ -523,9 +533,10 @@ class OZG_Session
         }
         if (Staked())
             v.Stakes = 1;
+        // The games the host may choose: the server's, of the place's set.
         for (int g = 0; g < cfg.GameIds.Count(); g++)
         {
-            if (OZG_Games.Sample(cfg.GameIds[g]))
+            if (FitsSet(cfg.GameIds[g]))
                 v.GameIds.Insert(cfg.GameIds[g]);
         }
         v.Dealt.Copy(m_R.Dealt);
@@ -1147,7 +1158,7 @@ class OZG_Session
     {
         if (m_R.St == OZG_Const.ST_PLAYING)
             return OZG_Const.SAY_PLAYING;
-        if (!OZG_Games.Sample(id) || !OZG_Cfg.Get().GameOn(id))
+        if (!FitsSet(id) || !OZG_Cfg.Get().GameOn(id))
             return OZG_Const.NO_GAME;
         if (id == m_R.GameId)
             return "";
@@ -1505,6 +1516,15 @@ class OZG_Session
         if (m_Place && !m_Place.OZG_Deck())
             m_Place.OZG_MakeDeck(m_R.DeckClass);
 
+        // A board game is dealt the pieces its board holds (boards and dice
+        // design §2): no stack, no fans, no sleights of the card sharp.
+        if (game.SetKind() != OZG_Const.SET_CARDS)
+        {
+            if (stackText != "")
+                return OZG_Const.SAY_SLEIGHT_NOT_GAME;
+            return DealPieces(game, seats, options, hint);
+        }
+
         // The dealer's three (card sharp's design §6.5): checked whole and
         // the deal tried on paper before a single item moves, so that a deal
         // the stack would leave short is refused with nothing done.
@@ -1572,6 +1592,42 @@ class OZG_Session
         OZG_Log.Dbg("session " + m_R.PlaceId + " deal: " + m_Game.Brief());
         if (!stack.Empty())
             StackRolls(uid, dealer, stack);
+        return "";
+    }
+
+    // A board game begun with the pieces the place's board holds.
+    protected string DealPieces(OZG_Game game, array<int> seats, map<string, string> options, string hint)
+    {
+        array<string> held = new array<string>();
+        OZG_BoardRead.FacesOf(m_Place, held);
+        array<string> used = new array<string>();
+        game.CardsUsed(used);
+        array<string> faces = new array<string>();
+        int i;
+        for (i = 0; i < held.Count(); i++)
+        {
+            if (used.Find(held[i]) >= 0)
+                faces.Insert(held[i]);
+        }
+        game.TakePieces(faces);
+        string refusal;
+        OZG_Random chance = new OZG_Random();
+        if (!game.Begin(seats, options, chance, hint, refusal))
+            return refusal;
+
+        m_Game = game;
+        m_R.St = OZG_Const.ST_PLAYING;
+        m_R.Dealt.Copy(seats);
+        m_R.DealtUids.Clear();
+        for (i = 0; i < seats.Count(); i++)
+            m_R.DealtUids.Insert(m_R.Seats[seats[i]].Uid);
+        m_R.Hint = "";
+        m_R.HintUid = "";
+        m_R.DealNo = m_R.DealNo + 1;
+        AddLog("deal");
+        Settle();
+        Changed();
+        OZG_Log.Dbg("session " + m_R.PlaceId + " game: " + m_Game.Brief());
         return "";
     }
 

@@ -1,0 +1,98 @@
+ImageSetClass {
+ Name "ozg_pieces_classic"
+ RefSize 512 1024
+ Textures {
+  ImageSetTextureClass {
+   mpix 1
+   path "OpenZone_Games/gui/imagesets/ozg_pieces_classic_ca.paa"
+  }
+ }
+ Images {
+  ImageSetDefClass bB {
+   Name "bB"
+   Pos 2 2
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass bD {
+   Name "bD"
+   Pos 132 2
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass bK {
+   Name "bK"
+   Pos 262 2
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass bN {
+   Name "bN"
+   Pos 2 132
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass bP {
+   Name "bP"
+   Pos 132 132
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass bQ {
+   Name "bQ"
+   Pos 262 132
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass bR {
+   Name "bR"
+   Pos 2 262
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass wB {
+   Name "wB"
+   Pos 132 262
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass wD {
+   Name "wD"
+   Pos 262 262
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass wK {
+   Name "wK"
+   Pos 2 392
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass wN {
+   Name "wN"
+   Pos 132 392
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass wP {
+   Name "wP"
+   Pos 262 392
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass wQ {
+   Name "wQ"
+   Pos 2 522
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass wR {
+   Name "wR"
+   Pos 132 522
+   Size 128 128
+   Flags 0
+  }
+ }
+ Groups {
+ }
+}

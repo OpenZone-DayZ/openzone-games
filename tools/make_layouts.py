@@ -616,6 +616,24 @@ def gen_edit(look):
                  [("ignorepointer", 1), ("clipchildren", 0)] + exact(0, 0, 120, 34) + [("priority", 45)], kids)
 
 
+# ---------------------------------------------------------------- the board games
+#
+# The board table (boards and dice design §7): a picture -- the field, a piece,
+# a lit target -- placed by the script in units, and a plain panel the script
+# tints to light a square.
+
+def board_picture():
+    attrs = [("ignorepointer", 1), ("color", "1 1 1 1")] + exact(0, 0, 50, 50) + [
+        ("priority", 3), ("mode", "blend"), ("src alpha", 1), ("stretch mode", "stretch_w_h")]
+    return block("ImageWidgetClass", "OZG_BPic", attrs)
+
+
+def board_light():
+    attrs = [("ignorepointer", 1), ("color", "1 1 1 0.4")] + exact(0, 0, 50, 50) + [
+        ("style", "rover_sim_colorable"), ("priority", 2)]
+    return block("PanelWidgetClass", "OZG_BLight", attrs)
+
+
 def write(name, body):
     path = os.path.join(OUT, name)
     with io.open(path, "w", encoding="utf-8", newline="\n") as f:
@@ -637,3 +655,5 @@ for look in ("classic", "stalker"):
     write("ozg_gbtn_" + look + ".layout", gen_button(look))
     write("ozg_gtext_" + look + ".layout", gen_text(look))
     write("ozg_gedit_" + look + ".layout", gen_edit(look))
+write("ozg_bpic.layout", board_picture())
+write("ozg_blight.layout", board_light())

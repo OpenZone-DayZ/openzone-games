@@ -47,10 +47,11 @@ forbid       = ["Bad type", "Can't compile", "NULL pointer to instance"]
 error_regex  = ["SCRIPT\\s+\\(E\\).*OZG_", "SCRIPT\\s+\\(E\\).*TGP_", "\\[OpenZone/Games\\] ERROR"]
 # The stand's shared profile has the core's Discord bridge switched on, and no
 # bridge process runs for this project: the core says so on every boot. A state
-# of this stand, not an event.
-noise        = ["Bridge.Url is not https", "bridge: "]
+# of this stand, not an event. The poses mod this stand may load beside ours
+# (dayz-mcp.local.toml) warns of its missing Credits.json on every boot.
+noise        = ["Bridge.Url is not https", "bridge: ", "scripts/Data/Credits.json"]
 
 # Read from the ready line.
 [expect.counters]
-games    = 5
+games    = 6
 problems = 0

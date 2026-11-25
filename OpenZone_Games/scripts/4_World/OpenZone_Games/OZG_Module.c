@@ -36,6 +36,8 @@ class OZG_Module : CF_ModuleWorld
             OZG_Games.Register(new OZG_Bridge());
         if (!OZG_Games.Sample(OZG_PrefConst.GAME_ID))
             OZG_Games.Register(new OZG_Preferans());
+        if (!OZG_Games.Sample(OZG_ChessConst.GAME_ID))
+            OZG_Games.Register(new OZG_Chess());
         // -- games register above this line --
 
         if (!GetGame().IsServer())

@@ -19,6 +19,13 @@ class OZG_Const
     static const string NO_CARD    = "STR_OZG_NO_CARD";
     static const string NO_CARDS   = "STR_OZG_NO_CARDS";
 
+    // What a place is laid out from (boards and dice design §2): a game plays
+    // with one kind of set, and a set item's config names its kind
+    // (ozgSetKind; a deck says nothing and is cards).
+    static const string SET_CARDS = "cards";
+    static const string SET_BOARD = "board";
+    static const string SET_DICE  = "dice";
+
     // ---------------------------------------------------------------- laying out
 
     // How the seats of a place are chosen: the mod's guess, or the placer's

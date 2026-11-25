@@ -28,7 +28,9 @@ class OZG_Decks
         for (int i = 0; i < n; i++)
         {
             GetGame().ConfigGetChildName("CfgVehicles", i, name);
-            if (!GetGame().IsKindOf(name, "OZG_Deck_Base"))
+            // A board is a set as a deck is one (boards and dice design §2).
+            bool aSet = GetGame().IsKindOf(name, "OZG_Deck_Base") || GetGame().IsKindOf(name, "OZG_Board_Base");
+            if (!aSet)
                 continue;
             if (GetGame().ConfigGetInt("CfgVehicles " + name + " scope") != 2)
                 continue;
@@ -74,6 +76,30 @@ class OZG_Decks
         if (style == "")
             style = "classic";
         return style;
+    }
+
+    // What a set is (OZG_Const.SET_*): its config's ozgSetKind; a deck names
+    // none and is cards.
+    static string KindOf(string setClass)
+    {
+        string kind;
+        if (setClass != "")
+            kind = GetGame().ConfigGetTextOut("CfgVehicles " + setClass + " ozgSetKind");
+        if (kind == "")
+            kind = OZG_Const.SET_CARDS;
+        return kind;
+    }
+
+    // The class of the place a set is laid out as: its config's ozgPlace; a
+    // deck names none and lies on the mat.
+    static string PlaceOf(string setClass)
+    {
+        string place;
+        if (setClass != "")
+            place = GetGame().ConfigGetTextOut("CfgVehicles " + setClass + " ozgPlace");
+        if (place == "")
+            place = "OZG_Place";
+        return place;
     }
 
     // The texture of a deck's back on the 3D things.
@@ -334,12 +360,17 @@ class OZG_Deck_Base extends ItemBase
         return OZG_Slots() - GetInventory().AttachmentCount();
     }
 
-    // A deck takes cards and nothing else.
+    // A deck takes cards and nothing else; a board, its pieces (OZG_Takes).
     override bool CanReceiveAttachment(EntityAI attachment, int slotId)
     {
-        if (!attachment || !attachment.IsInherited(OZG_Card_Base))
+        if (!attachment || !OZG_Takes(attachment))
             return false;
         return super.CanReceiveAttachment(attachment, slotId);
+    }
+
+    bool OZG_Takes(EntityAI thing)
+    {
+        return thing.IsInherited(OZG_Card_Base);
     }
 
     override void SetActions()
