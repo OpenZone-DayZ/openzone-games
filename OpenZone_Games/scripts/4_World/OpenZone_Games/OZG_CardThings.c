@@ -108,6 +108,35 @@ class OZG_Card_Base extends ItemBase
         }
     }
 
+    bool OZG_Notices(string uid)
+    {
+        if (uid == "" || m_OZG_Sign <= 0)
+            return false;
+        return m_OZG_Noticers.Find(uid) >= 0;
+    }
+
+    int OZG_NoticerCount()
+    {
+        return m_OZG_Noticers.Count();
+    }
+
+    // Server: one more noticer of a marked card (design §5). The list keeps
+    // at most MarkKnowers ids; the oldest gives way (§4.1). A reader is not
+    // made one: he sees more already.
+    void OZG_AddNoticer(string uid)
+    {
+        if (uid == "" || m_OZG_Sign <= 0)
+            return;
+        if (m_OZG_Readers.Find(uid) >= 0)
+            return;
+        if (m_OZG_Noticers.Find(uid) >= 0)
+            return;
+        m_OZG_Noticers.Insert(uid);
+        int most = OZG_Cfg.Get().MarkKnowers;
+        while (m_OZG_Noticers.Count() > most)
+            m_OZG_Noticers.RemoveOrdered(0);
+    }
+
     // What a deal keeps of the mark.
     void OZG_MarkInto(OZG_DealCard rec)
     {
@@ -287,5 +316,31 @@ class OZG_DeckRead
             into.Insert(rec);
         }
         return things.Count();
+    }
+
+    // The card item a deal's name stands for: the walk and the naming of
+    // CardsOf, so a name read off this place finds its card again while the
+    // place holds the same things (the session asks it in the frame of the
+    // deal). Null when the place holds no such card.
+    static OZG_Card_Base CardNamed(OZG_Place place, string name)
+    {
+        if (name == "")
+            return null;
+        array<EntityAI> things = new array<EntityAI>();
+        ThingsOf(place, things);
+        map<string, int> seen = new map<string, int>();
+        for (int i = 0; i < things.Count(); i++)
+        {
+            OZG_Card_Base card = OZG_Card_Base.Cast(things[i]);
+            if (!card)
+                continue;
+            string face = card.OZG_Face();
+            int had = 0;
+            seen.Find(face, had);
+            seen.Set(face, had + 1);
+            if (OZG_Cards.CopyNamed(face, had) == name)
+                return card;
+        }
+        return null;
     }
 }

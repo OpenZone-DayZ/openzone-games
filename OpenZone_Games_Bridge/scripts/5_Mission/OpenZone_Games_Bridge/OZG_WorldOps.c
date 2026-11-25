@@ -855,9 +855,10 @@ class OZG_WorldOps
         return true;
     }
 
-    // markof [id=<place> | in=me] face=<face>|all [who=me|<id>]: each card of
-    // that face (all: each marked card) as its face, its sign, and whether
-    // `who` marked it and reads it.
+    // markof [id=<place> | in=me] face=<face>|all [who=me|<id>] [only=notices]:
+    // each card of that face (all: each marked card) as its face, its sign,
+    // whether `who` marked it, reads it and notices it, and how many notice
+    // it. only=notices keeps the cards `who` notices, and counts them first.
     static bool OpMarkOf(map<string, string> args, out string detail)
     {
         array<EntityAI> things = new array<EntityAI>();
@@ -866,7 +867,9 @@ class OZG_WorldOps
         string uid;
         Who(args, uid);
         string face = OZG_VerbOps.Arg(args, "face", "As");
-        detail = face + ":";
+        bool onlyNoticed = OZG_VerbOps.Arg(args, "only", "") == "notices";
+        string list = "";
+        int noticed = 0;
         for (int i = 0; i < things.Count(); i++)
         {
             OZG_Card_Base card = OZG_Card_Base.Cast(things[i]);
@@ -876,11 +879,21 @@ class OZG_WorldOps
                 continue;
             if (face != "all" && card.OZG_Face() != face)
                 continue;
+            if (onlyNoticed && !card.OZG_Notices(uid))
+                continue;
+            if (card.OZG_Notices(uid))
+                noticed++;
             string one = " " + card.OZG_Face() + " sign=" + card.OZG_Sign().ToString();
             one = one + " by_who=" + B(card.OZG_MarkedBy() == uid);
             one = one + " reads=" + B(card.OZG_Reads(uid));
-            detail = detail + one + ";";
+            one = one + " notices=" + B(card.OZG_Notices(uid));
+            one = one + " noticers=" + card.OZG_NoticerCount().ToString();
+            list = list + one + ";";
         }
+        detail = face + ":";
+        if (onlyNoticed)
+            detail = detail + " " + noticed.ToString() + " noticed:";
+        detail = detail + list;
         return true;
     }
 
@@ -1007,6 +1020,46 @@ class OZG_WorldOps
         cfg.Validate(putRight);
         detail = "notice grace=" + cfg.NoticeGrace.ToString() + " step=" + cfg.NoticeStep.ToString();
         detail = detail + " max=" + cfg.NoticeMax.ToString() + " putright=" + putRight.ToString();
+        return true;
+    }
+
+    // noticer [id=<place> | in=me] face=<face>|all [who=me|<id>] [many=0]:
+    // `who` made a noticer of each marked card of that face (all: of every
+    // marked card), as a won roll would (design §5); with many=k the ids
+    // <who>1 .. <who>k are made noticers in turn. Only for the stand.
+    static bool OpNoticer(map<string, string> args, out string detail)
+    {
+        array<EntityAI> things = new array<EntityAI>();
+        if (!CardsIn(args, things, detail))
+            return false;
+        string uid;
+        Who(args, uid);
+        if (uid == "")
+        {
+            detail = "noticer: nobody to notice it";
+            return true;
+        }
+        string face = OZG_VerbOps.Arg(args, "face", "As");
+        int many = OZG_VerbOps.Arg(args, "many", "0").ToInt();
+        array<string> ids = new array<string>();
+        if (many <= 0)
+            ids.Insert(uid);
+        for (int m = 1; m <= many; m++)
+            ids.Insert(uid + m.ToString());
+        int done = 0;
+        for (int i = 0; i < things.Count(); i++)
+        {
+            OZG_Card_Base card = OZG_Card_Base.Cast(things[i]);
+            if (!card || !card.OZG_Marked())
+                continue;
+            if (face != "all" && card.OZG_Face() != face)
+                continue;
+            for (int k = 0; k < ids.Count(); k++)
+                card.OZG_AddNoticer(ids[k]);
+            done++;
+        }
+        detail = "noticer: " + ids.Count().ToString() + " id(s)";
+        detail = detail + " on " + done.ToString() + " card(s) of " + face;
         return true;
     }
 }

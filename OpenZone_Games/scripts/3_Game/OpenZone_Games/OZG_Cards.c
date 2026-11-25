@@ -249,4 +249,11 @@ class OZG_DealCard
             return false;
         return Readers.Find(uid) >= 0;
     }
+
+    bool NoticedBy(string uid)
+    {
+        if (Sign <= 0 || uid == "" || !Noticers)
+            return false;
+        return Noticers.Find(uid) >= 0;
+    }
 }
