@@ -209,6 +209,77 @@ class OZG_GFuzz
         return "";
     }
 
+    // hold'em's hands on known cases: each line "cards > cards" or "cards =
+    // cards" must hold, and each "cards : kind" must score that kind.
+    //   oz_games {"op":"phands"}
+    static bool PokerHands(map<string, string> args, out string detail)
+    {
+        array<string> cases = {
+            "As Ks Qs Js Ts : 8",
+            "5d 4d 3d 2d Ad : 8",
+            "9c 9d 9h 9s 2c : 7",
+            "Kc Kd Kh 2s 2c : 6",
+            "2h 7h 9h Jh Kh : 5",
+            "As 2d 3c 4h 5s : 4",
+            "Tc Jd Qh Ks As : 4",
+            "7c 7d 7h 2s 9c : 3",
+            "7c 7d 2h 2s 9c : 2",
+            "7c 7d 3h 2s 9c : 1",
+            "Ac Jd 9h 4s 2c : 0",
+            "As 2d 3c 4h 5s < 2s 3d 4c 5h 6s",
+            "Kc Kd Kh 2s 2c > 2h 7h 9h Jh Kh",
+            "Ac Ad 9h 4s 2c > Ac Ad 8h 4s 3c",
+            "Ac Ad 9h 4s 2c = Ah As 9d 4c 2d",
+            "Kc Kd 5h 5s 9c > Kh Ks 5d 5c 8c",
+            "As Ks Qs Js Ts 2d 3c > 9h 9d 9c 9s Ah Kd Qc",
+            "2c 2d 2h 3s 3c 4d 4h = 2c 2d 2h 4s 4c 3d 3h",
+            "Ah Kh 2c 3d 4s 5h 9c > Ks Kd 2c 3d 4s 5h 9c"
+        };
+        int checked = 0;
+        for (int i = 0; i < cases.Count(); i++)
+        {
+            string line = cases[i];
+            string sign = ":";
+            if (line.IndexOf(" > ") > 0)
+                sign = ">";
+            else if (line.IndexOf(" < ") > 0)
+                sign = "<";
+            else if (line.IndexOf(" = ") > 0)
+                sign = "=";
+            int at = line.IndexOf(" " + sign + " ");
+            string leftText = line.Substring(0, at);
+            string rightText = line.Substring(at + 3, line.Length() - at - 3);
+            array<string> left = new array<string>();
+            OZG_Cards.Parse(leftText, left);
+            int a = OZG_Poker.BestScore(left);
+            bool ok = false;
+            if (sign == ":")
+            {
+                ok = OZG_Poker.KindOf(a) == rightText.ToInt();
+            }
+            else
+            {
+                array<string> right = new array<string>();
+                OZG_Cards.Parse(rightText, right);
+                int b = OZG_Poker.BestScore(right);
+                if (sign == ">")
+                    ok = a > b;
+                if (sign == "<")
+                    ok = a < b;
+                if (sign == "=")
+                    ok = a == b;
+            }
+            if (!ok)
+            {
+                detail = "phands: WRONG on '" + line + "' (" + a.ToString() + ", kind " + OZG_Poker.KindOf(a).ToString() + ")";
+                return true;
+            }
+            checked++;
+        }
+        detail = "phands: " + checked.ToString() + " cases right";
+        return true;
+    }
+
     // The game saved and loaded into a fresh one gives the same state back.
     protected static string Reload(string id, OZG_Game game)
     {
