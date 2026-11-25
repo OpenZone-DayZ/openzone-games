@@ -18,7 +18,7 @@ first game is durak, podkidnoy and perevodnoy. Class prefix `OZG_`; runs with
 > Оригінальні ігри: <https://store.steampowered.com/franchise/stalker>. Подробиці в
 > [NOTICE](NOTICE).
 
-## Status: a game can be played (2026-11-24); nothing is published
+## Status: a game can be played (2026-11-24)
 
 - **A deck** is a container of its cards, fifty-two items in fifty-two slots, in two
   looks (the classic deck, and the stalkers' deck with stalkers and mutants on its picture
@@ -91,8 +91,6 @@ fourth, sleights ([docs/2026-11-25-sleights-record.md](docs/2026-11-25-sleights-
 The table's sounds and the cards in the air:
 [docs/2026-11-25-sounds-and-flights-record.md](docs/2026-11-25-sounds-and-flights-record.md).
 
-No key, no `mod.cpp`, no Workshop item: nothing is published without the owner's word.
-
 ## What is where
 
 | Path | What |
@@ -104,8 +102,17 @@ No key, no `mod.cpp`, no Workshop item: nothing is published without the owner's
 | `art/` | sources of the cards, of the tables (`art/table`) and the fonts (Oswald, PT Mono; SIL Open Font License; their list in `art/fonts/fonts.json`); how the sounds are made (`art/sounds/SOURCES.md`) |
 | `models/` | sources of the five models and how they are built ([models/README.md](models/README.md)) |
 | `docs/` | plans, records, measurements, an example for a server's economy |
+| `packaging/`, `package.ps1`, `keys/` | what a published `@OpenZone_Games` holds besides its pbo (below) |
 
 The three stand tools are never published and no server should load them.
+
+## Publishing
+
+`mod_build` packs the mod and signs it with the series key `OpenZone`: the public
+`keys/OpenZone.bikey` is committed, the private key beside it never is. `package.ps1` then
+puts the rest into `@OpenZone_Games`: `mod.cpp` and `meta.cpp` from
+`packaging/OpenZone_Games/` (`meta.cpp` holds the Workshop item's id, so an update goes to
+the same item) and the key. `.\package.ps1 -Check` says what is missing or stale.
 
 ## Settings
 
@@ -170,8 +177,6 @@ OpenZone), колоду тримають у долоні, одну карту �
 інструменти господаря. Місце чекає на гравця, який відійшов; хто йде посеред партії,
 скидає карти або лишає місце з картами іншому. Усе переживає рестарт сервера. Гравець у
 партії тримає віяло карт, пози задаються в налаштуваннях.
-
-Нічого не опубліковано: ні ключа, ні предмета в Workshop — без слова власника.
 
 ## Licence
 

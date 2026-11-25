@@ -32,9 +32,11 @@ If the two texts are read as differing, the English text governs.
 Material of GSC Game World
 ==========================
 
-The pictures on twenty cards of the stalkers' deck are cut from the files of the
-S.T.A.L.K.E.R. games: the source pictures in art/cards/stalker/src, and those
-cards as they are drawn into art/cards/stalker,
+The pictures on twenty-two cards of the stalkers' deck show the S.T.A.L.K.E.R.
+games. Twenty-one are cut from the files of the games; Faust's is a picture of
+S.T.A.L.K.E.R. 2 that those files do not hold (art/cards/stalker/src/SOURCES.md
+says where each one comes from). They are the source pictures in
+art/cards/stalker/src, and those cards as they are drawn into art/cards/stalker,
 OpenZone_Games/gui/imagesets/ozg_cards_stalker_ca.paa,
 OpenZone_Games/data/cards/ozg_deck_stalker_co.paa and
 OpenZone_Games/data/cards/stalker. The loners' patch sewn on the cloth of the
@@ -58,9 +60,10 @@ times, makes plain that it is unofficial, links to the store pages of the
 original games, and follows GSC's content guidelines. Those terms are not a
 licence and waive none of GSC's rights.
 
-    Зображення на двадцяти картах сталкерської колоди і нашивку вільних
-    сталкерів на тканині сталкерського столу взято з файлів ігор
-    S.T.A.L.K.E.R.; їх створила і повністю ними володіє GSC Game World.
+    Зображення на двадцяти двох картах сталкерської колоди і нашивка вільних
+    сталкерів на тканині сталкерського столу походять з ігор S.T.A.L.K.E.R.
+    (усе, крім зображення Фауста, взято з файлів самих ігор); їх створила і
+    повністю ними володіє GSC Game World.
     Ліцензія цього моду та дозволи з цього файлу на них НЕ поширюються.
     OpenZone Games -- фанатський мод; він неофіційний і не пов'язаний із
     GSC Game World. Оригінальні ігри продаються за посиланням вище.

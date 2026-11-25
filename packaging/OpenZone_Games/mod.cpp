@@ -1,0 +1,15 @@
+// How this mod presents itself in the launcher and the in-game mod list.
+//
+// Without this file DayZ shows the folder name and nothing else: no author,
+// no version, no description. The picture and logo paths are left out on
+// purpose: a wrong path draws a blank and says nothing.
+
+name        = "OpenZone Games";
+author      = "OpenZone";
+authorID    = "";
+version     = "0.1";
+
+description = "Table games for DayZ: lay a deck out on a table, a counter or the floor, sit round it with other players and play durak in a window, two to six at a table. Two decks, the classic one and the stalkers' one; every card is an item, and a card sharp may mark cards and cheat. The stalkers' deck and table use pictures from the S.T.A.L.K.E.R. games, created and owned by GSC Game World: a fan-made mod, not official, no affiliation with GSC Game World; the original games at store.steampowered.com/franchise/stalker. Needs Community Framework and OpenZone Core. github.com/OpenZone-DayZ/openzone-games";
+
+tooltip     = "OpenZone Games";
+overview    = "Table games for OpenZone servers. Needs Community Framework and OpenZone Core.";
