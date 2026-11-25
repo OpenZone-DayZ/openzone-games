@@ -60,16 +60,23 @@ class OZG_Settings : OZ_ConfigBase
     int   MarkSeconds2;
     int   LoupeSeconds;
     int   MarkKnowers;
+    // Noticing (card sharp's design §5, §7): the deals before a player can
+    // notice a mark he does not read, the percent his chance grows by every
+    // deal after them, and the most it grows to. The server rolls; a client
+    // is told none of the three.
+    int   NoticeGrace;
+    int   NoticeStep;
+    int   NoticeMax;
 
     void OZG_Settings()
     {
         LoadDefaults();
     }
 
-    // 2: the marks. 3: squatting is SFP's squat where SFP runs.
+    // 2: the marks. 3: squatting is SFP's squat where SFP runs. 4: noticing.
     override int LatestVersion()
     {
-        return 3;
+        return 4;
     }
 
     protected void DefaultPoses()
@@ -103,6 +110,9 @@ class OZG_Settings : OZ_ConfigBase
         MarkSeconds2 = 8;
         LoupeSeconds = 5;
         MarkKnowers = 16;
+        NoticeGrace = 5;
+        NoticeStep = 4;
+        NoticeMax = 40;
     }
 
     override bool Migrate(int from)
@@ -126,6 +136,13 @@ class OZG_Settings : OZ_ConfigBase
                 if (p && p.PoseId == "squatting" && p.Gesture == 0)
                     p.Gesture = OZG_Const.GESTURE_SFP_SQUAT;
             }
+        }
+        // Version 3 had no noticing: its defaults.
+        if (from < 4)
+        {
+            NoticeGrace = 5;
+            NoticeStep = 4;
+            NoticeMax = 40;
         }
         Version = LatestVersion();
         return true;
@@ -243,6 +260,23 @@ class OZG_Settings : OZ_ConfigBase
             MarkKnowers = 16;
             warnings++;
         }
+        // Noticing: no grace below none, a percent from 0 to 100. A step or a
+        // most of 0 is noticing switched off with marking left on.
+        if (NoticeGrace < 0)
+        {
+            NoticeGrace = 5;
+            warnings++;
+        }
+        if (NoticeStep < 0 || NoticeStep > 100)
+        {
+            NoticeStep = 4;
+            warnings++;
+        }
+        if (NoticeMax < 0 || NoticeMax > 100)
+        {
+            NoticeMax = 40;
+            warnings++;
+        }
         if (DebugLog != 0)
             DebugLog = 1;
     }
@@ -262,6 +296,20 @@ class OZG_Settings : OZ_ConfigBase
     bool GameOn(string gameId)
     {
         return GameIds.Find(gameId) >= 0;
+    }
+
+    // The chance, in percent, that a player notices one more marked card
+    // after `deals` deals that counted (design §5):
+    // min(NoticeMax, max(0, deals - NoticeGrace) * NoticeStep).
+    int NoticeChance(int deals)
+    {
+        int over = deals - NoticeGrace;
+        if (over < 0)
+            over = 0;
+        int chance = over * NoticeStep;
+        if (chance > NoticeMax)
+            chance = NoticeMax;
+        return chance;
     }
 }
 

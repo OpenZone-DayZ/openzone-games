@@ -986,4 +986,27 @@ class OZG_WorldOps
             detail = detail + " left=" + F2(hands.GetQuantity());
         return true;
     }
+
+    // noticecfg [grace=] [step=] [max=]: the settings of noticing (design
+    // §7) set on the running server, through the settings' own bounds, for a
+    // check: the file is not written, and a restart reads it again. Answers
+    // the three as they stand and how many the bounds put right.
+    static bool OpNoticeCfg(map<string, string> args, out string detail)
+    {
+        OZG_Settings cfg = OZG_Cfg.Get();
+        string grace = OZG_VerbOps.Arg(args, "grace", "");
+        string rise = OZG_VerbOps.Arg(args, "step", "");
+        string most = OZG_VerbOps.Arg(args, "max", "");
+        if (grace != "")
+            cfg.NoticeGrace = grace.ToInt();
+        if (rise != "")
+            cfg.NoticeStep = rise.ToInt();
+        if (most != "")
+            cfg.NoticeMax = most.ToInt();
+        int putRight;
+        cfg.Validate(putRight);
+        detail = "notice grace=" + cfg.NoticeGrace.ToString() + " step=" + cfg.NoticeStep.ToString();
+        detail = detail + " max=" + cfg.NoticeMax.ToString() + " putright=" + putRight.ToString();
+        return true;
+    }
 }
