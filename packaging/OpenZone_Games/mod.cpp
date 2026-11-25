@@ -7,9 +7,9 @@
 name        = "OpenZone Games";
 author      = "OpenZone";
 authorID    = "";
-version     = "0.1";
+version     = "0.2";
 
-description = "Table games for DayZ: lay a deck out on a table, a counter or the floor, sit round it with other players and play durak in a window, two to six at a table. Two decks, the classic one and the stalkers' one; every card is an item, and a card sharp may mark cards and cheat. The stalkers' deck and table use pictures from the S.T.A.L.K.E.R. games, created and owned by GSC Game World: a fan-made mod, not official, no affiliation with GSC Game World; the original games at store.steampowered.com/franchise/stalker. Needs Community Framework and OpenZone Core. github.com/OpenZone-DayZ/openzone-games";
+description = "Table games for DayZ: lay a deck out on a table, a counter or the floor, sit round it with other players and play in a window: durak, ochko, Texas hold'em, preferans and bridge; ochko and hold'em for chips the host hands out, with a paper of who brought in what at the end. Two decks, the classic one and the stalkers' one; every card is an item, and a card sharp may mark cards and cheat. The stalkers' deck and table use pictures from the S.T.A.L.K.E.R. games, created and owned by GSC Game World: a fan-made mod, not official, no affiliation with GSC Game World; the original games at store.steampowered.com/franchise/stalker. Needs Community Framework and OpenZone Core. github.com/OpenZone-DayZ/openzone-games";
 
 tooltip     = "OpenZone Games";
 overview    = "Table games for OpenZone servers. Needs Community Framework and OpenZone Core.";

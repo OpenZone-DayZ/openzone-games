@@ -1,6 +1,6 @@
 // The games' module inside the OpenZone window of VPP Admin Tools. Glue: it
 // requires the games, the core, the core's VPP window and VPPAdminTools, all
-// hard. No meta.cpp yet: there is no Workshop item for it.
+// hard. Its Workshop item's id is in meta.cpp beside this file.
 
 name        = "OpenZone Games for VPP Admin Tools";
 author      = "OpenZone";

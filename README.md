@@ -22,7 +22,8 @@ Admin Tools its settings are a module of the series' admin window
 
 ## Status: a game can be played (2026-11-24); on the Workshop since 2026-11-25
 
-The Workshop item: [OpenZone Games](https://steamcommunity.com/sharedfiles/filedetails/?id=3845773524).
+The Workshop items: [OpenZone Games](https://steamcommunity.com/sharedfiles/filedetails/?id=3845773524) and, for VPP Admin Tools,
+[OpenZone Games for VPP Admin Tools](https://steamcommunity.com/sharedfiles/filedetails/?id=3845883015) (since 2026-11-25 too).
 
 - **A deck** is a container of its cards, fifty-two items in fifty-two slots, in two
   looks (the classic deck, and the stalkers' deck with stalkers and mutants on its picture
@@ -80,8 +81,8 @@ The Workshop item: [OpenZone Games](https://steamcommunity.com/sharedfiles/filed
   vulnerability, each deal scored as in duplicate). The host chooses the game between
   deals; the window draws them from one table view every game shares. Their rules were
   played by script on the stand, thousands of deals each with every card and every chip
-  accounted for after every move; in the window hold'em's lobby was seen, a played hand
-  and the other three not yet
+  accounted for after every move, and all four were played in the window, in English and
+  in Ukrainian
   ([docs/2026-11-25-stakes-and-games-record.md](docs/2026-11-25-stakes-and-games-record.md)).
 - **Stakes** (ochko and hold'em): no money is touched. The host writes how many chips a
   player brings in, lets in those who ask to sit and gives rebuys; when the game is folded
@@ -135,14 +136,18 @@ puts the rest into `@OpenZone_Games`: `mod.cpp` and `meta.cpp` from
 `packaging/OpenZone_Games/` (`meta.cpp` holds the Workshop item's id, so an update goes to
 the same item) and the key. `.\package.ps1 -Check` says what is missing or stale.
 
-`OpenZone_Games_VPP` has its `mod.cpp` in `packaging/OpenZone_Games_VPP/` and no
-Workshop item yet.
+`@OpenZone_Games_VPP` is put together the same way from `packaging/OpenZone_Games_VPP/`.
 
-The Workshop item is 3845773524. Its page is kept here: the text in
-`packaging/OpenZone_Games.workshop.bbcode` (Steam takes at most 8000 bytes, and the
-Ukrainian half counts two bytes a letter), the main picture
-`packaging/OpenZone_Games.workshop.png` and the strip
-`packaging/OpenZone_Games.shot<N>.<en|uk>.jpg`, English and Ukrainian in pairs.
+| Workshop item | id | tags | Required items |
+|---|---|---|---|
+| OpenZone Games | 3845773524 | Mod, Mechanics, Props | Community Framework, OpenZone Core |
+| OpenZone Games for VPP Admin Tools | 3845883015 | Mod, Mechanics | OpenZone Games, OpenZone Core, OpenZone Core VPP, VPP Admin Tools |
+
+Their pages are kept here: the text in `packaging/<Mod>.workshop.bbcode` (Steam takes at
+most 8000 bytes, and the Ukrainian half counts two bytes a letter), the main picture
+`packaging/<Mod>.workshop.png` and the strip `packaging/<Mod>.shot<N>.<en|uk>.jpg`, English
+and Ukrainian in pairs. The glue goes up after the games: it is built against the games of
+the same commit.
 
 ## Settings
 
@@ -216,13 +221,13 @@ OpenZone), колоду тримають у долоні, одну карту �
 фішки: гроші мод не чіпає; господар вписує, на скільки гравець заходить, пускає тих, хто
 проситься за стіл, і дає докупити; коли гру згорнули або колоду зібрали, з'являється
 папірець — хто скільки заніс і в кого скільки було наприкінці, а розраховуються гравці
-самі. Правила цих ігор зіграні скриптом на стенді, тисячі роздач кожна; у вікні поки
-побачено лише лобі холдему. З VPP Admin Tools налаштування ігор — це модуль «Ігри» в
+самі. Правила цих ігор зіграні скриптом на стенді, тисячі роздач кожна, і всі чотири
+зіграні у вікні, англійською та українською. З VPP Admin Tools налаштування ігор — це модуль «Ігри» в
 адмінському вікні серії (`OpenZone_Games_VPP`): які ігри є, стіл і місця, час, шулерство,
 пози; збережене одразу доходить до гравців у грі.
 
-Мод у Steam Workshop з 2026-11-25:
-[OpenZone Games](https://steamcommunity.com/sharedfiles/filedetails/?id=3845773524).
+Моди в Steam Workshop з 2026-11-25: [OpenZone Games](https://steamcommunity.com/sharedfiles/filedetails/?id=3845773524) і
+[OpenZone Games для VPP Admin Tools](https://steamcommunity.com/sharedfiles/filedetails/?id=3845883015).
 
 ## Licence
 

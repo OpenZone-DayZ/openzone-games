@@ -202,6 +202,21 @@ little taller and the note under the poses on two lines.
   it.
 - The lines of moves name the seat's player now, as the seat lines did before `a2abfae`: a
   seat taken over in mid-deal (durak, preferans, bridge) renames the moves made before.
-- The glue is not packaged for the Workshop: `packaging/OpenZone_Games_VPP/mod.cpp` is
-  written, the item does not exist.
 - The mockup's design canvas on claude.ai has not been republished with the three boards.
+
+## 6. Published
+
+The owner, 2026-11-25: publish the VPP mod, update OpenZone Games, update the descriptions
+and the readmes everywhere, push. Both from the `dayz` MCP, the games first (the glue is
+built against them):
+
+- **OpenZone Games** 3845773524: the build of `7c9bb98` (13 115 346 bytes, 16 s), a change
+  note in English and Ukrainian, four pictures added to the strip (hold'em and preferans,
+  English and Ukrainian), then the new page (`packaging/OpenZone_Games.workshop.bbcode`,
+  7915 bytes: five games, the stakes, the VPP module).
+- **OpenZone Games for VPP Admin Tools** 3845883015, created public: tags Mod and Mechanics;
+  Required items OpenZone Games, OpenZone Core, OpenZone Core VPP and VPP Admin Tools; the
+  page `packaging/OpenZone_Games_VPP.workshop.bbcode`; the main picture the English
+  Settings page, the strip the three pages in English and Ukrainian.
+
+The public API read both pages back equal to the files.
