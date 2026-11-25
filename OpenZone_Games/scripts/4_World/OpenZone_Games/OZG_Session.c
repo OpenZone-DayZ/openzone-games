@@ -1395,7 +1395,10 @@ class OZG_Session
     }
 
     // The cards of the place the player reads and the game deals: what a
-    // dealer may choose for his hand, or take out by name (§6.5).
+    // dealer may choose for his hand, or take out by name (§6.5). Read is
+    // marked by him or studied closely (a reader of the mark); a card he only
+    // noticed gives him its sign, never the right to pick it (the owner's
+    // word, 2026-11-25), and is not among them.
     protected void DeckReadsFor(string uid, array<ref OZG_WDeckCard> into)
     {
         into.Clear();

@@ -303,3 +303,15 @@ VON state event sets) and Caps Lock, the game's push-to-talk, held 1.5 s by the 
 - before, window open: nothing at all;
 - after, window open: `voice on, the game's window open` at 16:22:57.699, `off` at
   16:22:59.699. Walking stays shut out (the `movement` group).
+
+## The dealer chooses only cards he reads (the owner's word, 2026-11-25)
+
+Noticing gives a player the sign of a card, not the right to pick it: the dealer's choice
+offers the cards he marked himself or studied closely, never one he only noticed. That is
+what the code did (`DeckReadsFor` keeps the cards whose readers hold his id; noticers are a
+list of their own); it is now said where it is done, and checked on the stand: at the
+stalkers' table, every card marked by the client's player, a second king of diamonds
+brought in and marked by another id (`stuff`, `mark who=marker1`), the client's player made
+its noticer (`noticer face=Kd`) -- `markof face=Kd`: `Kd sign=27 by_who=1 reads=1`, `Kd
+sign=74 by_who=0 reads=0 notices=1`; `deckreads`: 36 cards, one king of diamonds, `Kd/1/27`,
+the one he reads.
