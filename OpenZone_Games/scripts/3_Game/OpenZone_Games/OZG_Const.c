@@ -120,6 +120,16 @@ class OZG_Const
     static const string OP_FOLD    = "fold";
     static const string OP_HOST    = "host";
     static const string OP_MINE    = "mine";
+    // The later games (stakes-and-games design §3): the host picks the game;
+    // a seated player asks for chips; the host lets a player in, refuses
+    // him, or gives a seat chips.
+    static const string OP_GAME   = "game";
+    static const string OP_REBUY  = "rebuy";
+    static const string OP_LET    = "let";
+    static const string OP_REFUSE = "refuse";
+    static const string OP_CHIPS  = "chips";
+    // The most chips one buy-in or rebuy may bring.
+    static const int STAKE_MOST = 1000000;
 
     // To a client.
     static const string OP_VIEW   = "view";    // the table as it stands
@@ -215,4 +225,9 @@ class OZG_Const
     static const string SAY_NO_SEATS    = "STR_OZG_SAY_NO_SEATS";
     static const string SAY_SAT         = "STR_OZG_SAY_SAT";
     static const string SAY_LAID        = "STR_OZG_SAY_LAID";
+    static const string SAY_ASKED       = "STR_OZG_SAY_ASKED";
+    static const string SAY_REFUSED     = "STR_OZG_SAY_REFUSED";
+    static const string SAY_NO_CHIPS    = "STR_OZG_SAY_NO_CHIPS";
+    static const string SAY_BAD_AMOUNT  = "STR_OZG_SAY_BAD_AMOUNT";
+    static const string SAY_ASKED_CHIPS = "STR_OZG_SAY_ASKED_CHIPS";
 }

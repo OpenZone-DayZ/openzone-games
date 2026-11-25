@@ -32,6 +32,10 @@ class OZG_Module : CF_ModuleWorld
             OZG_Games.Register(new OZG_Ochko());
         if (!OZG_Games.Sample(OZG_PokerConst.GAME_ID))
             OZG_Games.Register(new OZG_Poker());
+        if (!OZG_Games.Sample(OZG_BridgeConst.GAME_ID))
+            OZG_Games.Register(new OZG_Bridge());
+        if (!OZG_Games.Sample(OZG_PrefConst.GAME_ID))
+            OZG_Games.Register(new OZG_Preferans());
         // -- games register above this line --
 
         if (!GetGame().IsServer())

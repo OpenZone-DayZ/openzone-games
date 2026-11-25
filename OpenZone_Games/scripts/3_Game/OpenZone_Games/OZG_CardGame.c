@@ -174,6 +174,64 @@ class OZG_CardGame : OZG_Game
         return took;
     }
 
+    // ---- tricks (bridge, preferans) ------------------------------------------
+
+    // Does card c beat card b, b having been the best of the trick so far?
+    // `trump` a suit letter, "" for none.
+    static bool TrickBeats(string c, string b, string trump)
+    {
+        string sc = OZG_Cards.SuitOf(c);
+        string sb = OZG_Cards.SuitOf(b);
+        if (trump != "" && sc == trump && sb != trump)
+            return true;
+        if (sc == sb)
+            return OZG_Cards.RankOf(c) > OZG_Cards.RankOf(b);
+        return false;
+    }
+
+    // The index of the card that takes the trick; the first card led.
+    static int TrickWinner(array<string> cards, string trump)
+    {
+        if (!cards || cards.Count() == 0)
+            return -1;
+        int best = 0;
+        for (int k = 1; k < cards.Count(); k++)
+        {
+            if (TrickBeats(cards[k], cards[best], trump))
+                best = k;
+        }
+        return best;
+    }
+
+    static bool HoldsSuit(array<string> hand, string suit)
+    {
+        if (suit == "")
+            return false;
+        for (int i = 0; i < hand.Count(); i++)
+        {
+            if (OZG_Cards.SuitOf(hand[i]) == suit)
+                return true;
+        }
+        return false;
+    }
+
+    // May `card` of `hand` go on a trick led in `lead` ("" for the lead
+    // itself)? Follow suit; with none, trump when `mustTrump` and one is held;
+    // otherwise anything.
+    static bool PlayAllowed(array<string> hand, string card, string lead, string trump, bool mustTrump)
+    {
+        if (hand.Find(card) < 0)
+            return false;
+        if (lead == "")
+            return true;
+        string suit = OZG_Cards.SuitOf(card);
+        if (HoldsSuit(hand, lead))
+            return suit == lead;
+        if (mustTrump && trump != "" && HoldsSuit(hand, trump))
+            return suit == trump;
+        return true;
+    }
+
     // ---- reads and notices (card sharp's design §4.4, §4.5) ------------------
 
     override void ReadsFor(int seat, string uid, array<ref OZG_WRead> into)

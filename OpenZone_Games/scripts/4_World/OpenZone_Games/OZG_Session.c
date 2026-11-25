@@ -53,6 +53,19 @@ class OZG_SessionRec
     int    DealNo;
     ref array<string> SleightUids;
     ref array<int> SleightCounts;
+    // Stakes (stakes-and-games design §3): for every player who sat here at a
+    // game played for them, by id, his name, what he brought in all told and
+    // his chips now; the requests waiting for the host (the seat asked for,
+    // -1 for chips for the seat held); the id on each seat of the deal in
+    // play, beside Dealt.
+    ref array<string> StakeUids;
+    ref array<string> StakeNames;
+    ref array<int> StakeIn;
+    ref array<int> StakeChips;
+    ref array<string> ReqUids;
+    ref array<string> ReqNames;
+    ref array<int> ReqSeats;
+    ref array<string> DealtUids;
 
     void OZG_SessionRec()
     {
@@ -65,6 +78,62 @@ class OZG_SessionRec
         Log = new array<string>();
         SleightUids = new array<string>();
         SleightCounts = new array<int>();
+        StakeUids = new array<string>();
+        StakeNames = new array<string>();
+        StakeIn = new array<int>();
+        StakeChips = new array<int>();
+        ReqUids = new array<string>();
+        ReqNames = new array<string>();
+        ReqSeats = new array<int>();
+        DealtUids = new array<string>();
+    }
+
+    // A file written before stakes, or with lists that do not pair up: every
+    // list made anew by script, and the pairs cut to their shortest.
+    void MendStakes()
+    {
+        array<string> uids = new array<string>();
+        array<string> names = new array<string>();
+        array<int> ins = new array<int>();
+        array<int> chips = new array<int>();
+        int i;
+        if (StakeUids && StakeNames && StakeIn && StakeChips)
+        {
+            for (i = 0; i < StakeUids.Count(); i++)
+            {
+                if (i >= StakeNames.Count() || i >= StakeIn.Count() || i >= StakeChips.Count())
+                    break;
+                uids.Insert(StakeUids[i]);
+                names.Insert(StakeNames[i]);
+                ins.Insert(StakeIn[i]);
+                chips.Insert(StakeChips[i]);
+            }
+        }
+        StakeUids = uids;
+        StakeNames = names;
+        StakeIn = ins;
+        StakeChips = chips;
+        array<string> rUids = new array<string>();
+        array<string> rNames = new array<string>();
+        array<int> rSeats = new array<int>();
+        if (ReqUids && ReqNames && ReqSeats)
+        {
+            for (i = 0; i < ReqUids.Count(); i++)
+            {
+                if (i >= ReqNames.Count() || i >= ReqSeats.Count())
+                    break;
+                rUids.Insert(ReqUids[i]);
+                rNames.Insert(ReqNames[i]);
+                rSeats.Insert(ReqSeats[i]);
+            }
+        }
+        ReqUids = rUids;
+        ReqNames = rNames;
+        ReqSeats = rSeats;
+        array<string> dealt = new array<string>();
+        if (DealtUids)
+            dealt.Copy(DealtUids);
+        DealtUids = dealt;
     }
 }
 
@@ -244,6 +313,7 @@ class OZG_Session
         }
         rec.SleightUids = uids;
         rec.SleightCounts = counts;
+        rec.MendStakes();
 
         OZG_Game game;
         if (rec.St != OZG_Const.ST_LOBBY)
@@ -435,7 +505,28 @@ class OZG_Session
             w.Z = s.Z;
             w.Yaw = s.Yaw;
             w.PoseNo = s.PoseNo;
+            if (Staked() && s.Uid != "")
+            {
+                int at = m_R.StakeUids.Find(s.Uid);
+                if (at >= 0)
+                {
+                    w.Chips = m_R.StakeChips[at];
+                    w.BroughtIn = m_R.StakeIn[at];
+                }
+                else
+                {
+                    w.Chips = 0;
+                    w.BroughtIn = 0;
+                }
+            }
             v.Seats.Insert(w);
+        }
+        if (Staked())
+            v.Stakes = 1;
+        for (int g = 0; g < cfg.GameIds.Count(); g++)
+        {
+            if (OZG_Games.Sample(cfg.GameIds[g]))
+                v.GameIds.Insert(cfg.GameIds[g]);
         }
         v.Dealt.Copy(m_R.Dealt);
         v.Log.Copy(m_R.Log);
@@ -472,6 +563,7 @@ class OZG_Session
         // the cards of the deck he reads. Each head is made for its player
         // alone, as the reads are.
         SleightHead(v, uid, seat, dealt);
+        StakeHead(v, uid);
 
         string head;
         string err;
@@ -530,6 +622,7 @@ class OZG_Session
 
     void Changed()
     {
+        SyncStacks();
         m_R.Rev = m_R.Rev + 1;
         Save();
         Pulse();
@@ -726,6 +819,14 @@ class OZG_Session
             why = OZG_Const.SAY_TOO_FAR;
             return false;
         }
+        // A game for stakes: the host lets a player in (design §3).
+        if (Staked() && !m_Letting && m_R.HostUid != "" && uid != m_R.HostUid)
+        {
+            AskFor(uid, OZG_Who.Name(player), no);
+            why = OZG_Const.SAY_ASKED;
+            Changed();
+            return false;
+        }
 
         bool takesOver = s.St == OZG_Const.SEAT_LEFT;
         s.St = OZG_Const.SEAT_TAKEN;
@@ -772,15 +873,20 @@ class OZG_Session
         why = "";
         OZG_SeatRec s = m_R.Seats[no];
         bool playing = InGame(no);
+        // A seat of a game for stakes is not left with its cards for another
+        // to play on: its chips are its player's.
+        string way = how;
+        if (playing && Staked())
+            way = OZG_Const.HOW_DISCARD;
         if (playing)
         {
-            if (how == OZG_Const.HOW_DISCARD)
+            if (way == OZG_Const.HOW_DISCARD)
             {
                 m_Game.DropSeat(no);
                 s.St = OZG_Const.SEAT_FREE;
                 AddLog("drop " + no.ToString());
             }
-            else if (how == OZG_Const.HOW_LEAVE)
+            else if (way == OZG_Const.HOW_LEAVE)
             {
                 s.St = OZG_Const.SEAT_LEFT;
                 AddLog("left " + no.ToString());
@@ -807,6 +913,251 @@ class OZG_Session
         if (playing)
             Settle();
         return true;
+    }
+
+    // ------------------------------------------------------------ stakes
+
+    // While the host lets a player in, Sit seats him without asking again.
+    protected bool m_Letting;
+
+    // Does the game at this place play for stakes (design §3)?
+    bool Staked()
+    {
+        OZG_Game sample = OZG_Games.Sample(m_R.GameId);
+        if (!sample)
+            return false;
+        return sample.UsesStakes();
+    }
+
+    int ChipsOf(string uid)
+    {
+        int at = m_R.StakeUids.Find(uid);
+        if (at < 0 || uid == "")
+            return 0;
+        return m_R.StakeChips[at];
+    }
+
+    // A player's line of the book, made when he has none.
+    protected int StakeLine(string uid, string name)
+    {
+        int at = m_R.StakeUids.Find(uid);
+        if (at >= 0)
+        {
+            if (name != "")
+                m_R.StakeNames[at] = name;
+            return at;
+        }
+        m_R.StakeUids.Insert(uid);
+        m_R.StakeNames.Insert(name);
+        m_R.StakeIn.Insert(0);
+        m_R.StakeChips.Insert(0);
+        return m_R.StakeUids.Count() - 1;
+    }
+
+    protected void StakeAdd(string uid, string name, int amount)
+    {
+        int at = StakeLine(uid, name);
+        m_R.StakeIn[at] = m_R.StakeIn[at] + amount;
+        m_R.StakeChips[at] = m_R.StakeChips[at] + amount;
+    }
+
+    protected void AskFor(string uid, string name, int seat)
+    {
+        int at = m_R.ReqUids.Find(uid);
+        if (at >= 0)
+        {
+            m_R.ReqNames[at] = name;
+            m_R.ReqSeats[at] = seat;
+            return;
+        }
+        m_R.ReqUids.Insert(uid);
+        m_R.ReqNames.Insert(name);
+        m_R.ReqSeats.Insert(seat);
+    }
+
+    protected void Unask(string uid)
+    {
+        int at = m_R.ReqUids.Find(uid);
+        if (at < 0)
+            return;
+        m_R.ReqUids.RemoveOrdered(at);
+        m_R.ReqNames.RemoveOrdered(at);
+        m_R.ReqSeats.RemoveOrdered(at);
+    }
+
+    // The chips of every seat of the deal, as the game counts them now, into
+    // the book: after every change, so a restart or a fold finds them there.
+    protected void SyncStacks()
+    {
+        if (!m_Game || m_R.St == OZG_Const.ST_LOBBY || !m_Game.UsesStakes())
+            return;
+        for (int k = 0; k < m_R.Dealt.Count() && k < m_R.DealtUids.Count(); k++)
+        {
+            int chips = m_Game.StackOf(m_R.Dealt[k]);
+            string uid = m_R.DealtUids[k];
+            if (chips < 0 || uid == "")
+                continue;
+            int at = StakeLine(uid, "");
+            m_R.StakeChips[at] = chips;
+        }
+    }
+
+    protected void StakeHead(OZG_WView v, string uid)
+    {
+        v.MyChips = 0;
+        v.MyIn = 0;
+        v.AskedChips = 0;
+        v.ReqUids.Clear();
+        v.ReqNames.Clear();
+        v.ReqSeats.Clear();
+        if (!Staked())
+            return;
+        int at = m_R.StakeUids.Find(uid);
+        if (at >= 0)
+        {
+            v.MyChips = m_R.StakeChips[at];
+            v.MyIn = m_R.StakeIn[at];
+        }
+        if (m_R.ReqUids.Find(uid) >= 0)
+            v.AskedChips = 1;
+        if (!IsHost(uid))
+            return;
+        v.ReqUids.Copy(m_R.ReqUids);
+        v.ReqNames.Copy(m_R.ReqNames);
+        v.ReqSeats.Copy(m_R.ReqSeats);
+    }
+
+    // The host lets a player in on the seat he asked for (or the free one
+    // nearest him) with `amount` chips; or, for one seated, gives the chips
+    // he asked for.
+    protected string LetIn(string uid, int amount)
+    {
+        int r = m_R.ReqUids.Find(uid);
+        if (r < 0)
+            return OZG_Const.SAY_NOT_NOW;
+        if (amount < 0 || amount > OZG_Const.STAKE_MOST)
+            return OZG_Const.SAY_BAD_AMOUNT;
+        if (m_R.St == OZG_Const.ST_PLAYING)
+            return OZG_Const.SAY_PLAYING;
+        string name = m_R.ReqNames[r];
+        int wanted = m_R.ReqSeats[r];
+        int mine = SeatOf(uid);
+        if (wanted < 0 || mine >= 0)
+        {
+            if (mine < 0)
+            {
+                Unask(uid);
+                Changed();
+                return OZG_Const.SAY_GONE;
+            }
+            if (amount < 1)
+                return OZG_Const.SAY_BAD_AMOUNT;
+            StakeAdd(uid, name, amount);
+            Unask(uid);
+            AddLog("chips " + mine.ToString() + " " + amount.ToString());
+            Changed();
+            return "";
+        }
+        PlayerBase p = OZG_Sessions.PlayerOf(uid);
+        if (!p)
+        {
+            Unask(uid);
+            Changed();
+            return OZG_Const.SAY_GONE;
+        }
+        int no = wanted;
+        bool free = no >= 0 && no < m_R.Seats.Count() && Takeable(m_R.Seats[no]);
+        if (!free)
+            no = NearestTakeable(p.GetPosition());
+        if (no < 0)
+            return OZG_Const.SAY_NO_SEATS;
+        string why;
+        if (!SeatLetIn(p, no, amount, why))
+            return why;
+        ShowTo(p);
+        return "";
+    }
+
+    // Seats a player the host let in, with his chips; the stand's bots sit
+    // this way too.
+    bool SeatLetIn(PlayerBase p, int no, int amount, out string why)
+    {
+        m_Letting = true;
+        bool sat = Sit(p, no, why);
+        m_Letting = false;
+        if (!sat)
+            return false;
+        string uid = OZG_Who.Uid(p);
+        StakeAdd(uid, OZG_Who.Name(p), amount);
+        Unask(uid);
+        AddLog("let " + no.ToString() + " " + amount.ToString());
+        Changed();
+        return true;
+    }
+
+    protected string Refuse(string uid)
+    {
+        if (m_R.ReqUids.Find(uid) < 0)
+            return OZG_Const.SAY_NOT_NOW;
+        Unask(uid);
+        PlayerBase p = OZG_Sessions.PlayerOf(uid);
+        if (p)
+            Say(p, OZG_Const.NOTICE_SIT, OZG_Const.SAY_REFUSED);
+        Changed();
+        return "";
+    }
+
+    // The host gives the player on seat `no` chips: a buy-in or a rebuy.
+    protected string GiveChips(int no, int amount)
+    {
+        if (no < 0 || no >= m_R.Seats.Count())
+            return OZG_Const.SAY_NOT_NOW;
+        if (!Staked())
+            return OZG_Const.SAY_CANNOT;
+        if (m_R.St == OZG_Const.ST_PLAYING)
+            return OZG_Const.SAY_PLAYING;
+        if (amount < 1 || amount > OZG_Const.STAKE_MOST)
+            return OZG_Const.SAY_BAD_AMOUNT;
+        OZG_SeatRec s = m_R.Seats[no];
+        if (s.Uid == "" || (s.St != OZG_Const.SEAT_TAKEN && s.St != OZG_Const.SEAT_KEPT))
+            return OZG_Const.SAY_NOT_NOW;
+        StakeAdd(s.Uid, s.Name, amount);
+        Unask(s.Uid);
+        AddLog("chips " + no.ToString() + " " + amount.ToString());
+        Changed();
+        return "";
+    }
+
+    // The host picks the game played at this place, between deals.
+    protected string ChooseGame(string id)
+    {
+        if (m_R.St == OZG_Const.ST_PLAYING)
+            return OZG_Const.SAY_PLAYING;
+        if (!OZG_Games.Sample(id) || !OZG_Cfg.Get().GameOn(id))
+            return OZG_Const.NO_GAME;
+        if (id == m_R.GameId)
+            return "";
+        m_R.GameId = id;
+        m_R.OptIds.Clear();
+        m_R.OptVals.Clear();
+        DefaultOptions();
+        m_R.Hint = "";
+        m_R.HintUid = "";
+        m_R.St = OZG_Const.ST_LOBBY;
+        m_R.Dealt.Clear();
+        m_R.DealtUids.Clear();
+        m_Game = null;
+        AddLog("game " + id);
+        Changed();
+        return "";
+    }
+
+    // The paper of a game for stakes (design §3), when the game is folded or
+    // the deck gathered and somebody brought chips in.
+    void MakePaper(PlayerBase by, vector at)
+    {
+        SyncStacks();
+        OZG_StakePaper.Make(m_R, by, at);
     }
 
     // ------------------------------------------------------------ what players ask
@@ -958,9 +1309,29 @@ class OZG_Session
             return "";
         }
 
+        if (op == OZG_Const.OP_REBUY)
+        {
+            if (mine < 0)
+                return OZG_Const.SAY_NOT_SEATED;
+            if (!Staked())
+                return OZG_Const.SAY_CANNOT;
+            AskFor(uid, OZG_Who.Name(player), -1);
+            Changed();
+            return "";
+        }
+
         // The rest is the host's.
         if (!IsHost(uid))
             return OZG_Const.SAY_NOT_HOST;
+
+        if (op == OZG_Const.OP_GAME)
+            return ChooseGame(ask.OptValue);
+        if (op == OZG_Const.OP_LET)
+            return LetIn(ask.How, ask.OptValue.ToInt());
+        if (op == OZG_Const.OP_REFUSE)
+            return Refuse(ask.How);
+        if (op == OZG_Const.OP_CHIPS)
+            return GiveChips(ask.SeatNo, ask.OptValue.ToInt());
 
         if (op == OZG_Const.OP_OPT)
             return Opt(ask.OptId, ask.OptValue);
@@ -1062,6 +1433,23 @@ class OZG_Session
         }
         if (seats.Count() < game.MinPlayers() || seats.Count() > game.MaxPlayers())
             return OZG_Const.NO_PLAYERS;
+        // A game for stakes deals the seats with chips (design §3).
+        array<int> amounts = new array<int>();
+        if (game.UsesStakes())
+        {
+            array<int> withChips = new array<int>();
+            for (i = 0; i < seats.Count(); i++)
+            {
+                int chips = ChipsOf(m_R.Seats[seats[i]].Uid);
+                if (chips <= 0)
+                    continue;
+                withChips.Insert(seats[i]);
+                amounts.Insert(chips);
+            }
+            if (withChips.Count() < game.MinPlayers())
+                return OZG_Const.SAY_NO_CHIPS;
+            seats.Copy(withChips);
+        }
 
         map<string, string> options = new map<string, string>();
         for (i = 0; i < m_R.OptIds.Count(); i++)
@@ -1105,6 +1493,8 @@ class OZG_Session
         OZG_Stack stack = new OZG_Stack();
         stack.Read(stackText);
         int dealer = SeatOf(uid);
+        if (!stack.Empty() && !game.HasSleights())
+            return OZG_Const.SAY_SLEIGHT_NOT_GAME;
         if (!stack.Empty())
         {
             string why = StackCheck(player, uid, stack, game, seats, options, hint);
@@ -1131,6 +1521,8 @@ class OZG_Session
         if (stack.PickCards.Count() > 0)
             game.DealFirst(dealer, NamesOf(stack.PickCards, all, keys));
 
+        if (game.UsesStakes())
+            game.TakeStacks(seats, amounts);
         string refusal;
         OZG_Random chance = new OZG_Random();
         if (!game.Begin(seats, options, chance, hint, refusal))
@@ -1139,6 +1531,9 @@ class OZG_Session
         m_Game = game;
         m_R.St = OZG_Const.ST_PLAYING;
         m_R.Dealt.Copy(seats);
+        m_R.DealtUids.Clear();
+        for (i = 0; i < seats.Count(); i++)
+            m_R.DealtUids.Insert(m_R.Seats[seats[i]].Uid);
         m_R.Hint = "";
         m_R.HintUid = "";
         // A new deal: every player's sleights counted anew; the dealer's own
@@ -1378,6 +1773,9 @@ class OZG_Session
         v.DeckReads.Clear();
         OZG_Settings cfg = OZG_Cfg.Get();
         if (cfg.Cheating != 1 || seat < 0 || uid == "")
+            return;
+        OZG_Game kind = OZG_Games.Sample(m_R.GameId);
+        if (!kind || !kind.HasSleights())
             return;
         if (m_R.St == OZG_Const.ST_PLAYING)
         {

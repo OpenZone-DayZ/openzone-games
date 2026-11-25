@@ -16,6 +16,8 @@ class OZG_Bots
 
     static const float STEP_SECONDS = 2.5;
     static const string PREFIX = "bot";
+    // The chips a bot is let in with at a game for stakes.
+    static const int BOT_CHIPS = 1000;
 
     static bool IsBot(string uid)
     {
@@ -40,6 +42,9 @@ class OZG_Bots
     // One move for a seat the game waits for; "" when it has nothing to say.
     static string Choose(OZG_Game game, int seat)
     {
+        // The later games know their own simplest moves.
+        if (game.GameId() != OZG_DurakConst.GAME_ID)
+            return game.BotMove(seat, null);
         array<string> moves = new array<string>();
         game.Moves(seat, moves);
         if (moves.Count() == 0)
@@ -201,7 +206,12 @@ class OZG_Bots
             string name = names[(s_Made - 1) % names.Count()];
             OZG_Who.Fake(body, uid, name);
             string why;
-            if (!s.Sit(body, i, why))
+            bool sat;
+            if (s.Staked())
+                sat = s.SeatLetIn(body, i, BOT_CHIPS, why);
+            else
+                sat = s.Sit(body, i, why);
+            if (!sat)
             {
                 OZG_Who.Unfake(uid);
                 GetGame().ObjectDelete(body);

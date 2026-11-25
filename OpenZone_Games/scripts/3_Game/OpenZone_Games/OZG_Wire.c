@@ -121,6 +121,16 @@ class OZG_WSeat
     float  Z;
     float  Yaw;
     int    PoseNo;
+    // A game played for stakes (stakes-and-games design §3): the chips of
+    // the player on this seat now, and what he brought in; -1 otherwise.
+    int    Chips;
+    int    BroughtIn;
+
+    void OZG_WSeat()
+    {
+        Chips = -1;
+        BroughtIn = -1;
+    }
 }
 
 // A card this client's player reads where it lies back up for that player
@@ -218,6 +228,19 @@ class OZG_WView
     int    SleightsMost;
     int    PicksMost;
     ref array<ref OZG_WDeckCard> DeckReads;
+    // Stakes (stakes-and-games design §3): 1 when the game plays for them;
+    // this player's own chips and what he brought in; 1 when he asked for
+    // chips and waits; for the host alone, the requests waiting: who, his
+    // name, the seat he asked for (-1: chips for the seat he holds).
+    int    Stakes;
+    int    MyChips;
+    int    MyIn;
+    int    AskedChips;
+    ref array<string> ReqUids;
+    ref array<string> ReqNames;
+    ref array<int> ReqSeats;
+    // The games this server offers, for the host to pick from.
+    ref array<string> GameIds;
 
     void OZG_WView()
     {
@@ -229,6 +252,10 @@ class OZG_WView
         Reads = new array<ref OZG_WRead>();
         Notices = new array<ref OZG_WNotice>();
         DeckReads = new array<ref OZG_WDeckCard>();
+        ReqUids = new array<string>();
+        ReqNames = new array<string>();
+        ReqSeats = new array<int>();
+        GameIds = new array<string>();
         Mine = -1;
         HostSeat = -1;
     }

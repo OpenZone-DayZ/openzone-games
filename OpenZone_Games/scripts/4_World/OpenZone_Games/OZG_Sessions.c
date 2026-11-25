@@ -303,6 +303,8 @@ class OZG_Sessions
         else if (by)
             at = by.GetPosition();
 
+        // A game for stakes leaves its paper (stakes-and-games design §3).
+        s.MakePaper(by, at);
         s.CloseAll(why);
         s.DropFans();
         DeleteFile(OZG_Session.PathOf(id));

@@ -142,6 +142,17 @@ class OZG_VerbOps
             return OZG_GFuzz.Run(args, detail);
         if (op == "phands")
             return OZG_GFuzz.PokerHands(args, detail);
+        if (op == "bscores")
+            return OZG_GFuzz.BridgeScores(args, detail);
+        if (op == "pscores")
+        {
+            string wrong = OZG_Preferans.SelfCheck();
+            if (wrong == "")
+                detail = "pscores: 11 deals and a balance right";
+            else
+                detail = "pscores: " + wrong;
+            return true;
+        }
         // -- ops of the later phases go above this line --
         detail = "unknown op '" + op + "'; known: " + KnownOps();
         return false;

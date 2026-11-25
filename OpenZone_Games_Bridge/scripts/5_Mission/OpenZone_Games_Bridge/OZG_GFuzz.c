@@ -56,6 +56,7 @@ class OZG_GFuzz
         int longest = 0;
         int ended = 0;
         int rebuys = 0;
+        int closed = 0;
         string hint = "";
         string last = "";
         for (int d = 0; d < deals; d++)
@@ -163,12 +164,17 @@ class OZG_GFuzz
                     stacks[i] = game.StackOf(dealt[i]);
             }
             hint = game.Outcome();
+            // Preferans: a pool closed starts the next deal on a new sheet.
+            if (id == OZG_PrefConst.GAME_ID && hint.IndexOf(";p=") < 0)
+                closed++;
         }
         int ms = TickCount(started) / 10000;
         detail = "gfuzz " + id + ": " + ended.ToString() + " deals of " + players.ToString();
         detail = detail + ", " + moves.ToString() + " moves, longest " + longest.ToString();
         if (sample.UsesStakes())
             detail = detail + ", rebuys " + rebuys.ToString();
+        if (id == OZG_PrefConst.GAME_ID)
+            detail = detail + ", pools closed " + closed.ToString();
         detail = detail + ", 0 defects, " + ms.ToString() + " ms; last hint " + hint;
         return true;
     }
@@ -277,6 +283,58 @@ class OZG_GFuzz
             checked++;
         }
         detail = "phands: " + checked.ToString() + " cases right";
+        return true;
+    }
+
+    // bridge's score on known cases: "<level><strain> <doubled> <vul 0|1>
+    // <made|down> <over or under> = <score>".
+    //   oz_games {"op":"bscores"}
+    static bool BridgeScores(map<string, string> args, out string detail)
+    {
+        array<string> cases = {
+            "4H 0 0 made 0 = 420",
+            "4H 0 1 made 0 = 620",
+            "3N 0 0 made 0 = 400",
+            "3N 0 1 made 0 = 600",
+            "1N 0 0 made 1 = 120",
+            "2S 1 0 made 0 = 470",
+            "2S 0 0 made 2 = 170",
+            "6C 2 0 made 0 = 1380",
+            "7N 0 1 made 0 = 2220",
+            "3D 1 1 made 1 = 870",
+            "1C 0 0 made 0 = 70",
+            "4S 1 1 down 1 = 200",
+            "3N 1 0 down 3 = 500",
+            "3N 1 0 down 4 = 800",
+            "3N 1 1 down 3 = 800",
+            "1N 2 0 down 1 = 200",
+            "2H 0 1 down 2 = 200",
+            "5D 0 0 down 3 = 150"
+        };
+        int checked = 0;
+        for (int i = 0; i < cases.Count(); i++)
+        {
+            array<string> p = new array<string>();
+            cases[i].Split(" ", p);
+            int level = p[0].Substring(0, 1).ToInt();
+            string strain = p[0].Substring(1, 1);
+            int doubled = p[1].ToInt();
+            bool vul = p[2] == "1";
+            int n = p[4].ToInt();
+            int want = p[6].ToInt();
+            int got;
+            if (p[3] == "made")
+                got = OZG_Bridge.MadeScore(level, strain, doubled, vul, n);
+            else
+                got = OZG_Bridge.DownScore(n, doubled, vul);
+            if (got != want)
+            {
+                detail = "bscores: WRONG on '" + cases[i] + "': " + got.ToString();
+                return true;
+            }
+            checked++;
+        }
+        detail = "bscores: " + checked.ToString() + " cases right";
         return true;
     }
 

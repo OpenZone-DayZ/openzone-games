@@ -89,10 +89,21 @@ class OZG_Settings : OZ_ConfigBase
 
     // 2: the marks. 3: squatting is SFP's squat where SFP runs. 4: noticing.
     // 5: sleights. 6: the loupe gone, its LoupeSeconds the StudySeconds of
-    // studying a card closely.
+    // studying a card closely. 7: the later games (stakes-and-games design).
     override int LatestVersion()
     {
-        return 6;
+        return 7;
+    }
+
+    // Every game of the mod, the order the host steps through them in.
+    static void AllGames(array<string> into)
+    {
+        into.Clear();
+        into.Insert("durak");
+        into.Insert("ochko");
+        into.Insert("poker");
+        into.Insert("preferans");
+        into.Insert("bridge");
     }
 
     // The loupe's length as a file of version 5 or older wrote it, read off
@@ -169,7 +180,7 @@ class OZG_Settings : OZ_ConfigBase
         MarkSeconds = 20;
         MaxSeats = 8;
         GameIds = new array<string>();
-        GameIds.Insert("durak");
+        AllGames(GameIds);
         DebugLog = 0;
         Cheating = 1;
         MarkUses = 20;
@@ -220,6 +231,19 @@ class OZG_Settings : OZ_ConfigBase
             int loupe = OldLoupeSeconds();
             if (loupe > 0)
                 StudySeconds = loupe;
+        }
+        // Version 6 knew durak alone: the later games join the list.
+        if (from < 7)
+        {
+            if (!GameIds)
+                GameIds = new array<string>();
+            array<string> all = new array<string>();
+            AllGames(all);
+            for (int g = 0; g < all.Count(); g++)
+            {
+                if (GameIds.Find(all[g]) < 0)
+                    GameIds.Insert(all[g]);
+            }
         }
         Version = LatestVersion();
         return true;

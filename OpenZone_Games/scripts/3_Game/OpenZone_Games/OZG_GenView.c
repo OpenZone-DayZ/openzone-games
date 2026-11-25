@@ -170,6 +170,15 @@ class OZG_Words
         return s;
     }
 
+    static string W4(string key, string a, string b, string c, string d)
+    {
+        string s = key + SEP + a;
+        s = s + SEP + b;
+        s = s + SEP + c;
+        s = s + SEP + d;
+        return s;
+    }
+
     static string CardArg(string card)
     {
         return "c:" + card;
