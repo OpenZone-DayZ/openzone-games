@@ -264,6 +264,17 @@ FrameWidgetClass OZG_WinStalker {
    vexactsize 1
    priority 30
   }
+  FrameWidgetClass OZG_Air {
+   ignorepointer 1
+   clipchildren 0
+   position 0 0
+   size 1600 900
+   hexactpos 1
+   vexactpos 1
+   hexactsize 1
+   vexactsize 1
+   priority 35
+  }
   FrameWidgetClass OZG_MyPlate {
    ignorepointer 1
    clipchildren 0

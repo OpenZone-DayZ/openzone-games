@@ -164,6 +164,8 @@ modded class MissionGameplay
             OZG_Place where = OZG_Place.OZG_ById(shake.PlaceId);
             if (shake.SoundName != "")
                 OZG_Sounds.PlayLocal(shake.SoundName, where);
+            if (menu && menu.PlaceId() == shake.PlaceId && shake.RegionName != "")
+                menu.ShakeRegion(shake.RegionName);
             return;
         }
 

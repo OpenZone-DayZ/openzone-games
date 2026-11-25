@@ -37,6 +37,14 @@ class OZG_GameMenu : UIScriptedMenu
     protected static const float CARD_BOX = 1.1;
     protected static const float PLATE_PAD = 4;
 
+    // The key the trump's card is drawn under (SlotOfFan and the rest below),
+    // and the parts of the table a shake moves (ShakeRegion): the stock with
+    // the trump under it (the card sharp's design calls it the deck), the
+    // discards, a seat's fan (RegionOfSeat).
+    static const string SLOT_TRUMP = "t";
+    static const string REGION_STOCK = "stock";
+    static const string REGION_DISCARDS = "discards";
+
     protected string m_PlaceId;
     protected string m_Style;
     protected ref OZG_TableLook m_Look;
@@ -105,6 +113,22 @@ class OZG_GameMenu : UIScriptedMenu
     protected ref array<float> m_AtkW;
     protected ref array<float> m_AtkH;
 
+    // Every card drawn with a key or a region (Card), for the flights and the
+    // shakes: its frame, the key a flight lands on it by, the region a shake
+    // moves it with, and where it rests, in pixels of its parent.
+    protected ref array<Widget> m_DrawnW;
+    protected ref array<string> m_DrawnKey;
+    protected ref array<string> m_DrawnRegion;
+    protected ref array<float> m_DrawnX;
+    protected ref array<float> m_DrawnY;
+    // The keys whose card waits for a flight to land, drawn hidden until then:
+    // a key is here once for every flight on its way to it.
+    protected ref array<string> m_Hidden;
+    // The layer the flying cards are made in (OZG_Air), and what moves them.
+    protected Widget m_Air;
+    protected ref OZG_Flights m_Flights;
+    protected ref OZG_Shakes m_Shakes;
+
     // What the server last said.
     protected ref OZG_WView m_V;
     protected ref OZG_DurakPublic m_Pub;
@@ -137,6 +161,14 @@ class OZG_GameMenu : UIScriptedMenu
         m_AtkY = new array<float>();
         m_AtkW = new array<float>();
         m_AtkH = new array<float>();
+        m_DrawnW = new array<Widget>();
+        m_DrawnKey = new array<string>();
+        m_DrawnRegion = new array<string>();
+        m_DrawnX = new array<float>();
+        m_DrawnY = new array<float>();
+        m_Hidden = new array<string>();
+        m_Flights = new OZG_Flights();
+        m_Shakes = new OZG_Shakes();
         if (!s_Reslashed)
             s_Reslashed = new array<string>();
     }
@@ -235,6 +267,9 @@ class OZG_GameMenu : UIScriptedMenu
     {
         if (style != "stalker")
             style = "classic";
+        // Nothing of the old look flies or shakes on: its cards go with it.
+        LandAll();
+        m_Shakes.Clear();
         ClearPictures();
         ClearList(m_SeatW);
         m_SeatOf.Clear();
@@ -269,6 +304,7 @@ class OZG_GameMenu : UIScriptedMenu
         m_LogTitle = TextWidget.Cast(Find("OZG_LogTitle"));
         m_StockLabel = TextWidget.Cast(Find("OZG_StockLabel"));
         m_DiscardLabel = TextWidget.Cast(Find("OZG_DiscardLabel"));
+        m_Air = Find("OZG_Air");
         // As many log lines as the look has.
         for (int i = 0; i < 40; i++)
         {
@@ -354,6 +390,9 @@ class OZG_GameMenu : UIScriptedMenu
     {
         if (m_V && m_V.Mine < 0)
             Send(OZG_Const.OP_UNWATCH, "", -1, "", "", "", 0);
+        // No card stays in the air, and no part of the table shaken.
+        LandAll();
+        m_Shakes.Clear();
         ClearPictures();
         ClearList(m_SeatW);
         m_SeatOf.Clear();
@@ -448,6 +487,8 @@ class OZG_GameMenu : UIScriptedMenu
             return;
         }
 
+        TickAir(timeslice);
+        TickShakes(timeslice);
         TrackHover();
 
         // The pulse on the place says a newer revision than the one shown:
@@ -518,6 +559,11 @@ class OZG_GameMenu : UIScriptedMenu
 
     protected void ClearPictures()
     {
+        m_DrawnW.Clear();
+        m_DrawnKey.Clear();
+        m_DrawnRegion.Clear();
+        m_DrawnX.Clear();
+        m_DrawnY.Clear();
         ClearList(m_FanPics);
         ClearList(m_TablePics);
         ClearList(m_HandPics);
@@ -721,8 +767,10 @@ class OZG_GameMenu : UIScriptedMenu
 
     // A card on the table: its picture with the middle at (cx, cy), w x h
     // units, turned clockwise by `turn` degrees, with its shadow under it when
-    // `shadow`, and its glow in the colour `glow` when that is not 0.
-    protected Widget Card(array<Widget> into, string picture, float cx, float cy, float w, float h, float turn, int glow, bool shadow)
+    // `shadow`, and its glow in the colour `glow` when that is not 0. `slot`
+    // is the key a flight lands on it by, `region` the part of the table a
+    // shake moves it with; "" for none.
+    protected Widget Card(array<Widget> into, string picture, float cx, float cy, float w, float h, float turn, int glow, bool shadow, string slot = "", string region = "")
     {
         Widget card = MakeLayout(LAYOUT_CARD, m_TableBox, "OZG_Card");
         if (!card)
@@ -745,6 +793,7 @@ class OZG_GameMenu : UIScriptedMenu
             shade.Show(shadow);
         Place(card, cx, cy, BoxOf(w, h), turn);
         into.Insert(card);
+        KeepDrawn(card, slot, region, cx, cy, BoxOf(w, h));
         return card;
     }
 
@@ -760,6 +809,467 @@ class OZG_GameMenu : UIScriptedMenu
         float along = dx * c + dy * s;
         float across = dy * c - dx * s;
         return Math.AbsFloat(along) <= w * 0.5 && Math.AbsFloat(across) <= h * 0.5;
+    }
+
+    // ------------------------------------------------------------ what was drawn, for flights and shakes
+
+    // The keys a flight lands on a card by: the index-th back of a seat's fan
+    // (as PaintFan lays it), the index-th card of the player's hand (in the
+    // order it is shown), an attack card of the bout or the card that beat
+    // it, the k-th back of the discards' heap; the trump is SLOT_TRUMP.
+    static string SlotOfFan(int seat, int index)
+    {
+        return "f" + seat.ToString() + "." + index.ToString();
+    }
+
+    static string SlotOfHand(int index)
+    {
+        return "h" + index.ToString();
+    }
+
+    static string SlotOfBout(int index, bool defence)
+    {
+        if (defence)
+            return "d" + index.ToString();
+        return "a" + index.ToString();
+    }
+
+    static string SlotOfHeap(int k)
+    {
+        return "x" + k.ToString();
+    }
+
+    // The region of a seat's fan, for ShakeRegion.
+    static string RegionOfSeat(int seat)
+    {
+        return "seat" + seat.ToString();
+    }
+
+    // A card drawn into the registry; hidden when a flight still has to land
+    // on its key. Its place at rest is kept in pixels, for a shake.
+    protected void KeepDrawn(Widget card, string slot, string region, float cx, float cy, float side)
+    {
+        if (!card)
+            return;
+        if (slot == "" && region == "")
+            return;
+        float half = side * 0.5;
+        m_DrawnW.Insert(card);
+        m_DrawnKey.Insert(slot);
+        m_DrawnRegion.Insert(region);
+        m_DrawnX.Insert((cx - half) * m_K);
+        m_DrawnY.Insert((cy - half) * m_K);
+        if (slot != "" && m_Hidden.Find(slot) >= 0)
+            card.Show(false);
+    }
+
+    // The registry forgets the cards of one part of the table before that
+    // part is drawn again and its pictures go.
+    protected void ForgetDrawn(array<Widget> part)
+    {
+        for (int i = m_DrawnW.Count() - 1; i >= 0; i--)
+        {
+            Widget w = m_DrawnW[i];
+            if (w && part.Find(w) < 0)
+                continue;
+            m_DrawnW.RemoveOrdered(i);
+            m_DrawnKey.RemoveOrdered(i);
+            m_DrawnRegion.RemoveOrdered(i);
+            m_DrawnX.RemoveOrdered(i);
+            m_DrawnY.RemoveOrdered(i);
+        }
+    }
+
+    // ------------------------------------------------------------ where cards lie
+
+    // The bottom seat of a view (BottomSeat for any view): the player's own;
+    // for a watcher the first seat somebody holds; -1 for none.
+    protected int BottomOf(OZG_WView v)
+    {
+        if (!v)
+            return -1;
+        if (v.Mine >= 0)
+            return v.Mine;
+        for (int i = 0; i < v.Seats.Count(); i++)
+        {
+            if (v.Seats[i].St != OZG_Const.SEAT_FREE)
+                return i;
+        }
+        return -1;
+    }
+
+    // The seats round the table in a view, from the bottom one's left: every
+    // seat somebody holds but the bottom one (PaintSeats).
+    protected void RoundOf(OZG_WView v, int bottom, array<int> into)
+    {
+        into.Clear();
+        int n = v.Seats.Count();
+        for (int k = 1; k < n; k++)
+        {
+            int no = (bottom + k) % n;
+            if (v.Seats[no].St != OZG_Const.SEAT_FREE)
+                into.Insert(no);
+        }
+    }
+
+    // The fan of the seat `no` as the view `v` lays it out: its middle, turn
+    // and scale. False when that seat has no fan there: a free seat, or the
+    // player's own (his hand is the faces at the bottom).
+    protected bool FanOf(OZG_WView v, int no, out float x, out float y, out float turn, out float scale)
+    {
+        x = 0;
+        y = 0;
+        turn = 0;
+        scale = 1;
+        if (!v || no < 0 || no >= v.Seats.Count())
+            return false;
+        int bottom = BottomOf(v);
+        if (no == bottom)
+        {
+            if (v.Mine >= 0)
+                return false;
+            x = m_Look.HandX;
+            y = m_Look.HandY + 20;
+            return true;
+        }
+        array<int> round = new array<int>();
+        RoundOf(v, bottom, round);
+        int at = round.Find(no);
+        if (at < 0)
+            return false;
+        array<ref OZG_TableSpot> spots = new array<ref OZG_TableSpot>();
+        m_Look.Spots(round.Count(), spots);
+        OZG_TableSpot spot = spots[at];
+        x = spot.X;
+        y = spot.Y;
+        turn = spot.Turn;
+        scale = spot.Scale;
+        return true;
+    }
+
+    // Where the i-th of `count` backs of a fan about (x, y), turned by `turn`,
+    // rests: its middle and its own turn (PaintFan).
+    protected void FanCardAt(float x, float y, float turn, float scale, int count, int i, out float cx, out float cy, out float a)
+    {
+        float spread = m_Look.FanSpread;
+        if (count > 1 && spread * (count - 1) > m_Look.FanFan)
+            spread = m_Look.FanFan / (count - 1);
+        float r = m_Look.FanR * scale;
+        float tr = turn * Math.DEG2RAD;
+        float c = Math.Cos(tr);
+        float s = Math.Sin(tr);
+        float mid = (count - 1) * 0.5;
+        float lean = (i - mid) * spread;
+        float ar = lean * Math.DEG2RAD;
+        float lx = r * Math.Sin(ar);
+        float ly = r - r * Math.Cos(ar);
+        cx = x + lx * c - ly * s;
+        cy = y + lx * s + ly * c;
+        a = lean + turn;
+    }
+
+    // Where the i-th of n cards of the player's hand rests before the pointer
+    // lifts it: its middle and its turn (PaintHand).
+    protected void HandCardAt(int n, int i, out float x, out float y, out float a)
+    {
+        float spread = m_Look.HandSpread;
+        if (n > 1 && spread * (n - 1) > m_Look.HandFan)
+            spread = m_Look.HandFan / (n - 1);
+        float r = m_Look.HandR;
+        float mid = (n - 1) * 0.5;
+        a = (i - mid) * spread;
+        float ar = a * Math.DEG2RAD;
+        x = m_Look.HandX + r * Math.Sin(ar);
+        y = m_Look.HandY + r - r * Math.Cos(ar);
+    }
+
+    // Where the index-th attack card of a bout of `n` lies, or the card that
+    // beat it (`defence`: laid over it and turned a little): middle, size and
+    // turn (PaintBout). One row of up to three; two rows of smaller cards from
+    // four.
+    protected void BoutCardAt(int n, int index, bool defence, out float cx, out float cy, out float w, out float h, out float turn)
+    {
+        float scale = 1;
+        float pitch = 150;
+        int perRow = n;
+        int rows = 1;
+        if (n == 3)
+            pitch = 116;
+        if (n >= 4)
+        {
+            rows = 2;
+            perRow = (n + 1) / 2;
+            scale = 0.82;
+            pitch = 104;
+            if (perRow > 3)
+                pitch = 312.0 / (perRow - 1);
+        }
+        w = m_Look.BoutW * scale;
+        h = m_Look.BoutH * scale;
+        float ox = 18 * scale;
+        float oy = 22 * scale;
+        int row = 0;
+        int col = index;
+        int inRow = perRow;
+        if (rows == 2 && index >= perRow)
+        {
+            row = 1;
+            col = index - perRow;
+            inRow = n - perRow;
+        }
+        float span = pitch * (inRow - 1) + w + ox;
+        float left = m_Look.BoutX - span * 0.5 + col * pitch;
+        float top = m_Look.BoutY;
+        if (rows == 2)
+            top = m_Look.BoutY - 66 + row * 118;
+        cx = left + w * 0.5;
+        cy = top + h * 0.5;
+        turn = 0;
+        if (defence)
+        {
+            cx = cx + ox;
+            cy = cy + oy;
+            turn = 12;
+        }
+    }
+
+    // The middle of the stock's back number `k` from the bottom (PaintTable).
+    protected void StockLayerAt(int k, out float sx, out float sy)
+    {
+        sx = m_Look.StockX - k * 1.2 + m_Look.PileW * 0.5;
+        sy = m_Look.StockY - k * 1.6 + m_Look.PileH * 0.5;
+    }
+
+    // How many backs the stock shows for so many cards in it: the trump lies
+    // apart, and six backs at most.
+    protected int StockLayers(int stockCount)
+    {
+        int layers = stockCount - 1;
+        if (layers > 6)
+            layers = 6;
+        return layers;
+    }
+
+    // A card of the seat `no`'s fan as the view `v` lays it out: the index-th
+    // of `count` backs, or the fan's middle (index -1). Null when that seat has
+    // no fan there.
+    OZG_CardSpot SpotOfFan(OZG_WView v, int no, int index, int count)
+    {
+        float x;
+        float y;
+        float turn;
+        float scale;
+        if (!FanOf(v, no, x, y, turn, scale))
+            return null;
+        float w = m_Look.FanW * scale;
+        float h = m_Look.FanH * scale;
+        if (index < 0 || count < 1)
+            return OZG_CardSpot.Make(x, y, w, h, turn);
+        float cx;
+        float cy;
+        float a;
+        FanCardAt(x, y, turn, scale, count, index, cx, cy, a);
+        return OZG_CardSpot.Make(cx, cy, w, h, a);
+    }
+
+    // The index-th of `count` cards of the player's own hand, faces, in the
+    // order the window shows them (SortHand).
+    OZG_CardSpot SpotOfHand(int index, int count)
+    {
+        float x;
+        float y;
+        float a;
+        HandCardAt(count, index, x, y, a);
+        return OZG_CardSpot.Make(x, y, m_Look.CardW, m_Look.CardH, a);
+    }
+
+    // The top of a stock of `stockCount` cards: where a card dealt or drawn
+    // leaves from; with no back left on it, the trump's place.
+    OZG_CardSpot SpotOfStock(int stockCount)
+    {
+        int layers = StockLayers(stockCount);
+        if (layers < 1)
+            return SpotOfTrump();
+        float sx;
+        float sy;
+        StockLayerAt(layers - 1, sx, sy);
+        return OZG_CardSpot.Make(sx, sy, m_Look.PileW, m_Look.PileH, 0);
+    }
+
+    // The trump, turned under the stock.
+    OZG_CardSpot SpotOfTrump()
+    {
+        float tx = m_Look.TrumpX + m_Look.PileW * 0.5;
+        float ty = m_Look.TrumpY + m_Look.PileH * 0.5;
+        return OZG_CardSpot.Make(tx, ty, m_Look.PileW, m_Look.PileH, 90);
+    }
+
+    // The k-th back of the discards' heap.
+    OZG_CardSpot SpotOfDiscards(int k)
+    {
+        float dx;
+        float dy;
+        float dt;
+        OZG_TableLook.HeapAt(k, dx, dy, dt);
+        float hx = m_Look.DiscardX + dx;
+        float hy = m_Look.DiscardY + dy;
+        return OZG_CardSpot.Make(hx, hy, m_Look.DiscardW, m_Look.DiscardH, dt);
+    }
+
+    // The index-th attack card of a bout of `count` cards, or the card that
+    // beat it.
+    OZG_CardSpot SpotOfBout(int count, int index, bool defence)
+    {
+        float cx;
+        float cy;
+        float w;
+        float h;
+        float turn;
+        BoutCardAt(count, index, defence, cx, cy, w, h, turn);
+        return OZG_CardSpot.Make(cx, cy, w, h, turn);
+    }
+
+    // How many backs the heap shows for so many cards discarded: a back for
+    // every two, OZG_TableLook.HEAP at most.
+    int HeapOf(int discardCount)
+    {
+        int heap = (discardCount + 1) / 2;
+        if (heap > OZG_TableLook.HEAP)
+            heap = OZG_TableLook.HEAP;
+        return heap;
+    }
+
+    // The pictures a flight wears: a card's face in a look, a look's back
+    // (-1: the deck's own).
+    string PictureOfFace(string card, int look)
+    {
+        return PictureOf("c_" + OZG_Cards.FaceOf(card), look);
+    }
+
+    string PictureOfBack(int look)
+    {
+        return PictureOf("back", look);
+    }
+
+    // ------------------------------------------------------------ flights and shakes
+
+    // A card flies over the table (OZG_Flights): `picture` on its face at
+    // first, `pictureLand` from halfway ("" keeps it), from `from` to `to`,
+    // after `delay` seconds, for `seconds`. The card drawn under the key
+    // `reveal` is hidden until it lands. Nothing waits for it, and a newer
+    // view lands it at once. The card sharp's fourth phase flies the sleights
+    // with this.
+    OZG_Flight Fly(string picture, string pictureLand, OZG_CardSpot from, OZG_CardSpot to, float delay, float seconds, string reveal)
+    {
+        if (!m_Air || !from || !to)
+            return null;
+        Widget card = MakeLayout(LAYOUT_CARD, m_Air, "OZG_Card");
+        if (!card)
+            return null;
+        ImageWidget face = ImageWidget.Cast(card.FindAnyWidget("OZG_CardFace"));
+        Widget halo = card.FindAnyWidget("OZG_CardGlow");
+        if (face)
+        {
+            face.LoadImageFile(0, picture);
+            face.SetImage(0);
+        }
+        if (halo)
+            halo.Show(false);
+        if (reveal != "")
+            HideSlot(reveal);
+        return m_Flights.Launch(card, pictureLand, from, to, delay, seconds, reveal);
+    }
+
+    // The card drawn under `key` waits, hidden, for one more flight.
+    void HideSlot(string key)
+    {
+        m_Hidden.Insert(key);
+        for (int i = 0; i < m_DrawnW.Count(); i++)
+        {
+            if (m_DrawnKey[i] == key && m_DrawnW[i])
+                m_DrawnW[i].Show(false);
+        }
+    }
+
+    // One flight onto `key` landed: the card drawn there shows once no other
+    // is on its way to it.
+    protected void RevealSlot(string key)
+    {
+        m_Hidden.RemoveItem(key);
+        if (m_Hidden.Find(key) >= 0)
+            return;
+        for (int i = 0; i < m_DrawnW.Count(); i++)
+        {
+            if (m_DrawnKey[i] == key && m_DrawnW[i])
+                m_DrawnW[i].Show(true);
+        }
+    }
+
+    // Every card in the air at once where it lands, and every hidden card
+    // shown: a newer view, a look built anew, the window closing.
+    protected void LandAll()
+    {
+        int n = m_Flights.Count();
+        array<string> landed = new array<string>();
+        m_Flights.Finish(landed);
+        for (int i = 0; i < landed.Count(); i++)
+            RevealSlot(landed[i]);
+        m_Hidden.Clear();
+        if (n > 0)
+            OZG_Log.Dbg("flights: " + n.ToString() + " landed at once");
+    }
+
+    // A small shake of a region of the table: a seat's fan (RegionOfSeat),
+    // the discards (REGION_DISCARDS) or the stock (REGION_STOCK). What a
+    // player who saw a sleight is shown (card sharp's design §6.1).
+    void ShakeRegion(string region)
+    {
+        if (region == "")
+            return;
+        int cards = 0;
+        for (int i = 0; i < m_DrawnRegion.Count(); i++)
+        {
+            if (m_DrawnRegion[i] == region)
+                cards++;
+        }
+        m_Shakes.Start(region);
+        OZG_Log.Dbg("shake " + region + ": " + cards.ToString() + " cards");
+    }
+
+    // The cards in the air, one frame on; a landed card shows its key.
+    protected void TickAir(float dt)
+    {
+        if (m_Flights.Count() == 0)
+            return;
+        array<string> landed = new array<string>();
+        m_Flights.Tick(dt, m_K, landed);
+        for (int i = 0; i < landed.Count(); i++)
+            RevealSlot(landed[i]);
+        if (m_Flights.Count() == 0)
+            OZG_Log.Dbg("flights: all landed");
+    }
+
+    // The shaking regions, one frame on: their cards moved off their rest,
+    // and put back when the shake ends.
+    protected void TickShakes(float dt)
+    {
+        if (!m_Shakes.Busy())
+            return;
+        array<string> ended = new array<string>();
+        m_Shakes.Tick(dt, ended);
+        float dx;
+        float dy;
+        for (int i = 0; i < m_DrawnW.Count(); i++)
+        {
+            string region = m_DrawnRegion[i];
+            Widget w = m_DrawnW[i];
+            if (region == "" || !w)
+                continue;
+            bool moving = m_Shakes.Offset(region, dx, dy);
+            if (!moving && ended.Find(region) < 0)
+                continue;
+            w.SetPos(m_DrawnX[i] + dx * m_K, m_DrawnY[i] + dy * m_K);
+        }
     }
 
     // ------------------------------------------------------------ marks
@@ -990,14 +1500,7 @@ class OZG_GameMenu : UIScriptedMenu
     // nobody holds one).
     protected int BottomSeat()
     {
-        if (m_V.Mine >= 0)
-            return m_V.Mine;
-        for (int i = 0; i < m_V.Seats.Count(); i++)
-        {
-            if (m_V.Seats[i].St != OZG_Const.SEAT_FREE)
-                return i;
-        }
-        return -1;
+        return BottomOf(m_V);
     }
 
     // What the game says of a seat now, and whether it waits for that seat.
@@ -1065,6 +1568,7 @@ class OZG_GameMenu : UIScriptedMenu
 
     protected void PaintSeats()
     {
+        ForgetDrawn(m_FanPics);
         ClearList(m_FanPics);
         ClearList(m_SeatW);
         m_SeatOf.Clear();
@@ -1085,12 +1589,7 @@ class OZG_GameMenu : UIScriptedMenu
             return;
         }
         array<int> round = new array<int>();
-        for (int k = 1; k < n; k++)
-        {
-            int no = (bottom + k) % n;
-            if (m_V.Seats[no].St != OZG_Const.SEAT_FREE)
-                round.Insert(no);
-        }
+        RoundOf(m_V, bottom, round);
         array<ref OZG_TableSpot> spots = new array<ref OZG_TableSpot>();
         m_Look.Spots(round.Count(), spots);
         for (int r = 0; r < round.Count(); r++)
@@ -1179,7 +1678,8 @@ class OZG_GameMenu : UIScriptedMenu
             float cy = y + lx * s + ly * c;
             int look = LookAt(looks, i);
             string back = PictureOf("back", look);
-            Widget card = Card(m_FanPics, back, cx, cy, w, h, a + turn, 0, true);
+            // A flight's slot and the seat's region (OZG_Flights.c).
+            Widget card = Card(m_FanPics, back, cx, cy, w, h, a + turn, 0, true, SlotOfFan(seat, i), RegionOfSeat(seat));
             int readNo = ReadAt(seat, look, used);
             int noticeNo = -1;
             if (readNo < 0)
@@ -1214,6 +1714,7 @@ class OZG_GameMenu : UIScriptedMenu
 
     protected void PaintTable()
     {
+        ForgetDrawn(m_TablePics);
         ClearList(m_TablePics);
         m_AtkX.Clear();
         m_AtkY.Clear();
@@ -1238,7 +1739,7 @@ class OZG_GameMenu : UIScriptedMenu
             if (m_Pub.StockCount > 0)
             {
                 string trump = "c_" + OZG_Cards.FaceOf(m_Pub.TrumpCard);
-                Widget trumpPic = Card(m_TablePics, PictureOf(trump, m_Pub.TrumpLook), tx, ty, pw, ph, 90, 0, true);
+                Widget trumpPic = Card(m_TablePics, PictureOf(trump, m_Pub.TrumpLook), tx, ty, pw, ph, 90, 0, true, SLOT_TRUMP, REGION_STOCK);
                 // A trump this player notices shows its speck (design §4.5).
                 int trumpNotice = NoticeOn(m_Pub.TrumpCard);
                 if (trumpPic && trumpNotice >= 0)
@@ -1247,7 +1748,7 @@ class OZG_GameMenu : UIScriptedMenu
             else
             {
                 string suit = "suit_" + m_Pub.TrumpCard.Substring(1, 1);
-                Card(m_TablePics, Picture(suit), tx, ty, 56, 78, 0, 0, false);
+                Card(m_TablePics, Picture(suit), tx, ty, 56, 78, 0, 0, false, "", REGION_STOCK);
             }
         }
         int layers = m_Pub.StockCount - 1;
@@ -1264,7 +1765,7 @@ class OZG_GameMenu : UIScriptedMenu
                 look = m_Pub.StockTop;
             float sx = m_Look.StockX - k * 1.2 + pw * 0.5;
             float sy = m_Look.StockY - k * 1.6 + ph * 0.5;
-            Widget layer = Card(m_TablePics, PictureOf("back", look), sx, sy, pw, ph, 0, 0, true);
+            Widget layer = Card(m_TablePics, PictureOf("back", look), sx, sy, pw, ph, 0, 0, true, "", REGION_STOCK);
             // The top card: a back this player reads carries its mark (design
             // §4.4), a back he notices its sign (§4.5).
             int topRead = -1;
@@ -1291,7 +1792,7 @@ class OZG_GameMenu : UIScriptedMenu
             OZG_TableLook.HeapAt(k, dx, dy, dt);
             float hx = m_Look.DiscardX + dx;
             float hy = m_Look.DiscardY + dy;
-            Card(m_TablePics, PictureOf("back", -1), hx, hy, m_Look.DiscardW, m_Look.DiscardH, dt, 0, true);
+            Card(m_TablePics, PictureOf("back", -1), hx, hy, m_Look.DiscardW, m_Look.DiscardH, dt, 0, true, SlotOfHeap(k), REGION_DISCARDS);
         }
 
         PaintBout();
@@ -1366,7 +1867,7 @@ class OZG_GameMenu : UIScriptedMenu
             // One step at a time: a long expression does not compile.
             string attackFace = "c_" + OZG_Cards.FaceOf(m_Pub.AttackCards[i]);
             int attackLook = LookAt(m_Pub.AttackLooks, i);
-            Widget attackPic = Card(m_TablePics, PictureOf(attackFace, attackLook), cx, cy, w, h, 0, glow, true);
+            Widget attackPic = Card(m_TablePics, PictureOf(attackFace, attackLook), cx, cy, w, h, 0, glow, true, SlotOfBout(i, false));
             // A card of the table this player notices shows its speck (design §4.5).
             int attackNotice = NoticeOn(m_Pub.AttackCards[i]);
             if (attackPic && attackNotice >= 0)
@@ -1383,7 +1884,7 @@ class OZG_GameMenu : UIScriptedMenu
             {
                 string beatenFace = "c_" + OZG_Cards.FaceOf(beaten);
                 int beatenLook = LookAt(m_Pub.DefenceLooks, i);
-                Widget beatenPic = Card(m_TablePics, PictureOf(beatenFace, beatenLook), cx + ox, cy + oy, w, h, 12, 0, true);
+                Widget beatenPic = Card(m_TablePics, PictureOf(beatenFace, beatenLook), cx + ox, cy + oy, w, h, 12, 0, true, SlotOfBout(i, true));
                 int beatenNotice = NoticeOn(beaten);
                 if (beatenPic && beatenNotice >= 0)
                     SpeckFace(beatenPic, w, h, m_V.Notices[beatenNotice]);
@@ -1401,8 +1902,32 @@ class OZG_GameMenu : UIScriptedMenu
         return group * 100 + OZG_Cards.RankOf(card);
     }
 
+    // A hand in the order the window shows it (SortKey). The flights find a
+    // card's place in it.
+    void SortHand(array<string> held, string trumpSuit, array<string> into)
+    {
+        into.Clear();
+        if (!held)
+            return;
+        into.Copy(held);
+        int n = into.Count();
+        for (int i = 1; i < n; i++)
+        {
+            string moved = into[i];
+            int key = SortKey(moved, trumpSuit);
+            int j = i - 1;
+            while (j >= 0 && SortKey(into[j], trumpSuit) > key)
+            {
+                into[j + 1] = into[j];
+                j--;
+            }
+            into[j + 1] = moved;
+        }
+    }
+
     protected void PaintHand()
     {
+        ForgetDrawn(m_HandPics);
         ClearList(m_HandPics);
         ClearHandMarks();
         if (!m_Own || !m_Own.Held || m_V.St == OZG_Const.ST_LOBBY)
@@ -1412,23 +1937,11 @@ class OZG_GameMenu : UIScriptedMenu
         if (m_Pub)
             trumpSuit = OZG_Cards.SuitOf(m_Pub.TrumpCard);
 
+        // The flights find a card's place by the same order (SortHand).
         array<string> cards = new array<string>();
-        cards.Copy(m_Own.Held);
+        SortHand(m_Own.Held, trumpSuit, cards);
         int n = cards.Count();
         int i;
-        int j;
-        for (i = 1; i < n; i++)
-        {
-            string moved = cards[i];
-            int key = SortKey(moved, trumpSuit);
-            j = i - 1;
-            while (j >= 0 && SortKey(cards[j], trumpSuit) > key)
-            {
-                cards[j + 1] = cards[j];
-                j--;
-            }
-            cards[j + 1] = moved;
-        }
 
         float spread = m_Look.HandSpread;
         if (n > 1 && spread * (n - 1) > m_Look.HandFan)
@@ -1457,7 +1970,7 @@ class OZG_GameMenu : UIScriptedMenu
             // not by its place in the row.
             string cardFace = "c_" + OZG_Cards.FaceOf(card);
             int cardLook = LookAt(m_Own.HeldLooks, m_Own.Held.Find(card));
-            Widget pic = Card(m_HandPics, PictureOf(cardFace, cardLook), x, y, m_Look.CardW, m_Look.CardH, a, glow, true);
+            Widget pic = Card(m_HandPics, PictureOf(cardFace, cardLook), x, y, m_Look.CardW, m_Look.CardH, a, glow, true, SlotOfHand(i));
             if (!pic)
                 continue;
             // A card of the hand this player notices shows its speck (design §4.5).

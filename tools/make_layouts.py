@@ -248,6 +248,9 @@ def window(look):
     k.append(text("OZG_Said", exact(*L["said"]), 15, ETELKA_S, c["warm"], 25, "center"))
     k.append(text("OZG_Result", exact(*L["result"]), 28, result_font, c["gold"], 26, "center", "", [("visible", 0)]))
     k.append(frame("OZG_Seats", exact(0, 0, W, H), 30))
+    # The cards in the air (OZG_Flights.c): over the table and the plates,
+    # under the buttons; a frame takes no pointer, and nor does a card.
+    k.append(frame("OZG_Air", exact(0, 0, W, H), 35))
 
     # The player's own plate, under the hand.
     x, y, w, h = L["my_plate"]
