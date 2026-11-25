@@ -76,6 +76,11 @@ hold'em — 5/10", the host's rows "Game: Texas hold'em", "Your chips: 0 (brough
 (`bots on=0`, waiting): every plate "chips 1000", the log "Survivor gets 1000 chips", "Ostap
 sits down with 1000 chips" and so on, the status "Choose the variant and deal".
 
+After the server and the client were restarted (to load the VPP glue, §4) the place came
+back with its stakes: the host's "Your chips: 1000 (brought in 1000)", the three bots' seats
+kept with "chips 1000 · away" (the stand's bots live one run of the server), the log as it
+was, the status "Players needed: 2".
+
 Not seen yet: a hand of hold'em dealt and played in the window; ochko, preferans and bridge
 in the window; the request to sit and "Let in" from the host's side; the rebuy; the paper
 after a fold or a gather; the Ukrainian client. The owner stopped the stand work at this
