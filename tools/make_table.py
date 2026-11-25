@@ -64,7 +64,19 @@ ROUND = [
     ("ozg_round_btn_edge_ca", (120, 40), 4, 2.0, (512, 128)),
     ("ozg_round_wide_ca", (352, 38), 4, 0.0, (1024, 128)),
     ("ozg_round_close_ca", (32, 28), 4, 0.0, (128, 128)),
+    # The card sharp's phase 4 (2026-11-25): the pockets' box and its rim, one
+    # unit and two (armed); the rim of an armed sleight's button; a tick box.
+    ("ozg_round_pocket_ca", (222, 152), 8, 0.0, (512, 512)),
+    ("ozg_round_pocket_edge_ca", (222, 152), 8, 1.0, (512, 512)),
+    ("ozg_round_pocket_edge2_ca", (222, 152), 8, 2.0, (512, 512)),
+    ("ozg_round_wide_edge_ca", (352, 40), 4, 2.0, (1024, 128)),
+    ("ozg_round_tick_ca", (24, 24), 4, 0.0, (128, 128)),
+    ("ozg_round_tick_edge_ca", (24, 24), 4, 2.0, (128, 128)),
+    # The ring round a pocket's card picked for a swap: the mock-up's 3 units
+    # round a 54 x 76 card with corners of 5.
+    ("ozg_round_ring_ca", (60, 82), 8, 3.0, (256, 512)),
 ]
+TICK = (24, 24)             # both: the tick in a dealer's tick box
 
 
 def noise(rnd, size, grain):
@@ -425,6 +437,21 @@ def rounded(size, radius, edge=0.0, k=4):
     return art.filter(ImageFilter.GaussianBlur(0.4))
 
 
+def tick():
+    """The tick a dealer puts by a card he deals to himself, as the mock-up drew
+    it (three points, three units wide): white, tinted by the window. 24 x 24
+    units."""
+    k = 8
+    art = Image.new("RGBA", (TICK[0] * k, TICK[1] * k), (255, 255, 255, 0))
+    d = ImageDraw.Draw(art)
+    pts = [(5 * k, 12 * k), (10 * k, 18 * k), (19 * k, 6 * k)]
+    d.line(pts, fill=(255, 255, 255, 255), width=3 * k, joint="curve")
+    for x, y in (pts[0], pts[2]):
+        r = 1.5 * k
+        d.ellipse((x - r, y - r, x + r, y + r), fill=(255, 255, 255, 255))
+    return art.filter(ImageFilter.GaussianBlur(0.5 * k / 4))
+
+
 def classic_window():
     """The classic window's own body, as the mock-up drew it: a grey-green rim,
     the dark window, its title band and the side panel, all with round corners.
@@ -481,19 +508,29 @@ def main():
         paa = sys.argv[sys.argv.index("--paa") + 1]
     if "--no-paa" in sys.argv or not os.path.isfile(paa):
         paa = None
+    # --only <stem>,<stem>: those pictures alone, the others left as they are.
+    only = None
+    if "--only" in sys.argv:
+        only = set(sys.argv[sys.argv.index("--only") + 1].split(","))
     os.makedirs(ART, exist_ok=True)
     os.makedirs(PAA_OUT, exist_ok=True)
-    save(felt_round(felt()), "ozg_table_felt_ca", (2048, 1024), paa)
-    save(classic_window(), "ozg_table_window_ca", (2048, 1024), paa)
-    save(cloth(), "ozg_table_cloth_co", (2048, 1024), paa)
-    save(table_frame(), "ozg_table_frame_ca", (2048, 1024), paa)
-    save(side_panel(), "ozg_table_side_ca", (512, 1024), paa)
-    save(tag(), "ozg_table_tag_ca", (512, 128), paa)
-    save(tag_edge(), "ozg_table_tagedge_ca", (512, 128), paa)
-    save(glow(), "ozg_table_glow_ca", (256, 256), paa)
-    save(shadow(), "ozg_table_shadow_ca", (256, 256), paa)
+
+    def out(make, stem, size):
+        if only is None or stem in only:
+            save(make(), stem, size, paa)
+
+    out(lambda: felt_round(felt()), "ozg_table_felt_ca", (2048, 1024))
+    out(classic_window, "ozg_table_window_ca", (2048, 1024))
+    out(cloth, "ozg_table_cloth_co", (2048, 1024))
+    out(table_frame, "ozg_table_frame_ca", (2048, 1024))
+    out(side_panel, "ozg_table_side_ca", (512, 1024))
+    out(tag, "ozg_table_tag_ca", (512, 128))
+    out(tag_edge, "ozg_table_tagedge_ca", (512, 128))
+    out(glow, "ozg_table_glow_ca", (256, 256))
+    out(shadow, "ozg_table_shadow_ca", (256, 256))
+    out(tick, "ozg_tick_ca", (128, 128))
     for stem, size, radius, edge, tex in ROUND:
-        save(rounded(size, radius, edge), stem, tex, paa)
+        out(lambda s=size, r=radius, e=edge: rounded(s, r, e), stem, tex)
 
 
 if __name__ == "__main__":

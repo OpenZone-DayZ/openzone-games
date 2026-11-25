@@ -39,6 +39,10 @@ ROOTS = {
     "win_stalker": "OZG_WinStalker",
     "plate_classic": "OZG_PlateClassic",
     "plate_stalker": "OZG_PlateStalker",
+    "tick_classic": "OZG_TickClassic",
+    "tick_stalker": "OZG_TickStalker",
+    "label_classic": "OZG_LabelClassic",
+    "label_stalker": "OZG_LabelStalker",
 }
 
 
@@ -106,6 +110,18 @@ def frame(name, place, prio, kids=None, extra=None):
     return ("FrameWidgetClass", name, attrs + (extra or []), kids)
 
 
+def rim(name, w, h, color, prio, extra=None):
+    """A one-unit rim round a box of w x h units, as four strips in a frame the
+    script shows and hides whole: nothing under the box's ground."""
+    strips = [
+        panel(name + "T", exact(0, 0, w, 1), color, 0),
+        panel(name + "B", exact(0, h - 1, w, 1), color, 0),
+        panel(name + "L", exact(0, 1, 1, h - 2), color, 0),
+        panel(name + "R", exact(w - 1, 1, 1, h - 2), color, 0),
+    ]
+    return frame(name, exact(0, 0, w, h), prio, strips, extra)
+
+
 def button(name, place, prio, kids, visible=1, empty=False):
     # A button with no style paints a light box where nothing opaque covers it
     # (dayz-modding, gui-layouts §31); `style Empty` paints nothing at all.
@@ -131,6 +147,14 @@ LOOKS = {
         host_line=(1180, 462, 352, 24), stack=(1180, 494, 352, 38),
         close=(1520, 36, 32, 28),
         title=(60, 28, 820, 44), sub=(880, 28, 300, 44), foot=(1190, 28, 318, 44),
+        # The card sharp's phase 4 (design §10, the canvas's boards Main and
+        # Stalker): the pockets' strip, the panel "Sleight of hand" under the
+        # log, and the dealer's frame on the table before a deal.
+        pockets=(68, 692, 222, 152), pockets_title=(12, 8, 198, 20), pockets_none=(12, 58, 198, 22),
+        sl_rule=(1180, 398, 352), sl_title=(1180, 407, 352, 22), sl_count=(1180, 431, 352, 18),
+        sl_buttons=(1180, 457, 352, 40, 48), sl_hint=(1180, 600, 352, 17), sl_rule2=(1180, 668, 352),
+        deal=(452, 300), deal_title=(0, 0, 460, 28), deal_count=(0, 28, 460, 18),
+        deal_buttons=(0, 52, 330, 38, 46), deal_caption=(0, 146, 470, 20), deal_hint=(0, 400, 470, 17),
     ),
     "stalker": dict(
         felt=(30, 66, 1130, 808),
@@ -143,6 +167,11 @@ LOOKS = {
         host_line=(1206, 402, 356, 24), stack=(1206, 432, 356, 38),
         close=(1126, 21, 30, 26),
         title=(20, 13, 1150, 42), sub=(40, 13, 300, 42), foot=(1206, 846, 356, 20),
+        pockets=(48, 700, 222, 152), pockets_title=(12, 8, 198, 20), pockets_none=(12, 58, 198, 22),
+        sl_rule=(1206, 350, 356), sl_title=(1206, 359, 356, 24), sl_count=(1206, 386, 356, 18),
+        sl_buttons=(1206, 412, 356, 40, 48), sl_hint=(1206, 556, 356, 17), sl_rule2=(1206, 628, 356),
+        deal=(440, 326), deal_title=(0, 0, 470, 28), deal_count=(0, 28, 470, 18),
+        deal_buttons=(0, 52, 330, 38, 46), deal_caption=(0, 146, 480, 20), deal_hint=(0, 404, 480, 17),
     ),
 }
 
@@ -152,12 +181,18 @@ C = {
                     label=rgb("#c9d3cb"), warm=rgb("#ffbd80"), rule=rgb("#33403a"),
                     moment_bg=rgb("#40584a"), moment_edge=rgb("#ecc440"), moment_ink=rgb("#f3f1e4"),
                     host_bg=rgb("#2c3632"), host_edge=rgb("#3a4a42"), host_ink=rgb("#e2e6de"),
-                    red_bg=rgb("#6e2622"), red_edge=rgb("#8a3a33"), red_ink=rgb("#f6e8e4")),
+                    red_bg=rgb("#6e2622"), red_edge=rgb("#8a3a33"), red_ink=rgb("#f6e8e4"),
+                    # The sleights (the canvas's board Main): pink, as its demo of what is not play.
+                    hot=rgb("#ff78aa"), sl_bg=rgb("#2c3632"), sl_ink=rgb("#e2e6de"),
+                    pocket_bg=rgb("#0a1410", 0.86), pocket_edge=rgb("#46594e"), tick_bg=rgb("#14201a")),
     "stalker": dict(ink=rgb("#cfc5a6"), dim=rgb("#a39a7e"), gold=rgb("#e0a030"), cream=rgb("#ddd3b2"),
                     label=rgb("#ddd3b2"), warm=rgb("#e8945a"), rule=rgb("#3b3630"),
                     moment_bg=rgb("#322920"), moment_edge=rgb("#e0a030"), moment_ink=rgb("#f2e4c2"),
                     host_bg=rgb("#25221e"), host_edge=rgb("#4d463d"), host_ink=rgb("#d9cfb0"),
-                    red_bg=rgb("#4a1c13"), red_edge=rgb("#8a3a24"), red_ink=rgb("#f0dcc8")),
+                    red_bg=rgb("#4a1c13"), red_edge=rgb("#8a3a24"), red_ink=rgb("#f0dcc8"),
+                    # The sleights (the canvas's board Stalker): rust orange.
+                    hot=rgb("#d6682c"), sl_bg=rgb("#25221e"), sl_ink=rgb("#d9cfb0"),
+                    pocket_bg=rgb("#100e0c", 0.9), pocket_edge=rgb("#4d463d"), tick_bg=rgb("#1c1a17")),
 }
 
 # The buttons the right column stacks: (name, label, red). A script shows the
@@ -207,6 +242,136 @@ def look_button(look, name, x, y, w, h, label, tone, prio, visible=0, size=None)
         ]
     kids.append(text(name + "Text", exact(0, 0, w, h), size, font, ink, 2, "center", label))
     return button(name, exact(x, y, w, h), prio, kids, visible, True)
+
+
+def sleight_button(look, name, x, y, w, h, label, prio=40, visible=0):
+    """A button of the sleights (the canvas's boards Main and Stalker): its
+    ground, its rim -- shown, and pink or rust, while the sleight is armed --
+    and its label. The script tints all three: armed, spent, ready."""
+    c = C[look]
+    if look == "classic":
+        kids = [
+            image(name + "Bg", exact(0, 0, w, h), 0, "ozg_round_wide_ca", c["sl_bg"]),
+            image(name + "Edge", exact(0, 0, w, h), 1, "ozg_round_wide_edge_ca", c["hot"], [("visible", 0)]),
+            text(name + "Text", exact(0, 0, w, h), 15, ETELKA_S, c["sl_ink"], 2, "center", label),
+        ]
+    else:
+        kids = [
+            panel(name + "Edge", exact(0, 0, w, h), c["host_edge"], 0),
+            panel(name + "Bg", exact(1, 1, w - 2, h - 2), c["sl_bg"], 1),
+            text(name + "Text", exact(0, 0, w, h), 20, OSWALD, c["sl_ink"], 2, "center", label),
+        ]
+    return button(name, exact(x, y, w, h), prio, kids, visible, True)
+
+
+def sleights(look):
+    """What phase 4 of the card sharp adds to a look (design §10): the pockets'
+    strip on the table, the panel of sleights in the right column, the dealer's
+    frame. Every part hidden until the script shows it."""
+    L, c = LOOKS[look], C[look]
+    k = []
+    caps = look == "stalker"
+    head_font = OSWALD if caps else ETELKA_M
+
+    # The pockets: a box with its title; the cards are the script's, drawn on
+    # the table over it.
+    px, py, pw, ph = L["pockets"]
+    if look == "classic":
+        box = [
+            image("OZG_PocketsBg", exact(0, 0, pw, ph), 0, "ozg_round_pocket_ca", c["pocket_bg"]),
+            image("OZG_PocketsEdge", exact(0, 0, pw, ph), 1, "ozg_round_pocket_edge_ca", c["pocket_edge"]),
+            image("OZG_PocketsEdgeHot", exact(0, 0, pw, ph), 2, "ozg_round_pocket_edge2_ca", c["hot"],
+                  [("visible", 0)]),
+        ]
+    else:
+        # The rims are four strips, not a plate under the ground: the ground is
+        # see-through (the mock-up's rgba 0.9), and a plate under it tinted
+        # the whole box rust while a sleight was armed.
+        box = [
+            panel("OZG_PocketsBg", exact(0, 0, pw, ph), c["pocket_bg"], 0),
+            rim("OZG_PocketsEdge", pw, ph, c["pocket_edge"], 1),
+            rim("OZG_PocketsEdgeHot", pw, ph, c["hot"], 2, [("visible", 0)]),
+        ]
+    box.append(text("OZG_PocketsTitle", exact(*L["pockets_title"]), 19 if caps else 16, head_font,
+                    c["cream"] if caps else c["ink"], 3, "left", "#STR_OZG_WIN_POCKETS"))
+    box.append(text("OZG_PocketsNone", exact(*L["pockets_none"]), 13, ETELKA_S, c["dim"], 3, "left",
+                    "#STR_OZG_WIN_POCKETS_NONE", [("visible", 0)]))
+    k.append(frame("OZG_Pockets", exact(px, py, pw, ph), 5, box, [("visible", 0)]))
+
+    # The panel of sleights, between two rules under the log.
+    rx, ry, rw = L["sl_rule"]
+    k.append(panel("OZG_SleightRule", exact(rx, ry, rw, 1), c["rule"], 25, [("visible", 0)]))
+    k.append(text("OZG_SleightTitle", exact(*L["sl_title"]), 21 if caps else 17, head_font,
+                  c["cream"] if caps else c["ink"], 25, "left", "#STR_OZG_WIN_SLEIGHTS", [("visible", 0)]))
+    k.append(text("OZG_SleightCount", exact(*L["sl_count"]), 13, ETELKA_S, c["dim"], 25, "left", "",
+                  [("visible", 0)]))
+    bx, by, bw, bh, step = L["sl_buttons"]
+    for i, (name, label) in enumerate((("OZG_BtnSlip", "#STR_OZG_WIN_SLIP"), ("OZG_BtnSwap", "#STR_OZG_WIN_SWAP"),
+                                       ("OZG_BtnToss", "#STR_OZG_WIN_TOSS"))):
+        k.append(sleight_button(look, name, bx, by + i * step, bw, bh, label))
+    hx, hy, hw, hh = L["sl_hint"]
+    for i in range(2):
+        k.append(text("OZG_SleightHint%d" % i, exact(hx, hy + i * hh, hw, hh), 13, ETELKA_S, c["dim"], 25,
+                      "left", "", [("visible", 0)]))
+    rx, ry, rw = L["sl_rule2"]
+    k.append(panel("OZG_SleightRule2", exact(rx, ry, rw, 1), c["rule"], 25, [("visible", 0)]))
+
+    # The dealer's frame (design §6.5, §10): before "Deal", on the table where
+    # the bout lies in play. The deck, the cards he reads and their ticks are
+    # the script's.
+    dx, dy = L["deal"]
+    kids = [
+        text("OZG_DealTitle", exact(*L["deal_title"]), 25 if caps else 20, OSWALD if caps else ETELKA_M, c["gold"], 2,
+             "left", "#STR_OZG_WIN_DEALING"),
+        text("OZG_DealCount", exact(*L["deal_count"]), 13, ETELKA_S, c["dim"], 2, "left", ""),
+        text("OZG_DealCaption", exact(*L["deal_caption"]), 14, ETELKA_S, c["ink"], 2, "left", ""),
+    ]
+    bx, by, bw, bh, step = L["deal_buttons"]
+    for i, (name, label) in enumerate((("OZG_BtnDeckIn", "#STR_OZG_WIN_DECK_IN"),
+                                       ("OZG_BtnDeckOut", "#STR_OZG_WIN_DECK_OUT"))):
+        kids.append(sleight_button(look, name, bx, by + i * step, bw, bh, label, 3, 1))
+    hx, hy, hw, hh = L["deal_hint"]
+    for i in range(2):
+        kids.append(text("OZG_DealHint%d" % i, exact(hx, hy + i * hh, hw, hh), 13, ETELKA_S, c["dim"], 2, "left", ""))
+    k.append(frame("OZG_Deal", exact(dx, dy, 480, 440), 40, kids, [("visible", 0)]))
+    return k
+
+
+def face_label(look):
+    """The face of a card the dealer reads, written on its back in his frame
+    (the earlier mock-up's table_deal): a pale label with the rank and the
+    suit, the rank's ink set by the script."""
+    c = C[look]
+    w, h = 36, 22
+    kids = [
+        image("OZG_LabelBg", exact(0, 0, w, h), 0, "ozg_round_tick_ca", rgb("#faf6e8", 0.96)),
+        image("OZG_LabelEdge", exact(0, 0, w, h), 1, "ozg_round_tick_edge_ca", c["gold"]),
+        text("OZG_LabelRank", exact(2, 0, 21, h), 16, ETELKA_M, rgb("#181618"), 2, "center", ""),
+        image("OZG_LabelSuit", exact(22, 6, 11, 11), 2, None, "1 1 1 1"),
+    ]
+    return block("FrameWidgetClass", ROOTS["label_" + look],
+                 [("ignorepointer", 1), ("clipchildren", 0)] + exact(0, 0, w, h) + [("priority", 2)], kids)
+
+
+def tick(look):
+    """A tick box of the dealer's frame: a card he reads dealt to himself when
+    ticked (the earlier mock-up's table_deal). The script places it and shows
+    the tick."""
+    c = C[look]
+    s = 22
+    if look == "classic":
+        kids = [
+            image("OZG_TickBg", exact(0, 0, s, s), 0, "ozg_round_tick_ca", c["tick_bg"]),
+            image("OZG_TickEdge", exact(0, 0, s, s), 1, "ozg_round_tick_edge_ca", c["dim"]),
+        ]
+    else:
+        kids = [
+            panel("OZG_TickEdge", exact(0, 0, s, s), c["dim"], 0),
+            panel("OZG_TickBg", exact(1, 1, s - 2, s - 2), c["tick_bg"], 1),
+        ]
+    kids.append(image("OZG_TickMark", exact(0, 0, s, s), 2, "ozg_tick_ca", c["gold"], [("visible", 0)]))
+    return block("FrameWidgetClass", ROOTS["tick_" + look],
+                 [("ignorepointer", 1), ("clipchildren", 0)] + exact(0, 0, s, s) + [("priority", 1)], kids)
 
 
 def window(look):
@@ -287,6 +452,7 @@ def window(look):
     sx, sy, sw, sh = L["stack"]
     for i, (name, label, red) in enumerate(STACKED):
         k.append(look_button(look, name, sx, sy + i * (sh + 8), sw, sh, label, "red" if red else "host", 40))
+    k.extend(sleights(look))
     cx, cy, cw, ch = L["close"]
     k.append(look_button(look, "OZG_BtnClose", cx, cy, cw, ch, "X", "red", 50, 1, 17 if look == "classic" else 19))
 
@@ -324,6 +490,7 @@ def card():
     fx, fy = (1 - fw) / 2, (1 - fh) / 2
     gm = 0.18 * fw                      # the glow: 18 units round a 100-wide card
     sm, sd = 0.08 * fw, 0.03 * fw       # the shadow: 8 units round it, 3 units down
+    rm = 3 / 54 * fw                    # the ring: 3 units round a pocket's 54-wide card
 
     def f(x, y, w, h):
         return frac(round(x, 4), round(y, 4), round(w, 4), round(h, 4))
@@ -333,13 +500,17 @@ def card():
               "0 0 0 0.55"),
         image("OZG_CardGlow", f(fx - gm, fy - gm, fw + 2 * gm, fh + 2 * gm), 1, "ozg_table_glow_ca", "1 1 1 1",
               [("visible", 0)]),
-        image("OZG_CardFace", f(fx, fy, fw, fh), 2),
+        # The ring of a pocket's card picked for a swap (the mock-up's solid
+        # 3-unit ring), shown and tinted by the script.
+        image("OZG_CardRing", f(fx - rm, fy - rm, fw + 2 * rm, fh + 2 * rm), 2, "ozg_round_ring_ca", "1 1 1 1",
+              [("visible", 0)]),
+        image("OZG_CardFace", f(fx, fy, fw, fh), 3),
         # The marks (tools/make_marks.py), placed by the script in pixels
         # inside the frame, so that they turn with the card: on a back the
         # sign of a card read or noticed, and a read card's pencilled face; on
         # a face, in the same sign picture, a noticed card's speck.
-        image("OZG_CardSign", exact(0, 0, 1, 1), 3, None, "1 1 1 1", [("visible", 0)]),
-        image("OZG_CardPencil", exact(0, 0, 1, 1), 4, None, "1 1 1 1", [("visible", 0)]),
+        image("OZG_CardSign", exact(0, 0, 1, 1), 4, None, "1 1 1 1", [("visible", 0)]),
+        image("OZG_CardPencil", exact(0, 0, 1, 1), 5, None, "1 1 1 1", [("visible", 0)]),
     ]
     return block("FrameWidgetClass", "OZG_Card",
                  [("ignorepointer", 1), ("clipchildren", 0)] + exact(0, 0, 100, 100) + [("priority", 1)], kids)
@@ -400,3 +571,7 @@ write("ozg_win_stalker.layout", window("stalker"))
 write("ozg_card.layout", card())
 write("ozg_plate_classic.layout", plate("classic"))
 write("ozg_plate_stalker.layout", plate("stalker"))
+write("ozg_tick_classic.layout", tick("classic"))
+write("ozg_tick_stalker.layout", tick("stalker"))
+write("ozg_label_classic.layout", face_label("classic"))
+write("ozg_label_stalker.layout", face_label("stalker"))

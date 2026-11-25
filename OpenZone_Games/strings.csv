@@ -240,3 +240,25 @@ STR_OZG_SAY_SLEIGHT_NO_MORE,У цій роздачі хитрощів більш
 STR_OZG_SAY_SLEIGHT_NO_CARD,Такої карти тут немає,There is no such card here
 STR_OZG_SAY_SLEIGHT_NOT_GAME,Ця карта не для цієї гри,That card is not of this game
 STR_OZG_SAY_SLEIGHT_NO_ROOM,"У колоді й поруч немає місця","There is no room in the deck or beside it"
+STR_OZG_WIN_POCKETS,У кишенях,In your pockets
+STR_OZG_WIN_POCKETS_NONE,Карт у кишенях немає,No cards in your pockets
+STR_OZG_WIN_SLEIGHTS,Спритність рук,Sleight of hand
+STR_OZG_WIN_SLEIGHTS_USED,Хитрощів у цій роздачі: %1 з %2,Sleights this deal: %1 of %2
+STR_OZG_WIN_SLIP,Підкинути з кишені,Slip in from a pocket
+STR_OZG_WIN_SWAP,Підмінити карту,Swap a card
+STR_OZG_WIN_TOSS,Скинути у відбій,Throw to the discards
+STR_OZG_WIN_TOSS_DONE,Готово,Done
+STR_OZG_HINT_SLEIGHT,"Підміна: карта з кишені, потім карта руки.|Попалися — побачать лише ті, хто помітив.","Swap: a card of your pockets, then one of your hand.|If it shows, only those who noticed see it."
+STR_OZG_HINT_SLIP,Оберіть карту в кишені — вона ляже вам у руку.,Choose a card in your pockets: it goes into your hand.
+STR_OZG_HINT_SWAP_POCKET,Оберіть карту в кишені…,Choose a card in your pockets...
+STR_OZG_HINT_SWAP_HAND,"…а тепер карту в руці, яку вона замінить.","...and now the card of your hand it replaces."
+STR_OZG_HINT_TOSS,"Клацніть одну-дві карти в руці — вони підуть|у відбій. «Готово» — закінчити.","Click one or two cards of your hand: they go to|the discards. Done ends it."
+STR_OZG_HINT_NO_MORE,У цій роздачі хитрощів більше не можна.,No more sleights in this deal.
+STR_OZG_WIN_DEALING,Ви роздаєте. Перед роздачею:,You deal. Before the deal:
+STR_OZG_WIN_DECK_IN,Покласти в колоду з кишені,Put into the deck from a pocket
+STR_OZG_WIN_DECK_OUT,Витягти з колоди в кишеню,Draw out of the deck into a pocket
+STR_OZG_WIN_DEAL_SELF,"Здати собі (ви читаєте ці карти, не більше %1):","Deal to yourself (you read these cards, %1 at most):"
+STR_OZG_WIN_DEAL_NONE,Ви не читаєте жодної карти цієї колоди.,You read no card of this deck.
+STR_OZG_HINT_DEAL,"Позначте карти, які здасте собі; решта — навмання.|Кожна дія — свій шанс попастися.","Tick the cards to deal to yourself; the rest is chance.|Each act has its own chance of being seen."
+STR_OZG_HINT_DECK_IN,Оберіть карту в кишені — вона ляже в колоду.,Choose a card in your pockets: it goes into the deck.
+STR_OZG_HINT_DECK_OUT,"Клацніть колоду — витягнете навмання,|або карту, яку читаєте.","Click the deck for any card,|or a card you read."

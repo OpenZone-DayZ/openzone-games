@@ -84,6 +84,49 @@ class OZG_TableLook
     int RoleTurn;
     int RoleIdle;
 
+    // The card sharp's phase 4 (design §10, the canvas's boards Main and
+    // Stalker): tools/make_layouts.py draws the boxes, these are the places of
+    // what the script lays in them and moves.
+    // The pockets: the middle of the first card, the step to the next, a
+    // card's size; the room the cards may take along the strip.
+    float PocketX;
+    float PocketY;
+    float PocketStep;
+    float PocketW;
+    float PocketH;
+    float PocketRoom;
+    // The right column while the panel of sleights shows: the log's lines,
+    // the host's line and the first stacked button, how many buttons fit.
+    int LogShort;
+    float HostLineY;
+    float HostLineY2;
+    float StackY2;
+    int StackFits2;
+    // The dealer's frame: the cards he reads (their first middle, the step,
+    // per row and the rows' step), the tick under each.
+    float TileX;
+    float TileY;
+    float TileStep;
+    int TilesPerRow;
+    float TileRowStep;
+    float TickDown;
+    // Colours of the sleights: armed (pink or rust), the glow of what an
+    // armed sleight takes, brighter for the card picked; a button ready,
+    // armed, spent and its label's two inks; the hint's two inks.
+    int Hot;
+    int SleightGlow;
+    int SleightPick;
+    int BtnBg;
+    int BtnBgArmed;
+    int BtnBgSpent;
+    int BtnEdge;
+    int BtnInk;
+    int BtnInkSpent;
+    int HintInk;
+    int HintHot;
+    int TickIdle;
+    int TickOn;
+
     protected static ref OZG_TableLook s_Classic;
     protected static ref OZG_TableLook s_Stalker;
 
@@ -122,6 +165,14 @@ class OZG_TableLook
         BoutH = 123;
         MomentStep = 46;
         StackStep = 46;
+        PocketStep = 68;
+        PocketW = 54;
+        PocketH = 76;
+        PocketRoom = 198;
+        TileStep = 70;
+        TilesPerRow = 5;
+        TileRowStep = 112;
+        TickDown = 56;
     }
 
     protected static OZG_TableLook MakeClassic()
@@ -161,6 +212,28 @@ class OZG_TableLook
         k.EdgeIdle = ARGB(255, 70, 84, 76);
         k.RoleTurn = ARGB(255, 236, 196, 64);
         k.RoleIdle = ARGB(255, 152, 163, 155);
+        k.PocketX = 107;
+        k.PocketY = 770;
+        k.LogShort = 13;
+        k.HostLineY = 462;
+        k.HostLineY2 = 680;
+        k.StackY2 = 705;
+        k.StackFits2 = 3;
+        k.TileX = 482;
+        k.TileY = 512;
+        k.Hot = ARGB(255, 255, 120, 170);
+        k.SleightGlow = ARGB(185, 255, 120, 170);
+        k.SleightPick = ARGB(255, 255, 150, 195);
+        k.BtnBg = ARGB(255, 44, 54, 50);
+        k.BtnBgArmed = ARGB(255, 74, 42, 58);
+        k.BtnBgSpent = ARGB(255, 35, 42, 39);
+        k.BtnEdge = ARGB(255, 255, 120, 170);
+        k.BtnInk = ARGB(255, 226, 230, 222);
+        k.BtnInkSpent = ARGB(255, 111, 122, 116);
+        k.HintInk = ARGB(255, 152, 163, 155);
+        k.HintHot = ARGB(255, 255, 156, 196);
+        k.TickIdle = ARGB(255, 152, 163, 155);
+        k.TickOn = ARGB(255, 236, 196, 64);
         return k;
     }
 
@@ -201,6 +274,30 @@ class OZG_TableLook
         k.EdgeIdle = ARGB(255, 110, 102, 91);
         k.RoleTurn = ARGB(255, 224, 160, 48);
         k.RoleIdle = ARGB(255, 181, 171, 144);
+        k.PocketX = 87;
+        k.PocketY = 778;
+        k.LogShort = 15;
+        k.HostLineY = 402;
+        k.HostLineY2 = 640;
+        k.StackY2 = 665;
+        k.StackFits2 = 4;
+        k.TileX = 470;
+        // Forty units lower than the classic frame's place: the title clear
+        // of the cloth's seam.
+        k.TileY = 538;
+        k.Hot = ARGB(255, 214, 104, 44);
+        k.SleightGlow = ARGB(200, 214, 104, 44);
+        k.SleightPick = ARGB(255, 240, 140, 70);
+        k.BtnBg = ARGB(255, 37, 34, 30);
+        k.BtnBgArmed = ARGB(255, 59, 41, 31);
+        k.BtnBgSpent = ARGB(255, 26, 24, 21);
+        k.BtnEdge = ARGB(255, 77, 70, 61);
+        k.BtnInk = ARGB(255, 217, 207, 176);
+        k.BtnInkSpent = ARGB(255, 107, 99, 82);
+        k.HintInk = ARGB(255, 163, 154, 126);
+        k.HintHot = ARGB(255, 232, 148, 90);
+        k.TickIdle = ARGB(255, 163, 154, 126);
+        k.TickOn = ARGB(255, 224, 160, 48);
         return k;
     }
 

@@ -41,6 +41,22 @@ FrameWidgetClass OZG_Card {
    "stretch mode" stretch_w_h
    visible 0
   }
+  ImageWidgetClass OZG_CardRing {
+   ignorepointer 1
+   color 1 1 1 1
+   position 0.2064 0.1008
+   size 0.5871 0.7985
+   hexactpos 0
+   vexactpos 0
+   hexactsize 0
+   vexactsize 0
+   priority 2
+   image0 "OpenZone_Games/gui/textures/ozg_round_ring_ca.paa"
+   mode blend
+   "src alpha" 1
+   "stretch mode" stretch_w_h
+   visible 0
+  }
   ImageWidgetClass OZG_CardFace {
    ignorepointer 1
    color 1 1 1 1
@@ -50,7 +66,7 @@ FrameWidgetClass OZG_Card {
    vexactpos 0
    hexactsize 0
    vexactsize 0
-   priority 2
+   priority 3
    mode blend
    "src alpha" 1
    "stretch mode" stretch_w_h
@@ -64,7 +80,7 @@ FrameWidgetClass OZG_Card {
    vexactpos 1
    hexactsize 1
    vexactsize 1
-   priority 3
+   priority 4
    mode blend
    "src alpha" 1
    "stretch mode" stretch_w_h
@@ -79,7 +95,7 @@ FrameWidgetClass OZG_Card {
    vexactpos 1
    hexactsize 1
    vexactsize 1
-   priority 4
+   priority 5
    mode blend
    "src alpha" 1
    "stretch mode" stretch_w_h

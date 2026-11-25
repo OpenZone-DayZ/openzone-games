@@ -140,8 +140,83 @@ class OZG_GameMenu : UIScriptedMenu
     protected bool m_AskStand;
     protected bool m_AskFold;
 
+    // ---- the card sharp's phase 4 (design §6, §10) ---------------------------
+    // The pockets' strip, the panel of sleights, the dealer's frame.
+    protected Widget m_Pockets;
+    protected Widget m_PocketsEdge;
+    protected Widget m_PocketsEdgeHot;
+    protected TextWidget m_PocketsNone;
+    protected Widget m_SleightRule;
+    protected Widget m_SleightRule2;
+    protected TextWidget m_SleightTitle;
+    protected TextWidget m_SleightCount;
+    protected ref array<TextWidget> m_SleightHint;
+    protected Widget m_BtnSlip;
+    protected Widget m_BtnSwap;
+    protected Widget m_BtnToss;
+    protected Widget m_Deal;
+    protected TextWidget m_DealTitle;
+    protected TextWidget m_DealCount;
+    protected TextWidget m_DealCaption;
+    protected ref array<TextWidget> m_DealHint;
+    protected Widget m_BtnDeckIn;
+    protected Widget m_BtnDeckOut;
+    // The right column's rule over the host's line, and whether the panel of
+    // sleights shows under the log now (PaintColumn decides it).
+    protected Widget m_ColRule;
+    protected bool m_PanelShown;
+    // What the script lays: the pockets' cards; the deck, the cards the
+    // dealer reads and their ticks.
+    protected ref array<Widget> m_PocketPics;
+    protected ref array<Widget> m_DealPics;
+    // The pockets as last read, and as drawn: each card's middle.
+    protected ref array<ref OZG_PocketCard> m_PocketCards;
+    protected ref array<ref OZG_PocketCard> m_PocketShown;
+    protected ref array<float> m_PocketX;
+    protected float m_PocketsAge;
+    protected string m_PocketsLine;
+    // The dealer's tiles as drawn: which read card, where.
+    protected ref array<string> m_TileKeys;
+    protected ref array<float> m_TileX;
+    protected ref array<float> m_TileY;
+    // The sleight armed: "" or one of OZG_Const.SLEIGHT_SLIP, _SWAP, _THROW,
+    // _DECK_IN, _DECK_OUT; the card of the pockets a swap picked; the cards
+    // one throw has sent.
+    protected string m_Sleight;
+    protected string m_PickKey;
+    protected int m_Thrown;
+    // The dealer's three as planned, sent with "Deal" (OZG_WAsk.Stack): keys
+    // of pocket cards put in, of deck cards out (or OZG_Const.ANY_CARD), of
+    // deck cards chosen; beside the cards out, their faces ("" by chance) and
+    // looks, for the strip.
+    protected ref array<string> m_PlanIn;
+    protected ref array<string> m_PlanOut;
+    protected ref array<string> m_PlanOutFace;
+    protected ref array<int> m_PlanOutLook;
+    protected ref array<string> m_PlanPick;
+    // This player's sleights asked for and not yet answered, oldest first,
+    // and an answer that came before the view it speaks of.
+    protected ref array<ref OZG_SleightFly> m_Flying;
+    protected ref OZG_WSleight m_Answer;
+
     void OZG_GameMenu()
     {
+        m_SleightHint = new array<TextWidget>();
+        m_DealHint = new array<TextWidget>();
+        m_PocketPics = new array<Widget>();
+        m_DealPics = new array<Widget>();
+        m_PocketCards = new array<ref OZG_PocketCard>();
+        m_PocketShown = new array<ref OZG_PocketCard>();
+        m_PocketX = new array<float>();
+        m_TileKeys = new array<string>();
+        m_TileX = new array<float>();
+        m_TileY = new array<float>();
+        m_PlanIn = new array<string>();
+        m_PlanOut = new array<string>();
+        m_PlanOutFace = new array<string>();
+        m_PlanOutLook = new array<int>();
+        m_PlanPick = new array<string>();
+        m_Flying = new array<ref OZG_SleightFly>();
         m_ShownRev = -1;
         m_K = 1;
         m_PickedSeat = -1;
@@ -331,6 +406,35 @@ class OZG_GameMenu : UIScriptedMenu
         m_BtnFold = Find("OZG_BtnFold");
         m_BtnFoldYes = Find("OZG_BtnFoldYes");
 
+        m_Pockets = Find("OZG_Pockets");
+        m_PocketsEdge = Find("OZG_PocketsEdge");
+        m_PocketsEdgeHot = Find("OZG_PocketsEdgeHot");
+        m_PocketsNone = TextWidget.Cast(Find("OZG_PocketsNone"));
+        m_SleightRule = Find("OZG_SleightRule");
+        m_SleightRule2 = Find("OZG_SleightRule2");
+        m_SleightTitle = TextWidget.Cast(Find("OZG_SleightTitle"));
+        m_SleightCount = TextWidget.Cast(Find("OZG_SleightCount"));
+        m_SleightHint.Clear();
+        m_DealHint.Clear();
+        for (int h = 0; h < 2; h++)
+        {
+            m_SleightHint.Insert(TextWidget.Cast(Find("OZG_SleightHint" + h.ToString())));
+            m_DealHint.Insert(TextWidget.Cast(Find("OZG_DealHint" + h.ToString())));
+        }
+        m_BtnSlip = Find("OZG_BtnSlip");
+        m_BtnSwap = Find("OZG_BtnSwap");
+        m_BtnToss = Find("OZG_BtnToss");
+        m_Deal = Find("OZG_Deal");
+        m_DealTitle = TextWidget.Cast(Find("OZG_DealTitle"));
+        m_DealCount = TextWidget.Cast(Find("OZG_DealCount"));
+        m_DealCaption = TextWidget.Cast(Find("OZG_DealCaption"));
+        m_BtnDeckIn = Find("OZG_BtnDeckIn");
+        m_BtnDeckOut = Find("OZG_BtnDeckOut");
+        m_ColRule = Find("OZG_ColRule");
+        m_Sleight = "";
+        m_PickKey = "";
+        m_Thrown = 0;
+
         // The stalkers' table writes its labels in capitals: what the layout
         // wrote as a key is written again from the script.
         if (m_Look.Caps)
@@ -351,6 +455,13 @@ class OZG_GameMenu : UIScriptedMenu
             SetLabel(m_BtnStandLeave, Caps(Tr("STR_OZG_WIN_STAND_LEAVE")));
             SetLabel(m_BtnFold, Caps(Tr("STR_OZG_WIN_FOLD")));
             SetLabel(m_BtnFoldYes, Caps(Tr("STR_OZG_WIN_FOLD_YES")));
+            SetCaps(TextWidget.Cast(Find("OZG_PocketsTitle")), "STR_OZG_WIN_POCKETS");
+            SetCaps(m_SleightTitle, "STR_OZG_WIN_SLEIGHTS");
+            SetCaps(m_DealTitle, "STR_OZG_WIN_DEALING");
+            SetLabel(m_BtnSlip, Caps(Tr("STR_OZG_WIN_SLIP")));
+            SetLabel(m_BtnSwap, Caps(Tr("STR_OZG_WIN_SWAP")));
+            SetLabel(m_BtnDeckIn, Caps(Tr("STR_OZG_WIN_DECK_IN")));
+            SetLabel(m_BtnDeckOut, Caps(Tr("STR_OZG_WIN_DECK_OUT")));
         }
         Measure();
     }
@@ -490,6 +601,7 @@ class OZG_GameMenu : UIScriptedMenu
         TickAir(timeslice);
         TickShakes(timeslice);
         TrackHover();
+        RefreshPockets(timeslice);
 
         // The pulse on the place says a newer revision than the one shown:
         // ask again. Looked at every two seconds, so a view that was lost, or
@@ -567,6 +679,13 @@ class OZG_GameMenu : UIScriptedMenu
         ClearList(m_FanPics);
         ClearList(m_TablePics);
         ClearList(m_HandPics);
+        ClearList(m_PocketPics);
+        ClearList(m_DealPics);
+        m_PocketShown.Clear();
+        m_PocketX.Clear();
+        m_TileKeys.Clear();
+        m_TileX.Clear();
+        m_TileY.Clear();
         ClearHandMarks();
         m_AtkX.Clear();
         m_AtkY.Clear();
@@ -839,10 +958,11 @@ class OZG_GameMenu : UIScriptedMenu
         return "x" + k.ToString();
     }
 
-    // The region of a seat's fan, for ShakeRegion.
+    // The region of a seat's fan, for ShakeRegion: the name the server's
+    // `shake` gives it (OZG_Regions).
     static string RegionOfSeat(int seat)
     {
-        return "seat" + seat.ToString();
+        return OZG_Regions.OfSeat(seat);
     }
 
     // A card drawn into the registry; hidden when a flight still has to land
@@ -1463,19 +1583,38 @@ class OZG_GameMenu : UIScriptedMenu
         if (m_V.Note != "")
             Said("#" + m_V.Note);
 
+        // The dealer's plan lives between deals and on his seat only: a deal
+        // dealt, or the dealing gone to another, leaves none.
+        if (!Dealing())
+            ClearPlan();
+        if (m_PocketsLine == "")
+        {
+            OZG_PocketsRead.Into(m_PocketCards);
+            m_PocketsLine = OZG_PocketsRead.Line(m_PocketCards);
+        }
+
         Measure();
         PaintTitle();
         PaintSeats();
         PaintTable();
         PaintHand();
         PaintMoment();
-        PaintLog();
         PaintColumn();
+        PaintLog();
+        PaintSleights();
 
         // What moved since the view shown before flies to where it is now:
         // only for a newer view of the game in the same look.
         if (newer && !rebuilt && durak)
             OZG_FlightPlan.Make(this, wasV, wasPub, wasOwn, m_V, m_Pub, m_Own);
+        // A sleight of this player's that the server answered before this
+        // view came flies now.
+        if (m_Answer && m_ShownRev >= m_Answer.Rev)
+        {
+            OZG_WSleight answer = m_Answer;
+            m_Answer = null;
+            FlySleight(answer);
+        }
     }
 
     protected string VariantLabel()
@@ -1623,7 +1762,9 @@ class OZG_GameMenu : UIScriptedMenu
     {
         OZG_WSeat s = m_V.Seats[no];
         OZG_DurakSeatPublic g;
-        if (BacksOf(no, g))
+        // Before the dealer's deal nothing of the game that ended lies on his
+        // table (PaintTable): his frame takes it.
+        if (BacksOf(no, g) && !Dealing())
             PaintFan(spot.X, spot.Y, spot.Turn, spot.Scale, g.CardCount, g.Backs, no);
 
         string root = "OZG_PlateClassic";
@@ -1742,6 +1883,14 @@ class OZG_GameMenu : UIScriptedMenu
         m_AtkW.Clear();
         m_AtkH.Clear();
         m_Result.Show(false);
+        // Before the dealer's deal his frame lies on the table and the deck at
+        // the stock's place (PaintDealer); nothing of the game that ended.
+        if (Dealing())
+        {
+            m_StockLabel.Show(true);
+            m_DiscardLabel.Show(false);
+            return;
+        }
         bool dealt = m_Pub && m_V.St != OZG_Const.ST_LOBBY;
         m_StockLabel.Show(dealt);
         m_DiscardLabel.Show(dealt);
@@ -1953,6 +2102,11 @@ class OZG_GameMenu : UIScriptedMenu
         ClearHandMarks();
         if (!m_Own || !m_Own.Held || m_V.St == OZG_Const.ST_LOBBY)
             return;
+        // The hand the last game left lies under the dealer's frame: it is
+        // not drawn before his deal (measured 2026-11-25: six cards over the
+        // second row of his choice).
+        if (Dealing())
+            return;
 
         string trumpSuit = "";
         if (m_Pub)
@@ -1980,9 +2134,18 @@ class OZG_GameMenu : UIScriptedMenu
             float y = m_Look.HandY + r - r * Math.Cos(ar);
 
             // A card that can be played glows; the card picked up glows
-            // brighter and stands out of the fan.
+            // brighter and stands out of the fan. While a sleight that takes
+            // a card of the hand is armed, every card glows its colour, and
+            // nothing else.
             int glow = 0;
-            if (card == m_Picked)
+            bool sleightHand = m_Sleight == OZG_Const.SLEIGHT_THROW;
+            if (m_Sleight == OZG_Const.SLEIGHT_SWAP && m_PickKey != "")
+                sleightHand = true;
+            if (sleightHand)
+                glow = m_Look.SleightGlow;
+            else if (m_Sleight != "")
+                glow = 0;
+            else if (card == m_Picked)
                 glow = m_Look.PickGlow;
             else if (Playing() && moves.Count() > 0)
                 glow = m_Look.Glow;
@@ -2167,6 +2330,9 @@ class OZG_GameMenu : UIScriptedMenu
                 status = Tr1("STR_OZG_ST_WAIT", names);
             }
         }
+        // The dealer's frame says what he does (its title).
+        if (Dealing())
+            status = "";
         m_Status.SetText(Caps(status));
     }
 
@@ -2234,15 +2400,18 @@ class OZG_GameMenu : UIScriptedMenu
 
     protected void PaintLog()
     {
+        // A shorter log while the panel of sleights shows under it.
         int lines = m_LogLines.Count();
+        if (m_PanelShown && m_Look.LogShort < lines)
+            lines = m_Look.LogShort;
         int have = m_V.Log.Count();
         int from = have - lines;
         if (from < 0)
             from = 0;
-        for (int i = 0; i < lines; i++)
+        for (int i = 0; i < m_LogLines.Count(); i++)
         {
             string text = "";
-            if (from + i < have)
+            if (i < lines && from + i < have)
                 text = LogWord(m_V.Log[from + i]);
             if (m_LogLines[i])
                 m_LogLines[i].SetText(text);
@@ -2329,6 +2498,24 @@ class OZG_GameMenu : UIScriptedMenu
         all.Insert(m_BtnStandLeave);
         all.Insert(m_BtnFold);
         all.Insert(m_BtnFoldYes);
+
+        // The panel of sleights takes the column under a shorter log while a
+        // deal is played (the canvas's boards); the host's line and the
+        // buttons go under it. When the moment's buttons do not fit there --
+        // the choices of standing up, the host's on a seat -- the panel gives
+        // way for that moment.
+        m_PanelShown = SleightsInPlay() && shown.Count() <= m_Look.StackFits2;
+        float stackY = m_Look.StackY;
+        float hostY = m_Look.HostLineY;
+        if (m_PanelShown)
+        {
+            stackY = m_Look.StackY2;
+            hostY = m_Look.HostLineY2;
+        }
+        m_HostLine.SetPos(m_Look.StackX * m_K, hostY * m_K);
+        if (m_ColRule)
+            m_ColRule.Show(!m_PanelShown);
+
         for (int i = 0; i < all.Count(); i++)
         {
             Widget b = all[i];
@@ -2337,8 +2524,798 @@ class OZG_GameMenu : UIScriptedMenu
             int at = shown.Find(b);
             b.Show(at >= 0);
             if (at >= 0)
-                b.SetPos(m_Look.StackX * m_K, (m_Look.StackY + at * m_Look.StackStep) * m_K);
+                b.SetPos(m_Look.StackX * m_K, (stackY + at * m_Look.StackStep) * m_K);
         }
+    }
+
+    // ------------------------------------------------------------ sleights (card sharp's design §6, §10)
+
+    // Sleights in play are open to this player now: dealt in, a deal in play,
+    // and the head says how many he may (none with Cheating 0).
+    protected bool SleightsInPlay()
+    {
+        return m_V && m_V.SleightsMost > 0 && MineInGame();
+    }
+
+    // The dealer's frame shows: between deals, to the host on his own seat,
+    // when the head says he may do sleights.
+    protected bool Dealing()
+    {
+        if (!m_V || m_V.St == OZG_Const.ST_PLAYING)
+            return false;
+        return m_V.IsHost == 1 && m_V.Mine >= 0 && m_V.SleightsMost > 0;
+    }
+
+    protected bool PlayMode(string mode)
+    {
+        return mode == OZG_Const.SLEIGHT_SLIP || mode == OZG_Const.SLEIGHT_SWAP || mode == OZG_Const.SLEIGHT_THROW;
+    }
+
+    protected bool DealMode(string mode)
+    {
+        return mode == OZG_Const.SLEIGHT_DECK_IN || mode == OZG_Const.SLEIGHT_DECK_OUT;
+    }
+
+    // The dealer's sleights planned: a card in one, a card out one, the
+    // chosen cards one (design §6.5).
+    protected int Planned()
+    {
+        int n = m_PlanIn.Count() + m_PlanOut.Count();
+        if (m_PlanPick.Count() > 0)
+            n++;
+        return n;
+    }
+
+    // How many sleights this player has left now.
+    protected int SleightsLeft()
+    {
+        if (Dealing())
+            return m_V.SleightsMost - Planned();
+        if (SleightsInPlay())
+            return m_V.SleightsMost - m_V.SleightsUsed;
+        return 0;
+    }
+
+    protected void ClearPlan()
+    {
+        m_PlanIn.Clear();
+        m_PlanOut.Clear();
+        m_PlanOutFace.Clear();
+        m_PlanOutLook.Clear();
+        m_PlanPick.Clear();
+    }
+
+    // The deal's stack for the server (OZG_WAsk.Stack); "" with nothing
+    // planned.
+    protected string StackText()
+    {
+        if (Planned() == 0)
+            return "";
+        string text = "in=" + Joined3(m_PlanIn) + ";out=" + Joined3(m_PlanOut);
+        return text + ";pick=" + Joined3(m_PlanPick);
+    }
+
+    protected string Joined3(array<string> keys)
+    {
+        string line = "";
+        for (int i = 0; i < keys.Count(); i++)
+        {
+            if (i > 0)
+                line = line + ",";
+            line = line + keys[i];
+        }
+        return line;
+    }
+
+    // A hint of two lines: the string's "|" parts them.
+    protected void Hint(array<TextWidget> lines, string text, bool hot)
+    {
+        string first = text;
+        string second = "";
+        int bar = text.IndexOf("|");
+        if (bar >= 0)
+        {
+            first = text.Substring(0, bar);
+            second = text.Substring(bar + 1, text.Length() - bar - 1);
+        }
+        int ink = m_Look.HintInk;
+        if (hot)
+            ink = m_Look.HintHot;
+        for (int i = 0; i < lines.Count(); i++)
+        {
+            if (!lines[i])
+                continue;
+            if (i == 0)
+                lines[i].SetText(first);
+            else
+                lines[i].SetText(second);
+            lines[i].SetColor(ink);
+        }
+    }
+
+    // A button of the sleights tinted: armed (its rim pink or rust), spent
+    // (the deal's sleights used up), ready.
+    protected void SleightButton(Widget b, bool armed, bool spent)
+    {
+        if (!b)
+            return;
+        string name = b.GetName();
+        Widget ground = b.FindAnyWidget(name + "Bg");
+        Widget rim = b.FindAnyWidget(name + "Edge");
+        TextWidget label = TextWidget.Cast(b.FindAnyWidget(name + "Text"));
+        int bg = m_Look.BtnBg;
+        if (armed)
+            bg = m_Look.BtnBgArmed;
+        else if (spent)
+            bg = m_Look.BtnBgSpent;
+        if (ground)
+            ground.SetColor(bg);
+        if (rim && m_Look.Caps)
+        {
+            if (armed)
+                rim.SetColor(m_Look.Hot);
+            else
+                rim.SetColor(m_Look.BtnEdge);
+        }
+        else if (rim)
+        {
+            rim.Show(armed);
+        }
+        if (label && spent && !armed)
+            label.SetColor(m_Look.BtnInkSpent);
+        else if (label)
+            label.SetColor(m_Look.BtnInk);
+    }
+
+    protected void PaintSleights()
+    {
+        bool inPlay = SleightsInPlay();
+        bool dealing = Dealing();
+        if (!inPlay && PlayMode(m_Sleight))
+            m_Sleight = "";
+        if (!dealing && DealMode(m_Sleight))
+            m_Sleight = "";
+        if (m_Sleight != OZG_Const.SLEIGHT_SWAP)
+            m_PickKey = "";
+        if (m_Sleight != OZG_Const.SLEIGHT_THROW)
+            m_Thrown = 0;
+        PaintPockets(inPlay || dealing);
+        PaintPanel(m_PanelShown);
+        PaintDealer(dealing);
+    }
+
+    // The strip "in your pockets" (design §10): the cards the player carries,
+    // faces up; less those the dealer plans into the deck, and with those he
+    // plans out of it -- a back for a card by chance.
+    protected void PaintPockets(bool show)
+    {
+        ForgetDrawn(m_PocketPics);
+        ClearList(m_PocketPics);
+        m_PocketShown.Clear();
+        m_PocketX.Clear();
+        if (m_Pockets)
+            m_Pockets.Show(show);
+        if (!show)
+            return;
+        int k;
+        for (k = 0; k < m_PocketCards.Count(); k++)
+        {
+            if (m_PlanIn.Find(m_PocketCards[k].Key) < 0)
+                m_PocketShown.Insert(m_PocketCards[k]);
+        }
+        for (k = 0; k < m_PlanOut.Count(); k++)
+            m_PocketShown.Insert(OZG_PocketCard.Make(m_PlanOut[k], m_PlanOutFace[k], m_PlanOutLook[k], true));
+        int n = m_PocketShown.Count();
+        if (m_PocketsNone)
+            m_PocketsNone.Show(n == 0);
+        bool armed = m_Sleight == OZG_Const.SLEIGHT_SLIP || m_Sleight == OZG_Const.SLEIGHT_SWAP;
+        if (m_Sleight == OZG_Const.SLEIGHT_DECK_IN)
+            armed = true;
+        if (m_PocketsEdgeHot)
+            m_PocketsEdgeHot.Show(armed);
+        if (m_PocketsEdge && !m_Look.Caps)
+            m_PocketsEdge.Show(!armed);
+        float step = PocketStepFor(n);
+        for (k = 0; k < n; k++)
+        {
+            OZG_PocketCard c = m_PocketShown[k];
+            float x = m_Look.PocketX + k * step;
+            string picture = PictureOfBack(c.Look);
+            if (c.Face != "")
+                picture = PictureOfFace(c.Face, c.Look);
+            int glow = 0;
+            if (armed && !c.Planned)
+                glow = m_Look.SleightGlow;
+            bool picked = c.Key == m_PickKey;
+            if (picked)
+                glow = m_Look.SleightPick;
+            Widget made = Card(m_PocketPics, picture, x, m_Look.PocketY, m_Look.PocketW, m_Look.PocketH, 0, glow, true, SlotOfPocket(k));
+            // The card picked for a swap: the mock-up's solid ring round it.
+            Widget ring = null;
+            if (made)
+                ring = made.FindAnyWidget("OZG_CardRing");
+            if (ring && picked)
+            {
+                ring.SetColor(m_Look.Hot);
+                ring.Show(true);
+            }
+            m_PocketX.Insert(x);
+        }
+    }
+
+    // The step between two cards of the strip, when it holds n: the mock-up's
+    // 68 units while three fit, closer when more must.
+    protected float PocketStepFor(int n)
+    {
+        float step = m_Look.PocketStep;
+        float room = m_Look.PocketRoom - m_Look.PocketW;
+        if (n > 1 && step * (n - 1) > room)
+            step = room / (n - 1);
+        return step;
+    }
+
+    static string SlotOfPocket(int k)
+    {
+        return "p" + k.ToString();
+    }
+
+    // Where the k-th card of the strip lies, of n.
+    OZG_CardSpot SpotOfPocket(int k, int n)
+    {
+        float x = m_Look.PocketX + k * PocketStepFor(n);
+        return OZG_CardSpot.Make(x, m_Look.PocketY, m_Look.PocketW, m_Look.PocketH, 0);
+    }
+
+    // The deck the dealer's frame lays at the stock's place: its top card.
+    OZG_CardSpot SpotOfDeck()
+    {
+        float sx;
+        float sy;
+        StockLayerAt(5, sx, sy);
+        return OZG_CardSpot.Make(sx, sy, m_Look.PileW, m_Look.PileH, 0);
+    }
+
+    // The panel "Sleight of hand" (the canvas's boards): the count of the
+    // deal, three buttons, the hint.
+    protected void PaintPanel(bool show)
+    {
+        array<Widget> parts = new array<Widget>();
+        parts.Insert(m_SleightRule);
+        parts.Insert(m_SleightRule2);
+        parts.Insert(m_SleightTitle);
+        parts.Insert(m_SleightCount);
+        parts.Insert(m_BtnSlip);
+        parts.Insert(m_BtnSwap);
+        parts.Insert(m_BtnToss);
+        int i;
+        for (i = 0; i < parts.Count(); i++)
+        {
+            if (parts[i])
+                parts[i].Show(show);
+        }
+        for (i = 0; i < m_SleightHint.Count(); i++)
+        {
+            if (m_SleightHint[i])
+                m_SleightHint[i].Show(show);
+        }
+        if (!show)
+            return;
+        int used = m_V.SleightsUsed;
+        int most = m_V.SleightsMost;
+        m_SleightCount.SetText(Tr2("STR_OZG_WIN_SLEIGHTS_USED", used.ToString(), most.ToString()));
+        bool spent = used >= most;
+        bool throwing = m_Sleight == OZG_Const.SLEIGHT_THROW;
+        SleightButton(m_BtnSlip, m_Sleight == OZG_Const.SLEIGHT_SLIP, spent);
+        SleightButton(m_BtnSwap, m_Sleight == OZG_Const.SLEIGHT_SWAP, spent);
+        SleightButton(m_BtnToss, throwing, spent);
+        if (throwing)
+            SetLabel(m_BtnToss, Caps(Tr("STR_OZG_WIN_TOSS_DONE")));
+        else
+            SetLabel(m_BtnToss, Caps(Tr("STR_OZG_WIN_TOSS")));
+
+        string key = "STR_OZG_HINT_SLEIGHT";
+        if (m_Sleight == OZG_Const.SLEIGHT_SLIP)
+            key = "STR_OZG_HINT_SLIP";
+        else if (m_Sleight == OZG_Const.SLEIGHT_SWAP && m_PickKey == "")
+            key = "STR_OZG_HINT_SWAP_POCKET";
+        else if (m_Sleight == OZG_Const.SLEIGHT_SWAP)
+            key = "STR_OZG_HINT_SWAP_HAND";
+        else if (throwing)
+            key = "STR_OZG_HINT_TOSS";
+        else if (spent)
+            key = "STR_OZG_HINT_NO_MORE";
+        Hint(m_SleightHint, Tr(key), m_Sleight != "");
+    }
+
+    // The dealer's frame (design §6.5, §10; the mock-up's table_deal): put
+    // into the deck, draw out of it, and the cards he reads with a tick to
+    // deal them to himself; the deck lies at the stock's place.
+    protected void PaintDealer(bool show)
+    {
+        ForgetDrawn(m_DealPics);
+        ClearList(m_DealPics);
+        m_TileKeys.Clear();
+        m_TileX.Clear();
+        m_TileY.Clear();
+        if (m_Deal)
+            m_Deal.Show(show);
+        if (!show)
+            return;
+        int i;
+        // What the plan names that is no longer there goes from it.
+        array<string> reads = new array<string>();
+        for (i = 0; i < m_V.DeckReads.Count(); i++)
+            reads.Insert(m_V.DeckReads[i].Key);
+        for (i = m_PlanPick.Count() - 1; i >= 0; i--)
+        {
+            if (reads.Find(m_PlanPick[i]) < 0)
+                m_PlanPick.Remove(i);
+        }
+
+        int planned = Planned();
+        int most = m_V.SleightsMost;
+        m_DealCount.SetText(Tr2("STR_OZG_WIN_SLEIGHTS_USED", planned.ToString(), most.ToString()));
+        bool spent = planned >= most;
+        m_BtnDeckIn.Show(true);
+        m_BtnDeckOut.Show(true);
+        SleightButton(m_BtnDeckIn, m_Sleight == OZG_Const.SLEIGHT_DECK_IN, spent);
+        SleightButton(m_BtnDeckOut, m_Sleight == OZG_Const.SLEIGHT_DECK_OUT, spent);
+
+        // The deck, six backs, the top one lit while a card is to be drawn.
+        bool drawing = m_Sleight == OZG_Const.SLEIGHT_DECK_OUT;
+        for (int k = 0; k < 6; k++)
+        {
+            float sx;
+            float sy;
+            StockLayerAt(k, sx, sy);
+            int deckGlow = 0;
+            if (drawing && k == 5)
+                deckGlow = m_Look.SleightGlow;
+            Card(m_DealPics, PictureOfBack(-1), sx, sy, m_Look.PileW, m_Look.PileH, 0, deckGlow, true, "", REGION_STOCK);
+        }
+
+        // The cards he reads, ten at most, a tick under each.
+        int n = m_V.DeckReads.Count();
+        if (n > 2 * m_Look.TilesPerRow)
+            n = 2 * m_Look.TilesPerRow;
+        if (n == 0)
+            m_DealCaption.SetText(Tr("STR_OZG_WIN_DEAL_NONE"));
+        else
+            m_DealCaption.SetText(Tr1("STR_OZG_WIN_DEAL_SELF", m_V.PicksMost.ToString()));
+        string tickRoot = "OZG_TickClassic";
+        if (m_Style == "stalker")
+            tickRoot = "OZG_TickStalker";
+        int shown = 0;
+        for (i = 0; i < n; i++)
+        {
+            OZG_WDeckCard c = m_V.DeckReads[i];
+            if (m_PlanOut.Find(c.Key) >= 0)
+                continue;
+            int row = shown / m_Look.TilesPerRow;
+            int col = shown % m_Look.TilesPerRow;
+            shown++;
+            float x = m_Look.TileX + col * m_Look.TileStep;
+            float y = m_Look.TileY + row * m_Look.TileRowStep;
+            bool ticked = m_PlanPick.Find(c.Key) >= 0;
+            int glow = 0;
+            if (drawing)
+                glow = m_Look.SleightGlow;
+            Widget tile = Card(m_DealPics, PictureOfBack(c.Look), x, y, m_Look.FanW, m_Look.FanH, 0, glow, true, SlotOfTile(c.Key));
+            // His mark in the back's pattern, and the face he knows written
+            // on a label in its corner, as the mock-up of the deal drew it:
+            // a choice he must read at a glance, not the table's faint pencil.
+            if (tile)
+                SignBack(tile, m_Look.FanW, m_Look.FanH, c.Look, c.Sign);
+            FaceLabel(c.Face, x - m_Look.FanW * 0.5 + 2, y - m_Look.FanH * 0.5 + 3);
+            Widget box = MakeLayout("OpenZone_Games/gui/layouts/ozg_tick_" + m_Style + ".layout", m_TableBox, tickRoot);
+            if (box)
+            {
+                float side = 22;
+                box.SetSize(side * m_K, side * m_K);
+                box.SetPos((x - side * 0.5) * m_K, (y + m_Look.TickDown - side * 0.5) * m_K);
+                Widget rim = box.FindAnyWidget("OZG_TickEdge");
+                Widget mark = box.FindAnyWidget("OZG_TickMark");
+                if (mark)
+                    mark.Show(ticked);
+                if (rim && ticked)
+                    rim.SetColor(m_Look.TickOn);
+                else if (rim)
+                    rim.SetColor(m_Look.TickIdle);
+                m_DealPics.Insert(box);
+            }
+            m_TileKeys.Insert(c.Key);
+            m_TileX.Insert(x);
+            m_TileY.Insert(y);
+        }
+
+        string key = "STR_OZG_HINT_DEAL";
+        if (m_Sleight == OZG_Const.SLEIGHT_DECK_IN)
+            key = "STR_OZG_HINT_DECK_IN";
+        else if (drawing)
+            key = "STR_OZG_HINT_DECK_OUT";
+        else if (spent)
+            key = "STR_OZG_HINT_NO_MORE";
+        Hint(m_DealHint, Tr(key), m_Sleight != "");
+    }
+
+    static string SlotOfTile(string key)
+    {
+        return "r" + key;
+    }
+
+    // A face on a pale label, its top-left at (x, y): the rank as the cards
+    // print it, the suit's own picture.
+    protected void FaceLabel(string face, float x, float y)
+    {
+        string root = "OZG_LabelClassic";
+        if (m_Style == "stalker")
+            root = "OZG_LabelStalker";
+        Widget label = MakeLayout("OpenZone_Games/gui/layouts/ozg_label_" + m_Style + ".layout", m_TableBox, root);
+        if (!label)
+            return;
+        label.SetSize(36 * m_K, 22 * m_K);
+        label.SetPos(x * m_K, y * m_K);
+        TextWidget rank = TextWidget.Cast(label.FindAnyWidget("OZG_LabelRank"));
+        ImageWidget suit = ImageWidget.Cast(label.FindAnyWidget("OZG_LabelSuit"));
+        string r = face.Substring(0, 1);
+        if (r == "T")
+            r = "10";
+        string s = face.Substring(1, 1);
+        if (rank)
+        {
+            rank.SetText(r);
+            if (s == "h" || s == "d")
+                rank.SetColor(ARGB(255, 200, 26, 40));
+            else
+                rank.SetColor(ARGB(255, 24, 22, 24));
+        }
+        if (suit)
+        {
+            suit.LoadImageFile(0, Picture("suit_" + s));
+            suit.SetImage(0);
+        }
+        m_DealPics.Insert(label);
+    }
+
+    // The pockets as they are now, read every half second: a change redraws
+    // the strip.
+    protected void RefreshPockets(float dt)
+    {
+        m_PocketsAge = m_PocketsAge + dt;
+        if (m_PocketsAge < 0.5)
+            return;
+        m_PocketsAge = 0;
+        OZG_PocketsRead.Into(m_PocketCards);
+        // A card planned into the deck that left the pockets is out of the plan.
+        for (int i = m_PlanIn.Count() - 1; i >= 0; i--)
+        {
+            bool still = false;
+            for (int k = 0; k < m_PocketCards.Count(); k++)
+            {
+                if (m_PocketCards[k].Key == m_PlanIn[i])
+                    still = true;
+            }
+            if (!still)
+                m_PlanIn.Remove(i);
+        }
+        string line = OZG_PocketsRead.Line(m_PocketCards);
+        if (line == m_PocketsLine)
+            return;
+        m_PocketsLine = line;
+        if (m_V)
+            PaintSleights();
+    }
+
+    // ---- the hit tests
+
+    protected int PocketAt(float x, float y)
+    {
+        if (!m_Pockets || !m_Pockets.IsVisible())
+            return -1;
+        for (int k = m_PocketX.Count() - 1; k >= 0; k--)
+        {
+            if (OnCard(x, y, m_PocketX[k], m_Look.PocketY, m_Look.PocketW, m_Look.PocketH, 0))
+                return k;
+        }
+        return -1;
+    }
+
+    protected int TileAt(float x, float y)
+    {
+        for (int k = m_TileKeys.Count() - 1; k >= 0; k--)
+        {
+            if (OnCard(x, y, m_TileX[k], m_TileY[k], m_Look.FanW, m_Look.FanH, 0))
+                return k;
+            float tx = m_TileX[k];
+            float ty = m_TileY[k] + m_Look.TickDown;
+            if (OnCard(x, y, tx, ty, 26, 26, 0))
+                return k;
+        }
+        return -1;
+    }
+
+    protected bool OnDeck(float x, float y)
+    {
+        OZG_CardSpot top = SpotOfDeck();
+        return OnCard(x, y, top.X, top.Y, top.W + 8, top.H + 8, 0);
+    }
+
+    // ---- what the player does with them
+
+    // The sleight asked for (design §9): the card of his pockets by its key,
+    // the card of his hand by its name.
+    protected void SendSleight(string op, string key, string card, string how)
+    {
+        OZG_WAsk ask = new OZG_WAsk();
+        ask.PlaceId = m_PlaceId;
+        ask.CardKey = key;
+        ask.Move = card;
+        ask.How = how;
+        string json;
+        string err;
+        JsonFileLoader<OZG_WAsk>.MakeData(ask, json, err, false);
+        OZ_Rpc.ServiceRequest(OZG_Const.SERVICE, op, json);
+    }
+
+    protected void ArmSleight(string mode)
+    {
+        if (m_Sleight == mode)
+        {
+            m_Sleight = "";
+        }
+        else
+        {
+            if (SleightsLeft() <= 0)
+                return;
+            m_Sleight = mode;
+        }
+        m_PickKey = "";
+        m_Thrown = 0;
+        m_Picked = "";
+        RepaintSleights();
+    }
+
+    // "Throw to the discards" pressed again, as "Done": the throw ends.
+    protected void TossButton()
+    {
+        if (m_Sleight == OZG_Const.SLEIGHT_THROW)
+        {
+            m_Sleight = "";
+            m_Thrown = 0;
+            RepaintSleights();
+            return;
+        }
+        ArmSleight(OZG_Const.SLEIGHT_THROW);
+    }
+
+    protected void RepaintSleights()
+    {
+        PaintTable();
+        PaintHand();
+        PaintMoment();
+        PaintSleights();
+    }
+
+    protected void ClickPocket(int k)
+    {
+        OZG_PocketCard c = m_PocketShown[k];
+        if (c.Planned)
+            return;
+        OZG_CardSpot spot = SpotOfPocket(k, m_PocketShown.Count());
+        string picture = PictureOfFace(c.Face, c.Look);
+        if (m_Sleight == OZG_Const.SLEIGHT_SLIP)
+        {
+            OZG_SleightFly f = new OZG_SleightFly();
+            f.Kind = OZG_Const.SLEIGHT_SLIP;
+            f.PocketSpot = spot;
+            f.PocketPicture = picture;
+            m_Flying.Insert(f);
+            SendSleight(OZG_Const.OP_SLIP, c.Key, "", "");
+            m_Sleight = "";
+        }
+        else if (m_Sleight == OZG_Const.SLEIGHT_SWAP)
+        {
+            if (m_PickKey == c.Key)
+                m_PickKey = "";
+            else
+                m_PickKey = c.Key;
+            RepaintSleights();
+            return;
+        }
+        else if (m_Sleight == OZG_Const.SLEIGHT_DECK_IN)
+        {
+            // Planned now, done with "Deal": the card flies into the deck
+            // in his own window, with its sound (design §6.1).
+            m_PlanIn.Insert(c.Key);
+            Fly(picture, PictureOfBack(c.Look), spot, SpotOfDeck(), 0, 0.45, "");
+            OZG_Sounds.PlayLocal("deckin", null);
+            m_Sleight = "";
+        }
+        else
+        {
+            return;
+        }
+        RepaintSleights();
+    }
+
+    protected void ClickHandSleight(int i)
+    {
+        string card = m_HandCodes[i];
+        float hx;
+        float hy;
+        HandMiddle(i, hx, hy);
+        OZG_CardSpot spot = OZG_CardSpot.Make(hx, hy, m_Look.CardW, m_Look.CardH, m_HandA[i]);
+        int look = LookAt(m_Own.HeldLooks, m_Own.Held.Find(card));
+        string picture = PictureOfFace(card, look);
+        OZG_SleightFly f = new OZG_SleightFly();
+        f.HandSpot = spot;
+        f.HandPicture = picture;
+        f.HandLook = look;
+        if (m_Sleight == OZG_Const.SLEIGHT_THROW)
+        {
+            f.Kind = OZG_Const.SLEIGHT_THROW;
+            m_Flying.Insert(f);
+            string how = "";
+            if (m_Thrown > 0)
+                how = OZG_Const.HOW_MORE;
+            SendSleight(OZG_Const.OP_THROW, "", card, how);
+            m_Thrown++;
+            if (m_Thrown >= OZG_Const.THROW_MOST)
+            {
+                m_Sleight = "";
+                m_Thrown = 0;
+            }
+        }
+        else if (m_Sleight == OZG_Const.SLEIGHT_SWAP && m_PickKey != "")
+        {
+            int at = -1;
+            for (int k = 0; k < m_PocketShown.Count(); k++)
+            {
+                if (m_PocketShown[k].Key == m_PickKey)
+                    at = k;
+            }
+            if (at < 0)
+                return;
+            OZG_PocketCard pocket = m_PocketShown[at];
+            f.Kind = OZG_Const.SLEIGHT_SWAP;
+            f.PocketSpot = SpotOfPocket(at, m_PocketShown.Count());
+            f.PocketPicture = PictureOfFace(pocket.Face, pocket.Look);
+            m_Flying.Insert(f);
+            SendSleight(OZG_Const.OP_SWAP, m_PickKey, card, "");
+            m_Sleight = "";
+            m_PickKey = "";
+        }
+        else
+        {
+            return;
+        }
+        RepaintSleights();
+    }
+
+    // A card the dealer reads: a tick (dealt to him first), or, while a card
+    // is to be drawn, that card out of the deck.
+    protected void ClickTile(int t)
+    {
+        string key = m_TileKeys[t];
+        OZG_WDeckCard c = null;
+        for (int i = 0; i < m_V.DeckReads.Count(); i++)
+        {
+            if (m_V.DeckReads[i].Key == key)
+                c = m_V.DeckReads[i];
+        }
+        if (!c)
+            return;
+        OZG_CardSpot from = OZG_CardSpot.Make(m_TileX[t], m_TileY[t], m_Look.FanW, m_Look.FanH, 0);
+        if (m_Sleight == OZG_Const.SLEIGHT_DECK_OUT)
+        {
+            if (SleightsLeft() <= 0)
+                return;
+            m_PlanPick.RemoveItem(key);
+            m_PlanOut.Insert(key);
+            m_PlanOutFace.Insert(c.Face);
+            m_PlanOutLook.Insert(c.Look);
+            int n = m_PocketShown.Count() + 1;
+            Fly(PictureOfBack(c.Look), PictureOfFace(c.Face, c.Look), from, SpotOfPocket(n - 1, n), 0, 0.45, "");
+            OZG_Sounds.PlayLocal("deckout", null);
+            m_Sleight = "";
+            RepaintSleights();
+            return;
+        }
+        if (m_Sleight != "")
+            return;
+        if (m_PlanPick.Find(key) >= 0)
+        {
+            m_PlanPick.RemoveItem(key);
+            RepaintSleights();
+            return;
+        }
+        // The first card chosen is a sleight of its own; the others ride on it.
+        if (m_PlanPick.Count() >= m_V.PicksMost)
+            return;
+        if (m_PlanPick.Count() == 0 && SleightsLeft() <= 0)
+            return;
+        m_PlanPick.Insert(key);
+        Fly(PictureOfBack(c.Look), "", from, SpotOfDeck(), 0, 0.45, "");
+        OZG_Sounds.PlayLocal("pick", null);
+        RepaintSleights();
+    }
+
+    // The deck, while a card is to be drawn: a card by chance out of it.
+    protected void ClickDeck()
+    {
+        if (m_Sleight != OZG_Const.SLEIGHT_DECK_OUT || SleightsLeft() <= 0)
+            return;
+        m_PlanOut.Insert(OZG_Const.ANY_CARD);
+        m_PlanOutFace.Insert("");
+        m_PlanOutLook.Insert(-1);
+        int n = m_PocketShown.Count() + 1;
+        Fly(PictureOfBack(-1), "", SpotOfDeck(), SpotOfPocket(n - 1, n), 0, 0.45, "");
+        OZG_Sounds.PlayLocal("deckout", null);
+        m_Sleight = "";
+        RepaintSleights();
+    }
+
+    // The server did this player's sleight (design §6.1, §9): its sound for
+    // him, and the card flown in his window from where he clicked it to where
+    // the view now draws it. An answer that comes before its view waits for
+    // it.
+    void SleightDone(OZG_WSleight w)
+    {
+        if (!w || w.PlaceId != m_PlaceId)
+            return;
+        OZG_Sounds.PlayLocal(w.SoundName, OZG_Place.OZG_ById(m_PlaceId));
+        if (m_ShownRev < w.Rev)
+        {
+            m_Answer = w;
+            return;
+        }
+        FlySleight(w);
+    }
+
+    // A sleight of his the server refused: its flight is dropped.
+    void SleightRefused()
+    {
+        if (m_Flying.Count() > 0)
+            m_Flying.RemoveOrdered(0);
+    }
+
+    protected void FlySleight(OZG_WSleight w)
+    {
+        if (m_Flying.Count() == 0)
+            return;
+        OZG_SleightFly f = m_Flying[0];
+        m_Flying.RemoveOrdered(0);
+        if (!f || f.Kind != w.Kind || !m_Own)
+            return;
+        string trumpSuit = "";
+        if (m_Pub)
+            trumpSuit = OZG_Cards.SuitOf(m_Pub.TrumpCard);
+        array<string> hand = new array<string>();
+        SortHand(m_Own.Held, trumpSuit, hand);
+        int flown = 0;
+        if (w.CameIn != "" && f.PocketSpot)
+        {
+            int at = hand.Find(w.CameIn);
+            if (at >= 0)
+            {
+                Fly(f.PocketPicture, "", f.PocketSpot, SpotOfHand(at, hand.Count()), 0, 0.45, SlotOfHand(at));
+                flown++;
+            }
+        }
+        if (w.Kind == OZG_Const.SLEIGHT_SWAP && f.HandSpot && f.PocketSpot)
+        {
+            Fly(f.HandPicture, "", f.HandSpot, f.PocketSpot, 0, 0.45, "");
+            flown++;
+        }
+        if (w.Kind == OZG_Const.SLEIGHT_THROW && f.HandSpot && m_Pub)
+        {
+            int heap = HeapOf(m_Pub.DiscardCount) - 1;
+            if (heap < 0)
+                heap = 0;
+            Fly(f.HandPicture, PictureOfBack(f.HandLook), f.HandSpot, SpotOfDiscards(heap), 0, 0.45, SlotOfHeap(heap));
+            flown++;
+        }
+        OZG_Log.Dbg("sleight " + w.Kind + " flown in his window: " + flown.ToString() + " card(s), rev " + w.Rev.ToString());
     }
 
     // ------------------------------------------------------------ clicks
@@ -2385,18 +3362,47 @@ class OZG_GameMenu : UIScriptedMenu
         PaintMoment();
     }
 
-    // A click on the cloth: the card under the pointer, if any.
+    // A click on the cloth: the card under the pointer, if any. The pockets
+    // and the dealer's cards come first; while a sleight is armed the hand
+    // serves it, and nothing is played.
     protected void ClickTable()
     {
         float x;
         float y;
         PointerAt(x, y);
+        int pocket = PocketAt(x, y);
+        if (pocket >= 0)
+        {
+            ClickPocket(pocket);
+            return;
+        }
+        if (Dealing())
+        {
+            int tile = TileAt(x, y);
+            if (tile >= 0)
+            {
+                ClickTile(tile);
+                return;
+            }
+            if (OnDeck(x, y))
+            {
+                ClickDeck();
+                return;
+            }
+        }
         int at = HandAt(x, y);
+        if (at >= 0 && m_Sleight != "")
+        {
+            ClickHandSleight(at);
+            return;
+        }
         if (at >= 0)
         {
             ClickHand(m_HandCodes[at]);
             return;
         }
+        if (m_Sleight != "")
+            return;
         at = AttackAt(x, y);
         if (at >= 0 && m_Picked != "")
         {
@@ -2445,7 +3451,41 @@ class OZG_GameMenu : UIScriptedMenu
         }
         if (w == m_BtnDeal)
         {
-            Send(OZG_Const.OP_DEAL, "", -1, "", "", "", 0);
+            // The dealer's three ride in the deal (design §9).
+            OZG_WAsk deal = new OZG_WAsk();
+            deal.PlaceId = m_PlaceId;
+            if (Dealing())
+                deal.Stack = StackText();
+            string dealJson;
+            string dealErr;
+            JsonFileLoader<OZG_WAsk>.MakeData(deal, dealJson, dealErr, false);
+            OZ_Rpc.ServiceRequest(OZG_Const.SERVICE, OZG_Const.OP_DEAL, dealJson);
+            m_Sleight = "";
+            return true;
+        }
+        if (w == m_BtnSlip)
+        {
+            ArmSleight(OZG_Const.SLEIGHT_SLIP);
+            return true;
+        }
+        if (w == m_BtnSwap)
+        {
+            ArmSleight(OZG_Const.SLEIGHT_SWAP);
+            return true;
+        }
+        if (w == m_BtnToss)
+        {
+            TossButton();
+            return true;
+        }
+        if (w == m_BtnDeckIn)
+        {
+            ArmSleight(OZG_Const.SLEIGHT_DECK_IN);
+            return true;
+        }
+        if (w == m_BtnDeckOut)
+        {
+            ArmSleight(OZG_Const.SLEIGHT_DECK_OUT);
             return true;
         }
         if (w == m_BtnTakeHost)

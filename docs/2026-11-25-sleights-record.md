@@ -207,3 +207,78 @@ repainted and marked for its clients). Measured after it: a stalkers' queen of h
 the server restarted, the card read `Qh/1`; put into the deck from the window by "Put into
 the deck from a pocket", dealt, and the server restarted: `restored: session ... st=1`,
 `problems=0`. The warning keeps its new tail (what is lacking, what is left over).
+
+## Task 7: the window
+
+Built, after the canvas's boards Main and Stalker and, for the dealer, the earlier mock-up's
+`table_deal.png` (the canvas has no deal):
+
+- **The pockets** ("In your pockets"): the cards the player carries outside any deck, read
+  from his own inventory every half second (`OZG_Pockets.c`), faces up, 68 units apart
+  while three fit and closer when more must; its rim pink (classic) or rust (stalker) and
+  its cards glowing while slip, swap or put-in waits for a card of it; the card picked for
+  a swap with the mock-up's solid ring round it.
+- **The panel "Sleight of hand"** under the log: "Sleights this deal: n of m", "Slip in from
+  a pocket", "Swap a card", "Throw to the discards" (it reads "Done" while a throw is open),
+  two lines of hint in the mock-up's words; the armed button's rim and ground, spent
+  buttons dimmed with "No more sleights in this deal". Shown in play to a seat dealt into
+  the deal; it yields to the host's buttons between deals.
+- **The doer's window**: a click asks the server (the card of the pockets by its item's key,
+  the card of the hand by its name); when the server's `sleight` comes, his sound plays and
+  the cards fly -- pocket to hand for a slip, both ways for a swap, hand to the discards
+  (turning to its back) for a throw; a refusal flies nothing.
+- **The dealer's frame** (host on his seat, sleights on, before "Deal"): "You deal. Before
+  the deal:", the count, "Put into the deck from a pocket", "Draw out of the deck into a
+  pocket", and the cards he reads (ten at most) as backs with their sign and the face on a
+  pale label in the corner, a tick box under each (as many ticks as `DealerPicks`); the
+  deck at the stock's place, lit while a card is to be drawn. Every plan flies at once with
+  its sound (pocket to deck, deck or a read card to the pockets, a ticked card to the deck),
+  the pockets show what will be there (a back for a card by chance), and "Deal" carries the
+  plan as the stack. Nothing of the game that ended is drawn on his table meanwhile.
+- 22 strings in English and Ukrainian; the art (`tools/make_table.py`: the pockets' box and
+  rims, a button's rim, the tick box and the tick, the ring) and the layouts
+  (`tools/make_layouts.py`: `sleights`, `face_label`, `tick`, `rim`).
+
+The stand (shots in `.dayz-mcp/shots`):
+
+- classic, English: "Slip in from a pocket", then a card of the pockets: the server's
+  `slip 8h ... at 30% rolled 44: not shown`, the client's `sound slip on local:
+  started=1` and `sleight slip flown in his window: 1 card(s)`; swap (the pocket's nine of
+  hearts for the six of spades): `swap 6s for 9h (pocket)`, two cards flown; a throw of two:
+  `throw 6d (card 1)`, `throw Ad (card 2)`, one card flown each, the count at "3 of 3", the
+  buttons spent (`client-1795613830749.png`, `client-1795613883834.png`,
+  `client-1795613997299.png`, `client-1795614013199.png`, `client-1795614032098.png`);
+- the spotter: a puppet's throw at `throw=100 spot=100`: `seen by bot2,<the client's id>,bot3`,
+  the client `shake discards: 2 cards` with the throw's sound; the discards in and out of the
+  shake 0.3 s apart (`sleight-shake-classic-discards-pair.png`);
+- the dealer's frame, classic, English: a stalkers' queen put in from the pockets ("1 of 3"),
+  a card by chance drawn out ("2 of 3"), two tiles ticked ("3 of 3", the buttons spent),
+  "Deal": `deckin Qh`, `deckout 5c`, `pick 9h,7s ... rolled 50,88: not shown`, his hand dealt
+  with the nine of hearts and the seven of spades (`client-1795615302208.png`,
+  `client-1795615399127.png`, `client-1795615428587.png`, `client-1795615456832.png`, the deal
+  in flight `client-1795615479884.png`);
+- stalker, English: the frame (`client-1795615838055.png`), a deal in flight
+  (`client-1795615881159.png`), the ring of a picked card (`client-1795615919667.png`,
+  `sleight-swap-ring-stalker-crop.png`), a card laid in flight (`client-1795616100469.png`);
+- stalker, Ukrainian (the client's language "Russian"): the panel in the mock-up's words,
+  "Оберіть карту в кишені — вона ляже вам у руку." while a slip waits, the dealer's frame
+  (`client-1795616318420.png`, `client-1795616329786.png`, `client-1795616585823.png`).
+
+Found on the stand and put right before this commit: the dealer's two buttons were never
+shown (the layout's `visible 0`); the faint pencil of a read face on a 58-unit tile was not
+to be read, so the tile carries its sign and the face on a label, as the deal's mock-up
+drew it; a card picked for a swap had only a brighter glow, now the mock-up's ring; the
+stalkers' pockets box went rust all over while armed (its hot rim was a plate under a
+see-through ground, now four strips); the stalkers' frame had its title on the cloth's
+seam (forty units lower now); the hand the last game left was drawn over the dealer's
+second row of tiles.
+
+Otherwise than the mock-ups, and why:
+
+- Between deals the panel of sleights is not shown and "Deal" stays in the column: the
+  column holds the host's five buttons then ("Variant" and "Deal" more than in play), and the
+  dealer's sleights are in his frame on the table. The deal's mock-up drew "Deal" under the
+  frame and the panel dimmed; it knew no "Variant".
+- A card taken out by chance is picked among all the cards of the place, not only the faces
+  the game deals (a five of clubs came out once); the design does not say.
+- At most ten tiles (two rows of five); the dealer with more read cards sees the first ten.

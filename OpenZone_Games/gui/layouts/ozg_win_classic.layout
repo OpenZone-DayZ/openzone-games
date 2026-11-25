@@ -1374,6 +1374,608 @@ FrameWidgetClass OZG_WinClassic {
     }
    }
   }
+  FrameWidgetClass OZG_Pockets {
+   ignorepointer 1
+   clipchildren 0
+   position 68 692
+   size 222 152
+   hexactpos 1
+   vexactpos 1
+   hexactsize 1
+   vexactsize 1
+   priority 5
+   visible 0
+   {
+    ImageWidgetClass OZG_PocketsBg {
+     ignorepointer 1
+     color 0.039 0.078 0.063 0.86
+     position 0 0
+     size 222 152
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 0
+     image0 "OpenZone_Games/gui/textures/ozg_round_pocket_ca.paa"
+     mode blend
+     "src alpha" 1
+     "stretch mode" stretch_w_h
+    }
+    ImageWidgetClass OZG_PocketsEdge {
+     ignorepointer 1
+     color 0.275 0.349 0.306 1
+     position 0 0
+     size 222 152
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 1
+     image0 "OpenZone_Games/gui/textures/ozg_round_pocket_edge_ca.paa"
+     mode blend
+     "src alpha" 1
+     "stretch mode" stretch_w_h
+    }
+    ImageWidgetClass OZG_PocketsEdgeHot {
+     ignorepointer 1
+     color 1.000 0.471 0.667 1
+     position 0 0
+     size 222 152
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 2
+     image0 "OpenZone_Games/gui/textures/ozg_round_pocket_edge2_ca.paa"
+     mode blend
+     "src alpha" 1
+     "stretch mode" stretch_w_h
+     visible 0
+    }
+    TextWidgetClass OZG_PocketsTitle {
+     ignorepointer 1
+     color 0.886 0.902 0.871 1
+     position 12 8
+     size 198 20
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     text "#STR_OZG_WIN_POCKETS"
+     font "gui/fonts/etelkatextpro22"
+     "exact text" 1
+     "exact text size" 16
+     "text halign" left
+     "text valign" center
+     priority 3
+    }
+    TextWidgetClass OZG_PocketsNone {
+     ignorepointer 1
+     color 0.596 0.639 0.608 1
+     position 12 58
+     size 198 22
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     text "#STR_OZG_WIN_POCKETS_NONE"
+     font "gui/fonts/etelkatextpro16"
+     "exact text" 1
+     "exact text size" 13
+     "text halign" left
+     "text valign" center
+     priority 3
+     visible 0
+    }
+   }
+  }
+  PanelWidgetClass OZG_SleightRule {
+   ignorepointer 1
+   position 1180 398
+   size 352 1
+   hexactpos 1
+   vexactpos 1
+   hexactsize 1
+   vexactsize 1
+   color 0.200 0.251 0.227 1
+   style rover_sim_colorable
+   priority 25
+   visible 0
+  }
+  TextWidgetClass OZG_SleightTitle {
+   ignorepointer 1
+   color 0.886 0.902 0.871 1
+   position 1180 407
+   size 352 22
+   hexactpos 1
+   vexactpos 1
+   hexactsize 1
+   vexactsize 1
+   text "#STR_OZG_WIN_SLEIGHTS"
+   font "gui/fonts/etelkatextpro22"
+   "exact text" 1
+   "exact text size" 17
+   "text halign" left
+   "text valign" center
+   priority 25
+   visible 0
+  }
+  TextWidgetClass OZG_SleightCount {
+   ignorepointer 1
+   color 0.596 0.639 0.608 1
+   position 1180 431
+   size 352 18
+   hexactpos 1
+   vexactpos 1
+   hexactsize 1
+   vexactsize 1
+   text ""
+   font "gui/fonts/etelkatextpro16"
+   "exact text" 1
+   "exact text size" 13
+   "text halign" left
+   "text valign" center
+   priority 25
+   visible 0
+  }
+  ButtonWidgetClass OZG_BtnSlip {
+   visible 0
+   position 1180 457
+   size 352 40
+   hexactpos 1
+   vexactpos 1
+   hexactsize 1
+   vexactsize 1
+   text ""
+   priority 40
+   style Empty
+   {
+    ImageWidgetClass OZG_BtnSlipBg {
+     ignorepointer 1
+     color 0.173 0.212 0.196 1
+     position 0 0
+     size 352 40
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 0
+     image0 "OpenZone_Games/gui/textures/ozg_round_wide_ca.paa"
+     mode blend
+     "src alpha" 1
+     "stretch mode" stretch_w_h
+    }
+    ImageWidgetClass OZG_BtnSlipEdge {
+     ignorepointer 1
+     color 1.000 0.471 0.667 1
+     position 0 0
+     size 352 40
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 1
+     image0 "OpenZone_Games/gui/textures/ozg_round_wide_edge_ca.paa"
+     mode blend
+     "src alpha" 1
+     "stretch mode" stretch_w_h
+     visible 0
+    }
+    TextWidgetClass OZG_BtnSlipText {
+     ignorepointer 1
+     color 0.886 0.902 0.871 1
+     position 0 0
+     size 352 40
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     text "#STR_OZG_WIN_SLIP"
+     font "gui/fonts/etelkatextpro16"
+     "exact text" 1
+     "exact text size" 15
+     "text halign" center
+     "text valign" center
+     priority 2
+    }
+   }
+  }
+  ButtonWidgetClass OZG_BtnSwap {
+   visible 0
+   position 1180 505
+   size 352 40
+   hexactpos 1
+   vexactpos 1
+   hexactsize 1
+   vexactsize 1
+   text ""
+   priority 40
+   style Empty
+   {
+    ImageWidgetClass OZG_BtnSwapBg {
+     ignorepointer 1
+     color 0.173 0.212 0.196 1
+     position 0 0
+     size 352 40
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 0
+     image0 "OpenZone_Games/gui/textures/ozg_round_wide_ca.paa"
+     mode blend
+     "src alpha" 1
+     "stretch mode" stretch_w_h
+    }
+    ImageWidgetClass OZG_BtnSwapEdge {
+     ignorepointer 1
+     color 1.000 0.471 0.667 1
+     position 0 0
+     size 352 40
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 1
+     image0 "OpenZone_Games/gui/textures/ozg_round_wide_edge_ca.paa"
+     mode blend
+     "src alpha" 1
+     "stretch mode" stretch_w_h
+     visible 0
+    }
+    TextWidgetClass OZG_BtnSwapText {
+     ignorepointer 1
+     color 0.886 0.902 0.871 1
+     position 0 0
+     size 352 40
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     text "#STR_OZG_WIN_SWAP"
+     font "gui/fonts/etelkatextpro16"
+     "exact text" 1
+     "exact text size" 15
+     "text halign" center
+     "text valign" center
+     priority 2
+    }
+   }
+  }
+  ButtonWidgetClass OZG_BtnToss {
+   visible 0
+   position 1180 553
+   size 352 40
+   hexactpos 1
+   vexactpos 1
+   hexactsize 1
+   vexactsize 1
+   text ""
+   priority 40
+   style Empty
+   {
+    ImageWidgetClass OZG_BtnTossBg {
+     ignorepointer 1
+     color 0.173 0.212 0.196 1
+     position 0 0
+     size 352 40
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 0
+     image0 "OpenZone_Games/gui/textures/ozg_round_wide_ca.paa"
+     mode blend
+     "src alpha" 1
+     "stretch mode" stretch_w_h
+    }
+    ImageWidgetClass OZG_BtnTossEdge {
+     ignorepointer 1
+     color 1.000 0.471 0.667 1
+     position 0 0
+     size 352 40
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 1
+     image0 "OpenZone_Games/gui/textures/ozg_round_wide_edge_ca.paa"
+     mode blend
+     "src alpha" 1
+     "stretch mode" stretch_w_h
+     visible 0
+    }
+    TextWidgetClass OZG_BtnTossText {
+     ignorepointer 1
+     color 0.886 0.902 0.871 1
+     position 0 0
+     size 352 40
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     text "#STR_OZG_WIN_TOSS"
+     font "gui/fonts/etelkatextpro16"
+     "exact text" 1
+     "exact text size" 15
+     "text halign" center
+     "text valign" center
+     priority 2
+    }
+   }
+  }
+  TextWidgetClass OZG_SleightHint0 {
+   ignorepointer 1
+   color 0.596 0.639 0.608 1
+   position 1180 600
+   size 352 17
+   hexactpos 1
+   vexactpos 1
+   hexactsize 1
+   vexactsize 1
+   text ""
+   font "gui/fonts/etelkatextpro16"
+   "exact text" 1
+   "exact text size" 13
+   "text halign" left
+   "text valign" center
+   priority 25
+   visible 0
+  }
+  TextWidgetClass OZG_SleightHint1 {
+   ignorepointer 1
+   color 0.596 0.639 0.608 1
+   position 1180 617
+   size 352 17
+   hexactpos 1
+   vexactpos 1
+   hexactsize 1
+   vexactsize 1
+   text ""
+   font "gui/fonts/etelkatextpro16"
+   "exact text" 1
+   "exact text size" 13
+   "text halign" left
+   "text valign" center
+   priority 25
+   visible 0
+  }
+  PanelWidgetClass OZG_SleightRule2 {
+   ignorepointer 1
+   position 1180 668
+   size 352 1
+   hexactpos 1
+   vexactpos 1
+   hexactsize 1
+   vexactsize 1
+   color 0.200 0.251 0.227 1
+   style rover_sim_colorable
+   priority 25
+   visible 0
+  }
+  FrameWidgetClass OZG_Deal {
+   ignorepointer 1
+   clipchildren 0
+   position 452 300
+   size 480 440
+   hexactpos 1
+   vexactpos 1
+   hexactsize 1
+   vexactsize 1
+   priority 40
+   visible 0
+   {
+    TextWidgetClass OZG_DealTitle {
+     ignorepointer 1
+     color 0.925 0.769 0.251 1
+     position 0 0
+     size 460 28
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     text "#STR_OZG_WIN_DEALING"
+     font "gui/fonts/etelkatextpro22"
+     "exact text" 1
+     "exact text size" 20
+     "text halign" left
+     "text valign" center
+     priority 2
+    }
+    TextWidgetClass OZG_DealCount {
+     ignorepointer 1
+     color 0.596 0.639 0.608 1
+     position 0 28
+     size 460 18
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     text ""
+     font "gui/fonts/etelkatextpro16"
+     "exact text" 1
+     "exact text size" 13
+     "text halign" left
+     "text valign" center
+     priority 2
+    }
+    TextWidgetClass OZG_DealCaption {
+     ignorepointer 1
+     color 0.886 0.902 0.871 1
+     position 0 146
+     size 470 20
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     text ""
+     font "gui/fonts/etelkatextpro16"
+     "exact text" 1
+     "exact text size" 14
+     "text halign" left
+     "text valign" center
+     priority 2
+    }
+    ButtonWidgetClass OZG_BtnDeckIn {
+     visible 1
+     position 0 52
+     size 330 38
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     text ""
+     priority 3
+     style Empty
+     {
+      ImageWidgetClass OZG_BtnDeckInBg {
+       ignorepointer 1
+       color 0.173 0.212 0.196 1
+       position 0 0
+       size 330 38
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 0
+       image0 "OpenZone_Games/gui/textures/ozg_round_wide_ca.paa"
+       mode blend
+       "src alpha" 1
+       "stretch mode" stretch_w_h
+      }
+      ImageWidgetClass OZG_BtnDeckInEdge {
+       ignorepointer 1
+       color 1.000 0.471 0.667 1
+       position 0 0
+       size 330 38
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 1
+       image0 "OpenZone_Games/gui/textures/ozg_round_wide_edge_ca.paa"
+       mode blend
+       "src alpha" 1
+       "stretch mode" stretch_w_h
+       visible 0
+      }
+      TextWidgetClass OZG_BtnDeckInText {
+       ignorepointer 1
+       color 0.886 0.902 0.871 1
+       position 0 0
+       size 330 38
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       text "#STR_OZG_WIN_DECK_IN"
+       font "gui/fonts/etelkatextpro16"
+       "exact text" 1
+       "exact text size" 15
+       "text halign" center
+       "text valign" center
+       priority 2
+      }
+     }
+    }
+    ButtonWidgetClass OZG_BtnDeckOut {
+     visible 1
+     position 0 98
+     size 330 38
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     text ""
+     priority 3
+     style Empty
+     {
+      ImageWidgetClass OZG_BtnDeckOutBg {
+       ignorepointer 1
+       color 0.173 0.212 0.196 1
+       position 0 0
+       size 330 38
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 0
+       image0 "OpenZone_Games/gui/textures/ozg_round_wide_ca.paa"
+       mode blend
+       "src alpha" 1
+       "stretch mode" stretch_w_h
+      }
+      ImageWidgetClass OZG_BtnDeckOutEdge {
+       ignorepointer 1
+       color 1.000 0.471 0.667 1
+       position 0 0
+       size 330 38
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 1
+       image0 "OpenZone_Games/gui/textures/ozg_round_wide_edge_ca.paa"
+       mode blend
+       "src alpha" 1
+       "stretch mode" stretch_w_h
+       visible 0
+      }
+      TextWidgetClass OZG_BtnDeckOutText {
+       ignorepointer 1
+       color 0.886 0.902 0.871 1
+       position 0 0
+       size 330 38
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       text "#STR_OZG_WIN_DECK_OUT"
+       font "gui/fonts/etelkatextpro16"
+       "exact text" 1
+       "exact text size" 15
+       "text halign" center
+       "text valign" center
+       priority 2
+      }
+     }
+    }
+    TextWidgetClass OZG_DealHint0 {
+     ignorepointer 1
+     color 0.596 0.639 0.608 1
+     position 0 400
+     size 470 17
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     text ""
+     font "gui/fonts/etelkatextpro16"
+     "exact text" 1
+     "exact text size" 13
+     "text halign" left
+     "text valign" center
+     priority 2
+    }
+    TextWidgetClass OZG_DealHint1 {
+     ignorepointer 1
+     color 0.596 0.639 0.608 1
+     position 0 417
+     size 470 17
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     text ""
+     font "gui/fonts/etelkatextpro16"
+     "exact text" 1
+     "exact text size" 13
+     "text halign" left
+     "text valign" center
+     priority 2
+    }
+   }
+  }
   ButtonWidgetClass OZG_BtnClose {
    visible 1
    position 1520 36

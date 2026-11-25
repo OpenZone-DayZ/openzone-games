@@ -115,10 +115,29 @@ modded class MissionGameplay
             string text = error;
             if (error.IndexOf("STR_") == 0)
                 text = "#" + error;
+            // A sleight refused flies nothing (card sharp's design §6.1).
+            bool sleight = op == OZG_Const.OP_SLIP || op == OZG_Const.OP_SWAP || op == OZG_Const.OP_THROW;
+            if (menu && sleight)
+                menu.SleightRefused();
             if (menu)
                 menu.Said(text);
             else
                 NotificationSystem.AddNotificationExtended(4, "#STR_OZG_MODNAME", text, "");
+            return;
+        }
+
+        // This player's own sleight, done (design §6.1, §9): its sound, and
+        // the card flown in his window.
+        if (op == OZG_Const.OP_SLEIGHT)
+        {
+            OZG_WSleight done;
+            string bad2;
+            if (!JsonFileLoader<OZG_WSleight>.LoadData(json, done, bad2) || !done)
+                return;
+            if (menu && menu.PlaceId() == done.PlaceId)
+                menu.SleightDone(done);
+            else
+                OZG_Sounds.PlayLocal(done.SoundName, OZG_Place.OZG_ById(done.PlaceId));
             return;
         }
 
