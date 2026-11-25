@@ -30,12 +30,12 @@ class OZG_ChessConst
     // Why a game ended (keys of the string table).
     static const string END_MATE = "STR_OZG_CHESS_END_MATE";
     static const string END_STALEMATE = "STR_OZG_CHESS_END_STALEMATE";
-    static const string END_RESIGN = "STR_OZG_CHESS_END_RESIGN";
-    static const string END_AGREED = "STR_OZG_CHESS_END_AGREED";
-    static const string END_REPETITION = "STR_OZG_CHESS_END_REPETITION";
+    static const string END_RESIGN = "STR_OZG_BOARD_END_RESIGN";
+    static const string END_AGREED = "STR_OZG_BOARD_END_AGREED";
+    static const string END_REPETITION = "STR_OZG_BOARD_END_REPETITION";
     static const string END_FIFTY = "STR_OZG_CHESS_END_FIFTY";
     static const string END_MATERIAL = "STR_OZG_CHESS_END_MATERIAL";
-    static const string END_LEFT = "STR_OZG_CHESS_END_LEFT";
+    static const string END_LEFT = "STR_OZG_BOARD_END_LEFT";
 
     // The refusal when the board lacks a piece the game needs.
     static const string NO_PIECES = "STR_OZG_BOARD_MISSING";
@@ -1187,19 +1187,19 @@ class OZG_Chess extends OZG_Game
         v.Final = m_Result;
         v.Reason = m_Reason;
         // The plates: each side's colour, the offer of a draw.
-        AddSeat(v, m_White, "STR_OZG_CHESS_WHITE");
-        AddSeat(v, m_Black, "STR_OZG_CHESS_BLACK");
+        AddSeat(v, m_White, "STR_OZG_BOARD_WHITE");
+        AddSeat(v, m_Black, "STR_OZG_BOARD_BLACK");
         if (m_Over)
         {
             v.Ended = 1;
-            v.Result = OZG_Words.W2("STR_OZG_CHESS_RESULT", OZG_Words.KeyArg(m_Reason), m_Result);
+            v.Result = OZG_Words.W2("STR_OZG_BOARD_RESULT", OZG_Words.KeyArg(m_Reason), m_Result);
             v.Status = v.Result;
         }
         else
         {
             int turn = SeatToMove();
             v.Awaited.Insert(turn);
-            string key = "STR_OZG_CHESS_STATUS_MOVE";
+            string key = "STR_OZG_BOARD_STATUS_MOVE";
             if (inCheck)
                 key = "STR_OZG_CHESS_STATUS_CHECK";
             v.Status = OZG_Words.W1(key, OZG_Words.SeatArg(turn));
@@ -1215,7 +1215,7 @@ class OZG_Chess extends OZG_Game
         g.SeatNo = seat;
         g.Role = OZG_Words.W0(colourKey);
         if (m_Offer == seat)
-            g.Line = OZG_Words.W0("STR_OZG_CHESS_OFFERS");
+            g.Line = OZG_Words.W0("STR_OZG_BOARD_OFFERS");
         v.SeatList.Insert(g);
     }
 
@@ -1230,7 +1230,7 @@ class OZG_Chess extends OZG_Game
             string m = moves[i];
             if (m == OZG_ChessConst.M_RESIGN || m == OZG_ChessConst.M_DRAW || m == OZG_ChessConst.M_ACCEPT || m == OZG_ChessConst.M_DECLINE)
             {
-                string label = "STR_OZG_CHESS_BTN_" + m;
+                string label = "STR_OZG_BOARD_BTN_" + m;
                 label.ToUpper();
                 OZG_GButton b = OZG_GButton.Make(m, OZG_Words.W0(label), -1, col);
                 if (m == OZG_ChessConst.M_ACCEPT)
@@ -1242,7 +1242,7 @@ class OZG_Chess extends OZG_Game
             v.CanPlay.Insert(m);
         }
         if (seat == SeatToMove())
-            v.Status = OZG_Words.W0("STR_OZG_CHESS_YOUR_MOVE");
+            v.Status = OZG_Words.W0("STR_OZG_BOARD_YOUR_MOVE");
         return OZG_BPrivate.Text(v);
     }
 
@@ -1252,7 +1252,7 @@ class OZG_Chess extends OZG_Game
         into.Clear();
         if (move == OZG_ChessConst.M_RESIGN || move == OZG_ChessConst.M_DRAW || move == OZG_ChessConst.M_ACCEPT || move == OZG_ChessConst.M_DECLINE)
         {
-            string key = "STR_OZG_CHESS_LOG_" + move;
+            string key = "STR_OZG_BOARD_LOG_" + move;
             key.ToUpper();
             into.Insert(key);
             return;
@@ -1266,7 +1266,7 @@ class OZG_Chess extends OZG_Game
             promo.ToUpper();
             shown = shown + "=" + promo;
         }
-        into.Insert("STR_OZG_CHESS_LOG_MOVE");
+        into.Insert("STR_OZG_BOARD_LOG_MOVE");
         into.Insert(shown);
     }
 

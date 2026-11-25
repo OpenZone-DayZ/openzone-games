@@ -40,4 +40,43 @@ class OZG_BoardOps
         detail = detail + " in " + (t1 - t0).ToString() + " ms; fen back " + board.ToFen();
         return true;
     }
+
+    // dperft pos=<64 letters of .wWbB and w|b> depth=<n>: draughts' move
+    // lines of that length, and the moves of the position with what each
+    // takes. No pos: the setup.
+    static bool OpDPerft(map<string, string> args, out string detail)
+    {
+        OZG_DraughtsBoard board = new OZG_DraughtsBoard();
+        string pos = OZG_VerbOps.Arg(args, "pos", "");
+        if (pos == "")
+        {
+            board.SetUp();
+        }
+        else if (!board.FromText(pos))
+        {
+            detail = "the position does not load: " + pos;
+            return false;
+        }
+        int depth = OZG_VerbOps.Arg(args, "depth", "1").ToInt();
+        if (depth < 1 || depth > 8)
+        {
+            detail = "depth 1..8";
+            return false;
+        }
+        int t0 = GetGame().GetTime();
+        int paths = board.DrPerft(depth);
+        int t1 = GetGame().GetTime();
+        detail = "dperft " + depth.ToString() + " = " + paths.ToString();
+        detail = detail + " in " + (t1 - t0).ToString() + " ms; moves:";
+        array<string> moves = new array<string>();
+        array<string> takes = new array<string>();
+        board.DrLegal(moves, takes);
+        for (int i = 0; i < moves.Count() && i < 40; i++)
+        {
+            detail = detail + " " + moves[i];
+            if (takes[i] != "")
+                detail = detail + "(x" + takes[i] + ")";
+        }
+        return true;
+    }
 }

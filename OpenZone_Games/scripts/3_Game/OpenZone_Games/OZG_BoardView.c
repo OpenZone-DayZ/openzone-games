@@ -27,6 +27,11 @@ class OZG_BPublic extends OZG_GPublic
     string Final;
     // Why it ended: a key of the string table.
     string Reason;
+    // Nardy: the 24 points, the bar and the discs off as text
+    // (OZG_NardyBoard.Text), the throw as it fell and the dice left to play.
+    string Points;
+    string Dice;
+    string DiceLeft;
 
     void OZG_BPublic()
     {

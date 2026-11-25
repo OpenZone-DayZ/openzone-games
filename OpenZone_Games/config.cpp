@@ -615,6 +615,9 @@ class CfgVehicles
         hiddenSelections[] = {"camo"};
         hiddenSelectionsTextures[] = {"OpenZone_Games\models\board\data\ozg_board_co.paa"};
         hiddenSelectionsMaterials[] = {"OpenZone_Games\models\board\data\ozg_board.rvmat"};
+        // The field up: chess, draughts and corners, or nardy (OZG_BoardPlace).
+        ozgFieldChess = "OpenZone_Games\models\board\data\ozg_board_co.paa";
+        ozgFieldNardy = "OpenZone_Games\models\board\data\ozg_board_nardy_co.paa";
     };
     class OZG_BoardPlacePlacing: OZG_PlacePlacing
     {

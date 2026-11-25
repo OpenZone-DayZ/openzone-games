@@ -91,7 +91,7 @@ class OZG_Settings : OZ_ConfigBase
     // 5: sleights. 6: the loupe gone, its LoupeSeconds the StudySeconds of
     // studying a card closely. 7: the later games (stakes-and-games design).
     // 8: the pen became the card sharp's kit, good for three marks.
-    // 9: the board games (boards and dice design), chess first.
+    // 9: the board and dice games (boards and dice design).
     override int LatestVersion()
     {
         return 9;
@@ -107,7 +107,18 @@ class OZG_Settings : OZ_ConfigBase
         into.Insert("poker");
         into.Insert("preferans");
         into.Insert("bridge");
+        NewIn9(into);
+    }
+
+    // The games version 9 brought: the board and dice games.
+    static void NewIn9(array<string> into)
+    {
         into.Insert("chess");
+        into.Insert("draughts");
+        into.Insert("giveaway");
+        into.Insert("corners");
+        into.Insert("nardy_long");
+        into.Insert("nardy_short");
     }
 
     // The loupe's length as a file of version 5 or older wrote it, read off
@@ -253,13 +264,19 @@ class OZG_Settings : OZ_ConfigBase
         // its place is good for three. A number an admin chose stays his.
         if (from < 8 && MarkUses == 20)
             MarkUses = 3;
-        // Version 8 knew the card games alone: the board games join the list.
+        // Version 8 knew the card games alone: the board and dice games join
+        // the list.
         if (from < 9)
         {
             if (!GameIds)
                 GameIds = new array<string>();
-            if (GameIds.Find("chess") < 0)
-                GameIds.Insert("chess");
+            array<string> added = new array<string>();
+            NewIn9(added);
+            for (int n = 0; n < added.Count(); n++)
+            {
+                if (GameIds.Find(added[n]) < 0)
+                    GameIds.Insert(added[n]);
+            }
         }
         Version = LatestVersion();
         return true;

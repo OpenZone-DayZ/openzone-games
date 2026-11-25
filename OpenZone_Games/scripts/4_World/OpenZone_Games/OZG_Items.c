@@ -511,6 +511,12 @@ class OZG_Place extends ItemBase
         SetSynchDirty();
     }
 
+    // Server: the game chosen here, for a place that shows it (a board turns
+    // its nardy field up). A deck's place shows nothing.
+    void OZG_ShowGame(string gameId)
+    {
+    }
+
     // Server: the pulse.
     void OZG_Pulse(int state, int taken, int busy, int total, int rev)
     {

@@ -45,6 +45,59 @@ class OZG_Board_Base extends OZG_Deck_Base
     }
 }
 
+// The board laid out (boards and dice design §4): the chess field up, or the
+// nardy field when a nardy game is chosen. The field is the picture of the
+// model's one selection; both pictures share the frame, so the sides look the
+// same either way.
+class OZG_BoardPlace extends OZG_Place
+{
+    protected int m_OZG_Side;
+    // Client and server: the side painted now, -1 for none yet.
+    protected int m_OZG_SideShown = -1;
+
+    void OZG_BoardPlace()
+    {
+        RegisterNetSyncVariableInt("m_OZG_Side", 0, 1);
+    }
+
+    override void OZG_ShowGame(string gameId)
+    {
+        int side = 0;
+        if (gameId == OZG_NardyConst.LONG_ID || gameId == OZG_NardyConst.SHORT_ID)
+            side = 1;
+        if (side == m_OZG_Side)
+            return;
+        m_OZG_Side = side;
+        SetSynchDirty();
+    }
+
+    override void OnVariablesSynchronized()
+    {
+        super.OnVariablesSynchronized();
+        OZG_PaintSide();
+    }
+
+    override void EEInit()
+    {
+        super.EEInit();
+        if (!GetGame().IsDedicatedServer())
+            OZG_PaintSide();
+    }
+
+    protected void OZG_PaintSide()
+    {
+        if (m_OZG_Side == m_OZG_SideShown)
+            return;
+        m_OZG_SideShown = m_OZG_Side;
+        string key = "ozgFieldChess";
+        if (m_OZG_Side == 1)
+            key = "ozgFieldNardy";
+        string picture = GetGame().ConfigGetTextOut("CfgVehicles " + GetType() + " " + key);
+        if (picture != "")
+            SetObjectTexture(0, picture);
+    }
+}
+
 class OZG_BoardRead
 {
     // The piece class that goes into each slot of a board's insert, in the

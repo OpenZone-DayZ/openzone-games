@@ -273,6 +273,19 @@ class OZG_Bench
             game.DealFirst(first.Substring(0, colon).ToInt(), chosen);
         }
 
+        // pos=<position>: a board game from there (chess: a FEN; draughts,
+        // giveaway and corners: the 64 squares' letters and w or b).
+        string pos = OZG_VerbOps.Arg(args, "pos", "");
+        if (pos != "")
+        {
+            OZG_Chess chess = OZG_Chess.Cast(game);
+            if (chess)
+                chess.StartFrom(pos);
+            OZG_BoardDuel duel = OZG_BoardDuel.Cast(game);
+            if (duel)
+                duel.StartFrom(pos);
+        }
+
         // A refusal of the game is an answer, and the game on the bench stays.
         string refusal;
         if (!game.Begin(seats, options, chance, OZG_VerbOps.Arg(args, "hint", ""), refusal))

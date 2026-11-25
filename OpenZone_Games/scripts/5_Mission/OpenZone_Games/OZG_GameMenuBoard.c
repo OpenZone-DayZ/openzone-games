@@ -37,7 +37,9 @@ modded class OZG_GameMenu
     protected ref array<Widget> m_BLines;
     protected ref array<float> m_BLinesAt;
     protected bool m_BLinesAside;
-    protected int m_PickedSq = -1;
+    // The squares picked so far of the move being made: the piece, then
+    // where it lands, one square a click.
+    protected ref array<int> m_PickPath;
     protected int m_PromoFrom = -1;
     protected int m_PromoTo = -1;
     // The field: its top-left corner and a square's side, in units; turned for
@@ -103,9 +105,7 @@ modded class OZG_GameMenu
             m_BLinesAt.Clear();
         }
         m_BLinesAside = false;
-        m_PickedSq = -1;
-        m_PromoFrom = -1;
-        m_PromoTo = -1;
+        PickClear();
     }
 
     override void ClickTable()
@@ -309,12 +309,15 @@ modded class OZG_GameMenu
     }
 
     // A piece's picture standing in a box `side` units wide at (x, y): its base
-    // `foot` of the box down, its size the kind's; a checker lies in the box.
+    // `foot` of the box down, its size the kind's; a checker lies in the box,
+    // a king of draughts as two, one on the other.
     protected void PieceAt(string letter, float x, float y, float side, float foot, int prio)
     {
         if (BoardDiscs())
         {
             BoardPic(PieceImage(letter), x, y, side, side, prio);
+            if (letter == "W" || letter == "B")
+                BoardPic(PieceImage(letter), x, y - side * 0.16, side, side, prio);
             return;
         }
         string up = letter;
@@ -322,6 +325,17 @@ modded class OZG_GameMenu
         float s = side * PieceScale(up);
         float baseY = y + side * foot;
         BoardPic(PieceImage(letter), x + (side - s) * 0.5, baseY + s * PIECE_BASE - s, s, s, prio);
+    }
+
+    // Is the letter a white piece's? Chess writes White in capitals; the
+    // checkers are w and W.
+    protected bool WhiteLetter(string letter)
+    {
+        if (BoardDiscs())
+            return letter == "w" || letter == "W";
+        string up = letter;
+        up.ToUpper();
+        return up == letter;
     }
 
     protected void BoardPaint()
@@ -332,12 +346,14 @@ modded class OZG_GameMenu
         HideAll(m_BTexts);
         if (!BoardGame() || m_V.St == OZG_Const.ST_LOBBY)
         {
-            m_PickedSq = -1;
-            m_PromoFrom = -1;
-            m_PromoTo = -1;
+            PickClear();
             return;
         }
         BoardRead();
+        // Nardy draws no 8 x 8 field (its table waits for the mockups): the
+        // generic lines and buttons are its table for now.
+        if (!m_BPub || m_BPub.Board.Length() != 64)
+            return;
         BoardLinesAside();
         float frame = BOARD_SIDE * 20.0 / 320.0;
         float left = BOARD_MIDDLE_X - BOARD_SIDE * 0.5;
@@ -380,35 +396,40 @@ modded class OZG_GameMenu
         PutAt(why, BOARD_TEXT_X, BOARD_TEXT_Y + 58, BOARD_TEXT_W, 24);
     }
 
-    // The last move, a check, the piece picked and where it may go: a square
-    // it would take on lit whole, an empty one marked in its middle.
+    // The last move, a check, the squares picked and where the move may go on:
+    // a square it would take on lit whole, an empty one marked in its middle;
+    // a square the move may end on and go on from, marked brighter.
     protected void BoardPaintLights()
     {
-        if (m_BPub.Last.Length() >= 4)
+        array<int> last = new array<int>();
+        string tail;
+        BoardPath(m_BPub.Last, last, tail);
+        int i;
+        for (i = 0; i < last.Count(); i++)
         {
-            int lastFrom = OZG_ChessBoard.SqOf(m_BPub.Last.Substring(0, 2));
-            int lastTo = OZG_ChessBoard.SqOf(m_BPub.Last.Substring(2, 2));
-            if (lastFrom >= 0)
-                BoardLight(lastFrom, ARGB(80, 255, 214, 80), 0);
-            if (lastTo >= 0)
-                BoardLight(lastTo, ARGB(110, 255, 214, 80), 0);
+            int alpha = 80;
+            if (i == last.Count() - 1)
+                alpha = 110;
+            if (last[i] >= 0)
+                BoardLight(last[i], ARGB(alpha, 255, 214, 80), 0);
         }
         if (m_BPub.Check >= 0)
             BoardLight(m_BPub.Check, ARGB(150, 220, 40, 30), 0);
-        array<int> targets = new array<int>();
-        if (m_PickedSq >= 0)
-            TargetsOf(m_PickedSq, targets);
-        if (targets.Count() == 0)
-            m_PickedSq = -1;
-        if (m_PickedSq < 0)
-            return;
-        BoardLight(m_PickedSq, ARGB(120, 70, 190, 70), 0);
-        for (int t = 0; t < targets.Count(); t++)
+        array<int> next = new array<int>();
+        PickNext(next);
+        if (Picked().Count() > 0 && next.Count() == 0 && PickExact().Count() == 0)
+            PickClear();
+        array<int> picked = Picked();
+        for (i = 0; i < picked.Count(); i++)
+            BoardLight(picked[i], ARGB(120, 70, 190, 70), 0);
+        if (picked.Count() >= 2 && PickExact().Count() > 0)
+            BoardLight(picked[picked.Count() - 1], ARGB(200, 120, 230, 120), m_BS * 0.2);
+        for (i = 0; i < next.Count(); i++)
         {
-            if (m_BPub.Board.Get(targets[t]) != ".")
-                BoardLight(targets[t], ARGB(100, 70, 190, 70), 0);
+            if (m_BPub.Board.Get(next[i]) != ".")
+                BoardLight(next[i], ARGB(100, 70, 190, 70), 0);
             else
-                BoardLight(targets[t], ARGB(140, 70, 190, 70), m_BS * 0.34);
+                BoardLight(next[i], ARGB(140, 70, 190, 70), m_BS * 0.34);
         }
     }
 
@@ -443,9 +464,7 @@ modded class OZG_GameMenu
         for (int k = 0; k < m_BPub.Taken.Length(); k++)
         {
             string taken = m_BPub.Taken.Get(k);
-            string upper = taken;
-            upper.ToUpper();
-            bool white = upper == taken;
+            bool white = WhiteLetter(taken);
             // Black sits at the top of a field not turned, and takes White's.
             bool tookByTop = white != m_BFlip;
             if (tookByTop)
@@ -481,8 +500,11 @@ modded class OZG_GameMenu
     // The promotion asked: four pieces in a row, the question under them.
     protected void BoardPaintPromotion()
     {
+        array<int> pair = new array<int>();
+        pair.Insert(m_PromoFrom);
+        pair.Insert(m_PromoTo);
         array<string> between = new array<string>();
-        MovesBetween(m_PromoFrom, m_PromoTo, between);
+        MovesOfPath(pair, between);
         if (between.Count() < 2)
         {
             m_PromoFrom = -1;
@@ -520,40 +542,118 @@ modded class OZG_GameMenu
 
     // ---- moves -----------------------------------------------------------------
 
-    // The squares the piece on `sq` may go to, from this seat's moves.
-    protected void TargetsOf(int sq, array<int> into)
+    protected array<int> Picked()
+    {
+        if (!m_PickPath)
+            m_PickPath = new array<int>();
+        return m_PickPath;
+    }
+
+    protected void PickClear()
+    {
+        Picked().Clear();
+        m_PromoFrom = -1;
+        m_PromoTo = -1;
+    }
+
+    // The squares of a move as it goes on the wire: "e2e4" and "e7e8q" (the
+    // letter left over in `tail`), "c3-d4", "c3:e5:c7".
+    protected void BoardPath(string move, array<int> into, out string tail)
+    {
+        into.Clear();
+        tail = "";
+        if (move.IndexOf("-") >= 0 || move.IndexOf(":") >= 0)
+        {
+            OZG_DraughtsBoard.PathOf(move, into);
+            return;
+        }
+        if (move.Length() < 4)
+            return;
+        into.Insert(OZG_ChessBoard.SqOf(move.Substring(0, 2)));
+        into.Insert(OZG_ChessBoard.SqOf(move.Substring(2, 2)));
+        if (move.Length() > 4)
+            tail = move.Substring(4, move.Length() - 4);
+    }
+
+    // Does the path of `move` begin with `prefix`? Its length in `count`.
+    protected bool PathBegins(string move, array<int> prefix, out int count)
+    {
+        array<int> path = new array<int>();
+        string tail;
+        BoardPath(move, path, tail);
+        count = path.Count();
+        if (path.Count() < prefix.Count() || prefix.Count() == 0)
+            return false;
+        for (int i = 0; i < prefix.Count(); i++)
+        {
+            if (path[i] != prefix[i])
+                return false;
+        }
+        return true;
+    }
+
+    // This seat's moves whose path is exactly `path` (more than one for a
+    // pawn that becomes a piece).
+    protected void MovesOfPath(array<int> path, array<string> into)
     {
         into.Clear();
         if (!m_BOwn || !m_BOwn.CanPlay)
             return;
-        string from = OZG_ChessBoard.SqName(sq);
         for (int i = 0; i < m_BOwn.CanPlay.Count(); i++)
         {
-            string m = m_BOwn.CanPlay[i];
-            if (m.Length() < 4 || m.Substring(0, 2) != from)
+            int count;
+            if (PathBegins(m_BOwn.CanPlay[i], path, count) && count == path.Count())
+                into.Insert(m_BOwn.CanPlay[i]);
+        }
+    }
+
+    protected array<string> PickExact()
+    {
+        array<string> exact = new array<string>();
+        if (Picked().Count() >= 2)
+            MovesOfPath(Picked(), exact);
+        return exact;
+    }
+
+    // The squares the move being picked may go to next.
+    protected void PickNext(array<int> into)
+    {
+        into.Clear();
+        if (!m_BOwn || !m_BOwn.CanPlay || Picked().Count() == 0)
+            return;
+        int at = Picked().Count();
+        for (int i = 0; i < m_BOwn.CanPlay.Count(); i++)
+        {
+            int count;
+            if (!PathBegins(m_BOwn.CanPlay[i], Picked(), count) || count <= at)
                 continue;
-            int to = OZG_ChessBoard.SqOf(m.Substring(2, 2));
-            if (to >= 0 && into.Find(to) < 0)
-                into.Insert(to);
+            array<int> path = new array<int>();
+            string tail;
+            BoardPath(m_BOwn.CanPlay[i], path, tail);
+            if (into.Find(path[at]) < 0)
+                into.Insert(path[at]);
         }
     }
 
-    // This seat's moves from one square to another ("e7e8q" .. for a pawn
-    // that becomes a piece).
-    protected void MovesBetween(int from, int to, array<string> into)
+    // Does any move of this seat begin on `sq`?
+    protected bool MovesFrom(int sq)
     {
-        into.Clear();
         if (!m_BOwn || !m_BOwn.CanPlay)
-            return;
-        string pair = OZG_ChessBoard.SqName(from) + OZG_ChessBoard.SqName(to);
+            return false;
+        array<int> start = new array<int>();
+        start.Insert(sq);
         for (int i = 0; i < m_BOwn.CanPlay.Count(); i++)
         {
-            string m = m_BOwn.CanPlay[i];
-            if (m.Length() >= 4 && m.Substring(0, 4) == pair)
-                into.Insert(m);
+            int count;
+            if (PathBegins(m_BOwn.CanPlay[i], start, count) && count >= 2)
+                return true;
         }
+        return false;
     }
 
+    // A click on the field: the move is picked a square a click, played when
+    // only one move is left that ends there; a click on the last square picked
+    // again ends a move that could go on (a chain of jumps in corners).
     protected void BoardClick(float px, float py)
     {
         if (!m_BPub)
@@ -563,9 +663,7 @@ modded class OZG_GameMenu
             string chosen = PromotionAt(px, py);
             int promoFrom = m_PromoFrom;
             int promoTo = m_PromoTo;
-            m_PromoFrom = -1;
-            m_PromoTo = -1;
-            m_PickedSq = -1;
+            PickClear();
             if (chosen != "")
             {
                 Play(OZG_ChessBoard.SqName(promoFrom) + OZG_ChessBoard.SqName(promoTo) + chosen);
@@ -577,34 +675,50 @@ modded class OZG_GameMenu
         int sq = SquareAt(px, py);
         if (sq < 0)
         {
-            m_PickedSq = -1;
+            PickClear();
             BoardPaint();
             return;
         }
-        if (m_PickedSq >= 0 && sq != m_PickedSq)
+        array<int> path = Picked();
+        int picked = path.Count();
+        if (picked >= 2 && sq == path[picked - 1])
         {
-            array<string> between = new array<string>();
-            MovesBetween(m_PickedSq, sq, between);
-            if (between.Count() == 1)
+            array<string> here = PickExact();
+            if (here.Count() == 1)
             {
-                m_PickedSq = -1;
-                Play(between[0]);
+                PickClear();
+                Play(here[0]);
                 return;
             }
-            if (between.Count() > 1)
+        }
+        if (picked > 0)
+        {
+            array<int> next = new array<int>();
+            PickNext(next);
+            if (next.Find(sq) >= 0)
             {
-                m_PromoFrom = m_PickedSq;
-                m_PromoTo = sq;
+                Picked().Insert(sq);
+                array<int> further = new array<int>();
+                PickNext(further);
+                array<string> exact = PickExact();
+                if (further.Count() == 0 && exact.Count() == 1)
+                {
+                    PickClear();
+                    Play(exact[0]);
+                    return;
+                }
+                if (further.Count() == 0 && exact.Count() > 1)
+                {
+                    m_PromoFrom = path[0];
+                    m_PromoTo = sq;
+                }
                 BoardPaint();
                 return;
             }
         }
-        array<int> targets = new array<int>();
-        TargetsOf(sq, targets);
-        if (targets.Count() > 0 && sq != m_PickedSq)
-            m_PickedSq = sq;
-        else
-            m_PickedSq = -1;
+        Picked().Clear();
+        if (MovesFrom(sq))
+            Picked().Insert(sq);
         BoardPaint();
     }
 

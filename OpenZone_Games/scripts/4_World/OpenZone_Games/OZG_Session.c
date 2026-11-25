@@ -629,6 +629,7 @@ class OZG_Session
         if (!m_Place)
             return;
         m_Place.OZG_Pulse(m_R.St, CountOf(OZG_Const.SEAT_TAKEN), Busy(), m_R.Seats.Count(), m_R.Rev);
+        m_Place.OZG_ShowGame(m_R.GameId);
     }
 
     void Changed()

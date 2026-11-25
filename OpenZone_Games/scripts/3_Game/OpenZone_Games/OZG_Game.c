@@ -74,6 +74,19 @@ class OZG_Game
     {
     }
 
+    // How many dice a seat throws (boards and dice design §8): 0 for a game of
+    // no dice. The session picks each seat's dice by the option of whose dice.
+    int DiceNeeded()
+    {
+        return 0;
+    }
+
+    // Before Begin and whenever a seat's dice change: the loads of the dice
+    // `seat` throws, a loaded face (0: none) and its weight in percent each.
+    void TakeDice(int seat, array<int> faces, array<int> weights)
+    {
+    }
+
     // A new, empty game of the same kind.
     OZG_Game Fresh()
     {

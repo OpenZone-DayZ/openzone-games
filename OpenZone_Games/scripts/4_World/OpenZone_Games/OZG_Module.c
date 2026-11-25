@@ -38,6 +38,16 @@ class OZG_Module : CF_ModuleWorld
             OZG_Games.Register(new OZG_Preferans());
         if (!OZG_Games.Sample(OZG_ChessConst.GAME_ID))
             OZG_Games.Register(new OZG_Chess());
+        if (!OZG_Games.Sample(OZG_DraughtsConst.GAME_ID))
+            OZG_Games.Register(new OZG_Draughts());
+        if (!OZG_Games.Sample(OZG_DraughtsConst.GIVEAWAY_ID))
+            OZG_Games.Register(new OZG_Giveaway());
+        if (!OZG_Games.Sample(OZG_CornersConst.GAME_ID))
+            OZG_Games.Register(new OZG_Corners());
+        if (!OZG_Games.Sample(OZG_NardyConst.LONG_ID))
+            OZG_Games.Register(new OZG_Nardy());
+        if (!OZG_Games.Sample(OZG_NardyConst.SHORT_ID))
+            OZG_Games.Register(new OZG_NardyShort());
         // -- games register above this line --
 
         if (!GetGame().IsServer())

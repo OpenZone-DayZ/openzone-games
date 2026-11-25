@@ -1045,6 +1045,55 @@ def board_picture(rng, n=BOARD_SIZE, turned=False):
     return picture, relief, strong, tight
 
 
+# The nardy field: two halves of twelve points, the bar between them; the same
+# frame as the chess side, so the board's sides look the same either way.
+CHERRY = ((120, 52, 34), (162, 82, 56))
+
+
+def nardy_picture(rng, n=BOARD_SIZE):
+    px = n / BOARD_MM
+    k = n / 512.0
+    picture, _ = wood(rng, (n, n), FRAME, 2.0 * k, 10)
+    field, _ = wood(rng, (n, n), MAPLE, 2.0 * k, 24)
+    dark, _ = wood(rng, (n, n), WALNUT, 2.0 * k, 24)
+    red, _ = wood(rng, (n, n), CHERRY, 2.0 * k, 24)
+    edge = int(round((BOARD_MM - FIELD_MM) / 2.0 * px))
+    inner = n - 2 * edge
+    bar = int(round(16 * px))
+    inside = Image.new("L", (n, n), 0)
+    ImageDraw.Draw(inside).rectangle([edge, edge, n - edge - 1, n - edge - 1], fill=255)
+    picture = Image.composite(field, picture, inside)
+    half = (inner - bar) / 2.0
+    point_w = half / 6.0
+    point_h = inner * 0.42
+    darks = Image.new("L", (n, n), 0)
+    reds = Image.new("L", (n, n), 0)
+    for side in range(2):
+        x0 = edge + side * (half + bar)
+        for i in range(6):
+            left = x0 + i * point_w
+            for top in (True, False):
+                if top:
+                    tri = [(left, edge), (left + point_w, edge), (left + point_w / 2.0, edge + point_h)]
+                else:
+                    tri = [(left, n - edge), (left + point_w, n - edge), (left + point_w / 2.0, n - edge - point_h)]
+                mask = darks if (i + (0 if top else 1)) % 2 == 0 else reds
+                ImageDraw.Draw(mask).polygon(tri, fill=255)
+    picture = Image.composite(dark, picture, darks)
+    picture = Image.composite(red, picture, reds)
+    bar_mask = Image.new("L", (n, n), 0)
+    bx = edge + int(round(half))
+    ImageDraw.Draw(bar_mask).rectangle([bx, edge, bx + bar - 1, n - edge - 1], fill=255)
+    frame_wood, _ = wood(rng, (n, n), FRAME, 2.0 * k, 10)
+    picture = Image.composite(frame_wood, picture, bar_mask)
+    inlay = Image.new("L", (n, n), 0)
+    d = int(round(4 * k))
+    ImageDraw.Draw(inlay).rectangle([edge - d, edge - d, n - edge + d - 1, n - edge + d - 1],
+                                    outline=255, width=max(2, int(round(2 * k))))
+    picture = Image.composite(Image.new("RGB", (n, n), MAPLE[1]), picture, inlay)
+    return picture
+
+
 def piece_wood(rng, tones):
     picture, streaks = wood(rng, (256, 256), tones, 2.5, 20)
     relief = ImageChops.subtract(Image.new("L", (256, 256), KIT_LEVEL), scale(streaks, 10 / 255.0))
@@ -1103,6 +1152,7 @@ def draw_board():
     out = (256, 256)
     save(Image.merge("RGB", (Image.new("L", out, 255), strong.resize(out, BOX), tight.resize(out, BOX))),
          "board", "data", "ozg_board_smdi.png")
+    save(nardy_picture(random.Random(1130)), "board", "data", "ozg_board_nardy_co.png")
     # The table window's pictures of the field (boards and dice design §7): the same
     # wood twice the size, the files and ranks as White reads them and as Black does.
     for side, turned in (("white", False), ("black", True)):

@@ -128,6 +128,8 @@ class OZG_VerbOps
             return OZG_WorldOps.OpSleightCfg(args, detail);
         if (op == "cheat")
             return OZG_Bench.OpCheat(args, detail);
+        if (op == "dperft")
+            return OZG_BoardOps.OpDPerft(args, detail);
         if (op == "perft")
             return OZG_BoardOps.OpPerft(args, detail);
         if (op == "split")

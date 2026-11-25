@@ -599,29 +599,61 @@ STR_OZG_DIE_DESC,"Гральна кістка: шість граней, від �
 STR_OZG_BOARD_MISSING,На дошці бракує фігур: партію не почати.,The board lacks pieces: the game cannot begin.
 STR_OZG_CHESS_END_MATE,Мат,Checkmate
 STR_OZG_CHESS_END_STALEMATE,Пат: нічия,Stalemate: a draw
-STR_OZG_CHESS_END_RESIGN,Партію здано,Resigned
-STR_OZG_CHESS_END_AGREED,Нічия за згодою,Draw by agreement
-STR_OZG_CHESS_END_REPETITION,Нічия: позиція повторилася тричі,Draw: the position came three times
+STR_OZG_BOARD_END_RESIGN,Партію здано,Resigned
+STR_OZG_BOARD_END_AGREED,Нічия за згодою,Draw by agreement
+STR_OZG_BOARD_END_REPETITION,Нічия: позиція повторилася тричі,Draw: the position came three times
 STR_OZG_CHESS_END_FIFTY,"Нічия: п'ятдесят ходів без взяття й ходу пішака","Draw: fifty moves with no capture and no pawn move"
 STR_OZG_CHESS_END_MATERIAL,Нічия: замало сил для мату,Draw: too little to mate
-STR_OZG_CHESS_END_LEFT,Гравець пішов з-за дошки,A player left the board
-STR_OZG_CHESS_WHITE,Білі,White
-STR_OZG_CHESS_BLACK,Чорні,Black
-STR_OZG_CHESS_OFFERS,пропонує нічию,offers a draw
-STR_OZG_CHESS_RESULT,"%1, %2","%1, %2"
-STR_OZG_CHESS_STATUS_MOVE,Хід: %1,%1 to move
+STR_OZG_BOARD_END_LEFT,Гравець пішов з-за дошки,A player left the board
+STR_OZG_BOARD_WHITE,Білі,White
+STR_OZG_BOARD_BLACK,Чорні,Black
+STR_OZG_BOARD_OFFERS,пропонує нічию,offers a draw
+STR_OZG_BOARD_RESULT,"%1, %2","%1, %2"
+STR_OZG_BOARD_STATUS_MOVE,Хід: %1,%1 to move
 STR_OZG_CHESS_STATUS_CHECK,Шах! Хід: %1,Check! %1 to move
-STR_OZG_CHESS_YOUR_MOVE,Ваш хід,Your move
-STR_OZG_CHESS_BTN_RESIGN,Здатися,Resign
-STR_OZG_CHESS_BTN_DRAW,Запропонувати нічию,Offer a draw
-STR_OZG_CHESS_BTN_ACCEPT,Погодитися на нічию,Accept the draw
-STR_OZG_CHESS_BTN_DECLINE,Відмовитися,Decline
-STR_OZG_CHESS_LOG_MOVE,%1: %2,%1: %2
-STR_OZG_CHESS_LOG_RESIGN,%1 здається,%1 resigns
-STR_OZG_CHESS_LOG_DRAW,%1 пропонує нічию,%1 offers a draw
-STR_OZG_CHESS_LOG_ACCEPT,%1 погоджується на нічию,%1 accepts the draw
-STR_OZG_CHESS_LOG_DECLINE,%1 відмовляється від нічиєї,%1 declines the draw
+STR_OZG_BOARD_YOUR_MOVE,Ваш хід,Your move
+STR_OZG_BOARD_BTN_RESIGN,Здатися,Resign
+STR_OZG_BOARD_BTN_DRAW,Запропонувати нічию,Offer a draw
+STR_OZG_BOARD_BTN_ACCEPT,Погодитися на нічию,Accept the draw
+STR_OZG_BOARD_BTN_DECLINE,Відмовитися,Decline
+STR_OZG_BOARD_LOG_MOVE,%1: %2,%1: %2
+STR_OZG_BOARD_LOG_RESIGN,%1 здається,%1 resigns
+STR_OZG_BOARD_LOG_DRAW,%1 пропонує нічию,%1 offers a draw
+STR_OZG_BOARD_LOG_ACCEPT,%1 погоджується на нічию,%1 accepts the draw
+STR_OZG_BOARD_LOG_DECLINE,%1 відмовляється від нічиєї,%1 declines the draw
 STR_OZG_CHESS_PROMOTE,Пішак стає:,The pawn becomes:
+STR_OZG_GAME_DRAUGHTS,Шашки,Draughts
+STR_OZG_GAME_GIVEAWAY,Піддавки,Giveaway
+STR_OZG_GAME_CORNERS,Кутки,Corners
+STR_OZG_DRAUGHTS_END_NO_PIECES,Не лишилося шашок,No pieces left
+STR_OZG_DRAUGHTS_END_NO_MOVE,Немає ходу,No move left
+STR_OZG_DRAUGHTS_END_KINGS,"Нічия: п'ятнадцять ходів самими дамками",Draw: fifteen moves of kings alone
+STR_OZG_CORNERS_END_FILLED,Кут зайнято,The corner is filled
+STR_OZG_CORNERS_END_BOTH,Нічия: обидва кути зайнято,Draw: both corners filled
+STR_OZG_CORNERS_END_STAYED,Шашка не вийшла зі свого кута до 40-го ходу,A disc stayed in its corner past move 40
+STR_OZG_CORNERS_END_STUCK,Нічия: жодна сторона не може ходити,Draw: neither side can move
+STR_OZG_CORNERS_SIZE,Шашок,Discs
+STR_OZG_CORNERS_9,"9, кут 3 на 3","9, a corner of 3 by 3"
+STR_OZG_CORNERS_12,"12, кут 4 на 3","12, a corner of 4 by 3"
+STR_OZG_GAME_NARDY_LONG,Довгі нарди,Long nardy
+STR_OZG_GAME_NARDY_SHORT,Короткі нарди,Short nardy
+STR_OZG_NARDY_END_WIN,Усі шашки винесено,All discs borne off
+STR_OZG_NARDY_END_MARS,"Марс: подвійна перемога","Mars: a double win"
+STR_OZG_NARDY_END_KOKS,"Кокс: потрійна перемога","Koks: a triple win"
+STR_OZG_NARDY_DICE,Кості,Dice
+STR_OZG_NARDY_DICE_LINE,Лишилося: %1,Left: %1
+STR_OZG_NARDY_SEAT_LINE,"Винесено %1, на барі %2","Off %1, on the bar %2"
+STR_OZG_NARDY_BTN_THROW,Кинути кості,Throw the dice
+STR_OZG_NARDY_BTN_STEP,%1-%2 (%3),%1-%2 (%3)
+STR_OZG_NARDY_BAR,бар,bar
+STR_OZG_NARDY_OFF,за дошку,off
+STR_OZG_NARDY_LOG_THROW,%1 кидає кості,%1 throws the dice
+STR_OZG_NARDY_LOG_STEP,%1: %2-%3 (%4),%1: %2-%3 (%4)
+STR_OZG_DICE_WHOSE,Чиї кості,Whose dice
+STR_OZG_DICE_HOST,Господаря,The host's
+STR_OZG_DICE_OWN,Свої,Own
+STR_OZG_DICE_WISH,За бажанням,By wish
+STR_OZG_DICE_NONE,У гравця немає банки з потрібними кістками,A player has no can with the dice needed
 # >>> generated: board
 STR_OZG_PIECE_WK,Білий король,White king
 STR_OZG_PIECE_WQ,Білий ферзь,White queen
