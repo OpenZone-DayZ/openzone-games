@@ -22,7 +22,13 @@ class CfgPatches
             "DZ_Data",
             "DZ_Scripts",
             "JM_CF_Scripts",
-            "OpenZone_Core"
+            "OpenZone_Core",
+            // The game's sounds config: the table's sound shaders and sets
+            // inherit its baseCharacter_SoundShader and baseCharacter_SoundSet,
+            // and without it the base classes are not there when the config
+            // is read (OpenZone Radio's config says the same). It is the
+            // game's own pbo, on every server.
+            "DZ_Sounds_Effects"
         };
     };
 };
@@ -480,3 +486,122 @@ class CfgVehicles
         hiddenSelectionsMaterials[] = {"OpenZone_Games\models\mark\data\ozg_mark_amber.rvmat"};
     };
 };
+
+// ------------------------------------------------------------ sounds
+//
+// The sounds of the table (design §17), every one made from numbers by
+// tools/make_sounds.py (art/sounds/SOURCES.md), a mono .ogg in
+// OpenZone_Games/sounds. A shader names its file without the extension, as
+// the game's own do, and carries 15 m (the design's number); a set is what a
+// client plays on the place (OZG_Sounds). The text between the markers is the
+// script's: edit the script, then run it.
+// >>> generated: sounds
+class CfgSoundShaders
+{
+    class baseCharacter_SoundShader;
+    class OZG_Shuffle_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_shuffle", 1}};
+        volume = 0.45;
+        range = 15;
+    };
+    class OZG_Deal_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_deal", 1}};
+        volume = 0.40;
+        range = 15;
+    };
+    class OZG_Trump_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_trump", 1}};
+        volume = 0.35;
+        range = 15;
+    };
+    class OZG_Lay_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_lay", 1}};
+        volume = 0.40;
+        range = 15;
+    };
+    class OZG_Beat_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_beat", 1}};
+        volume = 0.40;
+        range = 15;
+    };
+    class OZG_Take_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_take", 1}};
+        volume = 0.40;
+        range = 15;
+    };
+    class OZG_Sweep_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_sweep", 1}};
+        volume = 0.40;
+        range = 15;
+    };
+    class OZG_Draw_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_draw", 1}};
+        volume = 0.35;
+        range = 15;
+    };
+    class OZG_PutDown_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_putdown", 1}};
+        volume = 0.45;
+        range = 15;
+    };
+    class OZG_PickUp_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_pickup", 1}};
+        volume = 0.40;
+        range = 15;
+    };
+};
+class CfgSoundSets
+{
+    class baseCharacter_SoundSet;
+    class OZG_Shuffle_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_Shuffle_SoundShader"};
+    };
+    class OZG_Deal_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_Deal_SoundShader"};
+    };
+    class OZG_Trump_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_Trump_SoundShader"};
+    };
+    class OZG_Lay_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_Lay_SoundShader"};
+    };
+    class OZG_Beat_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_Beat_SoundShader"};
+    };
+    class OZG_Take_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_Take_SoundShader"};
+    };
+    class OZG_Sweep_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_Sweep_SoundShader"};
+    };
+    class OZG_Draw_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_Draw_SoundShader"};
+    };
+    class OZG_PutDown_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_PutDown_SoundShader"};
+    };
+    class OZG_PickUp_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_PickUp_SoundShader"};
+    };
+};
+// <<< generated: sounds
