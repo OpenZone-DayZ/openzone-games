@@ -137,6 +137,8 @@ class CfgSlots
     class Slot_OZG_Card60 { name = "OZG_Card60"; displayName = "$STR_OZG_CARD_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
     class Slot_OZG_Card61 { name = "OZG_Card61"; displayName = "$STR_OZG_CARD_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
     class Slot_OZG_Card62 { name = "OZG_Card62"; displayName = "$STR_OZG_CARD_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Card63 { name = "OZG_Card63"; displayName = "$STR_OZG_CARD_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Card64 { name = "OZG_Card64"; displayName = "$STR_OZG_CARD_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
 // <<< generated: slots
 };
 
@@ -157,8 +159,9 @@ class CfgVehicles
     // folders for one texture (measured 2026-11-24), hence ozg_<style>_ in
     // each name and not only a folder of the deck's own. A deck holds cards,
     // which are things, in slots that take any card: a new deck fills itself
-    // with the fifty-two of its own look, and what it holds after that is its
-    // owner's business.
+    // with the fifty-two of its own look, and with the two jokers when its
+    // class says ozgJokers = 1 (then it needs two slots more), and what it
+    // holds after that is its owner's business.
     class OZG_Deck_Base: Inventory_Base
     {
         scope = 0;
@@ -179,6 +182,8 @@ class CfgVehicles
         ozgStyle = "classic";
         ozgSheet = "OpenZone_Games\data\cards\ozg_deck_classic_co.paa";
         ozgCards = "OpenZone_Games\data\cards\classic\ozg_classic_";
+        // 1: a new deck gets the two jokers, Xr and Xb, besides the fifty-two.
+        ozgJokers = 0;
         // A laid-out game keeps its deck in this slot of the place.
         inventorySlot[] = {"OZG_DeckHold"};
 // >>> generated: deck slots
@@ -203,6 +208,7 @@ class CfgVehicles
     // The stalkers' deck: a worn one whose aces and kings carry stalkers and
     // whose queens, jacks and tens carry mutants. The pictures on those twenty
     // cards are GSC Game World's, from the S.T.A.L.K.E.R. games (see NOTICE).
+    // It has the two jokers: fifty-four cards.
     class OZG_Deck_Stalker: OZG_Deck_Base
     {
         scope = 2;
@@ -211,6 +217,18 @@ class CfgVehicles
         ozgStyle = "stalker";
         ozgSheet = "OpenZone_Games\data\cards\ozg_deck_stalker_co.paa";
         ozgCards = "OpenZone_Games\data\cards\stalker\ozg_stalker_";
+        ozgJokers = 1;
+// >>> generated: deck slots, stalker
+        attachments[] =
+        {
+            "OZG_Card01", "OZG_Card02", "OZG_Card03", "OZG_Card04", "OZG_Card05", "OZG_Card06", "OZG_Card07", "OZG_Card08", "OZG_Card09", "OZG_Card10",
+            "OZG_Card11", "OZG_Card12", "OZG_Card13", "OZG_Card14", "OZG_Card15", "OZG_Card16", "OZG_Card17", "OZG_Card18", "OZG_Card19", "OZG_Card20",
+            "OZG_Card21", "OZG_Card22", "OZG_Card23", "OZG_Card24", "OZG_Card25", "OZG_Card26", "OZG_Card27", "OZG_Card28", "OZG_Card29", "OZG_Card30",
+            "OZG_Card31", "OZG_Card32", "OZG_Card33", "OZG_Card34", "OZG_Card35", "OZG_Card36", "OZG_Card37", "OZG_Card38", "OZG_Card39", "OZG_Card40",
+            "OZG_Card41", "OZG_Card42", "OZG_Card43", "OZG_Card44", "OZG_Card45", "OZG_Card46", "OZG_Card47", "OZG_Card48", "OZG_Card49", "OZG_Card50",
+            "OZG_Card51", "OZG_Card52", "OZG_Card53", "OZG_Card54"
+        };
+// <<< generated: deck slots, stalker
     };
 
     // A card sharp's deck: the same deck outside, ten empty slots more
@@ -242,7 +260,7 @@ class CfgVehicles
             "OZG_Card31", "OZG_Card32", "OZG_Card33", "OZG_Card34", "OZG_Card35", "OZG_Card36", "OZG_Card37", "OZG_Card38", "OZG_Card39", "OZG_Card40",
             "OZG_Card41", "OZG_Card42", "OZG_Card43", "OZG_Card44", "OZG_Card45", "OZG_Card46", "OZG_Card47", "OZG_Card48", "OZG_Card49", "OZG_Card50",
             "OZG_Card51", "OZG_Card52", "OZG_Card53", "OZG_Card54", "OZG_Card55", "OZG_Card56", "OZG_Card57", "OZG_Card58", "OZG_Card59", "OZG_Card60",
-            "OZG_Card61", "OZG_Card62"
+            "OZG_Card61", "OZG_Card62", "OZG_Card63", "OZG_Card64"
         };
 // <<< generated: sharp slots, stalker
     };
@@ -276,7 +294,7 @@ class CfgVehicles
             "OZG_Card31", "OZG_Card32", "OZG_Card33", "OZG_Card34", "OZG_Card35", "OZG_Card36", "OZG_Card37", "OZG_Card38", "OZG_Card39", "OZG_Card40",
             "OZG_Card41", "OZG_Card42", "OZG_Card43", "OZG_Card44", "OZG_Card45", "OZG_Card46", "OZG_Card47", "OZG_Card48", "OZG_Card49", "OZG_Card50",
             "OZG_Card51", "OZG_Card52", "OZG_Card53", "OZG_Card54", "OZG_Card55", "OZG_Card56", "OZG_Card57", "OZG_Card58", "OZG_Card59", "OZG_Card60",
-            "OZG_Card61", "OZG_Card62"
+            "OZG_Card61", "OZG_Card62", "OZG_Card63", "OZG_Card64"
         };
     };
     class OZG_Card_2s: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_2S"; ozgFace = "2s"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_2s_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
@@ -331,6 +349,8 @@ class CfgVehicles
     class OZG_Card_Qc: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_QC"; ozgFace = "Qc"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_Qc_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
     class OZG_Card_Kc: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_KC"; ozgFace = "Kc"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_Kc_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
     class OZG_Card_Ac: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_AC"; ozgFace = "Ac"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\classic\ozg_classic_Ac_co.paa", "OpenZone_Games\data\cards\classic\ozg_classic_back_co.paa"}; };
+    class OZG_Card_Xr: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_XR"; ozgFace = "Xr"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\stalker\ozg_stalker_Xr_co.paa", "OpenZone_Games\data\cards\stalker\ozg_stalker_back_co.paa"}; };
+    class OZG_Card_Xb: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_XB"; ozgFace = "Xb"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\stalker\ozg_stalker_Xb_co.paa", "OpenZone_Games\data\cards\stalker\ozg_stalker_back_co.paa"}; };
 // <<< generated: cards
 
     // ------------------------------------------------------------ the card sharp's tools

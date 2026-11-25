@@ -48,9 +48,9 @@ when exactly one connected player bears it.
 | Command | Does |
 |---|---|
 | `!ozg deck` | a deck of cards (classic) into your hands, or your inventory when they are full |
-| `!ozg deck stalker` | the stalkers' deck: stalkers on the aces and kings, mutants on the queens, jacks and tens |
+| `!ozg deck stalker` | the stalkers' deck: stalkers on the aces and kings, mutants on the queens, jacks and tens, and two jokers (54 cards) |
 | `!ozg deck sharp` | a card sharp's deck (classic): the same fifty-two cards and ten empty slots more |
-| `!ozg deck stalkersharp` | a card sharp's deck in the stalkers' look |
+| `!ozg deck stalkersharp` | a card sharp's deck in the stalkers' look: the 54 and ten empty slots (64) |
 | `!ozg table` | a kitchen table two metres in front of you |
 | `!ozg bots` | two bots sit down at the nearest laid-out game (within 30 m) and start playing |
 | `!ozg bots 4` | four of them (as many as there are free seats) |

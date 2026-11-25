@@ -22,7 +22,8 @@ first game is durak, podkidnoy and perevodnoy. Class prefix `OZG_`; runs with
 
 - **A deck** is a container of its cards, fifty-two items in fifty-two slots, in two
   looks (the classic deck, and the stalkers' deck with stalkers and mutants on its picture
-  cards); a card sharp's deck of either look has ten empty slots more. A game is dealt
+  cards, which holds two jokers besides: fifty-four cards); a card sharp's deck of either
+  look has ten empty slots more. No game deals a joker. A game is dealt
   from the cards the deck really holds: fewer, or with further cards of a face. Gathering
   the game gives the very deck back. With it in hands a player takes "Choose placement":
   a hologram of a mat follows the aim, a panel says how many seats the spot has and of
@@ -101,7 +102,7 @@ the lines for `types.xml`, with a nominal of 0 for an admin to raise.
 перевідний.
 
 Стан на 2026-11-24: у гру можна грати. Колода — вмістище своїх карт: п'ятдесят дві
-карти-предмети у п'ятдесяти двох слотах (два вигляди: класична і сталкерська, зі сталкерами та мутантами на картах; шулерська колода має ще десять
+карти-предмети у п'ятдесяти двох слотах (два вигляди: класична і сталкерська, зі сталкерами та мутантами на картах; у сталкерській ще два джокери, п'ятдесят чотири карти, і жодна гра їх не роздає; шулерська колода має ще десять
 порожніх слотів). Карта теж предмет: одна модель на всі, кожна з власним лицем і сорочкою
 своєї колоди; у слотах колоди видно лиця, сама колода показує сорочку (на класичній — знак
 OpenZone), колоду тримають у долоні, одну карту — за край, і обидві лягають на землю

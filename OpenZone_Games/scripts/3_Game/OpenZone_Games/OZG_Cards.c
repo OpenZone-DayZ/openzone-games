@@ -14,10 +14,19 @@
 // beside the name, a record a card (OZG_DealCard below): two aces of spades
 // may wear one back or two, be marked or clean, and both ways they are two
 // cards.
+//
+// THE JOKERS: `Xr`, the red one, and `Xb`, the black one. A deck whose config
+// says ozgJokers = 1 is filled with them besides the fifty-two. A joker is a
+// card (IsCard, FaceOf) with no rank and no suit (RankOf -1, SuitOf ""), and
+// no game of this mod deals one: a game is handed the cards of its own set
+// (OZG_Game.CardsUsed), and no set names a joker.
 class OZG_Cards
 {
     static const string RANKS = "23456789TJQKA";
     static const string SUITS = "shdc";
+    // A joker's first letter, and its colours: red, black.
+    static const string JOKER = "X";
+    static const string JOKER_COLOURS = "rb";
     // Between a face and the number of a further card of that face.
     static const string COPY_MARK = ".";
 
@@ -29,11 +38,14 @@ class OZG_Cards
         int n = card.Length();
         if (n < 2)
             return false;
+        string first = card.Substring(0, 1);
+        string second = card.Substring(1, 1);
         string ranks = RANKS;
-        if (ranks.IndexOf(card.Substring(0, 1)) < 0)
-            return false;
         string suits = SUITS;
-        if (suits.IndexOf(card.Substring(1, 1)) < 0)
+        string colours = JOKER_COLOURS;
+        bool plain = ranks.IndexOf(first) >= 0 && suits.IndexOf(second) >= 0;
+        bool joker = first == JOKER && colours.IndexOf(second) >= 0;
+        if (!plain && !joker)
             return false;
         if (n == 2)
             return true;
@@ -48,7 +60,8 @@ class OZG_Cards
         return true;
     }
 
-    // 0 for a two .. 12 for an ace; -1 for what is not a card.
+    // 0 for a two .. 12 for an ace; -1 for what is not a card, and for a
+    // joker, which has no rank.
     static int RankOf(string card)
     {
         int copy;
@@ -58,13 +71,32 @@ class OZG_Cards
         return ranks.IndexOf(card.Substring(0, 1));
     }
 
-    // "s", "h", "d" or "c"; "" for what is not a card.
+    // "s", "h", "d" or "c"; "" for what is not a card, and for a joker.
     static string SuitOf(string card)
     {
         int copy;
         if (!WellMade(card, copy))
             return "";
+        if (card.Substring(0, 1) == JOKER)
+            return "";
         return card.Substring(1, 1);
+    }
+
+    // Whether a card is a joker, the first of its face or a further one.
+    static bool IsJoker(string card)
+    {
+        int copy;
+        if (!WellMade(card, copy))
+            return false;
+        return card.Substring(0, 1) == JOKER;
+    }
+
+    // The two jokers, the red one first.
+    static void Jokers(array<string> into)
+    {
+        string colours = JOKER_COLOURS;
+        for (int i = 0; i < colours.Length(); i++)
+            into.Insert(JOKER + colours.Substring(i, 1));
     }
 
     // 0 for the first card of a face, 1 and up for the others; -1 for what is

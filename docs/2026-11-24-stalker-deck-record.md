@@ -23,7 +23,7 @@ mutants too, and every card is worn its own way ("all cards are worn alike, rand
 | | spades | hearts | diamonds | clubs |
 |---|---|---|---|---|
 | Ace | Стрілець | Дегтярьов | Шрам | Скіф |
-| King | Привид | Сидорович | Доктор | Вовк |
+| King | Сахаров | Сидорович | Борода | Бармен |
 | Queen | Химера | Полтергейст | Контролер | Псевдогігант |
 | Jack | Бюрер | Снорк | Кровосос | Псевдособака |
 | Ten | Тушкан | Сліпий пес | Плоть | Кабан |
@@ -43,6 +43,29 @@ A style gets picture cards by having an entry in `PICTURES`, and uneven wear by
 `uneven=True`; `classic` and `zone` have neither and are drawn as before, to the byte
 (checked: a full run left their pictures and imagesets unchanged in git).
 
+## The jokers (2026-11-25)
+
+The owner asked for two jokers on the stalkers' deck, named for the Doctor and Faust, and
+for decks of 54 and 64 cards.
+
+- **The faces** `Xr`, the red joker, and `Xb`, the black one (`OZG_Cards.Jokers`,
+  `IsJoker`). A joker is a card (`IsCard`, `FaceOf`) with no rank and no suit (`RankOf`
+  -1, `SuitOf` ""). No game deals one: a game is handed only the cards of its own set
+  (`OZG_Game.CardsUsed`; durak's set is from the six up), so the jokers stay in the deck.
+- **The decks**: a deck class with `ozgJokers = 1` fills itself with the two jokers
+  besides the fifty-two (`OZG_Decks.HasJokers`, `OZG_FillNow`). `OZG_Deck_Stalker` has it
+  and 54 slots; `OZG_Deck_Stalker_Sharp` 64. The classic decks keep 52 and 62.
+- **The items**: `OZG_Card_Xr` "Червоний джокер" / "Red joker", `OZG_Card_Xb` "Чорний
+  джокер" / "Black joker", wearing the stalkers' look (`tools/make_card_items.py`).
+- **The picture** (`tools/make_cards.py`, `joker`): JOKER down two corners, the mark of the
+  series over a frame, the name under it: ДОКТОР on the red one, ФАУСТ on the black one.
+  The frame holds the mark of the series, large, until `PICTURES` gives the joker a line of
+  its own (`"Xr": ("photo", "ДОКТОР", "<file>")`), as a king's; then it holds that picture.
+- **Their pictures**: the owner wrote the lines into `PICTURES` and drew the deck the
+  same day: the Doctor's portrait on the red joker, Faust's on the black one, and on
+  the king of diamonds, the Doctor's old card, Beard of Call of Prypiat. The game's files
+  hold no picture of Faust; his is a file the owner gave (`src/SOURCES.md`).
+
 ## The wear
 
 A worn deck used to age every card by one recipe: the stains, specks and scratches
@@ -56,12 +79,15 @@ deck, so a face's wear tells nothing from behind.
 
 ## Whose the pictures are
 
-Not ours. The twenty pictures are cut from the files of the S.T.A.L.K.E.R. games and are
-GSC Game World's: seven portraits from the trilogy (Enhanced Edition), and from
-S.T.A.L.K.E.R. 2 the twelve mutants and Skif. The files of S.T.A.L.K.E.R. 2 name no picture
+Not ours. The twenty-two pictures show the S.T.A.L.K.E.R. games and are GSC Game World's:
+eight portraits from the files of the trilogy (Enhanced Edition), and from S.T.A.L.K.E.R. 2
+the twelve mutants and Skif, cut from its files, and Faust, from a file the owner gave
+(2026-11-25). The files of S.T.A.L.K.E.R. 2 name no picture
 after Skif: his card carries the hooded stalker of the difficulty screen, the first of its
 five pictures (the owner asked for Skif on that ace the same evening, and for the Doctor on
-the king of diamonds in the Forester's place). `art/cards/stalker/src/SOURCES.md` names the game, the file and the cell
+the king of diamonds in the Forester's place; on 2026-11-25, for Sakharov on the king of
+spades in Ghost's place and for the Barman on the king of clubs in Wolf's, both portraits
+of Shadow of Chornobyl). `art/cards/stalker/src/SOURCES.md` names the game, the file and the cell
 of each. `NOTICE` and `README.md` carry the statement GSC's terms ask for (the mod is
 unofficial, the assets are GSC's, where the games are sold) and keep the pictures outside
 the mod's licence. The owner decided on 2026-11-24 to take GSC's textures on those terms.

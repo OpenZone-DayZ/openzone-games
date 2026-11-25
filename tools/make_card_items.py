@@ -1,6 +1,6 @@
-# Writes what there is one of for every card: sixty-two slots, fifty-two card
-# classes, the slot lists of the decks, the cards' names, and the cards' lines
-# for a server's economy.
+# Writes what there is one of for every card: sixty-four slots, fifty-four card
+# classes (the fifty-two and the two jokers), the slot lists of the decks, the
+# cards' names, and the cards' lines for a server's economy.
 #
 #   python -I tools/make_card_items.py
 #
@@ -17,8 +17,16 @@ TYPES = os.path.join(ROOT, "docs", "examples", "types-openzone-games.xml")
 
 RANKS = "23456789TJQKA"
 SUITS = "shdc"
-SLOTS = 62
+SLOTS = 64
 PLAIN = 52
+SHARP_EXTRA = 10                   # the empty slots of a card sharp's deck
+# The jokers, red and black (OZG_Cards.Jokers). Only a deck whose config says
+# ozgJokers = 1 holds them, and only the stalkers' look draws them, so their
+# classes wear that look's pictures until the script paints them.
+JOKERS = ["Xr", "Xb"]
+JOKER_UA = {"Xr": "Червоний джокер", "Xb": "Чорний джокер"}
+JOKER_EN = {"Xr": "Red joker", "Xb": "Black joker"}
+JOKER_LOOK = "OpenZone_Games\\data\\cards\\stalker\\ozg_stalker_"
 
 RANK_UA = ["Двійка", "Трійка", "Четвірка", "П'ятірка", "Шістка", "Сімка", "Вісімка", "Дев'ятка",
            "Десятка", "Валет", "Дама", "Король", "Туз"]
@@ -37,12 +45,16 @@ FIRST_LOOK = "OpenZone_Games\\data\\cards\\classic\\ozg_classic_"
 CARD_MATERIAL = "OpenZone_Games\\data\\cards\\ozg_card.rvmat"
 
 
+def look_of(face):
+    return JOKER_LOOK if face in JOKERS else FIRST_LOOK
+
+
 def face_texture(face):
-    return FIRST_LOOK + face + "_co.paa"
+    return look_of(face) + face + "_co.paa"
 
 
-def back_texture():
-    return FIRST_LOOK + "back_co.paa"
+def back_texture(face="As"):
+    return look_of(face) + "back_co.paa"
 
 
 def faces():
@@ -52,6 +64,18 @@ def faces():
         for r in RANKS:
             out.append(r + s)
     return out
+
+
+def all_faces():
+    # Every face a card class is made for: the fifty-two, then the jokers.
+    return faces() + JOKERS
+
+
+def name_of(face):
+    if face in JOKERS:
+        return JOKER_UA[face], JOKER_EN[face]
+    r = RANKS.index(face[0])
+    return "%s %s" % (RANK_UA[r], SUIT_UA[face[1]]), "%s %s" % (RANK_EN[r], SUIT_EN[face[1]])
 
 
 def read(path):
@@ -117,18 +141,20 @@ def config():
              "        {"]
     cards += rows(names, "            ")
     cards += ["        };", "    };"]
-    for f in faces():
+    for f in all_faces():
         cards.append('    class OZG_Card_%s: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_%s"; '
                      'ozgFace = "%s"; hiddenSelectionsTextures[] = {"%s", "%s"}; };'
-                     % (f, f.upper(), f, face_texture(f), back_texture()))
+                     % (f, f.upper(), f, face_texture(f), back_texture(f)))
 
+    jokered = PLAIN + len(JOKERS)
     path = os.path.join(MOD, "config.cpp")
     text, bom, crlf = read(path)
     for name, lines in (("slots", slots),
                         ("cards", cards),
                         ("deck slots", slot_list(names[:PLAIN])),
-                        ("sharp slots, classic", slot_list(names)),
-                        ("sharp slots, stalker", slot_list(names))):
+                        ("deck slots, stalker", slot_list(names[:jokered])),
+                        ("sharp slots, classic", slot_list(names[:PLAIN + SHARP_EXTRA])),
+                        ("sharp slots, stalker", slot_list(names[:jokered + SHARP_EXTRA]))):
         text = between(text, "// >>> generated: " + name, "// <<< generated: " + name, lines)
     write(path, text, bom, crlf)
     return len(names)
@@ -136,10 +162,9 @@ def config():
 
 def strings():
     lines = []
-    for f in faces():
-        r = RANKS.index(f[0])
-        lines.append("STR_OZG_CARD_%s,%s %s,%s %s" % (f.upper(), RANK_UA[r], SUIT_UA[f[1]],
-                                                      RANK_EN[r], SUIT_EN[f[1]]))
+    for f in all_faces():
+        ua, en = name_of(f)
+        lines.append("STR_OZG_CARD_%s,%s,%s" % (f.upper(), ua, en))
     path = os.path.join(MOD, "strings.csv")
     text, bom, crlf = read(path)
     text = between(text, "# >>> generated: cards", "# <<< generated: cards", lines)
@@ -149,7 +174,7 @@ def strings():
 
 def types():
     lines = []
-    for f in faces():
+    for f in all_faces():
         lines += ['    <type name="OZG_Card_%s">' % f,
                   "        <nominal>0</nominal>",
                   "        <lifetime>14400</lifetime>",
@@ -165,7 +190,7 @@ def types():
     text, bom, crlf = read(TYPES)
     text = between(text, "<!-- >>> generated: cards -->", "<!-- <<< generated: cards -->", lines)
     write(TYPES, text, bom, crlf)
-    return len(faces())
+    return len(all_faces())
 
 
 print("slots %d, names %d, types %d" % (config(), strings(), types()))

@@ -84,6 +84,15 @@ class OZG_Decks
         return GetGame().ConfigGetTextOut("CfgVehicles " + deckClass + " ozgSheet");
     }
 
+    // Whether a new deck of this class gets the two jokers besides the
+    // fifty-two (its config's ozgJokers = 1).
+    static bool HasJokers(string deckClass)
+    {
+        if (deckClass == "")
+            return false;
+        return GetGame().ConfigGetInt("CfgVehicles " + deckClass + " ozgJokers") == 1;
+    }
+
     // The number of a look; 0 for a style no deck names.
     static int LookOfStyle(string style)
     {
@@ -214,7 +223,8 @@ class OZG_Deck_Base extends ItemBase
             OZG_FillNow();
     }
 
-    // Server: the fifty-two cards of this deck's own look, once.
+    // Server: the fifty-two cards of this deck's own look, and the two jokers
+    // of a deck that has them, once.
     void OZG_FillNow()
     {
         if (m_OZG_Filled)
@@ -227,6 +237,8 @@ class OZG_Deck_Base extends ItemBase
         string style = OZG_Decks.StyleOf(GetType());
         array<string> faces = new array<string>();
         OZG_Cards.Whole(faces);
+        if (OZG_Decks.HasJokers(GetType()))
+            OZG_Cards.Jokers(faces);
         int made = 0;
         for (int i = 0; i < faces.Count(); i++)
         {

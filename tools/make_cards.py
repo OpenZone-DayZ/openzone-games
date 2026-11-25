@@ -128,9 +128,11 @@ class Style:
     grime: tuple[int, int, int] = (0, 0, 0)     # dirt,
     stain: tuple[int, int, int] = (0, 0, 0)     # and what was spilt
     uneven: bool = False               # a worn deck whose every card draws its own lot of wear
+    jokers: bool = False               # its decks hold the two jokers, Xr and Xb (config ozgJokers)
 
     def ink(self, suit: str) -> tuple[int, int, int]:
-        return self.red if suit in "hd" else self.black
+        """The colour of a suit; of a joker's colour letter too: r red, b black."""
+        return self.red if suit in "hdr" else self.black
 
 
 CLASSIC = Style(
@@ -157,7 +159,7 @@ ZONE = Style(
 # The stalker deck: the stock and the inks of `zone`, a red back, a fourth tint for the tens,
 # which carry a picture as the court cards do.
 STALKER = replace(
-    ZONE, name="stalker", uneven=True,
+    ZONE, name="stalker", uneven=True, jokers=True,
     tints=dict(ZONE.tints, T=(186, 196, 198)),
     back=(146, 50, 38), back_deep=(118, 38, 30), line=(226, 212, 176), back_light=(166, 68, 52),
     mark=(232, 220, 184), accent=(232, 220, 184),
@@ -698,10 +700,10 @@ PICTURES = {
         "Ah": ("photo", "ДЕГТЯРЬОВ", "dehtiarov"),
         "Ad": ("photo", "ШРАМ", "shram"),
         "Ac": ("photo", "СКІФ", "skif"),
-        "Ks": ("photo", "ПРИВИД", "pryvyd"),
+        "Ks": ("photo", "САХАРОВ", "sakharov"),
         "Kh": ("photo", "СИДОРОВИЧ", "sydorovych"),
-        "Kd": ("photo", "ДОКТОР", "doktor"),
-        "Kc": ("photo", "ВОВК", "vovk"),
+        "Kd": ("photo", "БОРОДА", "boroda"),
+        "Kc": ("photo", "БАРМЕН", "barmen"),
         "Qs": ("figure", "ХИМЕРА", "khymera"),
         "Qh": ("figure", "ПОЛТЕРГЕЙСТ", "polterheist"),
         "Qd": ("figure", "КОНТРОЛЕР", "kontroler"),
@@ -714,6 +716,8 @@ PICTURES = {
         "Th": ("figure", "СЛІПИЙ ПЕС", "slipyi_pes"),
         "Td": ("figure", "ПЛОТЬ", "plot"),
         "Tc": ("figure", "КАБАН", "kaban"),
+        "Xr": ("photo", "ДОКТОР", "doktor"),
+        "Xb": ("photo", "ФАУСТ", "faust"),
     },
 }
 
@@ -808,9 +812,62 @@ def picture_card(ink, style, rank, suit, spec):
         ink.line([(26, y), (W - 26, y)], style.gold, 0.9)
 
 
+# --- the jokers: JOKER down two corners, the mark of the series over a frame, the name under
+# it. The frame holds the picture PICTURES gives the joker, like a king's; without one, the
+# mark of the series, large. The red one is Xr, the black one Xb.
+
+JOKER_FACES = ("Xr", "Xb")
+# The names the jokers carry when PICTURES gives them none (the owner's, 2026-11-25).
+JOKER_CAPTIONS = {"stalker": {"Xr": "ДОКТОР", "Xb": "ФАУСТ"}}
+FRAME_JOKER = (38.0, 50.0, 162.0, 190.0)
+JOKER_CAP, JOKER_PITCH = 11.0, 14.5          # a letter of JOKER down the corner: its height, the step
+
+
+def names_of(style):
+    """The images of a style's imageset: NAMES, then the jokers if the style has them."""
+    return NAMES + [f"c_{j}" for j in JOKER_FACES] if style.jokers else list(NAMES)
+
+
+def joker_index(style, colour_letter):
+    """The index of a joker: the letters of JOKER down the corner, one under the other."""
+    lay = Layer()
+    colour = style.ink(colour_letter)
+    for i, letter in enumerate("JOKER"):
+        mask, base = glyphs(letter, JOKER_CAP)
+        top = IDX_TOP + i * JOKER_PITCH
+        lay.stamp(mask, IDX_X - mask.width / S / 2, top + JOKER_CAP - base / S, colour)
+    return lay
+
+
+def joker(ink, style, colour_letter):
+    colour = style.ink(colour_letter)
+    face = "X" + colour_letter
+    spec = PICTURES.get(style.name, {}).get(face)
+    name = spec[1] if spec else JOKER_CAPTIONS.get(style.name, {}).get(face, "JOKER")
+    r = 10.0                                   # the mark leans up and right: its ring sits low left
+    oz_mark(ink, CX - 0.25 * r, 30.0 + 0.25 * r, r, colour, colour)
+    x0, y0, x1, y1 = FRAME_JOKER
+    if spec:
+        framed(ink, style, source(style.name, spec[2]), FRAME_JOKER, spec[0], colour, style.tints["K"])
+    else:
+        ink.rrect(x0, y0, x1, y1, 3, fill=style.tints["K"], outline=colour, width=1.5)
+        ink.rrect(x0 + 2.6, y0 + 2.6, x1 - 2.6, y1 - 2.6, 1.6, outline=style.gold, width=0.7)
+        r = 34.0
+        oz_mark(ink, CX - 0.25 * r, (y0 + y1) / 2 + 0.25 * r, r, colour, colour)
+    for y in (206.0, 240.0):
+        ink.line([(40, y), (W - 40, y)], style.gold, 0.9)
+    caption(ink, name, CX, 223.0, 15.0, colour, 116)
+
+
 def face_layers(style, rank, suit):
     """A face as the stock (RGB) and what is printed on it (a Layer), both on the S canvas."""
     ink = Layer()
+    if rank == "X":                            # a joker: `suit` is its colour letter
+        joker(ink, style, suit)
+        corner = joker_index(style, suit)
+        ink.add(corner)
+        ink.add_turned(corner)
+        return stock(style), ink
     colour = style.ink(suit)
     spec = PICTURES.get(style.name, {}).get(rank + suit)
     if spec:
@@ -1293,10 +1350,11 @@ def deck_sheet(style):
     return sheet
 
 
-def review_sheet(pictures):
-    """The 57 on mid grey, a suit a row and the back and the suits under them, about 1600 px wide."""
+def review_sheet(pictures, names):
+    """All of them on mid grey, a suit a row, and the back, the suits and the jokers under them,
+    about 1600 px wide."""
     gap, cols = 14, len(RANKS)
-    rows = [NAMES[i * cols:(i + 1) * cols] for i in range(4)] + [NAMES[52:]]
+    rows = [names[i * cols:(i + 1) * cols] for i in range(4)] + [names[52:]]
     sheet = Image.new("RGB", (cols * (W + gap) + gap, len(rows) * (H + gap) + gap), (128, 128, 128))
     for j, row in enumerate(rows):
         for i, name in enumerate(row):
@@ -1328,15 +1386,15 @@ def spread(img, by):
     return out
 
 
-def atlas(style, pictures):
-    """The pictures in their cells, in the order of NAMES, on a clear sheet.
+def atlas(style, pictures, names):
+    """The pictures in their cells, in the order of `names`, on a clear sheet.
 
     Clear means an alpha of zero, not black: the sheet is the colour of a card's edge
     under it, and round each cell lie BLEED pixels of that cell's own edge colours.
     """
-    assert len(NAMES) <= COLS * ROWS and cell(COLS * ROWS - 1)[1] + H + BLEED <= ATLAS
+    assert len(names) <= COLS * ROWS and cell(COLS * ROWS - 1)[1] + H + BLEED <= ATLAS
     sheet = Image.new("RGBA", (ATLAS, ATLAS), style.edge + (0,))
-    for i, name in enumerate(NAMES):
+    for i, name in enumerate(names):
         x, y = cell(i)
         halo = spread(pictures[name], BLEED).convert("RGBA")
         halo.putalpha(0)
@@ -1345,7 +1403,7 @@ def atlas(style, pictures):
     return sheet
 
 
-def imageset_text(set_name, texture):
+def imageset_text(set_name, texture, names):
     """The .imageset as the game's own are written: one space a level, LF, Flags 0, an empty Groups.
 
     `mpix 0` as in the other imagesets of the series: one texture, as large as RefSize.
@@ -1365,7 +1423,7 @@ def imageset_text(set_name, texture):
         " }",
         " Images {",
     ]
-    for i, name in enumerate(NAMES):
+    for i, name in enumerate(names):
         x, y = cell(i)
         lines += [f"  ImageSetDefClass {name} {{", f'   Name "{name}"', f"   Pos {x} {y}",
                   f"   Size {W} {H}", "   Flags 0", "  }"]
@@ -1441,7 +1499,7 @@ def to_paa(exe, png, paa, size):
 # ----------------------------------------------------------------------------- checks
 
 
-def check_imageset(path, sheet, pictures):
+def check_imageset(path, sheet, pictures, wanted):
     """Read the written .imageset back and hold it against the atlas and the pictures.
 
     Returns the path of the texture it names.
@@ -1456,9 +1514,9 @@ def check_imageset(path, sheet, pictures):
     found = re.findall(r'ImageSetDefClass (\w+) \{\s*Name "(\w+)"\s*Pos (\d+) (\d+)\s*Size (\d+) (\d+)\s*Flags 0\s*\}',
                        text)
     names = [f[1] for f in found]
-    if names != NAMES or any(f[0] != f[1] for f in found):
-        lacks, extra = sorted(set(NAMES) - set(names)), sorted(set(names) - set(NAMES))
-        raise SystemExit(f"error: {path.name}: {len(names)} images, not the {len(NAMES)} of NAMES in their order"
+    if names != wanted or any(f[0] != f[1] for f in found):
+        lacks, extra = sorted(set(wanted) - set(names)), sorted(set(names) - set(wanted))
+        raise SystemExit(f"error: {path.name}: {len(names)} images, not the {len(wanted)} wanted in their order"
                          f" (missing: {' '.join(lacks) or 'none'}; not wanted: {' '.join(extra) or 'none'})")
     boxes = []
     for _, name, x, y, w, h in found:
@@ -1491,29 +1549,31 @@ def save_png(img, path):
 def build(style, exe):
     print(f"[{style.name}]")
     folder = ART / style.name
-    pictures = {name: picture(style, name) for name in NAMES}
+    names = names_of(style)
+    pictures = {name: picture(style, name) for name in names}
     for name, img in pictures.items():
         save_png(img, folder / f"{name}.png")
-    save_png(review_sheet(pictures), folder / "_sheet.png")
+    save_png(review_sheet(pictures, names), folder / "_sheet.png")
     deck = deck_sheet(style)
     save_png(deck, folder / "deck_sheet.png")
     print(f"  {len(pictures)} pictures, deck_sheet.png and _sheet.png in {folder}")
 
     set_name = f"ozg_cards_{style.name}"
-    sheet = atlas(style, pictures)
+    sheet = atlas(style, pictures, names)
     atlas_png = BUILD / f"{set_name}_ca.png"
     deck_png = BUILD / f"ozg_deck_{style.name}_co.png"
     save_png(sheet, atlas_png)
     save_png(deck, deck_png)
     imageset = SETS / f"{set_name}.imageset"
     imageset.parent.mkdir(parents=True, exist_ok=True)
-    imageset.write_text(imageset_text(set_name, f"{MOD}/gui/imagesets/{set_name}_ca.paa"),
+    imageset.write_text(imageset_text(set_name, f"{MOD}/gui/imagesets/{set_name}_ca.paa", names),
                         encoding="utf-8", newline="\n")
-    texture = ROOT / check_imageset(imageset, sheet, pictures)     # the pbo prefix is the mod's folder
-    print(f"  {imageset}: {len(NAMES)} images, read back and held against the atlas")
+    texture = ROOT / check_imageset(imageset, sheet, pictures, names)  # the pbo prefix is the mod's folder
+    print(f"  {imageset}: {len(names)} images, read back and held against the atlas")
 
-    textures = []                                  # the 3D card's: 52 faces and the back
-    for name in NAMES[:53]:
+    textures = []                                  # the 3D card's: 52 faces, the back, the jokers
+    faces = [n for n in names if n.startswith("c_")]
+    for name in faces[:52] + ["back"] + faces[52:]:
         png = BUILD / "3d" / style.name / f"{name}_co.png"
         save_png(card_texture(style, name), png)
         textures.append((png, card_file(style, name), CARD_TEXTURE))

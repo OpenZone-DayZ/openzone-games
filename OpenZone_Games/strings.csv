@@ -223,6 +223,8 @@ STR_OZG_CARD_JC,Валет треф,Jack of clubs
 STR_OZG_CARD_QC,Дама треф,Queen of clubs
 STR_OZG_CARD_KC,Король треф,King of clubs
 STR_OZG_CARD_AC,Туз треф,Ace of clubs
+STR_OZG_CARD_XR,Червоний джокер,Red joker
+STR_OZG_CARD_XB,Чорний джокер,Black joker
 # <<< generated: cards
 # -- the card sharp's tools
 STR_OZG_MARKTOOL_NAME,Ручка шулера,Card sharp's pen
