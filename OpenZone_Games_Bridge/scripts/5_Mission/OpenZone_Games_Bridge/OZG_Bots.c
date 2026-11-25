@@ -405,6 +405,123 @@ class OZG_Bots
         return n;
     }
 
+    // ------------------------------------------------------------ the puppets
+
+    // A puppet (the `puppet` op) is played by someone at the keyboard through
+    // `ask`. Each time its table changes, the server's script log gets two
+    // lines: the table as everybody sees it, then the puppet's hand and the
+    // moves it may make, beginning with WAIT when the game stands still for
+    // it. A stand tool: a seat's hand goes into the server's log.
+    protected static string s_PuppetSaid = "";
+    protected static float s_PuppetWait;
+    protected static int s_PuppetLines;
+
+    static void PuppetTick(float timeslice)
+    {
+        s_PuppetWait = s_PuppetWait + timeslice;
+        if (s_PuppetWait < 0.5)
+            return;
+        s_PuppetWait = 0;
+        for (int i = 0; i < OZG_Sessions.Count(); i++)
+        {
+            OZG_Session s = OZG_Sessions.At(i);
+            if (!s)
+                continue;
+            for (int k = 0; k < s.m_R.Seats.Count(); k++)
+            {
+                string uid = s.m_R.Seats[k].Uid;
+                if (uid.IndexOf("puppet") != 0)
+                    continue;
+                string pub = PuppetTable(s);
+                string own = PuppetHand(s, k);
+                string both = pub + own;
+                if (both == s_PuppetSaid)
+                    continue;
+                s_PuppetSaid = both;
+                s_PuppetLines++;
+                string no = s_PuppetLines.ToString();
+                Print("[OZG_PUPPET] #" + no + " table " + pub);
+                Print("[OZG_PUPPET] #" + no + " mine seat=" + k.ToString() + " " + own);
+            }
+        }
+    }
+
+    protected static string PuppetTable(OZG_Session s)
+    {
+        string line = s.Id() + " st=" + s.m_R.St.ToString();
+        if (!s.m_Game)
+            return line + " nogame";
+        OZG_DurakPublic pub;
+        string err;
+        if (!JsonFileLoader<OZG_DurakPublic>.LoadData(s.m_Game.PublicView(), pub, err) || !pub)
+            return line + " pub? " + err;
+        line = line + " trump=" + pub.TrumpCard;
+        line = line + " stock=" + pub.StockCount.ToString() + " out=" + pub.DiscardCount.ToString();
+        line = line + " opener=" + pub.OpenerSeat.ToString() + " def=" + pub.DefenderSeat.ToString();
+        line = line + " limit=" + pub.AttackLimit.ToString();
+        if (pub.Taking != 0)
+            line = line + " TAKING";
+        string table = "";
+        int a;
+        for (a = 0; a < pub.AttackCards.Count(); a++)
+        {
+            string over = "-";
+            if (a < pub.DefenceCards.Count() && pub.DefenceCards[a] != "")
+                over = pub.DefenceCards[a];
+            table = table + " " + pub.AttackCards[a] + "/" + over;
+        }
+        line = line + " table=[" + table + " ]";
+        string seats = "";
+        for (a = 0; a < pub.SeatList.Count(); a++)
+        {
+            OZG_DurakSeatPublic sp = pub.SeatList[a];
+            if (!sp)
+                continue;
+            seats = seats + " " + sp.SeatNo.ToString() + ":" + sp.CardCount.ToString();
+            if (sp.Gone != 0)
+                seats = seats + "g";
+            if (sp.Passed != 0)
+                seats = seats + "p";
+        }
+        line = line + " seats=[" + seats + " ]";
+        string waits = "";
+        for (a = 0; a < pub.Awaited.Count(); a++)
+            waits = waits + " " + pub.Awaited[a].ToString();
+        line = line + " await=[" + waits + " ]";
+        if (pub.Ended != 0)
+            line = line + " ENDED durak=" + pub.DurakSeat.ToString() + " tie=" + pub.Tie.ToString();
+        return line;
+    }
+
+    protected static string PuppetHand(OZG_Session s, int k)
+    {
+        if (!s.m_Game)
+            return "";
+        string line = "";
+        if (s.m_R.St == OZG_Const.ST_PLAYING && s.m_Game.Waits(k))
+            line = "WAIT ";
+        OZG_DurakPrivate own;
+        string err;
+        if (!JsonFileLoader<OZG_DurakPrivate>.LoadData(s.m_Game.SeatView(k), own, err) || !own)
+            return line + "own? " + err;
+        line = line + "hand=" + PuppetJoin(own.Held) + " can=" + PuppetJoin(own.CanPlay);
+        return line;
+    }
+
+    protected static string PuppetJoin(array<string> words)
+    {
+        string text = "";
+        if (!words)
+            return text;
+        for (int i = 0; i < words.Count(); i++)
+        {
+            if (i > 0)
+                text = text + ",";
+            text = text + words[i];
+        }
+        return text;
+    }
+
     // ------------------------------------------------------------ the chat
 
     protected static void Reply(PlayerBase player, string text)
@@ -577,6 +694,7 @@ modded class MissionServer
     {
         super.OnUpdate(timeslice);
         OZG_Bots.Tick(timeslice);
+        OZG_Bots.PuppetTick(timeslice);
         OZG_Bots.DayTick(timeslice);
     }
 }
