@@ -55,5 +55,35 @@ FrameWidgetClass OZG_Card {
    "src alpha" 1
    "stretch mode" stretch_w_h
   }
+  ImageWidgetClass OZG_CardSign {
+   ignorepointer 1
+   color 1 1 1 1
+   position 0 0
+   size 1 1
+   hexactpos 1
+   vexactpos 1
+   hexactsize 1
+   vexactsize 1
+   priority 3
+   mode blend
+   "src alpha" 1
+   "stretch mode" stretch_w_h
+   visible 0
+  }
+  ImageWidgetClass OZG_CardPencil {
+   ignorepointer 1
+   color 1 1 1 1
+   position 0 0
+   size 1 1
+   hexactpos 1
+   vexactpos 1
+   hexactsize 1
+   vexactsize 1
+   priority 4
+   mode blend
+   "src alpha" 1
+   "stretch mode" stretch_w_h
+   visible 0
+  }
  }
 }

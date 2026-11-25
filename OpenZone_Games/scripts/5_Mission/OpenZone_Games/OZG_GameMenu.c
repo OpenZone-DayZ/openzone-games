@@ -762,6 +762,72 @@ class OZG_GameMenu : UIScriptedMenu
         return Math.AbsFloat(along) <= w * 0.5 && Math.AbsFloat(across) <= h * 0.5;
     }
 
+    // ------------------------------------------------------------ marks
+
+    // Which of this player's reads a back of the seat `seat` (-1: the top of
+    // the stock) in the look `look` shows: the first that lies there in that
+    // look and that no back drawn before took (`used`); -1: none. A fan shows
+    // its backs by look and not in the hand's order, so a read lies on the
+    // first free back of its look.
+    protected int ReadAt(int seat, int look, array<int> used)
+    {
+        if (!m_V || !m_V.Reads)
+            return -1;
+        for (int i = 0; i < m_V.Reads.Count(); i++)
+        {
+            OZG_WRead r = m_V.Reads[i];
+            if (r.Seat != seat || r.Look != look)
+                continue;
+            if (used.Find(i) >= 0)
+                continue;
+            used.Insert(i);
+            return i;
+        }
+        return -1;
+    }
+
+    // A read on a back of w x h units: the sign where its fault lies and the
+    // face in pencil in the top corner (design §4.4), inside the card's frame
+    // so that they turn with it. The places are pixels of a 200 x 280 card
+    // (OZG_MarkPlaces, tools/make_marks.py); the face lies in the middle of
+    // the frame, 5 : 7, as tools/make_layouts.py lays it.
+    protected void MarkBack(Widget card, float w, float h, OZG_WRead r)
+    {
+        ImageWidget sign = ImageWidget.Cast(card.FindAnyWidget("OZG_CardSign"));
+        ImageWidget pencil = ImageWidget.Cast(card.FindAnyWidget("OZG_CardPencil"));
+        if (!sign || !pencil)
+            return;
+        float side = BoxOf(w, h) * m_K;
+        float d = CARD_BOX * Math.Sqrt(74);
+        float faceW = side * 5 / d;
+        float faceH = side * 7 / d;
+        float left = (side - faceW) * 0.5;
+        float top = (side - faceH) * 0.5;
+        float kx = faceW / OZG_MarkPlaces.CARD_W;
+        float ky = faceH / OZG_MarkPlaces.CARD_H;
+        int x;
+        int y;
+        int bw;
+        int bh;
+        string style = OZG_Decks.StyleAt(r.Look);
+        if (OZG_MarkPlaces.SignBox(style, r.Sign, x, y, bw, bh))
+        {
+            sign.LoadImageFile(0, OZG_MarkPlaces.SignImage(style, r.Sign));
+            sign.SetImage(0);
+            sign.SetPos(left + x * kx, top + y * ky);
+            sign.SetSize(bw * kx, bh * ky);
+            sign.Show(true);
+        }
+        if (OZG_MarkPlaces.PencilBox(x, y, bw, bh))
+        {
+            pencil.LoadImageFile(0, OZG_MarkPlaces.PencilImage(r.Face));
+            pencil.SetImage(0);
+            pencil.SetPos(left + x * kx, top + y * ky);
+            pencil.SetSize(bw * kx, bh * ky);
+            pencil.Show(true);
+        }
+    }
+
     // ------------------------------------------------------------ drawing
 
     void Redraw()
@@ -974,7 +1040,7 @@ class OZG_GameMenu : UIScriptedMenu
         OZG_WSeat s = m_V.Seats[no];
         OZG_DurakSeatPublic g;
         if (BacksOf(no, g))
-            PaintFan(spot.X, spot.Y, spot.Turn, spot.Scale, g.CardCount, g.Backs);
+            PaintFan(spot.X, spot.Y, spot.Turn, spot.Scale, g.CardCount, g.Backs, no);
 
         string root = "OZG_PlateClassic";
         if (m_Style == "stalker")
@@ -1022,9 +1088,11 @@ class OZG_GameMenu : UIScriptedMenu
     }
 
     // A fan of backs: `count` cards about (x, y), turned by `turn`, the cards'
-    // own looks in `looks` (the lowest first).
-    protected void PaintFan(float x, float y, float turn, float scale, int count, array<int> looks)
+    // own looks in `looks` (the lowest first), the hand of the seat `seat`: a
+    // back this player reads there carries its mark (design §4.4).
+    protected void PaintFan(float x, float y, float turn, float scale, int count, array<int> looks, int seat)
     {
+        array<int> used = new array<int>();
         float spread = m_Look.FanSpread;
         if (count > 1 && spread * (count - 1) > m_Look.FanFan)
             spread = m_Look.FanFan / (count - 1);
@@ -1043,8 +1111,12 @@ class OZG_GameMenu : UIScriptedMenu
             float ly = r - r * Math.Cos(ar);
             float cx = x + lx * c - ly * s;
             float cy = y + lx * s + ly * c;
-            string back = PictureOf("back", LookAt(looks, i));
-            Card(m_FanPics, back, cx, cy, w, h, a + turn, 0, true);
+            int look = LookAt(looks, i);
+            string back = PictureOf("back", look);
+            Widget card = Card(m_FanPics, back, cx, cy, w, h, a + turn, 0, true);
+            int readNo = ReadAt(seat, look, used);
+            if (card && readNo >= 0)
+                MarkBack(card, w, h, m_V.Reads[readNo]);
         }
     }
 
@@ -1066,7 +1138,7 @@ class OZG_GameMenu : UIScriptedMenu
 
         OZG_DurakSeatPublic g;
         if (m_V.Mine < 0 && BacksOf(no, g))
-            PaintFan(m_Look.HandX, m_Look.HandY + 20, 0, 1, g.CardCount, g.Backs);
+            PaintFan(m_Look.HandX, m_Look.HandY + 20, 0, 1, g.CardCount, g.Backs, no);
     }
 
     protected void PaintTable()
@@ -1107,6 +1179,7 @@ class OZG_GameMenu : UIScriptedMenu
         if (layers > 6)
             layers = 6;
         int k;
+        array<int> stockUsed = new array<int>();
         for (k = 0; k < layers; k++)
         {
             // The top card shows the look of the one drawn next.
@@ -1115,7 +1188,13 @@ class OZG_GameMenu : UIScriptedMenu
                 look = m_Pub.StockTop;
             float sx = m_Look.StockX - k * 1.2 + pw * 0.5;
             float sy = m_Look.StockY - k * 1.6 + ph * 0.5;
-            Card(m_TablePics, PictureOf("back", look), sx, sy, pw, ph, 0, 0, true);
+            Widget layer = Card(m_TablePics, PictureOf("back", look), sx, sy, pw, ph, 0, 0, true);
+            // The top card: a back this player reads carries its mark (design §4.4).
+            int topRead = -1;
+            if (k == layers - 1)
+                topRead = ReadAt(-1, look, stockUsed);
+            if (layer && topRead >= 0)
+                MarkBack(layer, pw, ph, m_V.Reads[topRead]);
         }
 
         // The discards: a careless heap, a back for every two cards.
