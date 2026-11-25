@@ -8,6 +8,7 @@ modded class MissionGameplay
     protected ref OZG_Marks m_OZG_Marks;
     protected string m_OZG_OpenId;
     protected bool m_OZG_Asked;
+    protected bool m_OZG_Talking;
 
     override void OnInit()
     {
@@ -268,6 +269,26 @@ modded class MissionGameplay
         }
         if (m_OZG_Marks)
             m_OZG_Marks.Update();
+        OZG_WatchVoice();
+    }
+
+    // The player's own voice going on and off, in the client's log with
+    // whether the game's window was open: how push-to-talk under the window
+    // is checked (the owner's word, 2026-11-25: the players talk while they
+    // play).
+    protected void OZG_WatchVoice()
+    {
+        bool talking = IsVoNActive();
+        if (talking == m_OZG_Talking)
+            return;
+        m_OZG_Talking = talking;
+        string state = "off";
+        if (talking)
+            state = "on";
+        string window = "closed";
+        if (OZG_GameMenu.Current())
+            window = "open";
+        OZG_Log.Dbg("voice " + state + ", the game's window " + window);
     }
 
     override void OnKeyPress(int key)

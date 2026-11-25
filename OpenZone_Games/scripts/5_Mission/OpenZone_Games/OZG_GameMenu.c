@@ -466,6 +466,23 @@ class OZG_GameMenu : UIScriptedMenu
         Measure();
     }
 
+    // What the window shuts out while it is open: the game's "menu" group
+    // (bin\specific.xml) less its voice -- the inventory's group, the hotbar,
+    // walking and the inventory key -- so push-to-talk, its toggle and the
+    // voice level still work and the players talk while they play (the
+    // owner's word, 2026-11-25). The game takes single inputs here as well as
+    // groups (its script console does the same). A mod's own push-to-talk is
+    // in none of them.
+    protected static array<string> ShutOut()
+    {
+        array<string> groups = new array<string>();
+        groups.Insert("inventory");
+        groups.Insert("hotkey");
+        groups.Insert("movement");
+        groups.Insert("UAGear");
+        return groups;
+    }
+
     override void OnShow()
     {
         // The base locks the controls and shows the cursor; the excludes stop
@@ -483,7 +500,7 @@ class OZG_GameMenu : UIScriptedMenu
         Mission mission = GetGame().GetMission();
         if (mission)
         {
-            mission.AddActiveInputExcludes({"menu"});
+            mission.AddActiveInputExcludes(ShutOut());
             Hud hud = mission.GetHud();
             if (hud)
             {
@@ -513,7 +530,7 @@ class OZG_GameMenu : UIScriptedMenu
             Mission mission = GetGame().GetMission();
             if (mission)
             {
-                mission.RemoveActiveInputExcludes({"menu"}, true);
+                mission.RemoveActiveInputExcludes(ShutOut(), true);
                 Hud hud = mission.GetHud();
                 if (hud)
                 {

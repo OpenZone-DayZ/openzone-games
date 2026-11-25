@@ -282,3 +282,24 @@ Otherwise than the mock-ups, and why:
 - A card taken out by chance is picked among all the cards of the place, not only the faces
   the game deals (a five of clubs came out once); the design does not say.
 - At most ten tiles (two rows of five); the dealer with more read cards sees the first ten.
+
+## Push-to-talk under the window (the owner's word, 2026-11-25)
+
+The players must be able to talk while they play. The window shut out the game's "menu"
+group of inputs while it was open, and that group (`bin\specific.xml` in `dta\bin.pbo`)
+names `UAVoiceOverNet`, `UAVoiceOverNetToggle`, `UAVoiceOverNetMute` and `UAVoiceLevel`
+among its inputs; the inventory's group names none of them. The window now shuts out what
+"menu" holds less the voice: the groups `inventory` (gestures, aiming, stances, optics,
+actions), `hotkey` and `movement`, and the single input `UAGear` -- the game's own script
+console hands single inputs to `AddActiveInputExcludes` beside groups, as this does. A
+mod's own push-to-talk sits in none of these groups.
+
+Measured with a line the client now writes on every change of its own voice (`dbg: voice
+on|off, the game's window open|closed`, from the mission's `IsVoNActive`, which the game's
+VON state event sets) and Caps Lock, the game's push-to-talk, held 1.5 s by the stand
+(`client_key`):
+
+- before, window closed: `voice on, the game's window closed`, two seconds later `off`;
+- before, window open: nothing at all;
+- after, window open: `voice on, the game's window open` at 16:22:57.699, `off` at
+  16:22:59.699. Walking stays shut out (the `movement` group).
