@@ -18,6 +18,15 @@ class OZG_StakePaper
             return "Texas hold'em / Техаський холдем";
         if (gameId == OZG_OchkoConst.GAME_ID)
             return "Ochko / Очко";
+        // The book of a place outlives a change of game: a paper made after
+        // hold'em gave way to preferans was headed with preferans' bare id
+        // (seen 2026-11-25).
+        if (gameId == OZG_PrefConst.GAME_ID)
+            return "Preferans / Преферанс";
+        if (gameId == OZG_BridgeConst.GAME_ID)
+            return "Bridge / Бридж";
+        if (gameId == OZG_DurakConst.GAME_ID)
+            return "Durak / Дурень";
         return gameId;
     }
 

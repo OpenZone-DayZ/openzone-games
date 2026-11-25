@@ -679,6 +679,8 @@ class OZG_Session
     // The game ended: the result stands until the next deal.
     protected void Over()
     {
+        // The deal's last stacks into the book, while it still counts as played.
+        SyncStacks();
         m_R.St = OZG_Const.ST_FINISHED;
         m_R.Hint = m_Game.Outcome();
         m_R.HintUid = "";
@@ -990,10 +992,14 @@ class OZG_Session
     }
 
     // The chips of every seat of the deal, as the game counts them now, into
-    // the book: after every change, so a restart or a fold finds them there.
+    // the book: after every change while the deal is played, so a restart or
+    // a fold finds them there, and once more as it ends (Over). Between deals
+    // the book is the truth: an ended deal does not know the chips given
+    // since, and copying its stacks again took them back (seen 2026-11-25: a
+    // rebuy, and the 1000 of a bot seated again, gone at the next change).
     protected void SyncStacks()
     {
-        if (!m_Game || m_R.St == OZG_Const.ST_LOBBY || !m_Game.UsesStakes())
+        if (!m_Game || m_R.St != OZG_Const.ST_PLAYING || !m_Game.UsesStakes())
             return;
         for (int k = 0; k < m_R.Dealt.Count() && k < m_R.DealtUids.Count(); k++)
         {
