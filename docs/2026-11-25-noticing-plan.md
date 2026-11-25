@@ -88,7 +88,7 @@ Three settings of the design (§7), the settings file at version 4 with the defa
 **Interfaces:**
 - Produces: `OZG_Settings.NoticeGrace`, `NoticeStep`, `NoticeMax` (ints, server only), `int OZG_Settings.NoticeChance(int deals)` (percent, 0..100). Stand op `noticecfg [grace=] [step=] [max=]`.
 
-- [ ] **Step 1: The fields**
+- [x] **Step 1: The fields**
 
 In `OZG_Settings.c`, in `class OZG_Settings`, replace
 
@@ -115,7 +115,7 @@ with
     void OZG_Settings()
 ```
 
-- [ ] **Step 2: The version, the defaults, the migration, the bounds**
+- [x] **Step 2: The version, the defaults, the migration, the bounds**
 
 Replace
 
@@ -216,7 +216,7 @@ with
     }
 ```
 
-- [ ] **Step 3: The chance**
+- [x] **Step 3: The chance**
 
 Replace
 
@@ -252,7 +252,7 @@ with
 }
 ```
 
-- [ ] **Step 4: The stand sets them for a check**
+- [x] **Step 4: The stand sets them for a check**
 
 In `OZG_WorldOps.c`, at the end of `class OZG_WorldOps` (before its closing brace, after `OpCraft`), add:
 
@@ -291,7 +291,7 @@ In `OZG_Verb.c`, before the line `        // -- ops of the later phases go above
 
 and in `KnownOps()` replace `, mark, markof, craft, reads";` with `, mark, markof, craft, reads, noticecfg";`.
 
-- [ ] **Step 5: Lint, build, check**
+- [x] **Step 5: Lint, build, check**
 
 Before the build, `knowledge_find(kind="class", name=...)` for `NoticeGrace`, `NoticeStep`, `NoticeMax`, `NoticeChance`, `OpNoticeCfg`: none may be a class. Run `mod_lint`: no refusals. A stand cycle (Global Constraints). Then:
 
@@ -307,7 +307,7 @@ oz_games {"op":"noticecfg","grace":"5","step":"4","max":"40"}
 
 Expected: `notice grace=5 step=4 max=40 putright=0`; `notice grace=5 step=4 max=40 putright=3` (each out of its bounds and put back); `notice grace=0 step=100 max=100 putright=0`; `notice grace=5 step=4 max=40 putright=0`. The settings file is read again: still `"NoticeGrace": 5` (the op writes nothing).
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Settings.c OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_WorldOps.c OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_Verb.c
@@ -329,7 +329,7 @@ The card keeps its noticers itself (design §4.1): the list was saved with the i
 - Consumes: `OZG_Cfg.Get().MarkKnowers` (phase 2).
 - Produces, on `OZG_Card_Base` (server): `bool OZG_Notices(string uid)`, `int OZG_NoticerCount()`, `void OZG_AddNoticer(string uid)`. `bool OZG_DealCard.NoticedBy(string uid)`. `static OZG_Card_Base OZG_DeckRead.CardNamed(OZG_Place place, string name)`. Stand op `noticer`; `markof` answers ` notices=<0|1> noticers=<n>` for each card and takes `only=notices`.
 
-- [ ] **Step 1: The item takes a noticer**
+- [x] **Step 1: The item takes a noticer**
 
 In `OZG_CardThings.c`, in `class OZG_Card_Base`, replace
 
@@ -374,7 +374,7 @@ with
     void OZG_MarkInto(OZG_DealCard rec)
 ```
 
-- [ ] **Step 2: A deal's card found again in the place**
+- [x] **Step 2: A deal's card found again in the place**
 
 In `class OZG_DeckRead`, replace the end of `CardsOf` and of the class
 
@@ -426,7 +426,7 @@ with
 }
 ```
 
-- [ ] **Step 3: The record says who notices it**
+- [x] **Step 3: The record says who notices it**
 
 In `OZG_Cards.c`, in `class OZG_DealCard`, replace
 
@@ -459,7 +459,7 @@ with
 }
 ```
 
-- [ ] **Step 4: The stand makes a noticer, and markof tells them**
+- [x] **Step 4: The stand makes a noticer, and markof tells them**
 
 In `OZG_WorldOps.c`, replace the whole of `OpMarkOf`, from its comment
 
@@ -594,7 +594,7 @@ In `OZG_Verb.c`, before `        // -- ops of the later phases go above this lin
 
 and in `KnownOps()` replace `, reads, noticecfg";` with `, reads, noticecfg, noticer";`.
 
-- [ ] **Step 5: Lint, build, check**
+- [x] **Step 5: Lint, build, check**
 
 Before the build, `knowledge_find(kind="class", name=...)` for `NoticedBy`, `CardNamed`, `OpNoticer`, `OZG_Notices`, `OZG_NoticerCount`, `OZG_AddNoticer`. `mod_lint`, a stand cycle, a client, `world_teleport "6095.4 107.65 6028.9"`. Then, `<id>` the place laid, `<me>` the client's id:
 
@@ -647,7 +647,7 @@ Expected: `As: As sign=12 by_who=0 reads=0 notices=1 noticers=1;`; `Kh: Kh sign=
 
 Fold the game (the client is its host): `oz_games {"op":"ask","id":"<id>","ask":"fold"}` → `folded; ...`; then `oz_games {"op":"undeck"}` deletes the deck that came back into the hands.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add OpenZone_Games/scripts/4_World/OpenZone_Games/OZG_CardThings.c OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Cards.c OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_WorldOps.c OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_Verb.c
@@ -670,7 +670,7 @@ The session counts and rolls for every player dealt in, right after the deal and
 - Consumes: `OZG_Settings.NoticeChance`, `Cheating` (Task 1, phase 2); `OZG_Card_Base.OZG_AddNoticer`, `OZG_Notices`, `OZG_DealCard.NoticedBy`, `ReadBy`, `OZG_DeckRead.CardNamed` (Task 2, phase 2).
 - Produces: `bool OZG_Game.AddNoticer(string card, string uid)`; `int OZG_Session.NoticeDeals(string uid)`; the log lines `notice: <uid> noticed <face>, sign <s>, deal <d> at <c>%, place <id>` (info) and `notice roll: <uid> deal <d> at <c>% rolled <r>` (debug). Stand ops `whole id=` and `redeal id= n=`.
 
-- [ ] **Step 1: The game takes a noticer into the deal's record**
+- [x] **Step 1: The game takes a noticer into the deal's record**
 
 In `OZG_Game.c`, replace
 
@@ -724,7 +724,7 @@ with
 
 (Every record of `m_S.Dealt` is made by `OZG_DealCard.Make` or `Copy`, so its `Noticers` is never null.)
 
-- [ ] **Step 2: The session counts and rolls**
+- [x] **Step 2: The session counts and rolls**
 
 In `OZG_Session.c`, replace
 
@@ -859,7 +859,7 @@ Before the line `    // --------------------------------------------------------
 
 ```
 
-- [ ] **Step 3: The stand reads the whole deal and deals many times**
+- [x] **Step 3: The stand reads the whole deal and deals many times**
 
 In `OZG_WorldOps.c`, at the end of `class OZG_WorldOps` (before its closing brace), add:
 
@@ -1015,7 +1015,7 @@ In `OZG_Verb.c`, before `        // -- ops of the later phases go above this lin
 
 and in `KnownOps()` replace `, noticecfg, noticer";` with `, noticecfg, noticer, whole, redeal";`.
 
-- [ ] **Step 4: Lint, build, check one noticer (design §11.3: "with the grace set to 0 and the chance to 100")**
+- [x] **Step 4: Lint, build, check one noticer (design §11.3: "with the grace set to 0 and the chance to 100")**
 
 Before the build, `knowledge_find(kind="class", name=...)` for `AddNoticer`, `NoticeDeals`, `NoticeAfterDeal`, `NoticeOne`, `NoticedIn`, `OpWhole`, `OpRedeal`. `mod_lint`, a stand cycle, a client, `world_teleport "6095.4 107.65 6028.9"`. Every card marked by an id that sits nowhere, the bots made readers of every card, so that the client's player is the one who can notice:
 
@@ -1055,7 +1055,7 @@ oz_games {"op":"noticecfg"}
 
 Expected: `all: 5 noticed: ...`, the same five faces and signs as before the restart; `notice grace=5 step=4 max=40 putright=0` (the file's values are back). That the count of deals did not survive is checked in Task 4, which can show it. Fold this game (its bots did not survive the restart): `oz_games {"op":"ask","id":"<id>","ask":"fold"}`, `oz_games {"op":"undeck"}`.
 
-- [ ] **Step 5: Check the rate (design §11.3: "then with the defaults over many deals")**
+- [x] **Step 5: Check the rate (design §11.3: "then with the defaults over many deals")**
 
 Six players who notice (the bots are NOT made readers), the settings at their defaults (`noticecfg` answered `grace=5 step=4 max=40` above):
 
@@ -1079,7 +1079,7 @@ The six players take the whole thirty-six cards a deal. The first `redeal` start
 
 Fold the game and undeck: `oz_games {"op":"ask","id":"<id>","ask":"fold"}`, `oz_games {"op":"undeck"}`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Game.c OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Durak.c OpenZone_Games/scripts/4_World/OpenZone_Games/OZG_Session.c OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_WorldOps.c OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_Verb.c
@@ -1112,7 +1112,7 @@ The backs name no card; the face names the card the player holds and sees.
 - Consumes: `OZG_DealCard.NoticedBy`, `ReadBy`, `Look`, `Sign` (Task 2, phase 2); `OZG_Durak.DealtCard`, `IndexOfSeat` (phase 1, 2); `OZG_Session.NoticeDeals` (Task 3).
 - Produces: `class OZG_WNotice { int Seat; int Look; string CardName; int Sign; static OZG_WNotice MakeBack(int seat, int look, int sign); static OZG_WNotice MakeFace(string card, int look, int sign); }` -- a back's entry has `CardName` "" and `Seat` the hand's seat number or -1 for the top of the stock; a face's entry has the card's name and `Seat` -2. `OZG_WView.Notices` (`ref array<ref OZG_WNotice>`, never null on a client after `OZG_Table.Take`). `void OZG_Game.NoticesFor(int seat, string uid, array<ref OZG_WNotice> into)`. `string OZG_Session.HeadFor(string uid)` (for the stand). Stand op `notices id= [seat= | who=]`.
 
-- [ ] **Step 1: A notice on the wire**
+- [x] **Step 1: A notice on the wire**
 
 In `OZG_Wire.c`, replace
 
@@ -1188,7 +1188,7 @@ and in its constructor replace `        Reads = new array<ref OZG_WRead>();` wit
         Notices = new array<ref OZG_WNotice>();
 ```
 
-- [ ] **Step 2: The game says what a seat notices**
+- [x] **Step 2: The game says what a seat notices**
 
 In `OZG_Game.c`, replace
 
@@ -1286,7 +1286,7 @@ with
 
 (An unbeaten attack card has `""` beside it, and `DealtCard("")` answers null.)
 
-- [ ] **Step 3: The session puts them into the player's own head**
+- [x] **Step 3: The session puts them into the player's own head**
 
 In `OZG_Session.c`, in `ViewBody`, replace
 
@@ -1333,7 +1333,7 @@ After the method `ViewTo`, add:
     }
 ```
 
-- [ ] **Step 4: The client keeps the list whatever came**
+- [x] **Step 4: The client keeps the list whatever came**
 
 In `OZG_Table.c`, in `Take`, replace
 
@@ -1351,7 +1351,7 @@ with
             v.Notices = new array<ref OZG_WNotice>();
 ```
 
-- [ ] **Step 5: The stand reads a player's head**
+- [x] **Step 5: The stand reads a player's head**
 
 In `OZG_WorldOps.c`, at the end of `class OZG_WorldOps` (before its closing brace), add:
 
@@ -1424,7 +1424,7 @@ In `OZG_Verb.c`, before `        // -- ops of the later phases go above this lin
 
 and in `KnownOps()` replace `, whole, redeal";` with `, whole, redeal, notices";`.
 
-- [ ] **Step 6: Lint, build, check where a notice lies (design §11.3, §4.6)**
+- [x] **Step 6: Lint, build, check where a notice lies (design §11.3, §4.6)**
 
 Before the build, `knowledge_find(kind="class", name=...)` for `OZG_WNotice`'s members and methods (`CardName`, `MakeBack`, `MakeFace`), `Notices`, `NoticesFor`, `NoticeBack`, `NoticeFace`, `HeadFor`, `OpNotices`. `mod_lint`, a stand cycle, a client, `world_teleport "6095.4 107.65 6028.9"`.
 
@@ -1490,7 +1490,7 @@ Nobody else is told (design §4.6):
 
 **A restart in mid-game** (design §8: who noticed what survives, the count of deals does not): `client_stop`, `server_stop`, `server_start(timeout=600)`, `job_wait`, `log_verdict` = `pass`, the client, `world_ready`, `world_teleport "6095.4 107.65 6028.9"` (the client's seat is taken again within a second of being near). Then `oz_games {"op":"notices","id":"<id>","seat":"0"}`: `deals=0` and the same twenty-six entries (the game came back from the session file, its records with their noticers); `markof face=all who=me only=notices` → `all: 36 noticed`. Leave this game laid out: Task 6 folds it.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Wire.c OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Game.c OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Durak.c OpenZone_Games/scripts/4_World/OpenZone_Games/OZG_Session.c OpenZone_Games/scripts/5_Mission/OpenZone_Games/OZG_Table.c OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_WorldOps.c OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_Verb.c
@@ -1513,7 +1513,7 @@ A noticed face shows "a small dark speck in a margin" (design §4.5, §10). The 
 - Consumes: the faces `art/cards/<style>/c_*.png` (200 x 280, `tools/make_cards.py`).
 - Produces: in `OZG_MarkPlaces`: `static bool SpeckBox(string style, int sign, out int x, out int y, out int w, out int h)` (keys `<style>_f<sign>`), `static string SpeckImage()` (`set:ozg_marks image:speck`). The picture `speck` in `ozg_marks`.
 
-- [ ] **Step 1: The script draws the speck and its places**
+- [x] **Step 1: The script draws the speck and its places**
 
 Edit `tools/make_marks.py` with the Edit tool (it holds backslashes; nothing here goes through a shell). Replace
 
@@ -1846,7 +1846,7 @@ with
               % (style, SIGNS, PER_KIND, SIGNS, faces, spacing))
 ```
 
-- [ ] **Step 2: Where the speck's places come from**
+- [x] **Step 2: Where the speck's places come from**
 
 Replace the whole of `art/marks/SOURCES.md` with:
 
@@ -1867,7 +1867,7 @@ on the faces of a style are found by reading every face
 `<style>_specks.png` shows them on one face and on the ink of all the faces.
 ```
 
-- [ ] **Step 3: Draw them, and look at them**
+- [x] **Step 3: Draw them, and look at them**
 
 Run `python -I tools/make_marks.py`. Expected output (the plan's edits were applied to a copy of the script and run so, against copies of `art/cards`, when the plan was written):
 
@@ -1885,7 +1885,7 @@ Then:
 2. `git diff OpenZone_Games/scripts/5_Mission/OpenZone_Games/OZG_MarkPlaces.c`: only lines added (the comment, `SpeckBox`, `SpeckImage`, 198 `PutBox("<style>_f<n>", ...)` lines, each box 12 x 12) and the header comment's six lines replaced; not one `_s<n>` or `pencil` box changed.
 3. Look at `art/marks/classic_specks.png` and `stalker_specks.png`: on the left the queen of spades with all ninety-nine specks, a dotted frame just inside the edge; on the right the ink of every face of the style in grey, and no speck on the grey (none on an index, a pip, a frame or a caption). Look at `art/marks/_view.png`: the last column of each row, the king of hearts with sign 1's speck, a small dark dot in the margin; in the small copy, as a fan would show it, hardly to be seen.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add tools/make_marks.py art/marks OpenZone_Games/gui/imagesets/ozg_marks.imageset OpenZone_Games/gui/imagesets/ozg_marks_ca.paa OpenZone_Games/scripts/5_Mission/OpenZone_Games/OZG_MarkPlaces.c
@@ -1906,7 +1906,7 @@ The window draws, on a back the player notices, the sign as a fault in the back'
 - Consumes: `OZG_WView.Notices`, `OZG_WNotice.Seat`, `Look`, `CardName`, `Sign` (Task 4); `OZG_MarkPlaces.SpeckBox`, `SpeckImage` (Task 5), `SignBox`, `SignImage`, `PencilBox`, `PencilImage` (phase 2).
 - Produces: in `OZG_GameMenu`: `NoticeAt(int seat, int look, array<int> used)`, `NoticeOn(string card)`, `LayMark(...)`, `SignBack(...)`, `SpeckFace(...)`; `MarkBack` drawn through them.
 
-- [ ] **Step 1: The marks' drawing, in one place**
+- [x] **Step 1: The marks' drawing, in one place**
 
 In `OZG_GameMenu.c`, replace the whole of `MarkBack`, from its comment
 
@@ -2064,7 +2064,7 @@ with
     }
 ```
 
-- [ ] **Step 2: The fans and the stock show a noticed back's sign**
+- [x] **Step 2: The fans and the stock show a noticed back's sign**
 
 Replace
 
@@ -2154,7 +2154,7 @@ with
                 SignBack(layer, pw, ph, look, m_V.Notices[topNotice].Sign);
 ```
 
-- [ ] **Step 3: The faces show a noticed card's speck**
+- [x] **Step 3: The faces show a noticed card's speck**
 
 In `PaintTable`, replace
 
@@ -2225,7 +2225,7 @@ with
                 SpeckFace(pic, m_Look.CardW, m_Look.CardH, m_V.Notices[handNotice]);
 ```
 
-- [ ] **Step 4: The layout's comment says what the sign picture holds**
+- [x] **Step 4: The layout's comment says what the sign picture holds**
 
 In `tools/make_layouts.py`, in `card()`, replace
 
@@ -2246,7 +2246,7 @@ with
 
 Run `python -I tools/make_layouts.py`; `git status --short OpenZone_Games/gui/layouts` lists nothing (the layout files are written again the same).
 
-- [ ] **Step 5: Lint, build, look (design §11.3: "the sign on the right back and the speck on the right face")**
+- [x] **Step 5: Lint, build, look (design §11.3: "the sign on the right back and the speck on the right face")**
 
 Before the build, `knowledge_find(kind="class", name=...)` for `NoticeAt`, `NoticeOn`, `LayMark`, `SignBack`, `SpeckFace`, `SpeckBox`, `SpeckImage`. `mod_lint`, a stand cycle, `client_start(language="English")`, `job_wait`, `world_ready`, `world_teleport "6095.4 107.65 6028.9"`. Fold the game Task 4 left (`oz_games {"op":"ask","id":"<old id>","ask":"fold"}`, `undeck`). Then a table where the client's player notices every card but three, which he reads:
 
@@ -2289,7 +2289,7 @@ No string of the window changes in this task, so the Ukrainian client is not sho
 
 Send the key shots to the owner (`SendUserFile`): a whole table, the crops of a fan and of the hand, the table's faces, the stalkers' table.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add OpenZone_Games/scripts/5_Mission/OpenZone_Games/OZG_GameMenu.c tools/make_layouts.py
@@ -2307,7 +2307,7 @@ What was built and measured goes where the next reader looks for it: the record,
 - Modify: `docs/test-commands.md`, `README.md`, this plan (its ticks)
 - Outside the repository: `E:\openzone\docs\specs\2026-11-24-openzone-games-cardsharp-design.md`; the memory `project-table-games.md`; the skills only as Step 5 says
 
-- [ ] **Step 1: The record**
+- [x] **Step 1: The record**
 
 Create `docs/2026-11-25-noticing-record.md` in the shape of `docs/2026-11-25-marks-record.md`: a heading `# Noticing (the card sharp's phase 3): record`, the date and how the owner asked for it, and these sections, each filled from the steps' answers and never from this plan's expectations:
 - **What was built**: a table, a line a task, with its commit.
@@ -2315,7 +2315,7 @@ Create `docs/2026-11-25-noticing-record.md` in the shape of `docs/2026-11-25-mar
 - **Where the build differs from the design**: the notices in the head of the player's own view, not in the seat's private half (§4.6, §9; phase 2's reason); the cards that count are the deal's, not every card of the deck; the count is not reset by a success; the speck's place is its sign's, and the look of the speck is this plan's; a back the player reads shows his read, not his notice, and a reader who does not notice sees no speck; the noticing written to the server's log (§6.1 asks it of sleights and markings); the stand's bots notice too; what else came up.
 - **Not done**: the sleights and the dealer's choice (phase 4); the owner's word on the speck's size and ink, and on the fan card's pencil, still open from phase 2.
 
-- [ ] **Step 2: What a person tries**
+- [x] **Step 2: What a person tries**
 
 In `docs/test-commands.md`, in `## Marks and the loupe`, replace
 
@@ -2367,7 +2367,7 @@ a noticer by hand, as a won roll would.
 
 and in `## The verb for scripts`, after the sentence that ends `` `sweep=1` deletes them).``, add the sentence `` For noticing: `noticecfg`, `noticer`, `notices`, `whole` and `redeal` (above).``
 
-- [ ] **Step 3: The README**
+- [x] **Step 3: The README**
 
 In `README.md`, in the status list, replace
 
@@ -2436,7 +2436,7 @@ with
 розкладки. З колодою в руках
 ```
 
-- [ ] **Step 4: The design's status**
+- [x] **Step 4: The design's status**
 
 In `E:\openzone\docs\specs\2026-11-24-openzone-games-cardsharp-design.md` (not a repository): the status line says phase 3 is built and checked on the stand, with the date, this plan's path and the record's path, and that phase 4 is not built.
 
@@ -2448,7 +2448,7 @@ This phase calls nothing of the engine that phases 1 and 2 did not. If a run nev
 
 `C:\Users\56869\.claude\projects\E--openzone\memory\project-table-games.md` gains a paragraph: phase 3 built (the date, the commits), what was measured, what is open; its `description` line says so. `MEMORY.md` stays under 17.1 KB.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add docs/2026-11-25-noticing-record.md docs/test-commands.md README.md docs/2026-11-25-noticing-plan.md

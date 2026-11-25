@@ -39,6 +39,11 @@ first game is durak, podkidnoy and perevodnoy. Class prefix `OZG_`; runs with
   on its back wherever it lies back up in a game, with the mark drawn into the back's
   pattern, and nobody else is told anything. The pen and the loupe wear the game's own
   models for now.
+- **Noticing**: a player who is dealt, deal after deal, marked cards he does not read
+  begins after a few deals to notice them, one card at a time and by chance, and is told
+  nothing: from then on that card's back shows him its mark in the pattern, and its face a
+  small dark speck near the edge. What he noticed stays on the card; the count of deals
+  starts again with every restart and every game laid out anew.
 - **Seats** are worked out around the mat in one of three layouts: standing or sitting on
   the floor below a raised thing the mat lies on (a table, a wall's top, a crate), or
   sitting on the level of the mat itself. A player turns to the mat, is shown the free
@@ -64,7 +69,8 @@ checked by script and by chance in phase 1 ([docs/measurements](docs/measurement
 design note lives beside the repositories of the series, in
 `docs/specs/2026-11-23-openzone-games-design.md`; the cards as items are the first phase of
 `docs/specs/2026-11-24-openzone-games-cardsharp-design.md`; its second phase, marks, is
-built ([docs/2026-11-25-marks-record.md](docs/2026-11-25-marks-record.md)), noticing and
+built ([docs/2026-11-25-marks-record.md](docs/2026-11-25-marks-record.md)), and its third,
+noticing ([docs/2026-11-25-noticing-record.md](docs/2026-11-25-noticing-record.md));
 sleights are not.
 
 No key, no `mod.cpp`, no Workshop item: nothing is published without the owner's word.
@@ -76,7 +82,7 @@ No key, no `mod.cpp`, no Workshop item: nothing is published without the owner's
 | `OpenZone_Games/` | the mod: scripts, config, layouts, card imagesets, the table's textures and fonts, models |
 | `OpenZone_Games_Bridge/` | stand tool, server only: the `oz_games` verb, bots, the `!ozg` chat commands, `stage` (a table set out to be looked at) |
 | `TableGamesProbe/`, `TableGamesProbe_Bridge/` | stand tool of the first measurements ([docs/probe.md](docs/probe.md)) |
-| `tools/` | `make_cards.py` (the two decks' art), `make_marks.py` (the marks a reader sees on a back), `make_card_items.py` (the card items, their slots and names), `make_table.py` (the window's tables, frames, plates, shadows; `steel.py` is the trade screen's steel), `build_fonts.py` (the window's own fonts), `make_layouts.py` (the window), `stringtable.py`, `analyze.py` |
+| `tools/` | `make_cards.py` (the two decks' art), `make_marks.py` (the marks on the cards: a sign on a back, a reader's pencil, a speck on a face), `make_card_items.py` (the card items, their slots and names), `make_table.py` (the window's tables, frames, plates, shadows; `steel.py` is the trade screen's steel), `build_fonts.py` (the window's own fonts), `make_layouts.py` (the window), `stringtable.py`, `analyze.py` |
 | `art/` | sources of the cards, of the tables (`art/table`) and the fonts (Oswald, PT Mono; SIL Open Font License; their list in `art/fonts/fonts.json`) |
 | `models/` | sources of the five models and how they are built ([models/README.md](models/README.md)) |
 | `docs/` | plans, records, measurements, an example for a server's economy |
@@ -89,7 +95,9 @@ The three stand tools are never published and no server should load them.
 and editable in the core's admin window: the poses (a stance or the number of a gesture,
 so an animation mod's gestures can be added), the radii, the spacing of seats and of
 places, how long a place may stand idle, which games are on; whether cards may be
-marked at all (`Cheating`), the pen's uses and how long marking and studying take.
+marked at all (`Cheating`), the pen's uses and how long marking and studying take, and
+how soon and how fast a player begins to notice marks he does not read (`NoticeGrace`,
+`NoticeStep`, `NoticeMax`).
 
 The decks and the cards are not in any loot table: [docs/examples](docs/examples) has
 the lines for `types.xml`, with a nominal of 0 for an admin to raise.
@@ -110,7 +118,12 @@ OpenZone), колоду тримають у долоні, одну карту �
 отримує назад ту саму колоду. Ручка шулера мітить карту через звичайне крафтування гри,
 лупа показує, чи карта мічена; хто карту позначив або роздивився, бачить її лице олівцем
 на сорочці, де б вона не лежала сорочкою догори, і саму мітку в узорі сорочки; більше
-нікому нічого не кажуть. Ручка й лупа поки що мають моделі самої гри. З колодою в руках
+нікому нічого не кажуть. Ручка й лупа поки що мають моделі самої гри. Хто роздачу за
+роздачею грає міченими картами, яких не читає, з часом починає їх помічати — по одній
+карті й випадково, і йому про це нічого не кажуть: відтоді на сорочці такої карти він
+бачить мітку в узорі, а на її лиці — маленьку темну цятку біля краю. Помічене лишається
+на карті, а лік роздач починається знову після кожного рестарту й кожної нової
+розкладки. З колодою в руках
 гравець обирає місце, голограма килимка показує, скільки там місць і яких, або чому місце
 не годиться. Місця навколо обчислює мод: стоячи біля столу або сидячи на землі. Партію
 тримає сервер, а вікно — картярський стіл у вигляді колоди: зелене сукно в темно-зеленому

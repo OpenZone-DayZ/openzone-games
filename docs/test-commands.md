@@ -139,7 +139,7 @@ Without the gesture, the server's half of it:
 
     oz_games {"op":"craft","what":"mark","face":"As"}   the thing in the hands on the ace of spades you carry
     oz_games {"op":"craft","what":"loupe","face":"As"}
-    oz_games {"op":"markof","in":"me","face":"all"}     every marked card you carry: sign, by you, read by you
+    oz_games {"op":"markof","in":"me","face":"all"}     every marked card you carry: sign, by you, read and noticed by you
 
 At the table, with the window open, every back you read in another seat's fan and on
 the stock carries its fault and your pencil:
@@ -150,6 +150,37 @@ the stock carries its fault and your pencil:
 `Cheating` 0 in `OZ_Games_Settings.json` switches all of it off: nothing is marked,
 studied or drawn.
 
+## Noticing
+
+A player dealt deal after deal with marked cards he does not read begins to notice them
+(card sharp's design §5): five deals of nothing (`NoticeGrace`), then a chance of four
+percent more a deal (`NoticeStep`) up to forty (`NoticeMax`); a success is one card,
+picked at random among the deal's marked cards he neither reads nor notices. Nothing is
+said to him. From then on, at the table, its back shows him its sign in the pattern (no
+pencil: he does not know the face), and its face -- in his hand, on the table, as the
+trump -- a small dark speck just inside the edge, where that sign puts it. What he
+noticed stays on the card; the count of deals starts again with every restart and every
+game laid out anew.
+
+To see it at once, on the stand only (the server's memory; a restart reads the file
+again):
+
+    oz_games {"op":"noticecfg","grace":"0","step":"100","max":"100"}   every deal makes each player notice one more card
+    oz_games {"op":"noticecfg"}                                        the three as they stand
+
+With a game laid out (`<id>`) whose cards somebody who is not at the table marked:
+
+    oz_games {"op":"mark","id":"<id>","face":"all","who":"marker1"}    every card marked by an id that sits nowhere
+    oz_games {"op":"ask","id":"<id>","ask":"deal"}                      a deal: you notice one card
+    oz_games {"op":"notices","id":"<id>","seat":"0"}                    what seat 0's player is shown: b<seat>:<look>/<sign> on a back, f<card>/<sign> on a face
+    oz_games {"op":"markof","id":"<id>","face":"all","who":"me","only":"notices"}   the cards you notice, counted
+    oz_games {"op":"whole","id":"<id>"}                                 where every card lies: the hands, the table, the stock in order
+    oz_games {"op":"redeal","id":"<id>","n":"40"}                      forty deals at once, the noticing tallied against its chance
+
+`mark ... "who":"<a bot's id>"` (the ids are in `seats`) makes that bot a reader of the
+cards, and a reader never notices: a table where you alone notice. `noticer` makes an id
+a noticer by hand, as a won roll would.
+
 ## The verb for scripts
 
 The same and more through the MCP bridge, `world_exec(verb="oz_games", args={"op": ...})`:
@@ -159,7 +190,8 @@ The same and more through the MCP bridge, `world_exec(verb="oz_games", args={"op
 carried deck or a laid-out one, and gone), `undeck` (a player's decks deleted), `stuff`
 (cards of a face and a look into a laid-out game: the deck's free slots, then beside
 it), `held` (what a place holds: its deck, and how many cards beside it), `loose` (the
-cards lying on the ground near a point; `sweep=1` deletes them). `lay` takes `deck=`
+cards lying on the ground near a point; `sweep=1` deletes them). For noticing:
+`noticecfg`, `noticer`, `notices`, `whole` and `redeal` (above). `lay` takes `deck=`
 (a deck's class), `give` too. The header of each op in
 `OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_WorldOps.c` says what
 it takes. The ops of the rules alone (`begin`, `play`, `fuzz` and the rest) are in the
