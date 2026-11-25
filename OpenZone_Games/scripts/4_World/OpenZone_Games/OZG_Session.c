@@ -411,13 +411,19 @@ class OZG_Session
         if (IsHost(uid))
             v.IsHost = 1;
         v.Note = m_Note;
-        // What this player reads: only a player dealt into the game, and only
-        // into the head made for that player (design §4.6).
+        // What this player reads and notices: only a player dealt into the
+        // game, and only into the head made for that player (design §4.6).
+        // One head serves every player of a push: both lists are emptied
+        // first, so nobody is sent another's.
         v.Reads.Clear();
+        v.Notices.Clear();
         bool dealt = seat >= 0 && m_R.Dealt.Find(seat) >= 0;
         bool reading = OZG_Cfg.Get().Cheating == 1;
         if (m_Game && m_R.St != OZG_Const.ST_LOBBY && dealt && reading)
+        {
             m_Game.ReadsFor(seat, uid, v.Reads);
+            m_Game.NoticesFor(seat, uid, v.Notices);
+        }
 
         string head;
         string err;
@@ -440,6 +446,16 @@ class OZG_Session
         SendTo(p, OZG_Const.OP_VIEW, ViewBody(ViewHead(), uid));
         // Said once, to the first who looks.
         m_Note = "";
+    }
+
+    // For the stand: the head of the view this player would be sent now.
+    string HeadFor(string uid)
+    {
+        string head;
+        string shared;
+        string own;
+        OZG_Text.Cut3(ViewBody(ViewHead(), uid), head, shared, own);
+        return head;
     }
 
     void Push()

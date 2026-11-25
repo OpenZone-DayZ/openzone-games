@@ -39,6 +39,8 @@ class OZG_Table
             v.Log = new array<string>();
         if (!v.Reads)
             v.Reads = new array<ref OZG_WRead>();
+        if (!v.Notices)
+            v.Notices = new array<ref OZG_WNotice>();
 
         OZG_TableView view = new OZG_TableView();
         view.HeadPart = v;

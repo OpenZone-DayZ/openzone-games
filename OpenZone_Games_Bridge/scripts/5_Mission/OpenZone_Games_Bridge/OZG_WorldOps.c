@@ -1200,4 +1200,61 @@ class OZG_WorldOps
         detail = detail + " of " + F2(topExpect);
         return true;
     }
+
+    // notices id=<place> [seat=<n> | who=me|<id>]: the notices in the head of
+    // the view that player would be sent now (the session's own head, design
+    // §4.6): a back as "b<seat>:<look>/<sign>" (-1 the top of the stock), a
+    // face as "f<card>/<sign>"; with his seat (mine=-1 for one who holds
+    // none), the deals that counted towards noticing for him, how many reads
+    // the head carries and its length in bytes.
+    static bool OpNotices(map<string, string> args, out string detail)
+    {
+        OZG_Session s = Sess(args, detail);
+        if (!s)
+            return false;
+        string uid;
+        string seatArg = OZG_VerbOps.Arg(args, "seat", "");
+        if (seatArg != "")
+        {
+            int no = seatArg.ToInt();
+            if (no < 0 || no >= s.m_R.Seats.Count())
+            {
+                detail = "notices: no seat " + seatArg;
+                return true;
+            }
+            uid = s.m_R.Seats[no].Uid;
+        }
+        else
+        {
+            Who(args, uid);
+        }
+        string head = s.HeadFor(uid);
+        OZG_WView v;
+        string err;
+        if (!JsonFileLoader<OZG_WView>.LoadData(head, v, err) || !v)
+        {
+            detail = "notices: the head did not read: " + err;
+            return true;
+        }
+        int reads = 0;
+        if (v.Reads)
+            reads = v.Reads.Count();
+        detail = "notices of " + uid + " mine=" + v.Mine.ToString();
+        detail = detail + " deals=" + s.NoticeDeals(uid).ToString();
+        detail = detail + " reads=" + reads.ToString() + " head=" + head.Length().ToString() + "B:";
+        if (!v.Notices || v.Notices.Count() == 0)
+        {
+            detail = detail + " none";
+            return true;
+        }
+        for (int i = 0; i < v.Notices.Count(); i++)
+        {
+            OZG_WNotice n = v.Notices[i];
+            string one = " f" + n.CardName;
+            if (n.CardName == "")
+                one = " b" + n.Seat.ToString() + ":" + n.Look.ToString();
+            detail = detail + one + "/" + n.Sign.ToString();
+        }
+        return true;
+    }
 }

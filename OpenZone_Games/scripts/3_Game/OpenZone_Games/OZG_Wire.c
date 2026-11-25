@@ -61,6 +61,41 @@ class OZG_WRead
     }
 }
 
+// A card this client's player notices (card sharp's design §4.5): the sign
+// he sees on it, and where. On a back -- `CardName` empty -- in the hand of
+// the seat `Seat`, or on top of the stock (`Seat` -1), on a back of the look
+// `Look`; nothing says which card it is. On a face -- `CardName` the card's
+// name, which the player sees anyway, `Seat` -2 -- that card wherever it
+// lies face up for him: in his own hand, on the table, the trump under the
+// stock; `Look` gives the style of its face.
+class OZG_WNotice
+{
+    int    Seat;
+    int    Look;
+    string CardName;
+    int    Sign;
+
+    static OZG_WNotice MakeBack(int seat, int look, int sign)
+    {
+        OZG_WNotice n = new OZG_WNotice();
+        n.Seat = seat;
+        n.Look = look;
+        n.CardName = "";
+        n.Sign = sign;
+        return n;
+    }
+
+    static OZG_WNotice MakeFace(string card, int look, int sign)
+    {
+        OZG_WNotice n = new OZG_WNotice();
+        n.Seat = -2;
+        n.Look = look;
+        n.CardName = card;
+        n.Sign = sign;
+        return n;
+    }
+}
+
 // The head of a view.
 class OZG_WView
 {
@@ -88,6 +123,8 @@ class OZG_WView
     // What this client's player reads (design §4.4); empty for a watcher and
     // for a seat that reads nothing. Made apart for every player.
     ref array<ref OZG_WRead> Reads;
+    // What this client's player notices (design §4.5); empty as the reads.
+    ref array<ref OZG_WNotice> Notices;
 
     void OZG_WView()
     {
@@ -97,6 +134,7 @@ class OZG_WView
         Dealt = new array<int>();
         Log = new array<string>();
         Reads = new array<ref OZG_WRead>();
+        Notices = new array<ref OZG_WNotice>();
         Mine = -1;
         HostSeat = -1;
     }

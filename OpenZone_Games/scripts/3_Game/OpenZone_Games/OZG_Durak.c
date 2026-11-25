@@ -1022,6 +1022,58 @@ class OZG_Durak : OZG_Game
         return true;
     }
 
+    override void NoticesFor(int seat, string uid, array<ref OZG_WNotice> into)
+    {
+        into.Clear();
+        if (!m_S || uid == "")
+            return;
+        int i;
+        int h;
+        // Backs: the other seats' hands and the top of the stock, as the reads.
+        for (i = 0; i < m_S.SeatList.Count(); i++)
+        {
+            OZG_DurakSeat other = m_S.SeatList[i];
+            if (other.SeatNo == seat)
+                continue;
+            for (h = 0; h < other.Held.Count(); h++)
+                NoticeBack(other.SeatNo, other.Held[h], uid, into);
+        }
+        if (m_S.StockCards.Count() > 1)
+            NoticeBack(-1, m_S.StockCards[0], uid, into);
+        // Faces: the seat's own hand, the table, the trump while it lies
+        // under the stock (the window draws it there only then).
+        int mine = IndexOfSeat(seat);
+        if (mine >= 0)
+        {
+            array<string> held = m_S.SeatList[mine].Held;
+            for (h = 0; h < held.Count(); h++)
+                NoticeFace(held[h], uid, into);
+        }
+        for (i = 0; i < m_S.AttackCards.Count(); i++)
+        {
+            NoticeFace(m_S.AttackCards[i], uid, into);
+            NoticeFace(m_S.DefenceCards[i], uid, into);
+        }
+        if (m_S.StockCards.Count() > 0)
+            NoticeFace(m_S.TrumpCard, uid, into);
+    }
+
+    protected void NoticeBack(int where, string card, string uid, array<ref OZG_WNotice> into)
+    {
+        OZG_DealCard rec = DealtCard(card);
+        if (!rec || !rec.NoticedBy(uid) || rec.ReadBy(uid))
+            return;
+        into.Insert(OZG_WNotice.MakeBack(where, rec.Look, rec.Sign));
+    }
+
+    protected void NoticeFace(string card, string uid, array<ref OZG_WNotice> into)
+    {
+        OZG_DealCard rec = DealtCard(card);
+        if (!rec || !rec.NoticedBy(uid))
+            return;
+        into.Insert(OZG_WNotice.MakeFace(card, rec.Look, rec.Sign));
+    }
+
     override string SaveState()
     {
         if (!m_S)

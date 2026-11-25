@@ -167,6 +167,16 @@ class OZG_Game
         return false;
     }
 
+    // The cards the seat `seat`, held by the player `uid`, notices, where
+    // they lie for that player (card sharp's design §4.5): on a back where a
+    // read would lie, a card he notices and does not read (a reader sees
+    // more); on a face -- his own hand, the table, the trump -- every card he
+    // notices. A game without hidden cards says nothing.
+    void NoticesFor(int seat, string uid, array<ref OZG_WNotice> into)
+    {
+        into.Clear();
+    }
+
     bool IsOver()
     {
         return true;
