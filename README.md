@@ -3,8 +3,10 @@
 Table games for DayZ in the OpenZone family of mods. A player lays a deck out on a surface
 of their choosing: a table, a counter, the floor. The mod works out where others can sit
 or stand around it, and the game is played in a window while the characters sit at it. The
-first game is durak, podkidnoy and perevodnoy. Class prefix `OZG_`; runs with
-`OpenZone_Core` alone.
+games: durak (podkidnoy and perevodnoy), and since 2026-11-25 ochko, Texas hold'em,
+preferans and bridge. Class prefix `OZG_`; runs with `OpenZone_Core` alone; with VPP
+Admin Tools its settings are a module of the series' admin window
+(`OpenZone_Games_VPP`).
 
 > **The stalkers' deck and table use pictures from the S.T.A.L.K.E.R. games.** They are
 > created and fully owned by GSC Game World and are not covered by this mod's licence.
@@ -73,6 +75,18 @@ The Workshop item: [OpenZone Games](https://steamcommunity.com/sharedfiles/filed
   stock lies with the trump turned under it, the discards as a heap; the hand fans out
   along an arc, the playable cards lit; beside it the log and the host's tools. Durak in
   both variants, two to six players. Others may watch.
+- **Four more games** (2026-11-25): ochko (twenty-one with a bank), Texas hold'em with no
+  limit, preferans by the Sochi convention (three players) and bridge (four, Chicago
+  vulnerability, each deal scored as in duplicate). The host chooses the game between
+  deals; the window draws them from one table view every game shares. Their rules were
+  played by script on the stand, thousands of deals each with every card and every chip
+  accounted for after every move; in the window hold'em's lobby was seen, a played hand
+  and the other three not yet
+  ([docs/2026-11-25-stakes-and-games-record.md](docs/2026-11-25-stakes-and-games-record.md)).
+- **Stakes** (ochko and hold'em): no money is touched. The host writes how many chips a
+  player brings in, lets in those who ask to sit and gives rebuys; when the game is folded
+  or the deck gathered, a paper (the game's own note) says who brought in what and who had
+  what at the end. Settling up is the players' own business.
 - **A seat** is kept for a player who walks off; whoever leaves in mid-game discards his
   cards or leaves the seat with them for another to play on. The host's role passes on.
 - **Everything survives a restart**: the place, the seats, the hands, whose move it is.
@@ -92,19 +106,24 @@ noticing ([docs/2026-11-25-noticing-record.md](docs/2026-11-25-noticing-record.m
 fourth, sleights ([docs/2026-11-25-sleights-record.md](docs/2026-11-25-sleights-record.md)).
 The table's sounds and the cards in the air:
 [docs/2026-11-25-sounds-and-flights-record.md](docs/2026-11-25-sounds-and-flights-record.md).
+The four later games, the stakes and the admin pages: the design
+[docs/2026-11-25-stakes-and-games-design.md](docs/2026-11-25-stakes-and-games-design.md)
+and the record [docs/2026-11-25-stakes-and-games-record.md](docs/2026-11-25-stakes-and-games-record.md).
 
 ## What is where
 
 | Path | What |
 |---|---|
 | `OpenZone_Games/` | the mod: scripts, config, layouts, card imagesets, the table's textures and fonts, models, sounds |
-| `OpenZone_Games_Bridge/` | stand tool, server only: the `oz_games` verb, bots, the `!ozg` chat commands, `stage` (a table set out to be looked at) |
+| `OpenZone_Games_VPP/` | glue: the module "Ігри" of the OpenZone window in VPP Admin Tools (settings, card sharping, poses); needs VPP and the core's `OpenZone_VPP` |
+| `ui/` | how the VPP pages are converted from the series' mockup (`ui/css2layout.json`, the converter's reports); the boards themselves live in `docs/specs/2026-11-12-openzone-vpp-mockup` beside the repositories |
+| `OpenZone_Games_Bridge/` | stand tool, server only: the `oz_games` verb, bots, the `!ozg` chat commands, `stage` (a table set out to be looked at), `gfuzz` and the known hands and scores |
 | `TableGamesProbe/`, `TableGamesProbe_Bridge/` | stand tool of the first measurements ([docs/probe.md](docs/probe.md)) |
 | `tools/` | `make_cards.py` (the two decks' art), `make_marks.py` (the marks on the cards: a sign on a back, a reader's pencil, a speck on a face), `make_sounds.py` (the table's sounds, made from numbers), `make_card_items.py` (the card items, their slots and names), `make_table.py` (the window's tables, frames, plates, shadows; `steel.py` is the trade screen's steel), `build_fonts.py` (the window's own fonts), `make_layouts.py` (the window), `stringtable.py`, `analyze.py` |
 | `art/` | sources of the cards, of the tables (`art/table`) and the fonts (Oswald, PT Mono; SIL Open Font License; their list in `art/fonts/fonts.json`); how the sounds are made (`art/sounds/SOURCES.md`) |
 | `models/` | sources of the five models and how they are built ([models/README.md](models/README.md)) |
 | `docs/` | plans, records, measurements, an example for a server's economy |
-| `packaging/`, `package.ps1`, `keys/` | what a published `@OpenZone_Games` holds besides its pbo (below) |
+| `packaging/`, `package.ps1`, `keys/` | what a published `@OpenZone_Games` (and `@OpenZone_Games_VPP`) holds besides its pbo (below) |
 
 The three stand tools are never published and no server should load them.
 
@@ -116,6 +135,9 @@ puts the rest into `@OpenZone_Games`: `mod.cpp` and `meta.cpp` from
 `packaging/OpenZone_Games/` (`meta.cpp` holds the Workshop item's id, so an update goes to
 the same item) and the key. `.\package.ps1 -Check` says what is missing or stale.
 
+`OpenZone_Games_VPP` has its `mod.cpp` in `packaging/OpenZone_Games_VPP/` and no
+Workshop item yet.
+
 The Workshop item is 3845773524. Its page is kept here: the text in
 `packaging/OpenZone_Games.workshop.bbcode` (Steam takes at most 8000 bytes, and the
 Ukrainian half counts two bytes a letter), the main picture
@@ -125,7 +147,9 @@ Ukrainian half counts two bytes a letter), the main picture
 ## Settings
 
 `$profile:OpenZone\OZ_Games_Settings.json`, written with its defaults at the first start
-and editable in the core's admin window: the poses (a stance or the number of a gesture,
+and editable in the core's admin window -- with `OpenZone_Games_VPP` as the forms of the
+module "Ігри" (Налаштування, Шулерство, Пози), and always as the file itself under Файли
+конфігів; a save reaches the players online at once. It holds the poses (a stance or the number of a gesture,
 so an animation mod's gestures can be added), the radii, the spacing of seats and of
 places, how long a place may stand idle, which games are on; whether cards may be
 marked at all (`Cheating`), the pen's uses and how long marking and studying take, and
@@ -185,6 +209,17 @@ OpenZone), колоду тримають у долоні, одну карту �
 інструменти господаря. Місце чекає на гравця, який відійшов; хто йде посеред партії,
 скидає карти або лишає місце з картами іншому. Усе переживає рестарт сервера. Гравець у
 партії тримає віяло карт, пози задаються в налаштуваннях.
+
+З 2026-11-25 є ще чотири гри: очко (з банком), техаський холдем без ліміту, преферанс за
+сочинською конвенцією (троє гравців) і бридж (четверо, уразливість «Чикаго», кожна роздача
+рахується як у дуплікаті). Господар обирає гру між роздачами. Очко й холдем грають на
+фішки: гроші мод не чіпає; господар вписує, на скільки гравець заходить, пускає тих, хто
+проситься за стіл, і дає докупити; коли гру згорнули або колоду зібрали, з'являється
+папірець — хто скільки заніс і в кого скільки було наприкінці, а розраховуються гравці
+самі. Правила цих ігор зіграні скриптом на стенді, тисячі роздач кожна; у вікні поки
+побачено лише лобі холдему. З VPP Admin Tools налаштування ігор — це модуль «Ігри» в
+адмінському вікні серії (`OpenZone_Games_VPP`): які ігри є, стіл і місця, час, шулерство,
+пози; збережене одразу доходить до гравців у грі.
 
 Мод у Steam Workshop з 2026-11-25:
 [OpenZone Games](https://steamcommunity.com/sharedfiles/filedetails/?id=3845773524).

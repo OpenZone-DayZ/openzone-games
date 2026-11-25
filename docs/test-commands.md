@@ -247,6 +247,85 @@ The stand's ops (the place's id `id=`, a player `who=me|<id>`; a puppet holds ca
 A dealer only ever chooses cards he reads (marked by him or studied closely), never one he
 only noticed.
 
+## The later games and their stakes
+
+Ochko, Texas hold'em, preferans and bridge are laid out like durak (a deck, "Choose
+placement", "Lay out the game"). In the window the host's column has "Game: <name>":
+between deals each press steps to the next game the server offers (the settings'
+`GameIds`, in the order durak, ochko, hold'em, preferans, bridge). Preferans needs three
+seated players and bridge four; ochko and hold'em two to eight.
+
+**Chips** (ochko and hold'em). A seated player's column says "Your chips: N (brought in M)".
+
+- The host gives chips between deals: a click on a seated player's plate shows "Chips for
+  <name>", a box for the amount and "Give chips" (the host gives himself chips the same
+  way, from his own plate).
+- Somebody who takes "Sit here" at a game for stakes is not seated: he is told "You asked
+  the host to let you in", and the host's column shows "<name> asks to sit" with the box,
+  "Let in" and "Refuse". Letting in with 0 gives back the stack a returning player left
+  with.
+- A seated player who is not the host has "Ask for chips"; the host sees "<name> asks for
+  chips" and gives or refuses as above.
+- A deal takes only the seats that have chips.
+- Folding the game or gathering the deck leaves a paper (the game's own note) with whoever
+  did it, else on the ground: the game, the world's date, and a line a player -- brought
+  in, at the end, the difference. Read it with the game's own "Read".
+
+**Bots**: `!ozg bots 3` at a game for stakes seats three bots with 1000 chips each; they play
+the later games by each game's own simplest sensible move.
+
+The same through the MCP bridge (`<place>` is the id `places` names):
+
+    oz_games {"op":"ask","id":"<place>","who":"me","ask":"game","val":"poker"}
+    oz_games {"op":"ask","id":"<place>","who":"me","ask":"chips","seat":"0","val":"1000"}
+    oz_games {"op":"bots","id":"<place>","n":"3","on":"0"}       three bots, waiting
+    oz_games {"op":"bots","id":"<place>","n":"0","on":"1"}       the bots play
+    oz_games {"op":"ask","id":"<place>","who":"me","ask":"deal"}
+
+`val` of `game` is a game's id: `durak`, `ochko`, `poker`, `preferans`, `bridge`. The
+host answers a request with `ask=let` (`how` the asker's id, `val` the amount) or
+`ask=refuse` (`how` the asker's id); a seated player asks for chips with `ask=rebuy`.
+
+**The rules alone, by script**: `gfuzz` plays one game deal after deal with no world at
+all (the bots' moves and, forty times in a hundred, a move by chance) and checks after
+every move that every card is somewhere exactly once, that no chip is made or lost, that
+both halves of the view read, and every seventh move that a save loads back; it answers
+the moves, the longest deal, the rebuys it gave and the defects (0 expected). `phands`,
+`bscores` and `pscores` play hands and deals whose answer is known (hold'em's ranks,
+bridge's scores, preferans' pools and a closed pool's balance):
+
+    oz_games {"op":"gfuzz","game":"poker","deals":"300","players":"8","chips":"1000","seed":"1","opt":"blinds=5-10"}
+    oz_games {"op":"gfuzz","game":"preferans","deals":"1000","players":"3","opt":"pool=10"}
+    oz_games {"op":"phands"}    {"op":"bscores"}    {"op":"pscores"}
+
+The numbers of 2026-11-25 are in `2026-11-25-stakes-and-games-record.md`.
+
+## The games in the OpenZone window of VPP
+
+With `OpenZone_Games_VPP` loaded (it needs VPP Admin Tools and the core's
+`OpenZone_VPP`; the NHChernobyl stand loads all three):
+
+1. Click into the client's window once (keys reach a freshly started client only after
+   that), then **End** (VPP's admin mode; it may already be on) and **Home** (VPP's panel;
+   on the diag client Home also toggles the free camera).
+2. The OpenZone button (the OZ-COM sign) on VPP's toolbar opens the series' window; the
+   rail on its left has the module **Ігри / Games**.
+3. **Налаштування**: a tick for every game (switch one off, and the host's "Game" button
+   skips it), the table, presence, time, the mod's detailed log. **Шулерство**: card
+   sharping on or off, the marks, noticing (the line under it works the chance out of the
+   three boxes), sleight of hand, the chances of being seen. **Пози**: the list, a card,
+   higher / lower / new / delete, and the checks (the last asks this client whether it has
+   the pose's gesture). **Файли конфігів**: the same file raw.
+4. Change something on any page: the bar at the bottom of all three names it in the alert
+   colour. "Зберегти / Save" asks on the window's strip; "yes" sends the file, the journal
+   says it was applied, the boxes read it back. A box out of the server's bounds (most
+   seats outside 2 to 12, a percent above 100, who sees nearer than who plays) is refused
+   with the rule named, and nothing is sent.
+5. A player online gets the saved settings at once (the core's sync packet is sent to
+   everyone): a pose added shows in his window's pose switch without reconnecting.
+6. **Ядро › Огляд** has the card **Ігри**: games on, games laid out, being played, players
+   seated, card sharping, and the settings' problems.
+
 ## The verb for scripts
 
 The same and more through the MCP bridge, `world_exec(verb="oz_games", args={"op": ...})`:
