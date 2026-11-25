@@ -1411,6 +1411,14 @@ class OZG_GameMenu : UIScriptedMenu
         OZG_TableView view = OZG_Table.Of(m_PlaceId);
         if (!view)
             return;
+        // The view shown until now, for the flights: in locals, so that it
+        // lives through this call while the members take the new one.
+        OZG_WView wasV = m_V;
+        OZG_DurakPublic wasPub = m_Pub;
+        OZG_DurakPrivate wasOwn = m_Own;
+        bool newer = false;
+        if (wasV && view.HeadPart.Rev > m_ShownRev)
+            newer = true;
         m_V = view.HeadPart;
         m_ShownRev = m_V.Rev;
         m_Pub = null;
@@ -1426,10 +1434,18 @@ class OZG_GameMenu : UIScriptedMenu
         string style = m_V.Style;
         if (style != "stalker")
             style = "classic";
+        bool rebuilt = false;
         if (style != m_Style || !m_Win)
+        {
             Build(style);
+            rebuilt = true;
+        }
         if (!m_Win)
             return;
+        // A newer view lands every card still in the air before it is drawn:
+        // nothing flies on to a place the new view may have moved.
+        if (newer)
+            LandAll();
 
         if (m_Picked != "")
         {
@@ -1455,6 +1471,11 @@ class OZG_GameMenu : UIScriptedMenu
         PaintMoment();
         PaintLog();
         PaintColumn();
+
+        // What moved since the view shown before flies to where it is now:
+        // only for a newer view of the game in the same look.
+        if (newer && !rebuilt && durak)
+            OZG_FlightPlan.Make(this, wasV, wasPub, wasOwn, m_V, m_Pub, m_Own);
     }
 
     protected string VariantLabel()
