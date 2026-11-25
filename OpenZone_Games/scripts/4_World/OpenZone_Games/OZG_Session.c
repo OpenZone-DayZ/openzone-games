@@ -839,10 +839,12 @@ class OZG_Session
             SetHost(player);
         // A player let in at a game for stakes gets one line, with his chips
         // (LetIn), not this one too.
+        // The lines that name a seat's player carry the name: a window words
+        // them later, when somebody else may sit there (2026-11-25).
         if (takesOver)
-            AddLog("over " + no.ToString());
+            AddLog("over " + no.ToString() + " " + s.Name);
         else if (!m_Letting)
-            AddLog("sit " + no.ToString());
+            AddLog("sit " + no.ToString() + " " + s.Name);
         m_Idle = 0;
         Changed();
         why = "";
@@ -864,7 +866,7 @@ class OZG_Session
             m_R.HostUid = s.Uid;
             m_R.HostName = s.Name;
             m_HostAway = 0;
-            AddLog("host " + s.No.ToString());
+            AddLog("host " + s.No.ToString() + " " + s.Name);
             return;
         }
     }
@@ -1056,7 +1058,8 @@ class OZG_Session
                 return OZG_Const.SAY_BAD_AMOUNT;
             StakeAdd(uid, name, amount);
             Unask(uid);
-            AddLog("chips " + mine.ToString() + " " + amount.ToString());
+            string given = "chips " + mine.ToString() + " " + amount.ToString();
+            AddLog(given + " " + name);
             Changed();
             return "";
         }
@@ -1090,9 +1093,11 @@ class OZG_Session
         if (!sat)
             return false;
         string uid = OZG_Who.Uid(p);
-        StakeAdd(uid, OZG_Who.Name(p), amount);
+        string who = OZG_Who.Name(p);
+        StakeAdd(uid, who, amount);
         Unask(uid);
-        AddLog("let " + no.ToString() + " " + amount.ToString());
+        string line = "let " + no.ToString() + " " + amount.ToString();
+        AddLog(line + " " + who);
         Changed();
         return true;
     }
@@ -1125,7 +1130,8 @@ class OZG_Session
             return OZG_Const.SAY_NOT_NOW;
         StakeAdd(s.Uid, s.Name, amount);
         Unask(s.Uid);
-        AddLog("chips " + no.ToString() + " " + amount.ToString());
+        string given = "chips " + no.ToString() + " " + amount.ToString();
+        AddLog(given + " " + s.Name);
         Changed();
         return "";
     }

@@ -2528,6 +2528,17 @@ class OZG_GameMenu : UIScriptedMenu
         m_Status.SetText(Caps(status));
     }
 
+    // The player a seat line of the log names: "<seat> <name>" since
+    // 2026-11-25 (whoever sat there then), the seat's player now in an older
+    // line that has the number alone.
+    protected string LogWho(string rest)
+    {
+        int space = rest.IndexOf(" ");
+        if (space <= 0)
+            return SeatName(rest.ToInt());
+        return rest.Substring(space + 1, rest.Length() - space - 1);
+    }
+
     // One line of the log, worded.
     protected string LogWord(string line)
     {
@@ -2546,9 +2557,9 @@ class OZG_GameMenu : UIScriptedMenu
         if (head == "deal")
             return Tr("STR_OZG_LOG_DEAL");
         if (head == "sit")
-            return Tr1("STR_OZG_LOG_SIT", SeatName(rest.ToInt()));
+            return Tr1("STR_OZG_LOG_SIT", LogWho(rest));
         if (head == "over")
-            return Tr1("STR_OZG_LOG_OVER", SeatName(rest.ToInt()));
+            return Tr1("STR_OZG_LOG_OVER", LogWho(rest));
         int shownNo = rest.ToInt() + 1;
         if (head == "stand")
             return Tr1("STR_OZG_LOG_STAND", shownNo.ToString());
@@ -2557,7 +2568,7 @@ class OZG_GameMenu : UIScriptedMenu
         if (head == "left")
             return Tr1("STR_OZG_LOG_LEFT", shownNo.ToString());
         if (head == "host")
-            return Tr1("STR_OZG_LOG_HOST", SeatName(rest.ToInt()));
+            return Tr1("STR_OZG_LOG_HOST", LogWho(rest));
         if (head == "opt")
             return Tr1("STR_OZG_WIN_VARIANT", VariantLabel());
         if (head == "end")
@@ -4070,9 +4081,11 @@ class OZG_GameMenu : UIScriptedMenu
     // narrower than the look's plate.
     protected float GenPlateWidth(string text, float least)
     {
-        float per = 6.4;
+        // Measured on the stand: a Ukrainian line ran past a plate sized at
+        // 6.4 a letter, its letters being wider than the English ones.
+        float per = 7.2;
         if (m_Look.Caps)
-            per = 7.4;
+            per = 8.2;
         int letters = text.LengthUtf8();
         float need = letters * per + 18;
         if (need < least)
@@ -4080,6 +4093,24 @@ class OZG_GameMenu : UIScriptedMenu
         if (need > GEN_PLATE_MOST)
             return GEN_PLATE_MOST;
         return need;
+    }
+
+    // Whether the table shows a pile at the stock's place now (the stock, the
+    // talon): something the bid grid must not lie over.
+    protected bool GenHasPile()
+    {
+        if (!m_GPub)
+            return false;
+        OZG_GZone zone;
+        for (int z = 0; z < m_GPub.Zones.Count(); z++)
+        {
+            zone = m_GPub.Zones[z];
+            if (zone.Id != "stock" && zone.Id != "talon")
+                continue;
+            if (zone.Backs > 0 || zone.Faces.Count() > 0)
+                return true;
+        }
+        return false;
     }
 
     // A pile at the stock's place: its backs, the faces turned up beside it.
@@ -4285,6 +4316,11 @@ class OZG_GameMenu : UIScriptedMenu
         }
         float gridW = 5 * GEN_GRID_W + 4 * GEN_GRID_GAP;
         float gridLeft = m_Look.BoutX - gridW * 0.5;
+        // A pile at the stock's place (preferans' talon) stays in sight: the
+        // grid starts right of it (seen 2026-11-25: the grid lay over it).
+        float pileRight = m_Look.StockX + m_Look.PileW + 16;
+        if (GenHasPile() && gridLeft < pileRight)
+            gridLeft = pileRight;
         float gridTop = m_Look.BoutY + 60 - rows * (GEN_GRID_H + GEN_GRID_GAP) * 0.5;
         for (b = 0; b < m_GOwn.Buttons.Count(); b++)
         {
@@ -4539,9 +4575,17 @@ class OZG_GameMenu : UIScriptedMenu
                 return "";
             int seat = rest.Substring(0, space).ToInt();
             string amount = rest.Substring(space + 1, rest.Length() - space - 1);
+            // "<seat> <amount> <name>": the name of whoever it was then.
+            string who = SeatName(seat);
+            int named = amount.IndexOf(" ");
+            if (named > 0)
+            {
+                who = amount.Substring(named + 1, amount.Length() - named - 1);
+                amount = amount.Substring(0, named);
+            }
             if (head == "let")
-                return Tr2("STR_OZG_LOG_LET", SeatName(seat), amount);
-            return Tr2("STR_OZG_LOG_CHIPS", SeatName(seat), amount);
+                return Tr2("STR_OZG_LOG_LET", who, amount);
+            return Tr2("STR_OZG_LOG_CHIPS", who, amount);
         }
         if (!Generic())
             return "";
