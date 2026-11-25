@@ -837,9 +837,11 @@ class OZG_Session
         m_Watchers.RemoveItem(uid);
         if (m_R.HostUid == "")
             SetHost(player);
+        // A player let in at a game for stakes gets one line, with his chips
+        // (LetIn), not this one too.
         if (takesOver)
             AddLog("over " + no.ToString());
-        else
+        else if (!m_Letting)
             AddLog("sit " + no.ToString());
         m_Idle = 0;
         Changed();
@@ -1147,6 +1149,10 @@ class OZG_Session
         m_R.Dealt.Clear();
         m_R.DealtUids.Clear();
         m_Game = null;
+        // A new game starts a new log. A line of a move names no game, and a
+        // window words it by the game in play: the moves of the last one came
+        // out in the new one's words (seen 2026-11-25, hold'em then preferans).
+        m_R.Log.Clear();
         AddLog("game " + id);
         Changed();
         return "";

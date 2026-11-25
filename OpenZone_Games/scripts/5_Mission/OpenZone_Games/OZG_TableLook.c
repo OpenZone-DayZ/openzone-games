@@ -75,6 +75,29 @@ class OZG_TableLook
     float RightX;
     float PlateW;
 
+    // The words of a game that ended (OZG_Result), where the layout has them:
+    // durak's over its empty bout; the later games put them under their row of
+    // cards, which stays on the table at the end.
+    float ResultX;
+    float ResultY;
+    float ResultW;
+    float ResultH;
+
+    // The player's own plate (OZG_MyPlate) as the layout has it: where, how
+    // big, and its two lines inside it -- their left edge, the room right of
+    // them, their tops and heights. A later game's plate grows round its
+    // middle to hold its line, as the other seats' do.
+    float MyPlateX;
+    float MyPlateY;
+    float MyPlateW;
+    float MyPlateH;
+    float MyTextX;
+    float MyTextRight;
+    float MyNameY;
+    float MyNameH;
+    float MyRoleY;
+    float MyRoleH;
+
     // Colours.
     int Glow;               // behind a card that can be played
     int PickGlow;           // behind the card picked up
@@ -205,6 +228,20 @@ class OZG_TableLook
         k.LeftX = 148;
         k.RightX = 1056;
         k.PlateW = 180;
+        k.ResultX = 300;
+        k.ResultY = 380;
+        k.ResultW = 604;
+        k.ResultH = 56;
+        k.MyPlateX = 512;
+        k.MyPlateY = 806;
+        k.MyPlateW = 180;
+        k.MyPlateH = 48;
+        k.MyTextX = 4;
+        k.MyTextRight = 4;
+        k.MyNameY = 3;
+        k.MyNameH = 22;
+        k.MyRoleY = 25;
+        k.MyRoleH = 20;
         k.Glow = ARGB(165, 236, 196, 64);
         k.PickGlow = ARGB(255, 255, 236, 160);
         k.TargetGlow = ARGB(230, 236, 196, 64);
@@ -267,6 +304,20 @@ class OZG_TableLook
         k.LeftX = 128;
         k.RightX = 1062;
         k.PlateW = 190;
+        k.ResultX = 300;
+        k.ResultY = 372;
+        k.ResultW = 590;
+        k.ResultH = 56;
+        k.MyPlateX = 500;
+        k.MyPlateY = 815;
+        k.MyPlateW = 190;
+        k.MyPlateH = 46;
+        k.MyTextX = 30;
+        k.MyTextRight = 8;
+        k.MyNameY = 2;
+        k.MyNameH = 24;
+        k.MyRoleY = 25;
+        k.MyRoleH = 18;
         k.Glow = ARGB(165, 224, 160, 48);
         k.PickGlow = ARGB(255, 255, 214, 130);
         k.TargetGlow = ARGB(230, 224, 160, 48);

@@ -278,6 +278,8 @@ STR_OZG_G_LOG_PLAY,%1: хід %2,%1: plays %2
 STR_OZG_G_ST_WAIT,Хід гравця: %1,Waiting for: %1
 STR_OZG_G_ST_PLAY,Ходить %1,%1 to play
 STR_OZG_G_ST_NEED,Потрібно гравців: %1,Players needed: %1
+STR_OZG_G_ST_TOO_MANY,"Гравців забагато: ця гра щонайбільше на %1","Too many players: this game is for %1 at most"
+STR_OZG_G_ST_DEAL,Можна роздавати,Ready to deal
 STR_OZG_G_MARK_ochko,банкір,banker
 STR_OZG_G_MARK_poker,баттон,button
 STR_OZG_G_MARK_preferans,роздає,dealer
@@ -296,6 +298,16 @@ STR_OZG_STRAIN_D,бубон,diamonds
 STR_OZG_STRAIN_H,черв,hearts
 STR_OZG_STRAIN_S,пік,spades
 STR_OZG_STRAIN_N,БК,NT
+STR_OZG_STRAIN1_C,трефа,club
+STR_OZG_STRAIN1_D,бубна,diamond
+STR_OZG_STRAIN1_H,черва,heart
+STR_OZG_STRAIN1_S,піка,spade
+STR_OZG_STRAIN1_N,БК,NT
+STR_OZG_STRAIN2_C,трефи,clubs
+STR_OZG_STRAIN2_D,бубни,diamonds
+STR_OZG_STRAIN2_H,черви,hearts
+STR_OZG_STRAIN2_S,піки,spades
+STR_OZG_STRAIN2_N,БК,NT
 STR_OZG_LOG_GAME,Гра: %1,Game: %1
 STR_OZG_LOG_LET,%1 сідає з фішками: %2,%1 sits down with %2 chips
 STR_OZG_LOG_CHIPS,%1 отримує фішки: %2,%1 gets %2 chips
@@ -376,6 +388,7 @@ STR_OZG_POKER_LOG_FOLD,%1 скидає,%1 folds
 STR_OZG_POKER_LOG_CHECK,%1: чек,%1 checks
 STR_OZG_POKER_LOG_CALL,%1: колл,%1 calls
 STR_OZG_POKER_LOG_RAISE,%1 піднімає до %2,%1 raises to %2
+STR_OZG_POKER_LOG_BET,%1 ставить %2,%1 bets %2
 STR_OZG_POKER_LOG_ALLIN,%1 іде ва-банк,%1 goes all in
 STR_OZG_POKER_NO_CHECK,Чек неможливий: є ставка,You cannot check: there is a bet
 STR_OZG_POKER_NO_RAISE,Підняти зараз не можна,You may not raise now

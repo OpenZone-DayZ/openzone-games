@@ -61,6 +61,7 @@ class OZG_GameMenu : UIScriptedMenu
     protected Widget m_SeatsBox;
     protected Widget m_Hit;
     protected Widget m_MyPlate;
+    protected Widget m_MyBg;
     protected Widget m_MyEdge;
     protected TextWidget m_MyName;
     protected TextWidget m_MyRole;
@@ -402,6 +403,7 @@ class OZG_GameMenu : UIScriptedMenu
         m_Hit = Find("OZG_Hit");
         m_MyPlate = Find("OZG_MyPlate");
         m_MyEdge = Find("OZG_MyEdge");
+        m_MyBg = Find("OZG_MyBg");
         m_MyName = TextWidget.Cast(Find("OZG_MyName"));
         m_MyRole = TextWidget.Cast(Find("OZG_MyRole"));
         m_Title = TextWidget.Cast(Find("OZG_Title"));
@@ -1127,6 +1129,13 @@ class OZG_GameMenu : UIScriptedMenu
         if (count > 1 && spread * (count - 1) > m_Look.FanFan)
             spread = m_Look.FanFan / (count - 1);
         float r = m_Look.FanR * scale;
+        float fx;
+        float fy;
+        float fturn;
+        FanFacing(x, y, turn, r, spread, count, fx, fy, fturn);
+        x = fx;
+        y = fy;
+        turn = fturn;
         float tr = turn * Math.DEG2RAD;
         float c = Math.Cos(tr);
         float s = Math.Sin(tr);
@@ -1848,14 +1857,35 @@ class OZG_GameMenu : UIScriptedMenu
         Widget plate = MakeLayout("OpenZone_Games/gui/layouts/ozg_plate_" + m_Style + ".layout", m_SeatsBox, root);
         if (!plate)
             return;
+        // The line under the name: the later games' says more (a blind, the
+        // chips, the bet), and the plate grows to hold it.
+        bool turn;
+        string roleText;
+        float plateW = spot.PlateW;
+        if (Generic())
+        {
+            roleText = GenRole(no, turn);
+            plateW = GenPlateWidth(roleText, plateW);
+        }
+        else
+            roleText = RoleOf(no, turn);
+
         // The plate lies PLATE_PAD units inside its button, which leaves room
         // for the ring of a seat the host picked (tools/make_layouts.py).
         float h = 48;
         if (m_Style == "stalker")
             h = 46;
-        float bw = spot.PlateW + 2 * PLATE_PAD;
+        float bw = plateW + 2 * PLATE_PAD;
         float bh = h + 2 * PLATE_PAD;
         float left = spot.PlateX - bw * 0.5;
+        // A grown plate stays on the table: it slides in from the edge.
+        if (Generic())
+        {
+            if (left < GEN_PLATE_MIN_X)
+                left = GEN_PLATE_MIN_X;
+            if (left + bw > GEN_PLATE_MAX_X)
+                left = GEN_PLATE_MAX_X - bw;
+        }
         float top = spot.PlateY - PLATE_PAD;
         plate.SetSize(bw * m_K, bh * m_K);
         plate.SetPos(left * m_K, top * m_K);
@@ -1872,11 +1902,7 @@ class OZG_GameMenu : UIScriptedMenu
             who = Tr("STR_OZG_WIN_SEAT_LEFT");
         name.SetText(Caps(who));
 
-        bool turn;
-        if (Generic())
-            role.SetText(GenRole(no, turn));
-        else
-            role.SetText(RoleOf(no, turn));
+        role.SetText(roleText);
         if (turn)
         {
             edge.SetColor(m_Look.EdgeTurn);
@@ -1888,6 +1914,37 @@ class OZG_GameMenu : UIScriptedMenu
             role.SetColor(m_Look.RoleIdle);
         }
         sel.Show(no == m_PickedSeat);
+    }
+
+    // A fan a seat round the table holds bulges towards the table: the player
+    // holds it in front of himself, the middle card nearest the table and the
+    // outer ones curving back towards him, as the player's own hand does (the
+    // owner, 2026-11-25: "they must bulge towards the table! a player holds his
+    // fan in front of him" -- the side seats' fans bulged at their players).
+    // The seats' spots turn the side fans the other way round, so a fan whose
+    // outer cards would curve in towards the table is turned half round in the
+    // same room: its middle card moves to where its outer ones were. The order
+    // of the cards, and so what covers what, stays.
+    protected void FanFacing(float x, float y, float turn, float r, float spread, int count, out float fx, out float fy, out float fturn)
+    {
+        fx = x;
+        fy = y;
+        fturn = turn;
+        float tr = turn * Math.DEG2RAD;
+        float dx = -Math.Sin(tr);
+        float dy = Math.Cos(tr);
+        float tx = m_Look.BoutX - x;
+        float ty = m_Look.BoutY + m_Look.BoutH * 0.5 - y;
+        float towards = dx * tx + dy * ty;
+        if (towards <= 0)
+            return;
+        float half = spread * (count - 1) * 0.5 * Math.DEG2RAD;
+        float most = r - r * Math.Cos(half);
+        fx = x + dx * most;
+        fy = y + dy * most;
+        fturn = turn + 180;
+        if (fturn >= 360)
+            fturn = fturn - 360;
     }
 
     // A fan of backs: `count` cards about (x, y), turned by `turn`, the cards'
@@ -1904,6 +1961,13 @@ class OZG_GameMenu : UIScriptedMenu
         float r = m_Look.FanR * scale;
         float w = m_Look.FanW * scale;
         float h = m_Look.FanH * scale;
+        float fx;
+        float fy;
+        float fturn;
+        FanFacing(x, y, turn, r, spread, count, fx, fy, fturn);
+        x = fx;
+        y = fy;
+        turn = fturn;
         float tr = turn * Math.DEG2RAD;
         float c = Math.Cos(tr);
         float s = Math.Sin(tr);
@@ -1945,10 +2009,17 @@ class OZG_GameMenu : UIScriptedMenu
             name = name + " (" + Tr("STR_OZG_WIN_YOU") + ")";
         m_MyName.SetText(Caps(name));
         bool turn;
+        string roleText;
+        float plateW = m_Look.MyPlateW;
         if (Generic())
-            m_MyRole.SetText(GenRole(no, turn));
+        {
+            roleText = GenRole(no, turn);
+            plateW = GenPlateWidth(roleText, plateW);
+        }
         else
-            m_MyRole.SetText(RoleOf(no, turn));
+            roleText = RoleOf(no, turn);
+        m_MyRole.SetText(roleText);
+        FitMyPlate(plateW);
         if (turn)
             m_MyEdge.SetColor(m_Look.EdgeTurn);
         else
@@ -2079,7 +2150,7 @@ class OZG_GameMenu : UIScriptedMenu
             else if (m_Pub.DurakSeat >= 0)
                 over = Tr1("STR_OZG_ST_OVER_DURAK", SeatName(m_Pub.DurakSeat));
             m_Result.SetText(Caps(over));
-            m_Result.Show(true);
+            PutAt(m_Result, m_Look.ResultX, m_Look.ResultY, m_Look.ResultW, m_Look.ResultH);
         }
     }
 
@@ -2572,10 +2643,13 @@ class OZG_GameMenu : UIScriptedMenu
         }
 
         array<Widget> shown = new array<Widget>();
-        SetLabel(m_BtnVariant, Caps(Tr1("STR_OZG_WIN_VARIANT", VariantLabel())));
+        // A game with no variant (bridge) has no button for it.
+        string variant = VariantLabel();
+        SetLabel(m_BtnVariant, Caps(Tr1("STR_OZG_WIN_VARIANT", variant)));
         if (host && !playing)
         {
-            shown.Insert(m_BtnVariant);
+            if (variant != "")
+                shown.Insert(m_BtnVariant);
             shown.Insert(m_BtnDeal);
         }
         if (!host && seated && m_V.HostFree == 1)
@@ -3574,6 +3648,11 @@ class OZG_GameMenu : UIScriptedMenu
     // picks and, at a game for stakes, the requests and the chips.
 
     protected static const float GEN_BTN_W = 170;
+    // A later game's plate grows to hold its line, at most this wide, and stays
+    // between these edges of the table (layout units).
+    protected static const float GEN_PLATE_MOST = 330;
+    protected static const float GEN_PLATE_MIN_X = 14;
+    protected static const float GEN_PLATE_MAX_X = 1166;
     protected static const float GEN_BTN_H = 38;
     protected static const float GEN_GRID_W = 98;
     protected static const float GEN_GRID_H = 30;
@@ -3643,7 +3722,15 @@ class OZG_GameMenu : UIScriptedMenu
             return bid;
         string level = bid.Substring(0, n - 1);
         string strain = bid.Substring(n - 1, 1);
-        return level + " " + Tr("STR_OZG_STRAIN_" + strain);
+        // The strain agrees with the number: "1 club", "2 clubs"; Ukrainian has
+        // a third form from five on ("1 трефа", "2 трефи", "5 треф").
+        int count = level.ToInt();
+        string key = "STR_OZG_STRAIN_" + strain;
+        if (count == 1)
+            key = "STR_OZG_STRAIN1_" + strain;
+        else if (count >= 2 && count <= 4)
+            key = "STR_OZG_STRAIN2_" + strain;
+        return level + " " + Tr(key);
     }
 
     protected string GameLabel(string id)
@@ -3869,6 +3956,13 @@ class OZG_GameMenu : UIScriptedMenu
         float r = m_Look.FanR * scale;
         float w = m_Look.FanW * scale * 1.25;
         float h = m_Look.FanH * scale * 1.25;
+        float fx;
+        float fy;
+        float fturn;
+        FanFacing(x, y, turn, r, spread, count, fx, fy, fturn);
+        x = fx;
+        y = fy;
+        turn = fturn;
         float tr = turn * Math.DEG2RAD;
         float c = Math.Cos(tr);
         float s = Math.Sin(tr);
@@ -3932,9 +4026,13 @@ class OZG_GameMenu : UIScriptedMenu
             OZG_GZone zone = m_GPub.Zones[z];
             if (zone.Id == "bank" || zone.Id == "pot")
             {
-                GenLine(texts, Words(zone.Label), m_Look.BoutX - 150, 236, 300, 22);
-                texts++;
-                GenLine(texts, Words(zone.Line), m_Look.BoutX - 150, 258, 300, 28);
+                // One line under the row of cards, where the result stands
+                // when the deal is over (the pot is taken by then).
+                if (m_GPub.Ended == 1)
+                    continue;
+                string amount = Words(zone.Line);
+                string sum = Words(zone.Label) + " " + amount;
+                GenLine(texts, sum, m_Look.BoutX - 150, m_Look.BoutY + m_Look.BoutH + 12, 300, 26);
                 texts++;
                 continue;
             }
@@ -3948,8 +4046,40 @@ class OZG_GameMenu : UIScriptedMenu
         if (m_GPub.Ended == 1 && m_GPub.Result != "")
         {
             m_Result.SetText(Caps(Words(m_GPub.Result)));
-            m_Result.Show(true);
+            float rw = m_Look.ResultW;
+            PutAt(m_Result, m_Look.BoutX - rw * 0.5, m_Look.BoutY + m_Look.BoutH + 6, rw, 44);
         }
+    }
+
+    // The player's own plate `w` units wide round the layout's middle, its
+    // ground, frame and two lines with it: the layout's own size for durak.
+    protected void FitMyPlate(float w)
+    {
+        float h = m_Look.MyPlateH;
+        float middle = m_Look.MyPlateX + m_Look.MyPlateW * 0.5;
+        PutAt(m_MyPlate, middle - w * 0.5, m_Look.MyPlateY, w, h);
+        PutAt(m_MyBg, 0, 0, w, h);
+        PutAt(m_MyEdge, 0, 0, w, h);
+        float textW = w - m_Look.MyTextX - m_Look.MyTextRight;
+        PutAt(m_MyName, m_Look.MyTextX, m_Look.MyNameY, textW, m_Look.MyNameH);
+        PutAt(m_MyRole, m_Look.MyTextX, m_Look.MyRoleY, textW, m_Look.MyRoleH);
+    }
+
+    // How wide a later game's plate must be for its line: the line's letters
+    // at about the width of the role's 13-unit face (capitals wider), never
+    // narrower than the look's plate.
+    protected float GenPlateWidth(string text, float least)
+    {
+        float per = 6.4;
+        if (m_Look.Caps)
+            per = 7.4;
+        int letters = text.LengthUtf8();
+        float need = letters * per + 18;
+        if (need < least)
+            return least;
+        if (need > GEN_PLATE_MOST)
+            return GEN_PLATE_MOST;
+        return need;
     }
 
     // A pile at the stock's place: its backs, the faces turned up beside it.
@@ -4115,10 +4245,20 @@ class OZG_GameMenu : UIScriptedMenu
             }
             OZG_Game sample = OZG_Games.Sample(m_V.GameId);
             int least = 2;
+            int most = 8;
             if (sample)
+            {
                 least = sample.MinPlayers();
+                most = sample.MaxPlayers();
+            }
+            // Too many at the table is a refused deal too (preferans is for
+            // three): the host is told before he presses Deal.
             if (seated < least)
                 status = Tr1("STR_OZG_G_ST_NEED", least.ToString());
+            else if (seated > most)
+                status = Tr1("STR_OZG_G_ST_TOO_MANY", most.ToString());
+            else if (m_V.IsHost == 1 && VariantLabel() == "")
+                status = Tr("STR_OZG_G_ST_DEAL");
             else if (m_V.IsHost == 1)
                 status = Tr("STR_OZG_ST_LOBBY_HOST");
             else
@@ -4241,8 +4381,9 @@ class OZG_GameMenu : UIScriptedMenu
         }
         if (m_V.Stakes != 1)
             return row;
-        // A seated player's own chips.
-        if (m_V.Mine >= 0)
+        // A seated player's own chips, between deals: during one his plate
+        // says what is behind him, and this line would count his bet too.
+        if (m_V.Mine >= 0 && !playing)
         {
             GenColLine(t, Tr2("STR_OZG_WIN_MY_CHIPS", m_V.MyChips.ToString(), m_V.MyIn.ToString()), top + row * step);
             t++;

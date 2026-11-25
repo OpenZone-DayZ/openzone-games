@@ -963,7 +963,9 @@ class OZG_Poker : OZG_CardGame
             Advance(i);
             return true;
         }
-        if (verb == "raise")
+        // `bet:` is what the game offers when nothing is bet in the round yet;
+        // it is played as `raise:`, and the log words it as a bet.
+        if (verb == "raise" || verb == "bet")
         {
             if (s.CanRaise == 0)
             {
@@ -1105,7 +1107,7 @@ class OZG_Poker : OZG_CardGame
         {
             int least = RaiseLeast();
             if (least < most)
-                into.Insert("raise:" + least.ToString());
+                into.Insert(RaiseVerb() + least.ToString());
             into.Insert("allin");
         }
     }
@@ -1126,13 +1128,13 @@ class OZG_Poker : OZG_CardGame
         if (toCall <= 0)
         {
             if (roll < 20 && canRaise)
-                return "raise:" + least.ToString();
+                return RaiseVerb() + least.ToString();
             return "check";
         }
         if (toCall * 5 <= s.Chips + s.BetNow)
         {
             if (roll < 10 && canRaise)
-                return "raise:" + least.ToString();
+                return RaiseVerb() + least.ToString();
             if (roll < 85)
                 return "call";
             return "fold";
@@ -1142,13 +1144,26 @@ class OZG_Poker : OZG_CardGame
         return "fold";
     }
 
+    // The verb of a bet or a raise with its colon: a bet while nothing is bet in
+    // the round.
+    protected string RaiseVerb()
+    {
+        if (m_S.CurrentBet == 0)
+            return "bet:";
+        return "raise:";
+    }
+
     override void MoveWords(string move, array<string> into)
     {
         into.Clear();
         int colon = move.IndexOf(":");
         if (colon > 0)
         {
-            into.Insert("STR_OZG_POKER_LOG_RAISE");
+            string head = move.Substring(0, colon);
+            if (head == "bet")
+                into.Insert("STR_OZG_POKER_LOG_BET");
+            else
+                into.Insert("STR_OZG_POKER_LOG_RAISE");
             into.Insert(move.Substring(colon + 1, move.Length() - colon - 1));
             return;
         }
@@ -1211,12 +1226,8 @@ class OZG_Poker : OZG_CardGame
             if (Waits(s.SeatNo))
                 v.Awaited.Insert(s.SeatNo);
         }
+        // Only the cards dealt to the board lie on it: before the flop, none.
         OZG_GZone board = ZoneOf("board", OZG_Words.W0("STR_OZG_POKER_BOARD"), m_S.BoardCards, null);
-        board.Backs = 5 - m_S.BoardCards.Count();
-        if (m_S.Ended == 1)
-            board.Backs = 0;
-        if (m_S.StockCards.Count() > 0)
-            board.BackLook = LookOf(m_S.StockCards[0]);
         v.Zones.Insert(board);
         OZG_GZone pot = ZoneOf("pot", OZG_Words.W0("STR_OZG_POKER_POT"), null, null);
         pot.Line = OZG_Words.W1("STR_OZG_G_N", OZG_Words.NumArg(PotTotal()));
@@ -1281,7 +1292,7 @@ class OZG_Poker : OZG_CardGame
             int least = RaiseLeast();
             if (least < most)
             {
-                v.AmountMove = "raise:";
+                v.AmountMove = RaiseVerb();
                 if (m_S.CurrentBet == 0)
                     v.AmountLabel = OZG_Words.W0("STR_OZG_POKER_BTN_BET");
                 else
