@@ -7,14 +7,17 @@
 // works with these defaults, which are the same numbers.
 
 // One way of sitting or standing at a game. Poses are settings, not code: an
-// admin whose server runs an animation mod adds its gestures by number.
+// admin whose server runs an animation mod adds its gestures by number. A pose
+// is its gesture when the game knows that number (the mod that brings it is
+// loaded), otherwise its stance: "squatting" is SFP's squat where SFP runs,
+// a plain crouch where it does not.
 class OZG_Pose
 {
     string PoseId;
     string LabelKey;
     int    Kind;      // OZG_Const.KIND_STANDING or KIND_SITTING
-    string Stance;    // "erect", "crouch", or "" when the pose is a gesture
-    int    Gesture;   // the number of a gesture, 0 when the pose is a stance
+    string Stance;    // "erect", "crouch", or "": the stance, or the fallback of a gesture
+    int    Gesture;   // the number of a gesture, 0 when the pose is a stance only
 
     static OZG_Pose Make(string id, string label, int kind, string stance, int gesture)
     {
@@ -63,9 +66,10 @@ class OZG_Settings : OZ_ConfigBase
         LoadDefaults();
     }
 
+    // 2: the marks. 3: squatting is SFP's squat where SFP runs.
     override int LatestVersion()
     {
-        return 2;
+        return 3;
     }
 
     protected void DefaultPoses()
@@ -75,7 +79,7 @@ class OZG_Settings : OZ_ConfigBase
         PoseList.Insert(OZG_Pose.Make("crosslegged", "STR_OZG_POSE_CROSSLEGGED", OZG_Const.KIND_SITTING, "", 14));
         PoseList.Insert(OZG_Pose.Make("legsout", "STR_OZG_POSE_LEGSOUT", OZG_Const.KIND_SITTING, "", 15));
         PoseList.Insert(OZG_Pose.Make("campfire", "STR_OZG_POSE_CAMPFIRE", OZG_Const.KIND_SITTING, "", 13));
-        PoseList.Insert(OZG_Pose.Make("squatting", "STR_OZG_POSE_SQUATTING", OZG_Const.KIND_SITTING, "crouch", 0));
+        PoseList.Insert(OZG_Pose.Make("squatting", "STR_OZG_POSE_SQUATTING", OZG_Const.KIND_SITTING, "crouch", OZG_Const.GESTURE_SFP_SQUAT));
     }
 
     override void LoadDefaults()
@@ -111,6 +115,17 @@ class OZG_Settings : OZ_ConfigBase
             MarkSeconds2 = 8;
             LoupeSeconds = 5;
             MarkKnowers = 16;
+        }
+        // Version 2's squatting was a crouch alone: it takes SFP's squat,
+        // the crouch staying its fallback.
+        if (from < 3 && PoseList)
+        {
+            for (int i = 0; i < PoseList.Count(); i++)
+            {
+                OZG_Pose p = PoseList[i];
+                if (p && p.PoseId == "squatting" && p.Gesture == 0)
+                    p.Gesture = OZG_Const.GESTURE_SFP_SQUAT;
+            }
         }
         Version = LatestVersion();
         return true;

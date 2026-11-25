@@ -41,6 +41,10 @@ class OZG_Const
     static const int KIND_STANDING = 0;
     static const int KIND_SITTING  = 1;
 
+    // SFP's squat (its EmoteGopStyle, Workshop 2623995836): the gesture of
+    // the default "squatting", where SFP runs; elsewhere the pose crouches.
+    static const int GESTURE_SFP_SQUAT = 65008;
+
     // The mat's collision box, the one the measurements of 2026-11-23 used.
     static const float MAT_HALF_X = 0.25;
     static const float MAT_HALF_Z = 0.175;
