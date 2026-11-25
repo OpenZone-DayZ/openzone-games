@@ -18,7 +18,9 @@ first game is durak, podkidnoy and perevodnoy. Class prefix `OZG_`; runs with
 > Оригінальні ігри: <https://store.steampowered.com/franchise/stalker>. Подробиці в
 > [NOTICE](NOTICE).
 
-## Status: a game can be played (2026-11-24)
+## Status: a game can be played (2026-11-24); on the Workshop since 2026-11-25
+
+The Workshop item: [OpenZone Games](https://steamcommunity.com/sharedfiles/filedetails/?id=3845773524).
 
 - **A deck** is a container of its cards, fifty-two items in fifty-two slots, in two
   looks (the classic deck, and the stalkers' deck with stalkers and mutants on its picture
@@ -114,6 +116,12 @@ puts the rest into `@OpenZone_Games`: `mod.cpp` and `meta.cpp` from
 `packaging/OpenZone_Games/` (`meta.cpp` holds the Workshop item's id, so an update goes to
 the same item) and the key. `.\package.ps1 -Check` says what is missing or stale.
 
+The Workshop item is 3845773524. Its page is kept here: the text in
+`packaging/OpenZone_Games.workshop.bbcode` (Steam takes at most 8000 bytes, and the
+Ukrainian half counts two bytes a letter), the main picture
+`packaging/OpenZone_Games.workshop.png` and the strip
+`packaging/OpenZone_Games.shot<N>.<en|uk>.jpg`, English and Ukrainian in pairs.
+
 ## Settings
 
 `$profile:OpenZone\OZ_Games_Settings.json`, written with its defaults at the first start
@@ -177,6 +185,9 @@ OpenZone), колоду тримають у долоні, одну карту �
 інструменти господаря. Місце чекає на гравця, який відійшов; хто йде посеред партії,
 скидає карти або лишає місце з картами іншому. Усе переживає рестарт сервера. Гравець у
 партії тримає віяло карт, пози задаються в налаштуваннях.
+
+Мод у Steam Workshop з 2026-11-25:
+[OpenZone Games](https://steamcommunity.com/sharedfiles/filedetails/?id=3845773524).
 
 ## Licence
 
