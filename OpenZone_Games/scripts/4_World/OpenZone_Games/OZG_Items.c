@@ -179,6 +179,74 @@ class OZG_Deck_Base extends ItemBase
     protected bool m_OZG_Stored;
     protected bool m_OZG_Filled;
 
+    // The sound of the deck gathered up (design §17), in one synchronised
+    // number as a place carries its game's (OZG_Sounds.PackLot): the place is
+    // gone by then, the deck is where it lay.
+    protected int m_OZG_Sound;
+    protected ref OZG_SoundPulse m_OZG_Ear;
+
+    void OZG_Deck_Base()
+    {
+        RegisterNetSyncVariableInt("m_OZG_Sound");
+    }
+
+    // Server: a lot of sounds, heard on every client near the deck.
+    void OZG_Hear(array<int> ids)
+    {
+        if (!GetGame() || !GetGame().IsServer() || !ids || ids.Count() == 0)
+            return;
+        if (!m_OZG_Ear)
+            m_OZG_Ear = new OZG_SoundPulse();
+        m_OZG_Sound = m_OZG_Ear.NextNumber(m_OZG_Sound, ids);
+        SetSynchDirty();
+        GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).Remove(OZG_Quiet);
+        GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(OZG_Quiet, OZG_Sounds.QUIET_MS, false);
+        OZG_Log.Dbg("deck " + GetType() + " heard " + m_OZG_Ear.LastLot());
+    }
+
+    void OZG_HearOne(int id)
+    {
+        array<int> one = new array<int>();
+        one.Insert(id);
+        OZG_Hear(one);
+    }
+
+    // Server: the number keeps its count and carries no sounds.
+    void OZG_Quiet()
+    {
+        m_OZG_Sound = OZG_Sounds.QuietOf(m_OZG_Sound);
+        SetSynchDirty();
+    }
+
+    int OZG_SoundNumber()
+    {
+        return m_OZG_Sound;
+    }
+
+    string OZG_SoundLast()
+    {
+        if (!m_OZG_Ear)
+            return "-";
+        return m_OZG_Ear.LastLot();
+    }
+
+    override void OnVariablesSynchronized()
+    {
+        super.OnVariablesSynchronized();
+        if (GetGame().IsDedicatedServer())
+            return;
+        if (!m_OZG_Ear)
+            m_OZG_Ear = new OZG_SoundPulse();
+        m_OZG_Ear.HeardNumber(m_OZG_Sound, this, "deck");
+    }
+
+    override void EEDelete(EntityAI parent)
+    {
+        if (GetGame())
+            GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).Remove(OZG_Quiet);
+        super.EEDelete(parent);
+    }
+
     override bool IsBasebuildingKit()
     {
         return !m_OZG_Spared;
@@ -326,6 +394,10 @@ class OZG_Place extends ItemBase
     protected int m_OZG_Total;
     protected int m_OZG_Rev;
     protected int m_OZG_DeckNo;
+    // The sounds of the game (design §17): one synchronised number, a count
+    // and up to three sounds (OZG_Sounds.PackLot), quiet again QUIET_MS after.
+    protected int m_OZG_Sound;
+    protected ref OZG_SoundPulse m_OZG_Ear;
 
     // Server only.
     protected string m_OZG_DeckClass;
@@ -348,6 +420,7 @@ class OZG_Place extends ItemBase
         RegisterNetSyncVariableInt("m_OZG_Total", 0, 15);
         RegisterNetSyncVariableInt("m_OZG_Rev");
         RegisterNetSyncVariableInt("m_OZG_DeckNo", -1, 126);
+        RegisterNetSyncVariableInt("m_OZG_Sound");
     }
 
     // ------------------------------------------------------------ identity
@@ -421,6 +494,57 @@ class OZG_Place extends ItemBase
         SetSynchDirty();
     }
 
+    // Server: a lot of sounds of the game, heard on every client near the
+    // place (design §17), whether its window is open or not.
+    void OZG_Hear(array<int> ids)
+    {
+        if (!GetGame() || !GetGame().IsServer() || !ids || ids.Count() == 0)
+            return;
+        if (!m_OZG_Ear)
+            m_OZG_Ear = new OZG_SoundPulse();
+        m_OZG_Sound = m_OZG_Ear.NextNumber(m_OZG_Sound, ids);
+        SetSynchDirty();
+        GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).Remove(OZG_Quiet);
+        GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(OZG_Quiet, OZG_Sounds.QUIET_MS, false);
+        OZG_Log.Dbg("place " + OZG_Id() + " heard " + m_OZG_Ear.LastLot());
+    }
+
+    void OZG_HearOne(int id)
+    {
+        array<int> one = new array<int>();
+        one.Insert(id);
+        OZG_Hear(one);
+    }
+
+    // Server: the number keeps its count and carries no sounds.
+    void OZG_Quiet()
+    {
+        m_OZG_Sound = OZG_Sounds.QuietOf(m_OZG_Sound);
+        SetSynchDirty();
+    }
+
+    int OZG_SoundNumber()
+    {
+        return m_OZG_Sound;
+    }
+
+    string OZG_SoundLast()
+    {
+        if (!m_OZG_Ear)
+            return "-";
+        return m_OZG_Ear.LastLot();
+    }
+
+    // Client: what the number carries is played on the place.
+    protected void OZG_Listen()
+    {
+        if (GetGame().IsDedicatedServer())
+            return;
+        if (!m_OZG_Ear)
+            m_OZG_Ear = new OZG_SoundPulse();
+        m_OZG_Ear.HeardNumber(m_OZG_Sound, this, "place " + OZG_Id());
+    }
+
     // ------------------------------------------------------------ every place
 
     static array<OZG_Place> All()
@@ -471,6 +595,8 @@ class OZG_Place extends ItemBase
 
     override void EEDelete(EntityAI parent)
     {
+        if (GetGame())
+            GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).Remove(OZG_Quiet);
         s_All.RemoveItem(this);
         if (GetGame() && GetGame().IsServer())
             OZG_Sessions.PlaceGone(this);
@@ -760,6 +886,7 @@ class OZG_Place extends ItemBase
     {
         super.OnVariablesSynchronized();
         OZG_Look();
+        OZG_Listen();
         OZG_PlaceWatch.Moved(this);
     }
 

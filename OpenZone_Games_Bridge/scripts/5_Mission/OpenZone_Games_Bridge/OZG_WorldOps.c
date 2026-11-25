@@ -1287,4 +1287,64 @@ class OZG_WorldOps
         detail = detail + " sound=" + w.SoundName;
         return true;
     }
+
+    // sound [id=<place> | in=me] [play=<name>[,<name>..]]: the sound number of
+    // a laid-out game (in=me: of the deck in the first player's hands): its
+    // count, the sounds it carries now (none once OZG_Sounds.QUIET_MS has
+    // passed since its last lot) and its last lot. play= puts up to three
+    // sounds on the place, as a change of the game puts them.
+    static bool OpSound(map<string, string> args, out string detail)
+    {
+        int packed;
+        string last;
+        string what;
+        if (OZG_VerbOps.Arg(args, "in", "") == "me")
+        {
+            PlayerBase me = FirstPlayer();
+            OZG_Deck_Base deck;
+            if (me)
+                deck = OZG_Deck_Base.Cast(me.GetItemInHands());
+            if (!deck)
+            {
+                detail = "sound: no deck in the first player's hands";
+                return true;
+            }
+            packed = deck.OZG_SoundNumber();
+            last = deck.OZG_SoundLast();
+            what = "deck";
+        }
+        else
+        {
+            OZG_Session s = Sess(args, detail);
+            if (!s)
+                return false;
+            if (!s.m_Place)
+            {
+                detail = "sound: the session has no place";
+                return true;
+            }
+            string play = OZG_VerbOps.Arg(args, "play", "");
+            if (play != "")
+            {
+                array<string> names = new array<string>();
+                play.Split(",", names);
+                array<int> ids = new array<int>();
+                for (int i = 0; i < names.Count(); i++)
+                {
+                    int id = OZG_Sounds.IdOf(names[i]);
+                    if (id > 0)
+                        ids.Insert(id);
+                }
+                s.m_Place.OZG_Hear(ids);
+            }
+            packed = s.m_Place.OZG_SoundNumber();
+            last = s.m_Place.OZG_SoundLast();
+            what = "place " + s.Id();
+        }
+        array<int> now = new array<int>();
+        OZG_Sounds.IdsOf(packed, now);
+        detail = what + ": count=" + OZG_Sounds.CountOf(packed).ToString();
+        detail = detail + " now=" + OZG_Sounds.NamesOf(now) + " last=" + last;
+        return true;
+    }
 }

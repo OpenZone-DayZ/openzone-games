@@ -255,3 +255,59 @@ class OZG_SoundRun
             GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(PlayDue, soonest - now, false);
     }
 }
+
+// What one thing of the world does with its sound number. On the server: the
+// next number for a lot of sounds, and the lot remembered for the stand. On a
+// client: a new lot played once, as it comes; a number seen for the first
+// time with no sounds in it only noted, so that a lot played before the client
+// saw the thing is never played (OZG_Sounds.QUIET_MS).
+class OZG_SoundPulse
+{
+    protected int m_Heard;
+    protected string m_Last;
+    protected ref OZG_SoundRun m_Run;
+
+    void OZG_SoundPulse()
+    {
+        m_Heard = -1;
+        m_Last = "-";
+    }
+
+    // Server: the number after `packed` that carries `ids`.
+    int NextNumber(int packed, array<int> ids)
+    {
+        array<int> kept = new array<int>();
+        for (int i = 0; i < ids.Count() && i < OZG_Sounds.SLOTS; i++)
+            kept.Insert(ids[i]);
+        m_Last = OZG_Sounds.NamesOf(kept);
+        return OZG_Sounds.PackLot(packed, kept);
+    }
+
+    string LastLot()
+    {
+        return m_Last;
+    }
+
+    // Client: the number as it came, played on `thing`.
+    void HeardNumber(int packed, Object thing, string why)
+    {
+        int count = OZG_Sounds.CountOf(packed);
+        if (count == m_Heard)
+            return;
+        array<int> ids = new array<int>();
+        OZG_Sounds.IdsOf(packed, ids);
+        // When a client first reads the number: at the thing's coming into its
+        // world, or at the first change after (the record says which).
+        if (m_Heard < 0)
+        {
+            string first = why + ": first sound number, count " + count.ToString();
+            OZG_Log.Dbg(first + ", sounds " + OZG_Sounds.NamesOf(ids));
+        }
+        m_Heard = count;
+        if (ids.Count() == 0)
+            return;
+        if (!m_Run)
+            m_Run = new OZG_SoundRun(thing, why);
+        m_Run.AddLot(ids);
+    }
+}
