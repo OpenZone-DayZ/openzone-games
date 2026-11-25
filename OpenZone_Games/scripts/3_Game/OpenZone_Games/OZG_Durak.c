@@ -973,6 +973,45 @@ class OZG_Durak : OZG_Game
         return text;
     }
 
+    override void ReadsFor(int seat, string uid, array<ref OZG_WRead> into)
+    {
+        into.Clear();
+        if (!m_S || uid == "")
+            return;
+        for (int i = 0; i < m_S.SeatList.Count(); i++)
+        {
+            OZG_DurakSeat other = m_S.SeatList[i];
+            if (other.SeatNo == seat)
+                continue;
+            for (int h = 0; h < other.Held.Count(); h++)
+                ReadOne(other.SeatNo, other.Held[h], uid, into);
+        }
+        // The top of the stock; the last card of the stock is the trump, face
+        // up already.
+        if (m_S.StockCards.Count() > 1)
+            ReadOne(-1, m_S.StockCards[0], uid, into);
+    }
+
+    protected void ReadOne(int where, string card, string uid, array<ref OZG_WRead> into)
+    {
+        OZG_DealCard rec = DealtCard(card);
+        if (!rec || !rec.ReadBy(uid))
+            return;
+        into.Insert(OZG_WRead.Make(where, rec.Look, OZG_Cards.FaceOf(card), rec.Sign));
+    }
+
+    protected OZG_DealCard DealtCard(string card)
+    {
+        if (!m_S || card == "")
+            return null;
+        for (int i = 0; i < m_S.Dealt.Count(); i++)
+        {
+            if (m_S.Dealt[i] && m_S.Dealt[i].Name == card)
+                return m_S.Dealt[i];
+        }
+        return null;
+    }
+
     override string SaveState()
     {
         if (!m_S)

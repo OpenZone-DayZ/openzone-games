@@ -39,6 +39,28 @@ class OZG_WSeat
     int    PoseNo;
 }
 
+// A card this client's player reads where it lies back up for that player
+// (design §4.4): in the hand of the seat `Seat`, or on top of the stock
+// (`Seat` -1). The look says which back of that hand it is drawn on; the face
+// is what the player knows; the sign is the fault they see in the back.
+class OZG_WRead
+{
+    int    Seat;
+    int    Look;
+    string Face;
+    int    Sign;
+
+    static OZG_WRead Make(int seat, int look, string face, int sign)
+    {
+        OZG_WRead r = new OZG_WRead();
+        r.Seat = seat;
+        r.Look = look;
+        r.Face = face;
+        r.Sign = sign;
+        return r;
+    }
+}
+
 // The head of a view.
 class OZG_WView
 {
@@ -63,6 +85,9 @@ class OZG_WView
     string Hint;        // what the game that ended said (OZG_Game.Outcome)
     int    MarkSeconds;
     float  Reach;
+    // What this client's player reads (design §4.4); empty for a watcher and
+    // for a seat that reads nothing. Made apart for every player.
+    ref array<ref OZG_WRead> Reads;
 
     void OZG_WView()
     {
@@ -71,6 +96,7 @@ class OZG_WView
         Seats = new array<ref OZG_WSeat>();
         Dealt = new array<int>();
         Log = new array<string>();
+        Reads = new array<ref OZG_WRead>();
         Mine = -1;
         HostSeat = -1;
     }

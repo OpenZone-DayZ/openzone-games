@@ -405,6 +405,13 @@ class OZG_Session
         if (IsHost(uid))
             v.IsHost = 1;
         v.Note = m_Note;
+        // What this player reads: only a player dealt into the game, and only
+        // into the head made for that player (design §4.6).
+        v.Reads.Clear();
+        bool dealt = seat >= 0 && m_R.Dealt.Find(seat) >= 0;
+        bool reading = OZG_Cfg.Get().Cheating == 1;
+        if (m_Game && m_R.St != OZG_Const.ST_LOBBY && dealt && reading)
+            m_Game.ReadsFor(seat, uid, v.Reads);
 
         string head;
         string err;

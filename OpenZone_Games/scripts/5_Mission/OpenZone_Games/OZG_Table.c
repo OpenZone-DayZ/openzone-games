@@ -37,6 +37,8 @@ class OZG_Table
             v.Dealt = new array<int>();
         if (!v.Log)
             v.Log = new array<string>();
+        if (!v.Reads)
+            v.Reads = new array<ref OZG_WRead>();
 
         OZG_TableView view = new OZG_TableView();
         view.HeadPart = v;

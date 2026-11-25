@@ -884,6 +884,32 @@ class OZG_WorldOps
         return true;
     }
 
+    // reads id=<place> seat=<n>: what the view of that seat's player carries
+    // as reads: "<seat>:<face>/<sign>", -1 for the top of the stock.
+    static bool OpReads(map<string, string> args, out string detail)
+    {
+        OZG_Session s = Sess(args, detail);
+        if (!s)
+            return false;
+        int seat = OZG_VerbOps.Arg(args, "seat", "0").ToInt();
+        if (seat < 0 || seat >= s.m_R.Seats.Count() || !s.m_Game)
+        {
+            detail = "reads: no seat " + seat.ToString() + " in a game";
+            return true;
+        }
+        array<ref OZG_WRead> reads = new array<ref OZG_WRead>();
+        s.m_Game.ReadsFor(seat, s.m_R.Seats[seat].Uid, reads);
+        detail = "reads seat " + seat.ToString() + ":";
+        if (reads.Count() == 0)
+            detail = detail + " none";
+        for (int i = 0; i < reads.Count(); i++)
+        {
+            string one = " " + reads[i].Seat.ToString() + ":" + reads[i].Face;
+            detail = detail + one + "/" + reads[i].Sign.ToString();
+        }
+        return true;
+    }
+
     // craft what=mark|loupe [face=As] [in=me | in=place id=<place>]: the server's
     // half of a finished gesture, as the game's crafting action ends one
     // (PerformRecipeServer): the thing in the first player's hands on the

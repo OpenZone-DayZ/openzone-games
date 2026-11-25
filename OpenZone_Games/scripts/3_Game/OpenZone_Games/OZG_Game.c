@@ -150,6 +150,15 @@ class OZG_Game
         return "{}";
     }
 
+    // The cards the seat `seat`, held by the player `uid`, reads where they
+    // lie back up for that player: in the other seats' hands and on top of
+    // the stock (card sharp's design §4.4). A game without hidden cards says
+    // nothing.
+    void ReadsFor(int seat, string uid, array<ref OZG_WRead> into)
+    {
+        into.Clear();
+    }
+
     bool IsOver()
     {
         return true;
