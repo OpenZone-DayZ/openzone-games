@@ -132,6 +132,10 @@ class OZG_Durak : OZG_Game
 
         m_S = s;
         OpenBout(FirstOpener(hint));
+        // Heard: the shuffle, the deal's quick run, the trump turned up.
+        HearSound(OZG_SoundIds.SHUFFLE);
+        HearSound(OZG_SoundIds.DEAL);
+        HearSound(OZG_SoundIds.TRUMP);
         return true;
     }
 
@@ -264,6 +268,7 @@ class OZG_Durak : OZG_Game
         m_S.AttackCards.Insert(card);
         m_S.DefenceCards.Insert("");
         ClearPassed();
+        HearSound(OZG_SoundIds.LAY);
         return true;
     }
 
@@ -307,6 +312,7 @@ class OZG_Durak : OZG_Game
         held.RemoveOrdered(at);
         m_S.DefenceCards[target] = card;
         ClearPassed();
+        HearSound(OZG_SoundIds.BEAT);
         return true;
     }
 
@@ -341,6 +347,8 @@ class OZG_Durak : OZG_Game
         m_S.Defender = NextLive(i);
         m_S.AttackLimit = LimitFor(m_S.Defender);
         ClearPassed();
+        // Moved on: a card laid on the table like any other.
+        HearSound(OZG_SoundIds.LAY);
         return true;
     }
 
@@ -498,6 +506,10 @@ class OZG_Durak : OZG_Game
                 m_S.DiscardCards.Insert(m_S.DefenceCards[i]);
             }
         }
+        if (took)
+            HearSound(OZG_SoundIds.TAKE);
+        else
+            HearSound(OZG_SoundIds.SWEEP);
         m_S.AttackCards.Clear();
         m_S.DefenceCards.Clear();
         m_S.Taking = 0;
@@ -522,6 +534,7 @@ class OZG_Durak : OZG_Game
     // around the mat.
     protected void DrawAll(int from, int defender)
     {
+        int before = m_S.StockCards.Count();
         int n = m_S.SeatList.Count();
         for (int k = 0; k < n; k++)
         {
@@ -532,6 +545,8 @@ class OZG_Durak : OZG_Game
         }
         if (defender >= 0)
             DrawUp(defender);
+        if (m_S.StockCards.Count() < before)
+            HearSound(OZG_SoundIds.DRAW);
     }
 
     protected void DrawUp(int i)
@@ -605,6 +620,7 @@ class OZG_Durak : OZG_Game
             return;
 
         int i;
+        int before = m_S.DiscardCards.Count();
         for (i = 0; i < dropped.Held.Count(); i++)
             m_S.DiscardCards.Insert(dropped.Held[i]);
         dropped.Held.Clear();
@@ -620,6 +636,9 @@ class OZG_Durak : OZG_Game
         m_S.DefenceCards.Clear();
         m_S.Taking = 0;
         ClearPassed();
+        // Its hand and the table swept to the discards.
+        if (m_S.DiscardCards.Count() > before)
+            HearSound(OZG_SoundIds.SWEEP);
 
         DrawAll((at + 1) % m_S.SeatList.Count(), -1);
         MarkOut();

@@ -355,6 +355,18 @@ class OZG_Bench
         return true;
     }
 
+    // heard: what the game on the bench made heard since the last ask (the
+    // sounds of design §17, by name), and the list emptied.
+    static bool OpHeard(out string detail)
+    {
+        if (!HasGame(detail))
+            return false;
+        array<int> ids = new array<int>();
+        s_Game.TakeHeard(ids);
+        detail = "heard " + OZG_Sounds.NamesOf(ids);
+        return true;
+    }
+
     // all: every hand, the table and the stock.
     static bool OpAll(out string detail)
     {

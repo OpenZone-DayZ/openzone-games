@@ -485,7 +485,21 @@ class OZG_Session
         m_R.Rev = m_R.Rev + 1;
         Save();
         Pulse();
+        PassHeard();
         Push();
+    }
+
+    // What the last change made heard goes onto the place, where every client
+    // near it plays it (design §17): a deal, a move, a bout closed, a seat
+    // dropped, an absent seat passed over.
+    protected void PassHeard()
+    {
+        if (!m_Game || !m_Place)
+            return;
+        array<int> heard = new array<int>();
+        m_Game.TakeHeard(heard);
+        if (heard.Count() > 0)
+            m_Place.OZG_Hear(heard);
     }
 
     // Everybody who looks at this place is told it is gone.

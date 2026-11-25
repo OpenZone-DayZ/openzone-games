@@ -34,6 +34,8 @@ class OZG_VerbOps
             return OZG_Bench.OpOutcome(detail);
         if (op == "brief")
             return OZG_Bench.OpBrief(detail);
+        if (op == "heard")
+            return OZG_Bench.OpHeard(detail);
         if (op == "all")
             return OZG_Bench.OpAll(detail);
         if (op == "can")
@@ -129,7 +131,7 @@ class OZG_VerbOps
 
     static string KnownOps()
     {
-        string known = "status, deck, names, games, begin, act, play, outcome, brief, all, can, drop, away, view, save, load, fuzz";
+        string known = "status, deck, names, games, begin, act, play, outcome, brief, all, can, drop, away, view, save, load, fuzz, heard";
         known = known + ", ring, level, cards, pull, undeck, held, stuff, loose, lay, places, sess, seats, puppet, move, ask, sit, ticks, gather, hand, give, chat, bots, auto, face, stage, mark, markof, craft, reads, noticecfg, noticer, whole, redeal, notices, shake, sound";
         return known;
     }

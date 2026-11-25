@@ -84,6 +84,38 @@ class OZG_Game
         }
     }
 
+    // ---- what is heard -------------------------------------------------------
+
+    // The sounds the last change made, in the order it made them: ids of
+    // OZG_SoundIds (design §17). The session takes them after every change it
+    // accepts and puts them on the place, where every client near it plays
+    // them. A game nobody asks (the stand's bench) keeps the last eight.
+    protected ref array<int> m_Heard;
+
+    protected void HearSound(int sound)
+    {
+        if (!m_Heard)
+            m_Heard = new array<int>();
+        // The same sound twice in a row is heard once: two cards laid in one
+        // change sound as one.
+        int n = m_Heard.Count();
+        if (n > 0 && m_Heard[n - 1] == sound)
+            return;
+        if (n >= 8)
+            m_Heard.RemoveOrdered(0);
+        m_Heard.Insert(sound);
+    }
+
+    // What was heard since the last ask, added to `into`; the list emptied.
+    void TakeHeard(array<int> into)
+    {
+        if (!m_Heard)
+            return;
+        for (int i = 0; i < m_Heard.Count(); i++)
+            into.Insert(m_Heard[i]);
+        m_Heard.Clear();
+    }
+
     // ---- a game being played -------------------------------------------------
 
     // A deal. `seats` are the seats dealt in, in their order around the mat;

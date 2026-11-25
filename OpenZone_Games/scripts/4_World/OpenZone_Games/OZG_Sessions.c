@@ -233,6 +233,10 @@ class OZG_Sessions
             GiveDeck(to, deckClass, at);
             return;
         }
+        // Gathered up (design §17): the place goes in this frame, so the deck
+        // carries the sound. A deck made anew for a place that held none
+        // (GiveDeck) comes into the clients' world with it and is not heard.
+        deck.OZG_HearOne(OZG_SoundIds.PICKUP);
         if (to && to.IsAlive() && !to.GetItemInHands())
             to.ServerTakeEntityToHands(deck);
     }

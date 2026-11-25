@@ -756,6 +756,20 @@ class OZG_Place extends ItemBase
         return OZG_Deck_Base.Cast(GetInventory().FindAttachmentByName(OZG_Const.SLOT_HOLD));
     }
 
+    // Server: the deck put down on the mat is heard (design §17): laid out by
+    // hand (it lands a tick or more after the place is made), by the stand,
+    // or given to a place that lost its own. A place read from the world's
+    // storage has no session yet when its deck comes back, and is not heard.
+    override void EEItemAttached(EntityAI item, string slot_name)
+    {
+        super.EEItemAttached(item, slot_name);
+        if (!GetGame() || !GetGame().IsServer())
+            return;
+        if (!OZG_Deck_Base.Cast(item) || !OZG_Sessions.Of(this))
+            return;
+        OZG_HearOne(OZG_SoundIds.PUTDOWN);
+    }
+
     // Server: the deck is asked out of the placer's hands into the place, as
     // the game's indoor fireplace takes its first stick
     // (actioncreateindoorfireplace.c:95). The hands answer a tick or more
