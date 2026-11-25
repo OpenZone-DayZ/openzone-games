@@ -192,6 +192,13 @@ class OZG_Card_Base extends ItemBase
         OZG_Paint();
     }
 
+    // Studying the card closely, held in the hands (OZG_Study.c).
+    override void SetActions()
+    {
+        super.SetActions();
+        AddAction(OZG_ActionStudy);
+    }
+
     override void EEInit()
     {
         super.EEInit();
@@ -358,7 +365,7 @@ class OZG_DeckRead
     // A card of the game in play is found again by what the deal's record
     // keeps of it (card sharp's design §8): its face, the look of its back,
     // its mark and the mark's readers. Nothing in a place changes those while
-    // it lies laid out (the place is shut; marking and the loupe need the card
+    // it lies laid out (the place is shut; marking and studying need the card
     // out of any deck), and two items alike in all of them are the same card
     // to the game. The names a deal gave by the walk of the place shift when
     // a sleight takes a card out, so they are never used to find an item

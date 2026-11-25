@@ -315,3 +315,32 @@ brought in and marked by another id (`stuff`, `mark who=marker1`), the client's 
 its noticer (`noticer face=Kd`) -- `markof face=Kd`: `Kd sign=27 by_who=1 reads=1`, `Kd
 sign=74 by_who=0 reads=0 notices=1`; `deckreads`: 36 cards, one king of diamonds, `Kd/1/27`,
 the one he reads.
+
+## The loupe gone; "Study closely" (the owner's word, 2026-11-25)
+
+The loupe is taken out whole: its config class, its recipe, its strings, its line in the
+example `types.xml`, the stand's `craft what=loupe`, and the docs that showed it. In its
+place every card has an action of its own, "Study closely" ("Детально роздивитися"): a
+continuous action on the card held in the hands, `StudySeconds` long, with the game's "view
+compass" motion (an item held up to the eyes; lying down its full-body form), and the
+loupe's outcome -- the player alone is told "The card is marked" or "Nothing found" and
+becomes a reader of a marked card (`MarkKnowers` keep it), with the server's log line
+`study: <id> studied <face>, sign <n>`. `Cheating` 0 takes the action away (`OZG_Study.c`,
+registered in `OZG_Actions.c`, added in the card's `SetActions`). The settings file is
+version 6: `LoupeSeconds` became `StudySeconds`, the value carried over (read off the old
+file's text, since the class no longer has the field the loader would have read it
+into). The stand's `craft what=study face=<f>` is the action's end on a card one carries.
+
+The stand:
+
+- a version 5 file with `"LoupeSeconds": 7`: `migrated games settings v5 -> v6`, the file at
+  `"Version": 6` with `"StudySeconds": 7` and no `LoupeSeconds`;
+- an unmarked jack of clubs in the hands, the action run through the engine's gate
+  (`world_action OZG_ActionStudy`): started 16:34:30.3, the server's `study:
+  <id> studied Jc, sign 0` at 16:34:37.8 (seven seconds and the motion's end);
+- the same card marked by another id: the client shows "OpenZone Games -- The card is
+  marked", the action's prompt "Study closely [HOLD]" with the card in the hands
+  (`client-1795617301397.png`); `markof`: `Jc sign=47 by_who=0 reads=1`;
+- `Cheating` 0 in the file and the server restarted: the action refused by its own check
+  ("the action's own Can() said no"), and no "Study closely" offered with the card in the
+  hands.

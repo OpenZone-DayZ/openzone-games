@@ -175,7 +175,7 @@ class OZG_Const
     static const string NOTICE_LAY  = "games.lay";
     static const string NOTICE_SIT  = "games.sit";
     static const string NOTICE_SAY  = "games.say";
-    static const string NOTICE_LOUPE = "games.loupe";
+    static const string NOTICE_STUDY = "games.study";
 
     // The window. The id MUST BE SMALL: with a large number EnterScriptedMenu
     // returns null and the mission is never asked (measured by the series'
@@ -197,9 +197,10 @@ class OZG_Const
     static const string SAY_NOT_SEATED  = "STR_OZG_SAY_NOT_SEATED";
     static const string SAY_PLAYING     = "STR_OZG_SAY_PLAYING";
     static const string SAY_BAD_OPTION  = "STR_OZG_SAY_BAD_OPTION";
-    // What the loupe tells the one who studies a card (design §4.3).
-    static const string SAY_LOUPE_MARKED  = "STR_OZG_LOUPE_MARKED";
-    static const string SAY_LOUPE_NOTHING = "STR_OZG_LOUPE_NOTHING";
+    // What a player who studies a card closely is told (design §4.3; the
+    // loupe's work since 2026-11-25).
+    static const string SAY_STUDY_MARKED  = "STR_OZG_STUDY_MARKED";
+    static const string SAY_STUDY_NOTHING = "STR_OZG_STUDY_NOTHING";
     static const string SAY_BUSY        = "STR_OZG_SAY_BUSY";
     static const string SAY_HOST_HERE   = "STR_OZG_SAY_HOST_HERE";
     static const string SAY_HOW         = "STR_OZG_SAY_HOW";

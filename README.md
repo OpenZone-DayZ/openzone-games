@@ -34,11 +34,11 @@ first game is durak, podkidnoy and perevodnoy. Class prefix `OZG_`; runs with
   deck's back. A deck's slots show the faces, the deck shows its back (the classic one
   carries the mark of OpenZone); a deck is held in the palm, a single card by its end, and
   both lie back up on the ground.
-- **Marks**: a card sharp's pen marks a card through the game's crafting, a loupe tells
-  whether a card is marked; whoever marked a card, or studied it, sees its face pencilled
+- **Marks**: a card sharp's pen marks a card through the game's crafting; a card held in
+  the hands can be studied closely (an action of the card's own, a few seconds), which
+  tells whether it is marked; whoever marked a card, or studied it, sees its face pencilled
   on its back wherever it lies back up in a game, with the mark drawn into the back's
-  pattern, and nobody else is told anything. The pen and the loupe wear the game's own
-  models for now.
+  pattern, and nobody else is told anything. The pen wears the game's own model for now.
 - **Noticing**: a player who is dealt, deal after deal, marked cards he does not read
   begins after a few deals to notice them, one card at a time and by chance, and is told
   nothing: from then on that card's back shows him its mark in the pattern, and its face a
@@ -123,10 +123,11 @@ the lines for `types.xml`, with a nominal of 0 for an admin to raise.
 своєї колоди; у слотах колоди видно лиця, сама колода показує сорочку (на класичній — знак
 OpenZone), колоду тримають у долоні, одну карту — за край, і обидві лягають на землю
 сорочкою догори. Роздають з того, що в колоді справді є, а зібравши гру, гравець
-отримує назад ту саму колоду. Ручка шулера мітить карту через звичайне крафтування гри,
-лупа показує, чи карта мічена; хто карту позначив або роздивився, бачить її лице олівцем
-на сорочці, де б вона не лежала сорочкою догори, і саму мітку в узорі сорочки; більше
-нікому нічого не кажуть. Ручка й лупа поки що мають моделі самої гри. Хто роздачу за
+отримує назад ту саму колоду. Ручка шулера мітить карту через звичайне крафтування гри;
+карту в руках можна детально роздивитися (власна дія карти, кілька секунд), і це покаже,
+чи вона мічена; хто карту позначив або роздивився, бачить її лице олівцем на сорочці, де б
+вона не лежала сорочкою догори, і саму мітку в узорі сорочки; більше нікому нічого не
+кажуть. Ручка поки що має модель самої гри. Хто роздачу за
 роздачею грає міченими картами, яких не читає, з часом починає їх помічати — по одній
 карті й випадково, і йому про це нічого не кажуть: відтоді на сорочці такої карти він
 бачить мітку в узорі, а на її лиці — маленьку темну цятку біля краю. Помічене лишається

@@ -124,21 +124,22 @@ fills itself again): take a new one with `!ozg deck`.
 | a restart | stop the server in mid-bout and start it: the place, the seats, the hands and whose move it is are as they were |
 | gathering the deck | "Gather the deck" on a mat where no seat is taken, kept or left with cards; the host folds at any time from the window. The deck that was laid out comes back, into free hands or onto the spot |
 
-## Marks and the loupe
+## Marks and studying a card
 
-The pen marks a card, the loupe tells whether a card is marked; both through the
-game's crafting: the tool in your hands, a card you carry dragged onto it, then hold
-the left button (the pen 8 s, the loupe 5 s; `MarkSeconds2`, `LoupeSeconds`; the gesture
-takes about 2 s more). A card in a deck cannot be dragged: take it out first.
+The pen marks a card through the game's crafting: the pen in your hands, a card you
+carry dragged onto it, then hold the left button (8 s, `MarkSeconds2`; the gesture takes
+about 2 s more). A card in a deck cannot be dragged: take it out first. A card in your
+hands is studied closely by its own action, "Study closely" (5 s, `StudySeconds`): you
+are told alone "The card is marked" or "Nothing found", and you read a marked card from
+then on. (The loupe did this until 2026-11-25; it is gone.)
 
     oz_games {"op":"give","what":"OZG_MarkTool"}        the pen, into the hands
-    oz_games {"op":"give","what":"OZG_Loupe"}           the loupe, into the hands
-    oz_games {"op":"give","what":"OZG_Card_As"}         a card, into the inventory when the hands are full
+    oz_games {"op":"give","what":"OZG_Card_As"}         a card, into the hands (the inventory when they are full)
 
 Without the gesture, the server's half of it:
 
     oz_games {"op":"craft","what":"mark","face":"As"}   the thing in the hands on the ace of spades you carry
-    oz_games {"op":"craft","what":"loupe","face":"As"}
+    oz_games {"op":"craft","what":"study","face":"As"}  the end of "Study closely" on the ace of spades you carry
     oz_games {"op":"markof","in":"me","face":"all"}     every marked card you carry: sign, by you, read and noticed by you
 
 At the table, with the window open, every back you read in another seat's fan and on

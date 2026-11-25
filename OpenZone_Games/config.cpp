@@ -12,7 +12,7 @@ class CfgPatches
 {
     class OpenZone_Games
     {
-        units[] = {"OZG_Deck_Classic", "OZG_Deck_Stalker", "OZG_Deck_Classic_Sharp", "OZG_Deck_Stalker_Sharp", "OZG_MarkTool", "OZG_Loupe"};
+        units[] = {"OZG_Deck_Classic", "OZG_Deck_Stalker", "OZG_Deck_Classic_Sharp", "OZG_Deck_Stalker_Sharp", "OZG_MarkTool"};
         weapons[] = {};
         requiredVersion = 0.1;
         // Hard dependencies: a blocking window before the game loads rather
@@ -359,12 +359,13 @@ class CfgVehicles
     class OZG_Card_Xb: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_XB"; ozgFace = "Xb"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\stalker\ozg_stalker_Xb_co.paa", "OpenZone_Games\data\cards\stalker\ozg_stalker_back_co.paa"}; };
 // <<< generated: cards
 
-    // ------------------------------------------------------------ the card sharp's tools
+    // ------------------------------------------------------------ the card sharp's tool
     //
-    // Each works through a recipe of the game's own crafting (OZG_Recipes.c):
-    // the tool in the hands and a card the player carries. Their models are
-    // the game's own, stand-ins until art of their own (card sharp's design
-    // §12): the pen and the pistol scope.
+    // It works through a recipe of the game's own crafting (OZG_Recipes.c):
+    // the tool in the hands and a card the player carries. Its model is the
+    // game's own pen, a stand-in until art of its own (card sharp's design
+    // §12). The loupe is gone (2026-11-25): a card held in the hands is
+    // studied closely by an action of its own (OZG_Study.c).
     class OZG_MarkTool: Inventory_Base
     {
         scope = 2;
@@ -382,21 +383,6 @@ class CfgVehicles
         varQuantityInit = 100;
         varQuantityMin = 0;
         varQuantityMax = 100;
-    };
-
-    class OZG_Loupe: Inventory_Base
-    {
-        scope = 2;
-        displayName = "$STR_OZG_LOUPE_NAME";
-        descriptionShort = "$STR_OZG_LOUPE_DESC";
-        model = "\DZ\weapons\attachments\optics\optic_pistol.p3d";
-        animClass = "Binoculars";
-        itemSize[] = {2, 1};
-        rotationFlags = 12;
-        weight = 120;
-        hiddenSelections[] = {"camo"};
-        hiddenSelectionsTextures[] = {"dz\weapons\attachments\optics\data\pistol_scope_co.paa"};
-        hiddenSelectionsMaterials[] = {"dz\weapons\attachments\data\pistol_scope.rvmat"};
     };
 
     // ------------------------------------------------------------ the place

@@ -1263,12 +1263,13 @@ class OZG_WorldOps
         return true;
     }
 
-    // craft what=mark|loupe [face=As] [in=me | in=place id=<place>]: the server's
-    // half of a finished gesture, as the game's crafting action ends one
-    // (PerformRecipeServer): the thing in the first player's hands on the
-    // first card of that face the player carries (in=place: in the laid-out
-    // game's deck, which the recipe must refuse). The recipe's own check
-    // comes first, so a refusal is an answer and no script error.
+    // craft what=mark|study [face=As] [in=me | in=place id=<place>]: the
+    // server's half of a finished gesture. mark: as the game's crafting action
+    // ends one (PerformRecipeServer), the thing in the first player's hands on
+    // the first card of that face the player carries (in=place: in the
+    // laid-out game's deck, which the recipe must refuse); the recipe's own
+    // check comes first, so a refusal is an answer and no script error.
+    // study: the end of "Study closely" (OZG_Study.Done) on that card.
     static bool OpCraft(map<string, string> args, out string detail)
     {
         PlayerBase me = FirstPlayer();
@@ -1281,11 +1282,6 @@ class OZG_WorldOps
         string what = OZG_VerbOps.Arg(args, "what", "mark");
         RecipeBase recipe = OZG_Recipes.MarkRecipe();
         string recipeName = "OZG_RecipeMark";
-        if (what == "loupe")
-        {
-            recipe = OZG_Recipes.LoupeRecipe();
-            recipeName = "OZG_RecipeLoupe";
-        }
         if (OZG_VerbOps.Arg(args, "in", "") == "")
             args.Set("in", "me");
         array<EntityAI> things = new array<EntityAI>();
@@ -1298,6 +1294,22 @@ class OZG_WorldOps
             OZG_Card_Base one = OZG_Card_Base.Cast(things[i]);
             if (one && one.OZG_Face() == face)
                 card = one;
+        }
+        if (what == "study")
+        {
+            if (!card)
+            {
+                detail = "craft study: no " + face + " carried";
+                return true;
+            }
+            if (OZG_Cfg.Get().Cheating != 1)
+            {
+                detail = "craft study: refused, Cheating 0";
+                return true;
+            }
+            OZG_Study.Done(me, card);
+            detail = "craft study " + face + ": sign " + card.OZG_Sign().ToString() + " reads=" + B(card.OZG_Reads(uid));
+            return true;
         }
         ItemBase hands = me.GetItemInHands();
         if (!recipe || !hands || !card)

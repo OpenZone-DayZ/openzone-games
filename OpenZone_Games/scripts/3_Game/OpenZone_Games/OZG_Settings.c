@@ -53,12 +53,12 @@ class OZG_Settings : OZ_ConfigBase
     int   MaxSeats;
     ref array<string> GameIds;
     int   DebugLog;
-    // Marks and the loupe (card sharp's design §7). Cheating 0: nothing can
-    // be marked, studied or read.
+    // Marks and studying a card closely (card sharp's design §7; the loupe
+    // until 2026-11-25). Cheating 0: nothing can be marked, studied or read.
     int   Cheating;
     int   MarkUses;
     int   MarkSeconds2;
-    int   LoupeSeconds;
+    int   StudySeconds;
     int   MarkKnowers;
     // Noticing (card sharp's design §5, §7): the deals before a player can
     // notice a mark he does not read, the percent his chance grows by every
@@ -88,10 +88,48 @@ class OZG_Settings : OZ_ConfigBase
     }
 
     // 2: the marks. 3: squatting is SFP's squat where SFP runs. 4: noticing.
-    // 5: sleights.
+    // 5: sleights. 6: the loupe gone, its LoupeSeconds the StudySeconds of
+    // studying a card closely.
     override int LatestVersion()
     {
-        return 5;
+        return 6;
+    }
+
+    // The loupe's length as a file of version 5 or older wrote it, read off
+    // the file's text (the class no longer has the field, so the loader drops
+    // it); -1 when the file has none.
+    protected static int OldLoupeSeconds()
+    {
+        FileHandle f = OpenFile(OZG_Cfg.PATH, FileMode.READ);
+        if (f == 0)
+            return -1;
+        string text = "";
+        string line;
+        while (FGets(f, line) >= 0)
+            text = text + line + " ";
+        CloseFile(f);
+        string key = "\"LoupeSeconds\"";
+        int at = text.IndexOf(key);
+        if (at < 0)
+            return -1;
+        string rest = text.Substring(at + key.Length(), text.Length() - at - key.Length());
+        int colon = rest.IndexOf(":");
+        if (colon < 0)
+            return -1;
+        rest = rest.Substring(colon + 1, rest.Length() - colon - 1);
+        rest = rest.Trim();
+        string digits = "";
+        string nums = "0123456789";
+        for (int i = 0; i < rest.Length(); i++)
+        {
+            string c = rest.Substring(i, 1);
+            if (nums.IndexOf(c) < 0)
+                break;
+            digits = digits + c;
+        }
+        if (digits == "")
+            return -1;
+        return digits.ToInt();
     }
 
     protected void DefaultSleights()
@@ -136,7 +174,7 @@ class OZG_Settings : OZ_ConfigBase
         Cheating = 1;
         MarkUses = 20;
         MarkSeconds2 = 8;
-        LoupeSeconds = 5;
+        StudySeconds = 5;
         MarkKnowers = 16;
         NoticeGrace = 5;
         NoticeStep = 4;
@@ -152,7 +190,7 @@ class OZG_Settings : OZ_ConfigBase
             Cheating = 1;
             MarkUses = 20;
             MarkSeconds2 = 8;
-            LoupeSeconds = 5;
+            StudySeconds = 5;
             MarkKnowers = 16;
         }
         // Version 2's squatting was a crouch alone: it takes SFP's squat,
@@ -176,6 +214,13 @@ class OZG_Settings : OZ_ConfigBase
         // Version 4 had no sleights: their defaults.
         if (from < 5)
             DefaultSleights();
+        // Version 5 had the loupe: studying a card takes its time.
+        if (from < 6)
+        {
+            int loupe = OldLoupeSeconds();
+            if (loupe > 0)
+                StudySeconds = loupe;
+        }
         Version = LatestVersion();
         return true;
     }
@@ -287,9 +332,9 @@ class OZG_Settings : OZ_ConfigBase
             MarkSeconds2 = 8;
             warnings++;
         }
-        if (LoupeSeconds < 1)
+        if (StudySeconds < 1)
         {
-            LoupeSeconds = 5;
+            StudySeconds = 5;
             warnings++;
         }
         if (MarkKnowers < 2)
@@ -428,7 +473,7 @@ class OZG_ClientCfg
     int   PoseCount;
     int   Cheating;
     int   MarkSeconds2;
-    int   LoupeSeconds;
+    int   StudySeconds;
 }
 
 // The settings in force on this machine.
@@ -493,7 +538,7 @@ class OZG_Cfg
         c.PoseCount = now.PoseList.Count();
         c.Cheating = now.Cheating;
         c.MarkSeconds2 = now.MarkSeconds2;
-        c.LoupeSeconds = now.LoupeSeconds;
+        c.StudySeconds = now.StudySeconds;
         string text;
         string err;
         JsonFileLoader<OZG_ClientCfg>.MakeData(c, text, err, false);
@@ -537,7 +582,7 @@ class OZG_Cfg
         fresh.MarkSeconds = c.MarkSeconds;
         fresh.Cheating = c.Cheating;
         fresh.MarkSeconds2 = c.MarkSeconds2;
-        fresh.LoupeSeconds = c.LoupeSeconds;
+        fresh.StudySeconds = c.StudySeconds;
         array<ref OZG_Pose> poses = new array<ref OZG_Pose>();
         for (int i = 0; i < poseTexts.Count(); i++)
         {
