@@ -267,6 +267,7 @@ class OZG_Session
                 if (missing > 0)
                 {
                     why = missing.ToString() + " of its " + deal.Count().ToString() + " cards are not in the place";
+                    why = why + "; " + OZG_DeckRead.Unmatched(m_Place, deal, things);
                     good = false;
                 }
             }

@@ -181,3 +181,29 @@ The stand (NHChernobyl, the client's player and two puppets in jeans at a classi
 - a card of that game deleted from the deck (`pull Kc`) and the server restarted: `WARNING:
   session <id>: the game does not add up (1 of its 40 cards are not in the place)`, the
   place an empty lobby (`st=0 rev=1`).
+
+## A restart after a stalkers' card came in from the pockets
+
+Found while the window was tried (below): after a deal with a slip, a swap and four
+throws done from the window, the next restart said `the game does not add up (1 of its 40
+cards are not in the place)` and the game was lost. The same sleights asked by the stand
+(`sleight kind=slip|swap|throw`) on a classic deck came back whole, so the warning was
+first made to say what it lacked: each record no item matched and each card item no record
+took. Then, step by step:
+
+- a stalkers' nine of clubs given into the client player's pockets read `9c/1` (look 1, the
+  stalkers'); after a restart and a reconnect the same card read `9c/0`;
+- slipped into a hand in that state and the server restarted: `lacking 9c.1/0/0; left over
+  ... 9c/1/stalker/0` -- the game's record said look 0, the item, loaded from the world's
+  storage, look 1.
+
+The cause: a card keeps the NAME of its look (the style) in the storage and computed the
+number from it in `EEOnAfterLoad`; an item loaded with a character from the players'
+database never had it computed and kept the number of a new card, 0, the classic look. The
+window drew such a card classic, and a sleight wrote that look into the game's record; the
+world's load gave the item its real look, and the record no longer matched it. The fix:
+the look is computed in `OnStoreLoad` from the style the moment it is read (the item also
+repainted and marked for its clients). Measured after it: a stalkers' queen of hearts given,
+the server restarted, the card read `Qh/1`; put into the deck from the window by "Put into
+the deck from a pocket", dealt, and the server restarted: `restored: session ... st=1`,
+`problems=0`. The warning keeps its new tail (what is lacking, what is left over).

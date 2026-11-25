@@ -39,6 +39,12 @@ class OZG_Card_Base extends ItemBase
         return m_OZG_Look;
     }
 
+    // The name of its look, as the world's storage keeps it.
+    string OZG_StyleName()
+    {
+        return m_OZG_Style;
+    }
+
     // Server: said once, by whoever makes the card.
     void OZG_SetStyle(string style)
     {
@@ -234,7 +240,16 @@ class OZG_Card_Base extends ItemBase
         string style;
         if (!ctx.Read(style))
             return false;
+        // The look follows the style here, not only in EEOnAfterLoad: an item
+        // loaded with a character from the players' database kept the look of
+        // a new card (measured 2026-11-25: a stalkers' card in a player's
+        // pockets read look 0 after a restart), so the window drew it
+        // classic and a sleight wrote that look into the game, which then
+        // did not add up after the next restart.
         m_OZG_Style = style;
+        m_OZG_Look = OZG_Decks.LookOfStyle(style);
+        SetSynchDirty();
+        OZG_Paint();
         // A card stored before marks: clean.
         if (v < 2)
             return true;
@@ -409,6 +424,35 @@ class OZG_DeckRead
             things.Insert(found);
         }
         return missing;
+    }
+
+    // What a game that does not add up lacks, for the server's log: each
+    // record no item matched (name/look/sign), and each card item of the place
+    // no record took (face/look/style/sign).
+    static string Unmatched(OZG_Place place, array<ref OZG_DealCard> deal, array<OZG_Card_Base> things)
+    {
+        string line = "lacking";
+        int i;
+        for (i = 0; i < deal.Count(); i++)
+        {
+            if (i < things.Count() && things[i])
+                continue;
+            OZG_DealCard rec = deal[i];
+            line = line + " " + rec.Name + "/" + rec.Look.ToString();
+            line = line + "/" + rec.Sign.ToString();
+        }
+        line = line + "; left over";
+        array<EntityAI> all = new array<EntityAI>();
+        ThingsOf(place, all);
+        for (i = 0; i < all.Count(); i++)
+        {
+            OZG_Card_Base card = OZG_Card_Base.Cast(all[i]);
+            if (!card || things.Find(card) >= 0)
+                continue;
+            line = line + " " + card.OZG_Face() + "/" + card.OZG_Look().ToString();
+            line = line + "/" + card.OZG_StyleName() + "/" + card.OZG_Sign().ToString();
+        }
+        return line;
     }
 
     // The item a card of the game in play stands for; null when the place
