@@ -7,6 +7,7 @@
 class OZG_Recipes
 {
     protected static ref RecipeBase s_Mark;
+    protected static ref RecipeBase s_Loupe;
 
     // The recipe as registered, for the stand's `craft`.
     static RecipeBase MarkRecipe()
@@ -18,6 +19,17 @@ class OZG_Recipes
     {
         s_Mark = new OZG_RecipeMark();
         return s_Mark;
+    }
+
+    static RecipeBase LoupeRecipe()
+    {
+        return s_Loupe;
+    }
+
+    static RecipeBase MakeLoupe()
+    {
+        s_Loupe = new OZG_RecipeLoupe();
+        return s_Loupe;
     }
 
     // An item the base recipe takes: none with attachments (recipebase.c:
@@ -140,11 +152,89 @@ class OZG_RecipeMark extends RecipeBase
     }
 }
 
+// The loupe and a card: the player is told, alone, "the card is marked" or
+// "nothing found", and becomes a reader of a marked card (design §4.3).
+// Nothing is used up. A line in the server's log, as for a marking.
+class OZG_RecipeLoupe extends RecipeBase
+{
+    override void Init()
+    {
+        m_Name = "#STR_OZG_LOUPE_ACT";
+        m_IsInstaRecipe = false;
+        // Not read: GetLengthInSecs below gives the setting's length.
+        m_AnimationLength = 1.25;
+        m_Specialty = 0;
+
+        m_MinDamageIngredient[0] = -1;
+        m_MaxDamageIngredient[0] = 3;
+        m_MinQuantityIngredient[0] = -1;
+        m_MaxQuantityIngredient[0] = -1;
+        m_MinDamageIngredient[1] = -1;
+        m_MaxDamageIngredient[1] = -1;
+        m_MinQuantityIngredient[1] = -1;
+        m_MaxQuantityIngredient[1] = -1;
+
+        InsertIngredient(0, "OZG_Loupe");
+        m_IngredientAddHealth[0] = 0;
+        m_IngredientSetHealth[0] = -1;
+        m_IngredientAddQuantity[0] = 0;
+        m_IngredientDestroy[0] = false;
+        m_IngredientUseSoftSkills[0] = false;
+
+        InsertIngredient(1, "OZG_Card_Base");
+        m_IngredientAddHealth[1] = 0;
+        m_IngredientSetHealth[1] = -1;
+        m_IngredientAddQuantity[1] = 0;
+        m_IngredientDestroy[1] = false;
+        m_IngredientUseSoftSkills[1] = false;
+    }
+
+    override float GetLengthInSecs()
+    {
+        return OZG_Cfg.Get().LoupeSeconds;
+    }
+
+    override bool CanDo(ItemBase ingredients[], PlayerBase player)
+    {
+        // The two items into locals and no super.CanDo (OZG_Recipes.NoAttachments).
+        ItemBase loupe = ingredients[0];
+        ItemBase card = ingredients[1];
+        if (!OZG_Recipes.NoAttachments(loupe) || !OZG_Recipes.NoAttachments(card))
+            return false;
+        if (OZG_Cfg.Get().Cheating != 1)
+            return false;
+        if (!OZG_Recipes.Carried(loupe, player))
+            return false;
+        return OZG_Recipes.Carried(card, player);
+    }
+
+    override void Do(ItemBase ingredients[], PlayerBase player, array<ItemBase> results, float specialty_weight)
+    {
+        if (!GetGame().IsServer())
+            return;
+        OZG_Card_Base card = OZG_Card_Base.Cast(ingredients[1]);
+        string uid = OZG_Who.Uid(player);
+        if (!card || uid == "")
+            return;
+        string word = OZG_Const.SAY_LOUPE_NOTHING;
+        if (card.OZG_Marked())
+        {
+            card.OZG_AddReader(uid);
+            word = OZG_Const.SAY_LOUPE_MARKED;
+        }
+        PlayerIdentity id = player.GetIdentity();
+        if (id)
+            OZ_Rpc.Notice(id, OZG_Const.NOTICE_LOUPE, true, word);
+        OZG_Log.Info("loupe: " + uid + " studied " + card.OZG_Face() + ", sign " + card.OZG_Sign().ToString());
+    }
+}
+
 modded class PluginRecipesManagerBase
 {
     override void RegisterRecipies()
     {
         super.RegisterRecipies();
         RegisterRecipe(OZG_Recipes.MakeMark());
+        RegisterRecipe(OZG_Recipes.MakeLoupe());
     }
 }

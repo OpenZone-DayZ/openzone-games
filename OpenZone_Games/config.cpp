@@ -12,7 +12,7 @@ class CfgPatches
 {
     class OpenZone_Games
     {
-        units[] = {"OZG_Deck_Classic", "OZG_Deck_Stalker", "OZG_Deck_Classic_Sharp", "OZG_Deck_Stalker_Sharp", "OZG_MarkTool"};
+        units[] = {"OZG_Deck_Classic", "OZG_Deck_Stalker", "OZG_Deck_Classic_Sharp", "OZG_Deck_Stalker_Sharp", "OZG_MarkTool", "OZG_Loupe"};
         weapons[] = {};
         requiredVersion = 0.1;
         // Hard dependencies: a blocking window before the game loads rather
@@ -354,6 +354,21 @@ class CfgVehicles
         varQuantityInit = 100;
         varQuantityMin = 0;
         varQuantityMax = 100;
+    };
+
+    class OZG_Loupe: Inventory_Base
+    {
+        scope = 2;
+        displayName = "$STR_OZG_LOUPE_NAME";
+        descriptionShort = "$STR_OZG_LOUPE_DESC";
+        model = "\DZ\weapons\attachments\optics\optic_pistol.p3d";
+        animClass = "Binoculars";
+        itemSize[] = {2, 1};
+        rotationFlags = 12;
+        weight = 120;
+        hiddenSelections[] = {"camo"};
+        hiddenSelectionsTextures[] = {"dz\weapons\attachments\optics\data\pistol_scope_co.paa"};
+        hiddenSelectionsMaterials[] = {"dz\weapons\attachments\data\pistol_scope.rvmat"};
     };
 
     // ------------------------------------------------------------ the place

@@ -884,7 +884,7 @@ class OZG_WorldOps
         return true;
     }
 
-    // craft what=mark [face=As] [in=me | in=place id=<place>]: the server's
+    // craft what=mark|loupe [face=As] [in=me | in=place id=<place>]: the server's
     // half of a finished gesture, as the game's crafting action ends one
     // (PerformRecipeServer): the thing in the first player's hands on the
     // first card of that face the player carries (in=place: in the laid-out
@@ -902,6 +902,11 @@ class OZG_WorldOps
         string what = OZG_VerbOps.Arg(args, "what", "mark");
         RecipeBase recipe = OZG_Recipes.MarkRecipe();
         string recipeName = "OZG_RecipeMark";
+        if (what == "loupe")
+        {
+            recipe = OZG_Recipes.LoupeRecipe();
+            recipeName = "OZG_RecipeLoupe";
+        }
         if (OZG_VerbOps.Arg(args, "in", "") == "")
             args.Set("in", "me");
         array<EntityAI> things = new array<EntityAI>();
