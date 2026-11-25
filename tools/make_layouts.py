@@ -43,6 +43,14 @@ ROOTS = {
     "tick_stalker": "OZG_TickStalker",
     "label_classic": "OZG_LabelClassic",
     "label_stalker": "OZG_LabelStalker",
+    # The later games (stakes-and-games design §4): a button, a line of text
+    # and a box for a number, laid by the script where it wants them.
+    "gbtn_classic": "OZG_GenBtnClassic",
+    "gbtn_stalker": "OZG_GenBtnStalker",
+    "gtext_classic": "OZG_GenTextClassic",
+    "gtext_stalker": "OZG_GenTextStalker",
+    "gedit_classic": "OZG_GenEditClassic",
+    "gedit_stalker": "OZG_GenEditStalker",
 }
 
 
@@ -558,6 +566,56 @@ def plate(look):
                  kids)
 
 
+def gen_button(look):
+    """A button of the later games: a bid, "Hit", "Call 40". The script sizes
+    and places it and writes its label; the edge shows round the main choice.
+    Every part is a fraction of the button, so it follows the size it is given."""
+    c = C[look]
+    name = ROOTS["gbtn_" + look]
+    if look == "classic":
+        kids = [
+            image(name + "Bg", fill(), 0, "ozg_round_wide_ca", c["host_bg"]),
+            image(name + "Edge", fill(), 1, "ozg_round_wide_edge_ca", c["gold"], [("visible", 0)]),
+            text(name + "Text", fill(), 15, ETELKA_S, c["host_ink"], 2, "center", ""),
+        ]
+    else:
+        kids = [
+            panel(name + "Edge", fill(), c["host_edge"], 0),
+            panel(name + "Bg", frac(0.01, 0.05, 0.98, 0.9), c["host_bg"], 1),
+            panel(name + "Hot", frac(0, 0.88, 1, 0.12), c["gold"], 1, [("visible", 0)]),
+            text(name + "Text", fill(), 18, OSWALD, c["host_ink"], 2, "center", ""),
+        ]
+    return block("ButtonWidgetClass", name,
+                 [("visible", 1)] + exact(0, 0, 120, 34) + [("text", '""'), ("priority", 45), ("style", "Empty")],
+                 kids)
+
+
+def gen_text(look):
+    """A line of the later games' table: a pile's word, a number under it, a
+    line of the score. The script places it and writes it."""
+    c = C[look]
+    if look == "classic":
+        kind, name, attrs, kids = text(ROOTS["gtext_" + look], exact(0, 0, 300, 22), 15, ETELKA_S, c["label"], 6, "center", "")
+    else:
+        kind, name, attrs, kids = text(ROOTS["gtext_" + look], exact(0, 0, 300, 22), 15, ETELKA_S, c["label"], 6, "center", "")
+    return block(kind, name, attrs, kids)
+
+
+def gen_edit(look):
+    """A box for a number: a bet, a raise, a bank, the chips the host gives."""
+    c = C[look]
+    name = ROOTS["gedit_" + look]
+    kids = [
+        panel(name + "Bg", fill(), c["host_bg"], 0),
+        ("EditBoxWidgetClass", name + "Box", frac(0.04, 0.05, 0.92, 0.9) + [
+            ("color", c["host_ink"]), ("priority", 2), ("style", "Editor"),
+            ("font", '"gui/fonts/sdf_MetronLight24"'), ("exact text", 1), ("exact text size", 18),
+            ("text halign", "center")], None),
+    ]
+    return block("FrameWidgetClass", name,
+                 [("ignorepointer", 1), ("clipchildren", 0)] + exact(0, 0, 120, 34) + [("priority", 45)], kids)
+
+
 def write(name, body):
     path = os.path.join(OUT, name)
     with io.open(path, "w", encoding="utf-8", newline="\n") as f:
@@ -575,3 +633,7 @@ write("ozg_tick_classic.layout", tick("classic"))
 write("ozg_tick_stalker.layout", tick("stalker"))
 write("ozg_label_classic.layout", face_label("classic"))
 write("ozg_label_stalker.layout", face_label("stalker"))
+for look in ("classic", "stalker"):
+    write("ozg_gbtn_" + look + ".layout", gen_button(look))
+    write("ozg_gtext_" + look + ".layout", gen_text(look))
+    write("ozg_gedit_" + look + ".layout", gen_edit(look))

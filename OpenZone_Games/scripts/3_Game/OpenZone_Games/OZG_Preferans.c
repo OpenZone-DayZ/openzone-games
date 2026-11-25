@@ -725,7 +725,11 @@ class OZG_Preferans : OZG_CardGame
                 if (halves > 0)
                 {
                     m_S.Hill[wi] = m_S.Hill[wi] + price * halves / 2;
-                    m_S.Results.Insert(OZG_Words.W2("STR_OZG_PREF_RES_WHIST_SHORT", OZG_Words.SeatArg(SeatNoAt(wi)), OZG_Words.NumArg(halves)));
+                    int whole = halves / 2;
+                    string short2 = whole.ToString();
+                    if (halves % 2 == 1)
+                        short2 = short2 + ".5";
+                    m_S.Results.Insert(OZG_Words.W2("STR_OZG_PREF_RES_WHIST_SHORT", OZG_Words.SeatArg(SeatNoAt(wi)), short2));
                 }
             }
         }

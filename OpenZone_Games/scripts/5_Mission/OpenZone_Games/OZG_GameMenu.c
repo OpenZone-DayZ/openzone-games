@@ -133,6 +133,28 @@ class OZG_GameMenu : UIScriptedMenu
     protected ref OZG_WView m_V;
     protected ref OZG_DurakPublic m_Pub;
     protected ref OZG_DurakPrivate m_Own;
+    // The later games' halves of a view (stakes-and-games design §4).
+    protected ref OZG_GPublic m_GPub;
+    protected ref OZG_GPrivate m_GOwn;
+    // What the script lays for them: the table's buttons and the move each
+    // makes, the table's lines of text, the amount's box and what it was set
+    // for; the column's buttons, lines and the chips' box; the faces of other
+    // seats this player may click (the dummy).
+    protected ref array<Widget> m_GenBtns;
+    protected ref array<string> m_GenBtnMoves;
+    protected ref array<Widget> m_GenTexts;
+    protected Widget m_GenEdit;
+    protected string m_GenEditMove;
+    protected ref array<Widget> m_GenColBtns;
+    protected ref array<string> m_GenColMoves;
+    protected ref array<Widget> m_GenColTexts;
+    protected Widget m_StakeEdit;
+    protected ref array<string> m_GenFaceCodes;
+    protected ref array<float> m_GenFaceX;
+    protected ref array<float> m_GenFaceY;
+    protected ref array<float> m_GenFaceW;
+    protected ref array<float> m_GenFaceH;
+    protected ref array<float> m_GenFaceA;
 
     // What the player is in the middle of.
     protected string m_Picked;
@@ -201,6 +223,18 @@ class OZG_GameMenu : UIScriptedMenu
 
     void OZG_GameMenu()
     {
+        m_GenBtns = new array<Widget>();
+        m_GenBtnMoves = new array<string>();
+        m_GenTexts = new array<Widget>();
+        m_GenColBtns = new array<Widget>();
+        m_GenColMoves = new array<string>();
+        m_GenColTexts = new array<Widget>();
+        m_GenFaceCodes = new array<string>();
+        m_GenFaceX = new array<float>();
+        m_GenFaceY = new array<float>();
+        m_GenFaceW = new array<float>();
+        m_GenFaceH = new array<float>();
+        m_GenFaceA = new array<float>();
         m_SleightHint = new array<TextWidget>();
         m_DealHint = new array<TextWidget>();
         m_PocketPics = new array<Widget>();
@@ -352,6 +386,7 @@ class OZG_GameMenu : UIScriptedMenu
         if (m_Win)
             m_Win.Unlink();
         m_Win = null;
+        GenForget();
         m_Style = style;
         m_Look = OZG_TableLook.Of(style);
 
@@ -1574,6 +1609,12 @@ class OZG_GameMenu : UIScriptedMenu
             JsonFileLoader<OZG_DurakPublic>.LoadData(view.Shared, m_Pub, err);
         if (durak && view.Own != "")
             JsonFileLoader<OZG_DurakPrivate>.LoadData(view.Own, m_Own, err);
+        m_GPub = null;
+        m_GOwn = null;
+        if (!durak && view.Shared != "")
+            JsonFileLoader<OZG_GPublic>.LoadData(view.Shared, m_GPub, err);
+        if (!durak && view.Own != "")
+            JsonFileLoader<OZG_GPrivate>.LoadData(view.Own, m_GOwn, err);
 
         // The deck's look decides the window's.
         string style = m_V.Style;
@@ -1619,6 +1660,7 @@ class OZG_GameMenu : UIScriptedMenu
         }
 
         Measure();
+        GenHideTable();
         PaintTitle();
         PaintSeats();
         PaintTable();
@@ -1757,6 +1799,12 @@ class OZG_GameMenu : UIScriptedMenu
         ClearList(m_FanPics);
         ClearList(m_SeatW);
         m_SeatOf.Clear();
+        m_GenFaceCodes.Clear();
+        m_GenFaceX.Clear();
+        m_GenFaceY.Clear();
+        m_GenFaceW.Clear();
+        m_GenFaceH.Clear();
+        m_GenFaceA.Clear();
         int n = m_V.Seats.Count();
         if (n == 0)
         {
@@ -1789,7 +1837,9 @@ class OZG_GameMenu : UIScriptedMenu
         OZG_DurakSeatPublic g;
         // Before the dealer's deal nothing of the game that ended lies on his
         // table (PaintTable): his frame takes it.
-        if (BacksOf(no, g) && !Dealing())
+        if (Generic())
+            GenSeatCards(no, spot.X, spot.Y, spot.Turn, spot.Scale);
+        else if (BacksOf(no, g) && !Dealing())
             PaintFan(spot.X, spot.Y, spot.Turn, spot.Scale, g.CardCount, g.Backs, no);
 
         string root = "OZG_PlateClassic";
@@ -1823,7 +1873,10 @@ class OZG_GameMenu : UIScriptedMenu
         name.SetText(Caps(who));
 
         bool turn;
-        role.SetText(RoleOf(no, turn));
+        if (Generic())
+            role.SetText(GenRole(no, turn));
+        else
+            role.SetText(RoleOf(no, turn));
         if (turn)
         {
             edge.SetColor(m_Look.EdgeTurn);
@@ -1892,12 +1945,21 @@ class OZG_GameMenu : UIScriptedMenu
             name = name + " (" + Tr("STR_OZG_WIN_YOU") + ")";
         m_MyName.SetText(Caps(name));
         bool turn;
-        m_MyRole.SetText(RoleOf(no, turn));
+        if (Generic())
+            m_MyRole.SetText(GenRole(no, turn));
+        else
+            m_MyRole.SetText(RoleOf(no, turn));
         if (turn)
             m_MyEdge.SetColor(m_Look.EdgeTurn);
         else
             m_MyEdge.SetColor(m_Look.EdgeIdle);
 
+        if (Generic())
+        {
+            if (m_V.Mine < 0)
+                GenSeatCards(no, m_Look.HandX, m_Look.HandY + 20, 0, 1);
+            return;
+        }
         OZG_DurakSeatPublic g;
         if (m_V.Mine < 0 && BacksOf(no, g))
             PaintFan(m_Look.HandX, m_Look.HandY + 20, 0, 1, g.CardCount, g.Backs, no);
@@ -1912,6 +1974,11 @@ class OZG_GameMenu : UIScriptedMenu
         m_AtkW.Clear();
         m_AtkH.Clear();
         m_Result.Show(false);
+        if (Generic())
+        {
+            GenPaintTable();
+            return;
+        }
         // Before the dealer's deal his frame lies on the table and the deck at
         // the stock's place (PaintDealer); nothing of the game that ended.
         if (Dealing())
@@ -2140,6 +2207,11 @@ class OZG_GameMenu : UIScriptedMenu
         ForgetDrawn(m_HandPics);
         ClearList(m_HandPics);
         ClearHandMarks();
+        if (Generic())
+        {
+            GenPaintHand();
+            return;
+        }
         if (!m_Own || !m_Own.Held || m_V.St == OZG_Const.ST_LOBBY)
             return;
         // The hand the last game left lies under the dealer's frame: it is
@@ -2292,6 +2364,11 @@ class OZG_GameMenu : UIScriptedMenu
     // The buttons of the moment, and the line that says whose move it is.
     protected void PaintMoment()
     {
+        if (Generic())
+        {
+            GenPaintMoment();
+            return;
+        }
         bool pass = CanPlay("pass");
         bool take = CanPlay("take");
         bool moveOn = m_Picked != "" && CanPlay("t:" + m_Picked);
@@ -2392,6 +2469,9 @@ class OZG_GameMenu : UIScriptedMenu
             rest = line.Substring(space + 1, line.Length() - space - 1);
         }
 
+        string later = GenLogWord(head, rest);
+        if (later != "")
+            return later;
         if (head == "deal")
             return Tr("STR_OZG_LOG_DEAL");
         if (head == "sit")
@@ -2448,6 +2528,11 @@ class OZG_GameMenu : UIScriptedMenu
         int lines = m_LogLines.Count();
         if (m_PanelShown && m_Look.LogShort < lines)
             lines = m_Look.LogShort;
+        if (Generic())
+        {
+            GenPaintLog(lines);
+            return;
+        }
         int have = m_V.Log.Count();
         int from = have - lines;
         if (from < 0)
@@ -2559,6 +2644,9 @@ class OZG_GameMenu : UIScriptedMenu
         m_HostLine.SetPos(m_Look.StackX * m_K, hostY * m_K);
         if (m_ColRule)
             m_ColRule.Show(!m_PanelShown);
+        // The game the host picks, and at a game for stakes the chips, take
+        // the first rows of the stack.
+        int extra = GenColumn(stackY);
 
         for (int i = 0; i < all.Count(); i++)
         {
@@ -2568,7 +2656,7 @@ class OZG_GameMenu : UIScriptedMenu
             int at = shown.Find(b);
             b.Show(at >= 0);
             if (at >= 0)
-                b.SetPos(m_Look.StackX * m_K, (stackY + at * m_Look.StackStep) * m_K);
+                b.SetPos(m_Look.StackX * m_K, (stackY + (at + extra) * m_Look.StackStep) * m_K);
         }
     }
 
@@ -3386,6 +3474,11 @@ class OZG_GameMenu : UIScriptedMenu
 
     protected void ClickHand(string card)
     {
+        if (Generic())
+        {
+            GenClickCard(card);
+            return;
+        }
         array<string> moves = new array<string>();
         MovesOf(card, moves);
         if (moves.Count() == 0)
@@ -3414,6 +3507,19 @@ class OZG_GameMenu : UIScriptedMenu
         float x;
         float y;
         PointerAt(x, y);
+        if (Generic())
+        {
+            int held = HandAt(x, y);
+            if (held >= 0)
+            {
+                GenClickCard(m_HandCodes[held]);
+                return;
+            }
+            int shown = GenFaceAt(x, y);
+            if (shown >= 0)
+                GenClickCard(m_GenFaceCodes[shown]);
+            return;
+        }
         int pocket = PocketAt(x, y);
         if (pocket >= 0)
         {
@@ -3454,6 +3560,894 @@ class OZG_GameMenu : UIScriptedMenu
             string move = "d:" + m_Picked + ":" + number.ToString();
             if (CanPlay(move))
                 Play(move);
+        }
+    }
+
+    // ------------------------------------------------------------ the later games (stakes-and-games design §4)
+    //
+    // Ochko, hold'em, preferans and bridge describe their table in one shape
+    // (OZG_GPublic, OZG_GPrivate); this part draws it. A seat is drawn as
+    // durak's is -- a fan of backs and a plate -- and the cards it shows face
+    // up as a fan of faces; the piles lie in the middle; the hand is fanned as
+    // durak's; the moves that name no card are buttons, the bids a grid; an
+    // amount is typed into a box. The right column gets the game the host
+    // picks and, at a game for stakes, the requests and the chips.
+
+    protected static const float GEN_BTN_W = 170;
+    protected static const float GEN_BTN_H = 38;
+    protected static const float GEN_GRID_W = 98;
+    protected static const float GEN_GRID_H = 30;
+    protected static const float GEN_GRID_GAP = 6;
+    protected static const float GEN_AMOUNT_X = 76;
+    protected static const float GEN_AMOUNT_W = 210;
+
+    protected bool Generic()
+    {
+        if (!m_V || m_V.GameId == "")
+            return false;
+        return m_V.GameId != OZG_DurakConst.GAME_ID;
+    }
+
+    // ---- words ---------------------------------------------------------------
+
+    // Words of a view: a key and its arguments (OZG_Words), in this client's
+    // language.
+    protected string Words(string words)
+    {
+        if (words == "")
+            return "";
+        array<string> parts = new array<string>();
+        OZG_Words.Parts(words, parts);
+        if (parts.Count() == 0)
+            return "";
+        string s = Tr(parts[0]);
+        for (int i = 1; i < parts.Count(); i++)
+        {
+            string arg = ArgWord(parts[i]);
+            s.Replace("%" + i.ToString(), arg);
+        }
+        return s;
+    }
+
+    protected string ArgWord(string arg)
+    {
+        int n = arg.Length();
+        if (n < 2 || arg.Substring(1, 1) != ":")
+            return arg;
+        string kind = arg.Substring(0, 1);
+        string rest = arg.Substring(2, n - 2);
+        if (kind == "c")
+            return CardWord(rest);
+        if (kind == "s")
+            return SeatName(rest.ToInt());
+        if (kind == "k")
+            return Tr(rest);
+        if (kind == "b")
+            return BidWord(rest);
+        return arg;
+    }
+
+    // A call of the auction: "1C".."7N", "6S".."10N", "P", "X", "XX", "M".
+    protected string BidWord(string bid)
+    {
+        if (bid == "P")
+            return Tr("STR_OZG_CALL_PASS");
+        if (bid == "X")
+            return Tr("STR_OZG_CALL_DBL");
+        if (bid == "XX")
+            return Tr("STR_OZG_CALL_RDBL");
+        if (bid == "M")
+            return Tr("STR_OZG_CALL_MISERE");
+        int n = bid.Length();
+        if (n < 2)
+            return bid;
+        string level = bid.Substring(0, n - 1);
+        string strain = bid.Substring(n - 1, 1);
+        return level + " " + Tr("STR_OZG_STRAIN_" + strain);
+    }
+
+    protected string GameLabel(string id)
+    {
+        OZG_Game sample = OZG_Games.Sample(id);
+        if (!sample)
+            return id;
+        return Tr(sample.LabelKey());
+    }
+
+    // ---- what the view says ----------------------------------------------------
+
+    protected OZG_GSeat GenSeat(int no)
+    {
+        if (!m_GPub || !m_GPub.SeatList)
+            return null;
+        for (int i = 0; i < m_GPub.SeatList.Count(); i++)
+        {
+            if (m_GPub.SeatList[i].SeatNo == no)
+                return m_GPub.SeatList[i];
+        }
+        return null;
+    }
+
+    // The moves a card makes now: from the hand, or from the faces of a seat
+    // this player plays for (the dummy, an open whist's partner).
+    protected void GenMovesOf(string card, array<string> into)
+    {
+        into.Clear();
+        if (!m_GOwn || !m_GOwn.CanPlay)
+            return;
+        for (int i = 0; i < m_GOwn.CanPlay.Count(); i++)
+        {
+            string move = m_GOwn.CanPlay[i];
+            if (OZG_Cards.OfMove(move) == card)
+                into.Insert(move);
+        }
+    }
+
+    // What a plate says of a seat, and whether the game waits for it.
+    protected string GenRole(int no, out bool turn)
+    {
+        turn = false;
+        OZG_WSeat s = m_V.Seats[no];
+        string does = "";
+        OZG_GSeat g = GenSeat(no);
+        if (g && m_V.St != OZG_Const.ST_LOBBY)
+        {
+            does = Words(g.Role);
+            string line = Words(g.Line);
+            if (line != "")
+                does = Joined(does, line);
+            if (g.Mark == 1)
+            {
+                string mark = Tr("STR_OZG_G_MARK_" + m_V.GameId);
+                if (does == "")
+                    does = mark;
+                else
+                    does = mark + " · " + does;
+            }
+            if (m_GPub.Ended != 1 && m_GPub.Awaited && m_GPub.Awaited.Find(no) >= 0)
+                turn = true;
+        }
+        else if (m_V.Stakes == 1 && s.Chips >= 0 && s.St != OZG_Const.SEAT_FREE)
+        {
+            does = Tr1("STR_OZG_G_LINE_CHIPS", s.Chips.ToString());
+        }
+        if (no == m_V.HostSeat)
+            does = Joined(does, Tr("STR_OZG_WIN_HOST_MARK"));
+        if (s.St == OZG_Const.SEAT_KEPT)
+            does = Joined(does, Tr("STR_OZG_WIN_AWAY"));
+        return does;
+    }
+
+    // ---- the widgets the script lays -----------------------------------------
+
+    protected Widget GenMake(string kind)
+    {
+        string look = "Classic";
+        if (m_Style == "stalker")
+            look = "Stalker";
+        string root = "OZG_Gen" + kind + look;
+        string file = "ozg_g" + kind + "_" + m_Style + ".layout";
+        file.ToLower();
+        return MakeLayout("OpenZone_Games/gui/layouts/" + file, m_Win, root);
+    }
+
+    protected Widget GenButton(array<Widget> pool, array<string> moves, int i)
+    {
+        while (pool.Count() <= i)
+        {
+            Widget made = GenMake("Btn");
+            if (!made)
+                return null;
+            made.Show(false);
+            pool.Insert(made);
+            moves.Insert("");
+        }
+        return pool[i];
+    }
+
+    protected TextWidget GenText(array<Widget> pool, int i)
+    {
+        while (pool.Count() <= i)
+        {
+            Widget made = GenMake("Text");
+            if (!made)
+                return null;
+            made.Show(false);
+            pool.Insert(made);
+        }
+        return TextWidget.Cast(pool[i]);
+    }
+
+    protected EditBoxWidget GenEditBox(Widget frame)
+    {
+        if (!frame)
+            return null;
+        return EditBoxWidget.Cast(frame.FindAnyWidget(frame.GetName() + "Box"));
+    }
+
+    protected void GenHot(Widget button, bool hot)
+    {
+        if (!button)
+            return;
+        Widget edge = button.FindAnyWidget(button.GetName() + "Edge");
+        if (m_Style == "stalker")
+            edge = button.FindAnyWidget(button.GetName() + "Hot");
+        if (edge)
+            edge.Show(hot);
+    }
+
+    protected void PutAt(Widget w, float x, float y, float width, float height)
+    {
+        if (!w)
+            return;
+        w.SetPos(x * m_K, y * m_K);
+        w.SetSize(width * m_K, height * m_K);
+        w.Show(true);
+    }
+
+    protected void HideAll(array<Widget> pool)
+    {
+        for (int i = 0; i < pool.Count(); i++)
+        {
+            if (pool[i])
+                pool[i].Show(false);
+        }
+    }
+
+    // The widgets of the later games' table out of sight: before every
+    // drawing, and for durak.
+    protected void GenHideTable()
+    {
+        HideAll(m_GenBtns);
+        HideAll(m_GenTexts);
+        if (m_GenEdit)
+            m_GenEdit.Show(false);
+    }
+
+    // Everything made for the later games goes with the look it was made in.
+    protected void GenForget()
+    {
+        m_GenBtns.Clear();
+        m_GenBtnMoves.Clear();
+        m_GenTexts.Clear();
+        m_GenColBtns.Clear();
+        m_GenColMoves.Clear();
+        m_GenColTexts.Clear();
+        m_GenEdit = null;
+        m_StakeEdit = null;
+        m_GenEditMove = "";
+        m_GenFaceCodes.Clear();
+        m_GenFaceX.Clear();
+        m_GenFaceY.Clear();
+        m_GenFaceW.Clear();
+        m_GenFaceH.Clear();
+        m_GenFaceA.Clear();
+    }
+
+    // A whole number typed into a box, "" for none.
+    protected string BoxNumber(Widget frame)
+    {
+        EditBoxWidget box = GenEditBox(frame);
+        if (!box)
+            return "";
+        string text = box.GetText();
+        string digits = "";
+        string nums = "0123456789";
+        for (int i = 0; i < text.Length(); i++)
+        {
+            string c = text.Substring(i, 1);
+            if (nums.IndexOf(c) >= 0)
+                digits = digits + c;
+        }
+        if (digits.Length() > 7)
+            digits = digits.Substring(0, 7);
+        return digits;
+    }
+
+    // ---- seats -----------------------------------------------------------------
+
+    // A seat's cards: its faces as a fan when it shows any, else its backs.
+    protected void GenSeatCards(int no, float x, float y, float turn, float scale)
+    {
+        OZG_GSeat g = GenSeat(no);
+        if (!g || m_V.St == OZG_Const.ST_LOBBY)
+            return;
+        if (g.Faces.Count() > 0)
+            GenFaces(x, y, turn, scale, g.Faces, g.FaceLooks, no);
+        else if (g.Backs.Count() > 0)
+            PaintFan(x, y, turn, scale, g.Backs.Count(), g.Backs, no);
+    }
+
+    // A fan of faces, as a fan of backs is laid; every face is kept for the
+    // pointer, a face this player may play lit.
+    protected void GenFaces(float x, float y, float turn, float scale, array<string> faces, array<int> looks, int seat)
+    {
+        int count = faces.Count();
+        float spread = m_Look.FanSpread;
+        if (count > 1 && spread * (count - 1) > m_Look.FanFan)
+            spread = m_Look.FanFan / (count - 1);
+        float r = m_Look.FanR * scale;
+        float w = m_Look.FanW * scale * 1.25;
+        float h = m_Look.FanH * scale * 1.25;
+        float tr = turn * Math.DEG2RAD;
+        float c = Math.Cos(tr);
+        float s = Math.Sin(tr);
+        float mid = (count - 1) * 0.5;
+        array<string> can = new array<string>();
+        for (int i = 0; i < count; i++)
+        {
+            float a = (i - mid) * spread;
+            float ar = a * Math.DEG2RAD;
+            float lx = r * Math.Sin(ar);
+            float ly = r - r * Math.Cos(ar);
+            float cx = x + lx * c - ly * s;
+            float cy = y + lx * s + ly * c;
+            string card = faces[i];
+            string face = "c_" + OZG_Cards.FaceOf(card);
+            int look = LookAt(looks, i);
+            GenMovesOf(card, can);
+            int glow = 0;
+            if (can.Count() > 0)
+                glow = m_Look.Glow;
+            Card(m_FanPics, PictureOf(face, look), cx, cy, w, h, a + turn, glow, true, "", RegionOfSeat(seat));
+            m_GenFaceCodes.Insert(card);
+            m_GenFaceX.Insert(cx);
+            m_GenFaceY.Insert(cy);
+            m_GenFaceW.Insert(w);
+            m_GenFaceH.Insert(h);
+            m_GenFaceA.Insert(a + turn);
+        }
+    }
+
+    protected int GenFaceAt(float x, float y)
+    {
+        for (int i = m_GenFaceCodes.Count() - 1; i >= 0; i--)
+        {
+            if (OnCard(x, y, m_GenFaceX[i], m_GenFaceY[i], m_GenFaceW[i], m_GenFaceH[i], m_GenFaceA[i]))
+                return i;
+        }
+        return -1;
+    }
+
+    // ---- the middle of the table -----------------------------------------------
+
+    protected void GenLine(int i, string text, float x, float y, float w, float h)
+    {
+        TextWidget t = GenText(m_GenTexts, i);
+        if (!t)
+            return;
+        t.SetText(Caps(text));
+        PutAt(t, x, y, w, h);
+    }
+
+    protected void GenPaintTable()
+    {
+        m_StockLabel.Show(false);
+        m_DiscardLabel.Show(false);
+        if (!m_GPub || m_V.St == OZG_Const.ST_LOBBY)
+            return;
+        int texts = 0;
+        for (int z = 0; z < m_GPub.Zones.Count(); z++)
+        {
+            OZG_GZone zone = m_GPub.Zones[z];
+            if (zone.Id == "bank" || zone.Id == "pot")
+            {
+                GenLine(texts, Words(zone.Label), m_Look.BoutX - 150, 236, 300, 22);
+                texts++;
+                GenLine(texts, Words(zone.Line), m_Look.BoutX - 150, 258, 300, 28);
+                texts++;
+                continue;
+            }
+            if (zone.Id == "stock" || zone.Id == "talon")
+            {
+                texts = GenPile(zone, texts);
+                continue;
+            }
+            texts = GenRow(zone, texts);
+        }
+        if (m_GPub.Ended == 1 && m_GPub.Result != "")
+        {
+            m_Result.SetText(Caps(Words(m_GPub.Result)));
+            m_Result.Show(true);
+        }
+    }
+
+    // A pile at the stock's place: its backs, the faces turned up beside it.
+    protected int GenPile(OZG_GZone zone, int texts)
+    {
+        float pw = m_Look.PileW;
+        float ph = m_Look.PileH;
+        int layers = zone.Backs;
+        if (layers > 6)
+            layers = 6;
+        int k;
+        for (k = 0; k < layers; k++)
+        {
+            int look = -1;
+            if (k == layers - 1)
+                look = zone.BackLook;
+            float sx = m_Look.StockX - k * 1.2 + pw * 0.5;
+            float sy = m_Look.StockY - k * 1.6 + ph * 0.5;
+            Card(m_TablePics, PictureOf("back", look), sx, sy, pw, ph, 0, 0, true, "", REGION_STOCK);
+        }
+        float fx = m_Look.StockX + pw * 0.5;
+        if (layers > 0)
+            fx = fx + pw + 10;
+        for (k = 0; k < zone.Faces.Count(); k++)
+        {
+            string face = "c_" + OZG_Cards.FaceOf(zone.Faces[k]);
+            int faceLook = LookAt(zone.Looks, k);
+            Card(m_TablePics, PictureOf(face, faceLook), fx + k * (pw + 8), m_Look.StockY + ph * 0.5, pw, ph, 0, 0, true, "", REGION_STOCK);
+        }
+        if (layers > 0 || zone.Faces.Count() > 0)
+        {
+            GenLine(texts, Words(zone.Label), m_Look.StockX - 30, m_Look.StockY + ph + 8, pw + 60, 22);
+            texts++;
+        }
+        return texts;
+    }
+
+    // A row at the bout's place: the board, the trick with who laid each card.
+    protected int GenRow(OZG_GZone zone, int texts)
+    {
+        int faces = zone.Faces.Count();
+        int n = faces + zone.Backs;
+        if (n == 0)
+            return texts;
+        float w = m_Look.BoutW;
+        float h = m_Look.BoutH;
+        float pitch = w + 14;
+        if (n > 5)
+            pitch = (5 * (w + 14)) / n;
+        float left = m_Look.BoutX - pitch * (n - 1) * 0.5;
+        float cy = m_Look.BoutY + h * 0.5;
+        GenLine(texts, Words(zone.Label), m_Look.BoutX - 150, m_Look.BoutY - 28, 300, 22);
+        texts++;
+        for (int k = 0; k < n; k++)
+        {
+            float cx = left + k * pitch;
+            if (k < faces)
+            {
+                string face = "c_" + OZG_Cards.FaceOf(zone.Faces[k]);
+                int look = LookAt(zone.Looks, k);
+                Widget pic = Card(m_TablePics, PictureOf(face, look), cx, cy, w, h, 0, 0, true);
+                int notice = NoticeOn(zone.Faces[k]);
+                if (pic && notice >= 0)
+                    SpeckFace(pic, w, h, m_V.Notices[notice]);
+                int by = -1;
+                if (k < zone.By.Count())
+                    by = zone.By[k];
+                if (by >= 0)
+                {
+                    GenLine(texts, SeatName(by), cx - 60, cy + h * 0.5 + 4, 120, 20);
+                    texts++;
+                }
+            }
+            else
+            {
+                Card(m_TablePics, PictureOf("back", zone.BackLook), cx, cy, w, h, 0, 0, true);
+            }
+        }
+        return texts;
+    }
+
+    // ---- the hand ----------------------------------------------------------------
+
+    protected void GenPaintHand()
+    {
+        if (!m_GOwn || !m_GOwn.Held || m_V.St == OZG_Const.ST_LOBBY)
+            return;
+        int n = m_GOwn.Held.Count();
+        int i;
+        float spread = m_Look.HandSpread;
+        if (n > 1 && spread * (n - 1) > m_Look.HandFan)
+            spread = m_Look.HandFan / (n - 1);
+        float r = m_Look.HandR;
+        float mid = (n - 1) * 0.5;
+        array<string> moves = new array<string>();
+        for (i = 0; i < n; i++)
+        {
+            string card = m_GOwn.Held[i];
+            GenMovesOf(card, moves);
+            float a = (i - mid) * spread;
+            float ar = a * Math.DEG2RAD;
+            float x = m_Look.HandX + r * Math.Sin(ar);
+            float y = m_Look.HandY + r - r * Math.Cos(ar);
+            int glow = 0;
+            if (Playing() && moves.Count() > 0)
+                glow = m_Look.Glow;
+            string cardFace = "c_" + OZG_Cards.FaceOf(card);
+            int cardLook = LookAt(m_GOwn.HeldLooks, i);
+            Widget pic = Card(m_HandPics, PictureOf(cardFace, cardLook), x, y, m_Look.CardW, m_Look.CardH, a, glow, true, SlotOfHand(i));
+            if (!pic)
+                continue;
+            int handNotice = NoticeOn(card);
+            OZG_Cover nextOver = null;
+            if (i < n - 1)
+                nextOver = OZG_Cover.MakeFan(r, spread, m_Look.CardW, m_Look.CardH);
+            if (handNotice >= 0)
+                SpeckFace(pic, m_Look.CardW, m_Look.CardH, m_V.Notices[handNotice], nextOver);
+            m_HandW.Insert(pic);
+            m_HandCodes.Insert(card);
+            m_HandX.Insert(x);
+            m_HandY.Insert(y);
+            m_HandA.Insert(a);
+        }
+        for (i = 0; i < m_HandW.Count(); i++)
+            PlaceHand(i);
+    }
+
+    protected void GenClickCard(string card)
+    {
+        array<string> moves = new array<string>();
+        GenMovesOf(card, moves);
+        if (moves.Count() > 0)
+            Play(moves[0]);
+    }
+
+    // ---- the moment: whose move, the buttons, the amount -------------------------
+
+    protected void GenPaintMoment()
+    {
+        if (m_BtnTake)
+            m_BtnTake.Show(false);
+        if (m_BtnPass)
+            m_BtnPass.Show(false);
+        if (m_BtnMove)
+            m_BtnMove.Show(false);
+        HideAll(m_GenBtns);
+        if (m_GenEdit)
+            m_GenEdit.Show(false);
+
+        string own = "";
+        if (m_GOwn && m_V.St != OZG_Const.ST_LOBBY)
+            own = Words(m_GOwn.Status);
+        m_Hint.SetText(own);
+
+        string status = "";
+        if (m_V.St == OZG_Const.ST_LOBBY || (m_GPub && m_GPub.Ended == 1) || !m_GPub)
+        {
+            int seated = 0;
+            for (int i = 0; i < m_V.Seats.Count(); i++)
+            {
+                if (m_V.Seats[i].St == OZG_Const.SEAT_TAKEN)
+                    seated++;
+            }
+            OZG_Game sample = OZG_Games.Sample(m_V.GameId);
+            int least = 2;
+            if (sample)
+                least = sample.MinPlayers();
+            if (seated < least)
+                status = Tr1("STR_OZG_G_ST_NEED", least.ToString());
+            else if (m_V.IsHost == 1)
+                status = Tr("STR_OZG_ST_LOBBY_HOST");
+            else
+                status = Tr("STR_OZG_ST_LOBBY");
+        }
+        else
+        {
+            status = Words(m_GPub.Status);
+            if (m_GPub.Trump != "")
+                status = status + " · " + Tr("STR_OZG_G_TRUMP_" + m_GPub.Trump);
+        }
+        m_Status.SetText(Caps(status));
+
+        if (!m_GOwn || !Playing())
+            return;
+        int used = 0;
+        int actions = 0;
+        int rows = 0;
+        int b;
+        for (b = 0; b < m_GOwn.Buttons.Count(); b++)
+        {
+            if (m_GOwn.Buttons[b].Row + 1 > rows)
+                rows = m_GOwn.Buttons[b].Row + 1;
+        }
+        float gridW = 5 * GEN_GRID_W + 4 * GEN_GRID_GAP;
+        float gridLeft = m_Look.BoutX - gridW * 0.5;
+        float gridTop = m_Look.BoutY + 60 - rows * (GEN_GRID_H + GEN_GRID_GAP) * 0.5;
+        for (b = 0; b < m_GOwn.Buttons.Count(); b++)
+        {
+            OZG_GButton gb = m_GOwn.Buttons[b];
+            Widget w = GenButton(m_GenBtns, m_GenBtnMoves, used);
+            if (!w)
+                break;
+            m_GenBtnMoves[used] = gb.Move;
+            used++;
+            SetLabel(w, Caps(Words(gb.Label)));
+            GenHot(w, gb.Hot == 1);
+            if (gb.Row < 0)
+            {
+                PutAt(w, m_Look.MomentX, m_Look.MomentY - actions * m_Look.MomentStep, GEN_BTN_W, GEN_BTN_H);
+                actions++;
+            }
+            else
+            {
+                float gx = gridLeft + gb.Col * (GEN_GRID_W + GEN_GRID_GAP);
+                float gy = gridTop + gb.Row * (GEN_GRID_H + GEN_GRID_GAP);
+                PutAt(w, gx, gy, GEN_GRID_W, GEN_GRID_H);
+            }
+        }
+        // The amount: its box and the button that sends it, low on the left.
+        if (m_GOwn.AmountMove == "")
+            return;
+        if (!m_GenEdit)
+            m_GenEdit = GenMake("Edit");
+        EditBoxWidget box = GenEditBox(m_GenEdit);
+        string bounds = m_GOwn.AmountMove + m_GOwn.AmountMin.ToString() + "-" + m_GOwn.AmountMax.ToString();
+        if (box && bounds != m_GenEditMove)
+        {
+            box.SetText(m_GOwn.AmountStart.ToString());
+            m_GenEditMove = bounds;
+        }
+        PutAt(m_GenEdit, GEN_AMOUNT_X, m_Look.MomentY, GEN_AMOUNT_W, GEN_BTN_H);
+        Widget send = GenButton(m_GenBtns, m_GenBtnMoves, used);
+        if (send)
+        {
+            m_GenBtnMoves[used] = "#amount";
+            string range = " (" + m_GOwn.AmountMin.ToString() + "-" + m_GOwn.AmountMax.ToString() + ")";
+            SetLabel(send, Caps(Words(m_GOwn.AmountLabel)) + range);
+            GenHot(send, false);
+            PutAt(send, GEN_AMOUNT_X, m_Look.MomentY - m_Look.MomentStep, GEN_AMOUNT_W, GEN_BTN_H);
+        }
+    }
+
+    // ---- the right column: the game, the chips -----------------------------------
+
+    protected Widget GenColButton(int i, string move, string label)
+    {
+        Widget w = GenButton(m_GenColBtns, m_GenColMoves, i);
+        if (!w)
+            return null;
+        m_GenColMoves[i] = move;
+        SetLabel(w, label);
+        GenHot(w, false);
+        return w;
+    }
+
+    protected void GenColLine(int i, string text, float y)
+    {
+        TextWidget t = GenText(m_GenColTexts, i);
+        if (!t)
+            return;
+        t.SetText(text);
+        PutAt(t, m_Look.StackX, y, 352, GEN_BTN_H);
+    }
+
+    // What the column holds above its stack for the later games and for
+    // stakes; returns the rows it took from `top` down.
+    protected int GenColumn(float top)
+    {
+        HideAll(m_GenColBtns);
+        HideAll(m_GenColTexts);
+        if (m_StakeEdit)
+            m_StakeEdit.Show(false);
+        if (!m_V)
+            return 0;
+        bool host = m_V.IsHost == 1;
+        bool playing = Playing();
+        float step = m_Look.StackStep;
+        float colW = 352;
+        int row = 0;
+        int b = 0;
+        int t = 0;
+        // The host picks the game between deals.
+        if (host && !playing && m_V.GameIds.Count() > 1)
+        {
+            Widget game = GenColButton(b, "#game", Caps(Tr1("STR_OZG_WIN_GAME", GameLabel(m_V.GameId))));
+            b++;
+            PutAt(game, m_Look.StackX, top + row * step, colW, GEN_BTN_H);
+            row++;
+        }
+        if (m_V.Stakes != 1)
+            return row;
+        // A seated player's own chips.
+        if (m_V.Mine >= 0)
+        {
+            GenColLine(t, Tr2("STR_OZG_WIN_MY_CHIPS", m_V.MyChips.ToString(), m_V.MyIn.ToString()), top + row * step);
+            t++;
+            row++;
+        }
+        // The first request waiting for the host: its line, the amount and
+        // "Let in" (or "Give") on one row, "Refuse" under them.
+        bool asking = host && m_V.ReqUids.Count() > 0;
+        bool picked = host && !playing && m_PickedSeat >= 0 && m_PickedSeat < m_V.Seats.Count();
+        if (picked)
+            picked = m_V.Seats[m_PickedSeat].St == OZG_Const.SEAT_TAKEN || m_V.Seats[m_PickedSeat].St == OZG_Const.SEAT_KEPT;
+        if (asking || picked)
+        {
+            if (!m_StakeEdit)
+                m_StakeEdit = GenMake("Edit");
+            string ask;
+            string sendMove = "#give";
+            string sendLabel = Tr("STR_OZG_WIN_GIVE");
+            if (asking)
+            {
+                ask = Tr1("STR_OZG_WIN_REQ_CHIPS", m_V.ReqNames[0]);
+                if (m_V.ReqSeats[0] >= 0)
+                    ask = Tr1("STR_OZG_WIN_REQ_SIT", m_V.ReqNames[0]);
+                if (m_V.ReqUids.Count() > 1)
+                {
+                    int more = m_V.ReqUids.Count() - 1;
+                    ask = ask + " (+" + more.ToString() + ")";
+                }
+                sendMove = "#let";
+                if (m_V.ReqSeats[0] >= 0)
+                    sendLabel = Tr("STR_OZG_WIN_LET");
+            }
+            else
+            {
+                ask = Tr1("STR_OZG_WIN_CHIPS_FOR", SeatName(m_PickedSeat));
+            }
+            GenColLine(t, ask, top + row * step);
+            t++;
+            row++;
+            float half = (colW - 8) * 0.5;
+            PutAt(m_StakeEdit, m_Look.StackX, top + row * step, half, GEN_BTN_H);
+            Widget send = GenColButton(b, sendMove, Caps(sendLabel));
+            b++;
+            PutAt(send, m_Look.StackX + half + 8, top + row * step, half, GEN_BTN_H);
+            row++;
+            if (asking)
+            {
+                Widget refuse = GenColButton(b, "#refuse", Caps(Tr("STR_OZG_WIN_REFUSE")));
+                b++;
+                PutAt(refuse, m_Look.StackX, top + row * step, colW, GEN_BTN_H);
+                row++;
+            }
+        }
+        // A seated player who is not the host asks for chips.
+        if (!host && m_V.Mine >= 0)
+        {
+            if (m_V.AskedChips == 1)
+            {
+                GenColLine(t, Tr("STR_OZG_WIN_ASKED_CHIPS"), top + row * step);
+                t++;
+            }
+            else
+            {
+                Widget askChips = GenColButton(b, "#askchips", Caps(Tr("STR_OZG_WIN_ASK_CHIPS")));
+                b++;
+                PutAt(askChips, m_Look.StackX, top + row * step, colW, GEN_BTN_H);
+            }
+            row++;
+        }
+        return row;
+    }
+
+    protected void NextGame()
+    {
+        if (!m_V || m_V.GameIds.Count() == 0)
+            return;
+        int at = m_V.GameIds.Find(m_V.GameId);
+        int next = at + 1;
+        if (next >= m_V.GameIds.Count())
+            next = 0;
+        Send(OZG_Const.OP_GAME, "", -1, "", "", m_V.GameIds[next], 0);
+    }
+
+    // A button of the later games: a move of the game, or one of the window's
+    // own (`#...`).
+    protected void GenClick(string move)
+    {
+        if (move == "#game")
+        {
+            NextGame();
+            return;
+        }
+        if (move == "#askchips")
+        {
+            Send(OZG_Const.OP_REBUY, "", -1, "", "", "", 0);
+            return;
+        }
+        if (move == "#let" || move == "#refuse")
+        {
+            if (!m_V || m_V.ReqUids.Count() == 0)
+                return;
+            string uid = m_V.ReqUids[0];
+            if (move == "#refuse")
+            {
+                Send(OZG_Const.OP_REFUSE, "", -1, uid, "", "", 0);
+                return;
+            }
+            string amount = BoxNumber(m_StakeEdit);
+            if (amount == "")
+                amount = "0";
+            Send(OZG_Const.OP_LET, "", -1, uid, "", amount, 0);
+            return;
+        }
+        if (move == "#give")
+        {
+            string chips = BoxNumber(m_StakeEdit);
+            if (chips == "")
+            {
+                Said(Tr(OZG_Const.SAY_BAD_AMOUNT));
+                return;
+            }
+            Send(OZG_Const.OP_CHIPS, "", m_PickedSeat, "", "", chips, 0);
+            return;
+        }
+        if (move == "#amount")
+        {
+            if (!m_GOwn || m_GOwn.AmountMove == "")
+                return;
+            string n = BoxNumber(m_GenEdit);
+            if (n == "")
+            {
+                Said(Tr(OZG_Const.SAY_BAD_AMOUNT));
+                return;
+            }
+            Play(m_GOwn.AmountMove + n);
+            return;
+        }
+        Play(move);
+    }
+
+    // ---- the log and the score sheet ---------------------------------------------
+
+    // A line of the log of a later game, or "" for one the window words as
+    // before.
+    protected string GenLogWord(string head, string rest)
+    {
+        if (head == "game")
+            return Tr1("STR_OZG_LOG_GAME", GameLabel(rest));
+        if (head == "let" || head == "chips")
+        {
+            int space = rest.IndexOf(" ");
+            if (space <= 0)
+                return "";
+            int seat = rest.Substring(0, space).ToInt();
+            string amount = rest.Substring(space + 1, rest.Length() - space - 1);
+            if (head == "let")
+                return Tr2("STR_OZG_LOG_LET", SeatName(seat), amount);
+            return Tr2("STR_OZG_LOG_CHIPS", SeatName(seat), amount);
+        }
+        if (!Generic())
+            return "";
+        if (head == "end")
+            return Tr("STR_OZG_LOG_END");
+        OZG_Game sample = OZG_Games.Sample(m_V.GameId);
+        if (!sample)
+            return "";
+        string first = head.Substring(0, 1);
+        string digits = "0123456789";
+        if (digits.IndexOf(first) < 0)
+            return "";
+        array<string> parts = new array<string>();
+        sample.MoveWords(rest, parts);
+        if (parts.Count() == 0)
+            return "";
+        string words = parts[0] + OZG_Words.SEP + OZG_Words.SeatArg(head.ToInt());
+        for (int i = 1; i < parts.Count(); i++)
+            words = words + OZG_Words.SEP + parts[i];
+        return Words(words);
+    }
+
+    protected void GenPaintLog(int lines)
+    {
+        array<string> rows = new array<string>();
+        int k;
+        if (m_GPub && m_V.St != OZG_Const.ST_LOBBY)
+        {
+            for (k = 0; k < m_GPub.Score.Count(); k++)
+                rows.Insert(Words(m_GPub.Score[k]));
+            if (rows.Count() > 0 && rows.Count() < lines - 1)
+                rows.Insert("");
+        }
+        int room = lines - rows.Count();
+        int have = m_V.Log.Count();
+        int from = have - room;
+        if (from < 0)
+            from = 0;
+        for (k = from; k < have && rows.Count() < lines; k++)
+            rows.Insert(LogWord(m_V.Log[k]));
+        for (int i = 0; i < m_LogLines.Count(); i++)
+        {
+            string text = "";
+            if (i < lines && i < rows.Count())
+                text = rows[i];
+            if (m_LogLines[i])
+                m_LogLines[i].SetText(text);
         }
     }
 
@@ -3602,6 +4596,19 @@ class OZG_GameMenu : UIScriptedMenu
         if (w == m_BtnFoldYes)
         {
             Send(OZG_Const.OP_FOLD, "", -1, "", "", "", 0);
+            return true;
+        }
+
+        int gen = m_GenBtns.Find(w);
+        if (gen >= 0)
+        {
+            GenClick(m_GenBtnMoves[gen]);
+            return true;
+        }
+        int col = m_GenColBtns.Find(w);
+        if (col >= 0)
+        {
+            GenClick(m_GenColMoves[col]);
             return true;
         }
 

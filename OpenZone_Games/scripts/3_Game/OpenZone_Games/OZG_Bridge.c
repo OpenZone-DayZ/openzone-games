@@ -976,7 +976,11 @@ class OZG_Bridge : OZG_CardGame
             string trump = TrumpSuit();
             if (trump != "")
                 v.Trump = trump;
-            v.Score.Insert(OZG_Words.W3("STR_OZG_BRIDGE_CONTRACT_LINE", OZG_Words.SeatArg(SeatNoAt(m_S.Declarer)), ContractArg(), DoubledKey()));
+            string declArg = OZG_Words.SeatArg(SeatNoAt(m_S.Declarer));
+            if (m_S.Doubled == 0)
+                v.Score.Insert(OZG_Words.W2("STR_OZG_BRIDGE_CONTRACT_LINE0", declArg, ContractArg()));
+            else
+                v.Score.Insert(OZG_Words.W3("STR_OZG_BRIDGE_CONTRACT_LINE", declArg, ContractArg(), DoubledKey()));
             if (m_S.Phase == OZG_BridgeConst.PLAY && m_S.Turn >= 0)
             {
                 if (m_S.Turn == m_S.Dummy)
