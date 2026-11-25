@@ -286,6 +286,23 @@ The same through the MCP bridge (`<place>` is the id `places` names):
 host answers a request with `ask=let` (`how` the asker's id, `val` the amount) or
 `ask=refuse` (`how` the asker's id); a seated player asks for chips with `ask=rebuy`.
 
+**The book of chips, with no player at all**: a place laid by script, a puppet for its
+host, two bots; a deal played out, then chips given to a seat of that deal. The next deal
+must deal that seat its last stack and the chips given (until 2026-11-25 the chips given
+between deals were taken back at the next change); the fold leaves a paper whose two
+columns add up to the same sum (the server log has it: `place <id> paper: ...`).
+
+    oz_games {"op":"lay","at":"<x y z>"}                              a place by script (flat ground, two metres from any other); its id
+    oz_games {"op":"puppet","id":"<place>","seat":"0","name":"Hosta"}  a character on seat 0, the host; its id (puppet1 on a fresh server)
+    oz_games {"op":"ask","id":"<place>","who":"puppet1","ask":"game","val":"poker"}
+    oz_games {"op":"ask","id":"<place>","who":"puppet1","ask":"chips","seat":"0","val":"1000"}
+    oz_games {"op":"bots","id":"<place>","n":"2","on":"0"}
+    oz_games {"op":"ask","id":"<place>","who":"puppet1","ask":"deal"}
+    oz_games {"op":"auto","id":"<place>"}                             the deal played to its end; the stacks
+    oz_games {"op":"ask","id":"<place>","who":"puppet1","ask":"chips","seat":"2","val":"500"}
+    oz_games {"op":"ask","id":"<place>","who":"puppet1","ask":"deal"}  seat 2: its stack and 500
+    oz_games {"op":"ask","id":"<place>","who":"puppet1","ask":"fold"}  the paper
+
 **The rules alone, by script**: `gfuzz` plays one game deal after deal with no world at
 all (the bots' moves and, forty times in a hundred, a move by chance) and checks after
 every move that every card is somewhere exactly once, that no chip is made or lost, that

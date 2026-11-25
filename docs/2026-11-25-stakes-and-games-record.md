@@ -8,7 +8,8 @@ in §4 below.
 The stand throughout: NHChernobyl, diag 1.30.164289, with SFP 2952842170 and 2623995836,
 VPP Admin Tools 1828439124 and the core's `OpenZone_VPP` loaded (the machine profile
 `dayz-mcp.local.toml`). A server verdict whose only reasons are SFP's two `Credits.json`
-warnings is clean. The client was English, 1920 x 1080.
+warnings is clean. The client was English, 1920 x 1080; the last runs had it in Ukrainian
+(the engine's "Russian" slot carries the Ukrainian texts).
 
 ## 1. What is built
 
@@ -81,10 +82,51 @@ back with its stakes: the host's "Your chips: 1000 (brought in 1000)", the three
 kept with "chips 1000 · away" (the stand's bots live one run of the server), the log as it
 was, the status "Players needed: 2".
 
-Not seen yet: a hand of hold'em dealt and played in the window; ochko, preferans and bridge
-in the window; the request to sit and "Let in" from the host's side; the rebuy; the paper
-after a fold or a gather; the Ukrainian client. The owner stopped the stand work at this
-point ("не трогай пока стенд"); these are the next checks, listed in `test-commands.md`.
+The owner stopped the stand work at this point (leave the stand alone for now) and gave it
+back the same evening (go on). Then, the client in English first:
+
+- **Hold'em**: a hand dealt and played to the showdown, the hint right on every street (the
+  host held a high card to the river), the pot under the row of cards. No side pot came up.
+- **Bridge**: 1NT by the host, the bots bidding and playing, the dummy's fan played by
+  clicks (only a card that may be played is lit): three down, 150 to East-West. Another
+  deal, 1♠ by East-West, one down: 50 to North-South.
+- **Ochko**: a round against a bank of 240, the points counted as the cards came, busts,
+  the banker standing; the line "Survivor holds the bank: 474".
+- **Preferans**: 6♥ by the host, the talon taken and two cards discarded, the contract
+  named, one whister; made, 2 to the host's pool, the balances adding up to nought.
+- **Stakes**: a character asking to sit ("Mykola asks to sit", the box, "Let in",
+  "Refuse"), let in with 500; his request for chips ("Mykola asks for chips") refused; the
+  host picked his plate and gave him 500 from the column ("Chips for Mykola", "Give chips",
+  beside "Remove the player").
+
+Then in Ukrainian: the same request to sit and letting in, a hand of hold'em, preferans
+dealt to the bidding, the VPP pages (§4), and the fold of the game for stakes: the paper
+went into the host's inventory, its text in the server log.
+
+Put right after looking (`da6109f` for the English runs, `a2abfae` for the Ukrainian): the
+fans of the seats round the table bulge towards the table, as a player holds his fan in
+front of him (the owner, 2026-11-25: they must bulge towards the table, a player sets his
+fan in front of him); a plate grows to hold its line, the player's own too, and a
+Ukrainian line needs wider letters; the pot and a deal's result stand under the row of
+cards; hold'em has only the dealt cards on the board and a bet when nothing is bet; the
+bid grid lies beside preferans' talon, not over it; a new game starts a new log; the log's
+seat lines carry the name of whoever sat there then; a game with no variant has no variant
+button; the bids agree with their number ("1 трефа", "2 трефи", "5 треф").
+
+### The book of chips between deals
+
+The paper of that fold added up wrong: 23 500 chips brought in, 17 500 at the end, though a
+game for stakes makes and loses none. Every change at the table copied the stacks of the
+deal into the book, the last deal's too after it had ended, so chips given since were
+taken back at the next change: six bots seated again after restarts had lost 1000 each.
+Measured with no player at all: a hold'em deal played out, 500 given to a seat of it, and
+the next deal dealt that seat its old stack.
+
+Now the stacks go into the book while a deal is played and once more as it ends; between
+deals the book is the truth (`61ed53a`). The same steps then: the seat was dealt 1490 (990
+and the 500), and the paper of the fold after it had 4500 in and 4500 at the end, headed
+with the game's name in both languages (it had named preferans by its bare id). The steps
+are in `test-commands.md`, "The book of chips, with no player at all".
 
 ## 3. The settings reach the players online
 
@@ -93,8 +135,9 @@ and the server's settings, but a client keeps what it was sent when it connected
 the radii, whether card sharping is on) and never asks again, so players online went on with
 the old numbers until they reconnected. `OZG_SettingsApplier` now sends the core's sync
 packet to everyone online after a save (`OZ_SyncSender.SendAll`), as the radio's profiles
-do; the module's card on Ядро › Огляд does the same after "reload every module". Not yet
-seen on the stand.
+do; the module's card on Ядро › Огляд does the same after "reload every module". Seen on
+the stand: a save from the window, and the server's log line `sync: re-sent to 1
+player(s): games settings edited`.
 
 ## 4. The games in the OpenZone window of VPP
 
@@ -141,12 +184,24 @@ The stand: `mod_lint` clean; the converter's reports with no caption without a k
 family's `lint_scripts.py` silent; the server boots clean with the glue; the client's first
 compile stopped on a local named `debug` (a word of the language: renamed, and the fact is in
 the `dayz-modding` skill), the second compiled (`client_compile_check`: "client compiles").
-The pages have not been seen on the client yet: that, a save, its echo to a player online,
-and both languages are the next checks.
+Then on the client, in English and in Ukrainian: the three pages draw as their boards; a
+save goes through the confirm strip, the server writes the file and sends the sync packet
+again (§3), the page reads the file back; a new pose, higher, delete and the checks work;
+"Open as a file" shows the file raw. Put right after looking (`4b52506`): the noticing
+line lost its percent signs (`string.Format` drops a `%` no digit follows; the skill has
+the fact); the games' rows follow the file's order and a save keeps it; the overview card
+keeps four short facts, the core writing them on one line of its width; the games list a
+little taller and the note under the poses on two lines.
 
 ## 5. Left open
 
-- The live checks of §2 and §4.
+- Not seen yet: a side pot in hold'em; a saved setting in a player's window (the packet is
+  sent; a pose added has not been looked for in the pose switch); the paper read from the
+  item in the game (its text was read in the server log).
+- A finished trick of bridge and preferans leaves the table at once, with no pause to see
+  it.
+- The lines of moves name the seat's player now, as the seat lines did before `a2abfae`: a
+  seat taken over in mid-deal (durak, preferans, bridge) renames the moves made before.
 - The glue is not packaged for the Workshop: `packaging/OpenZone_Games_VPP/mod.cpp` is
   written, the item does not exist.
 - The mockup's design canvas on claude.ai has not been republished with the three boards.
