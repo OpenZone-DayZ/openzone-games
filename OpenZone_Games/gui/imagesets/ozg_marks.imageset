@@ -915,6 +915,12 @@ ImageSetClass {
    Size 68 34
    Flags 0
   }
+  ImageSetDefClass speck {
+   Name "speck"
+   Pos 83 419
+   Size 12 12
+   Flags 0
+  }
   ImageSetDefClass stalker_s1 {
    Name "stalker_s1"
    Pos 2 402
@@ -923,7 +929,7 @@ ImageSetClass {
   }
   ImageSetDefClass stalker_s10 {
    Name "stalker_s10"
-   Pos 83 419
+   Pos 97 419
    Size 7 12
    Flags 0
   }
@@ -953,7 +959,7 @@ ImageSetClass {
   }
   ImageSetDefClass stalker_s15 {
    Name "stalker_s15"
-   Pos 92 419
+   Pos 106 419
    Size 7 12
    Flags 0
   }
@@ -989,7 +995,7 @@ ImageSetClass {
   }
   ImageSetDefClass stalker_s20 {
    Name "stalker_s20"
-   Pos 101 419
+   Pos 115 419
    Size 7 12
    Flags 0
   }
@@ -1019,7 +1025,7 @@ ImageSetClass {
   }
   ImageSetDefClass stalker_s25 {
    Name "stalker_s25"
-   Pos 110 419
+   Pos 124 419
    Size 7 12
    Flags 0
   }
@@ -1055,7 +1061,7 @@ ImageSetClass {
   }
   ImageSetDefClass stalker_s30 {
    Name "stalker_s30"
-   Pos 119 419
+   Pos 133 419
    Size 7 12
    Flags 0
   }
@@ -1085,7 +1091,7 @@ ImageSetClass {
   }
   ImageSetDefClass stalker_s35 {
    Name "stalker_s35"
-   Pos 128 419
+   Pos 142 419
    Size 7 12
    Flags 0
   }
@@ -1115,13 +1121,13 @@ ImageSetClass {
   }
   ImageSetDefClass stalker_s4 {
    Name "stalker_s4"
-   Pos 269 419
+   Pos 283 419
    Size 12 11
    Flags 0
   }
   ImageSetDefClass stalker_s40 {
    Name "stalker_s40"
-   Pos 137 419
+   Pos 151 419
    Size 7 12
    Flags 0
   }
@@ -1145,13 +1151,13 @@ ImageSetClass {
   }
   ImageSetDefClass stalker_s44 {
    Name "stalker_s44"
-   Pos 146 419
+   Pos 160 419
    Size 13 12
    Flags 0
   }
   ImageSetDefClass stalker_s45 {
    Name "stalker_s45"
-   Pos 161 419
+   Pos 175 419
    Size 7 12
    Flags 0
   }
@@ -1181,13 +1187,13 @@ ImageSetClass {
   }
   ImageSetDefClass stalker_s5 {
    Name "stalker_s5"
-   Pos 170 419
+   Pos 184 419
    Size 7 12
    Flags 0
   }
   ImageSetDefClass stalker_s50 {
    Name "stalker_s50"
-   Pos 179 419
+   Pos 193 419
    Size 7 12
    Flags 0
   }
@@ -1211,13 +1217,13 @@ ImageSetClass {
   }
   ImageSetDefClass stalker_s54 {
    Name "stalker_s54"
-   Pos 283 419
+   Pos 297 419
    Size 12 11
    Flags 0
   }
   ImageSetDefClass stalker_s55 {
    Name "stalker_s55"
-   Pos 188 419
+   Pos 202 419
    Size 7 12
    Flags 0
   }
@@ -1253,7 +1259,7 @@ ImageSetClass {
   }
   ImageSetDefClass stalker_s60 {
    Name "stalker_s60"
-   Pos 197 419
+   Pos 211 419
    Size 7 12
    Flags 0
   }
@@ -1277,13 +1283,13 @@ ImageSetClass {
   }
   ImageSetDefClass stalker_s64 {
    Name "stalker_s64"
-   Pos 297 419
+   Pos 311 419
    Size 12 11
    Flags 0
   }
   ImageSetDefClass stalker_s65 {
    Name "stalker_s65"
-   Pos 206 419
+   Pos 220 419
    Size 7 12
    Flags 0
   }
@@ -1319,7 +1325,7 @@ ImageSetClass {
   }
   ImageSetDefClass stalker_s70 {
    Name "stalker_s70"
-   Pos 215 419
+   Pos 229 419
    Size 7 12
    Flags 0
   }
@@ -1343,13 +1349,13 @@ ImageSetClass {
   }
   ImageSetDefClass stalker_s74 {
    Name "stalker_s74"
-   Pos 311 419
+   Pos 325 419
    Size 12 11
    Flags 0
   }
   ImageSetDefClass stalker_s75 {
    Name "stalker_s75"
-   Pos 224 419
+   Pos 238 419
    Size 7 12
    Flags 0
   }
@@ -1385,7 +1391,7 @@ ImageSetClass {
   }
   ImageSetDefClass stalker_s80 {
    Name "stalker_s80"
-   Pos 233 419
+   Pos 247 419
    Size 7 12
    Flags 0
   }
@@ -1415,7 +1421,7 @@ ImageSetClass {
   }
   ImageSetDefClass stalker_s85 {
    Name "stalker_s85"
-   Pos 242 419
+   Pos 256 419
    Size 7 12
    Flags 0
   }
@@ -1451,7 +1457,7 @@ ImageSetClass {
   }
   ImageSetDefClass stalker_s90 {
    Name "stalker_s90"
-   Pos 251 419
+   Pos 265 419
    Size 7 12
    Flags 0
   }
@@ -1481,7 +1487,7 @@ ImageSetClass {
   }
   ImageSetDefClass stalker_s95 {
    Name "stalker_s95"
-   Pos 260 419
+   Pos 274 419
    Size 7 12
    Flags 0
   }

@@ -22,13 +22,23 @@
 # Every fault and every pencilled face is a picture of one ink on a clear
 # ground, laid over the back where it was drawn, as the mock-up laid it.
 #
+# On a FACE a sign is a small dark speck in the margin (design §4.5): one
+# picture for every sign, put where the sign says on a line MARGIN in from the
+# card's edge. The ninety-nine places are spread evenly over the stretches of
+# that line where no face of the style carries ink (every face read against
+# the paper round it) and dealt to the signs by lot, with a fixed seed: two
+# signs a player notices sit apart on the faces as on the backs.
+#
 # Usage: python -I tools/make_marks.py [--paa <ImageToPAA.exe>] [--no-paa]
 #
-# Reads art/cards/<style>/back.png (tools/make_cards.py). Writes
-# art/marks/<style>_signs.png (the ninety-nine on that back, to look at),
-# art/marks/_view.png (each kind and a read back, as the mock-up's sheet),
-# build/marks/ozg_marks_ca.png, OpenZone_Games/gui/imagesets/ozg_marks.imageset
-# and, given ImageToPAA, ozg_marks_ca.paa beside it, and
+# Reads art/cards/<style>/back.png and the faces art/cards/<style>/c_*.png
+# (tools/make_cards.py). Writes art/marks/<style>_signs.png (the ninety-nine
+# on that back, to look at), art/marks/<style>_specks.png (the ninety-nine
+# specks on one face, and where the faces of the style carry ink),
+# art/marks/_view.png (each kind, a read back and a noticed face, as the
+# mock-up's sheet), build/marks/ozg_marks_ca.png,
+# OpenZone_Games/gui/imagesets/ozg_marks.imageset and, given ImageToPAA,
+# ozg_marks_ca.paa beside it, and
 # OpenZone_Games/scripts/5_Mission/OpenZone_Games/OZG_MarkPlaces.c.
 import io
 import math
@@ -37,7 +47,7 @@ import random
 import subprocess
 import sys
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
@@ -89,6 +99,25 @@ GAP = {"dot": 22, "block": 22, "cut": 22, "shade": 22, "nick": 12}
 # pixels in whole; drawn larger and reduced, a shape covers as much when it is this
 # much larger all round, in card pixels (held against the mock-up's sheet, 2026-11-25).
 GROW = 0.5
+# The speck on a face (design §4.5): a dark ink, as the back's dot; its radius
+# (GROW comes on top, as on the backs); how far in from a card's edge its
+# middle lies, on a line that runs round the corners; the least distance
+# between two specks' middles. CORNER is a card's corner radius, as
+# tools/make_cards.py draws it.
+SPECK = (20, 10, 8, 230)
+SPECK_R = 2.2
+MARGIN = 6.0
+SPECK_GAP = 6.5
+CORNER = 13.0
+# What is ink on a face: a pixel this much darker than the paper round it (a
+# median of MEDIAN px), or this much more coloured, in a patch OPEN px across
+# at the least -- the dirt and the creases of a worn face are thinner, and
+# are paper; a speck's middle keeps a square of CLEAR px round it free of ink.
+INK_DARK = 28
+INK_COLOUR = 45
+MEDIAN = 21
+OPEN = 3
+CLEAR = 11
 
 
 def at(style, i, j):
@@ -266,6 +295,131 @@ def cut_out(img):
     return img.crop((x0, y0, x1, y1)), (x0, y0, x1 - x0, y1 - y0)
 
 
+# ---------------------------------------------------------------- the specks
+
+def face_names(style):
+    """The faces a style has pictures of: art/cards/<style>/c_*.png, jokers too."""
+    folder = os.path.join(CARDS, style)
+    return sorted(n for n in os.listdir(folder) if n.startswith("c_") and n.endswith(".png"))
+
+
+def inked(style):
+    """Where any face of a style carries ink or a picture, at a card's size (255 inked,
+    0 clear): each face read against the paper round every pixel, the darker or more
+    coloured patches kept, all faces laid together. And how many faces there are."""
+    out = None
+    names = face_names(style)
+    for name in names:
+        rgb = Image.open(os.path.join(CARDS, style, name)).convert("RGB")
+        if rgb.size != (W, H):
+            raise SystemExit("error: %s/%s is %s, not %d x %d" % (style, name, rgb.size, W, H))
+        lum = rgb.convert("L")
+        paper = lum.filter(ImageFilter.MedianFilter(MEDIAN))
+        dark = ImageChops.subtract(paper, lum).point(lambda v: 255 if v > INK_DARK else 0)
+        r, g, b = rgb.split()
+        colour = ImageChops.subtract(ImageChops.lighter(ImageChops.lighter(r, g), b),
+                                     ImageChops.darker(ImageChops.darker(r, g), b))
+        tinted = ImageChops.subtract(colour, colour.filter(ImageFilter.MedianFilter(MEDIAN)))
+        ink = ImageChops.lighter(dark, tinted.point(lambda v: 255 if v > INK_COLOUR else 0))
+        ink = ink.filter(ImageFilter.MinFilter(OPEN)).filter(ImageFilter.MaxFilter(OPEN))
+        out = ink if out is None else ImageChops.lighter(out, ink)
+    if out is None:
+        raise SystemExit("error: no faces in " + os.path.join(CARDS, style))
+    return out, len(names)
+
+
+def margin_line():
+    """The line a speck's middle may lie on: MARGIN in from a card's edge and round its
+    corners, clockwise from the top left, a point about every half pixel."""
+    pts = []
+    r = CORNER - MARGIN
+
+    def line(x0, y0, x1, y1):
+        n = max(2, int(math.hypot(x1 - x0, y1 - y0) / 0.5))
+        pts.extend((x0 + (x1 - x0) * k / n, y0 + (y1 - y0) * k / n) for k in range(n))
+
+    def bend(cx, cy, a0):
+        n = max(2, int(math.pi / 2 * r / 0.5))
+        for k in range(n):
+            a = math.radians(a0 + 90.0 * k / n)
+            pts.append((cx + r * math.cos(a), cy + r * math.sin(a)))
+
+    line(CORNER, MARGIN, W - CORNER, MARGIN)
+    bend(W - CORNER, CORNER, -90)
+    line(W - MARGIN, CORNER, W - MARGIN, H - CORNER)
+    bend(W - CORNER, H - CORNER, 0)
+    line(W - CORNER, H - MARGIN, CORNER, H - MARGIN)
+    bend(CORNER, H - CORNER, 90)
+    line(MARGIN, H - CORNER, MARGIN, CORNER)
+    bend(CORNER, CORNER, 180)
+    return pts
+
+
+def speck_places(style, ink):
+    """Ninety-nine places for a speck on the faces of a style, spread evenly along the
+    stretches of the margin line clear of every face's ink and SPECK_GAP apart at the
+    least, then dealt to the signs by lot: element n - 1 is sign n's middle. And the
+    spacing they were spread at."""
+    near = ink.filter(ImageFilter.MaxFilter(CLEAR))
+    path = margin_line()
+    clear = [near.getpixel((min(W - 1, int(round(x))), min(H - 1, int(round(y))))) == 0 for x, y in path]
+    length = 0.0
+    for k in range(1, len(path)):
+        if clear[k] and clear[k - 1]:
+            length += math.hypot(path[k][0] - path[k - 1][0], path[k][1] - path[k - 1][1])
+    spacing = length / SIGNS
+    while spacing >= SPECK_GAP:
+        chosen, run = [], spacing
+        for k, (x, y) in enumerate(path):
+            if k > 0 and clear[k] and clear[k - 1]:
+                run += math.hypot(x - path[k - 1][0], y - path[k - 1][1])
+            if not clear[k] or run < spacing:
+                continue
+            if all(math.hypot(x - cx, y - cy) >= SPECK_GAP for cx, cy in chosen):
+                chosen.append((x, y))
+                run = 0.0
+        if len(chosen) >= SIGNS:
+            chosen = chosen[:SIGNS]
+            random.Random("%s:specks" % style).shuffle(chosen)
+            return chosen, spacing
+        spacing *= 0.98
+    raise SystemExit("error: %s: the margin has room for fewer than %d specks" % (style, SIGNS))
+
+
+def speck():
+    """The speck as one picture cut out round it, and the box it was cut from on a card
+    where the speck's middle is the card's middle."""
+    big = sheet(SPECK)
+    d = ImageDraw.Draw(big)
+    g, r = GROW, SPECK_R
+    d.ellipse(s(CX - r - g, CY - r * 0.9 - g, CX + r * 0.95 + g, CY + r + g), fill=SPECK)
+    return cut_out(reduce(big, SPECK))
+
+
+def speck_box(box, place):
+    """The box of the speck's picture on a card, for a speck whose middle is `place`."""
+    bx, by, bw, bh = box
+    return bx + int(round(place[0] - CX)), by + int(round(place[1] - CY)), bw, bh
+
+
+def specks_sheet(style, ink, places, pic, box):
+    """The queen of spades of a style with all ninety-nine specks on her, and beside her
+    where the faces of the style carry ink (grey) with the specks laid on it; both twice a
+    card's size."""
+    on = Image.open(os.path.join(CARDS, style, "c_Qs.png")).convert("RGBA")
+    grey = Image.new("RGBA", (W, H), (255, 255, 255, 255))
+    grey.paste((150, 150, 150, 255), None, ink)
+    for place in places:
+        x, y, _, _ = speck_box(box, place)
+        on.alpha_composite(pic, (x, y))
+        grey.alpha_composite(pic, (x, y))
+    big_on = on.resize((2 * W, 2 * H), LANCZOS)
+    out = Image.new("RGB", (4 * W + 30, 2 * H + 20), (45, 45, 45))
+    out.paste(big_on, (10, 10), big_on)
+    out.paste(grey.resize((2 * W, 2 * H), LANCZOS).convert("RGB"), (2 * W + 20, 10))
+    return out
+
+
 # ---------------------------------------------------------------- the sheets
 
 def pack(pieces, size):
@@ -313,8 +467,8 @@ def signs_sheet(faulted):
 
 
 def view_sheet(rows):
-    """A row a style: the back, a fault of each kind, a read back; at their size and as
-    small as a fan shows them, as the mock-up's sheet."""
+    """A row a style: the back, a fault of each kind, a read back, a noticed face; at
+    their size and as small as a fan shows them, as the mock-up's sheet."""
     n = len(rows[0])
     out = Image.new("RGB", (n * 210 + n * 80, len(rows) * 300 - 10), (45, 45, 45))
     for r, shown in enumerate(rows):
@@ -340,10 +494,12 @@ def imageset(size, spots, pieces):
 
 CODE_TOP = """// GENERATED by tools/make_marks.py -- edit the script, not this file.
 //
-// Where the game window draws a mark on a back (card sharp's design §4.4,
-// §4.5): the box of each sign's picture in set:ozg_marks, by the style of the
-// back, and the box of the pencilled face, in pixels of a 200 x 280 card. A
-// style with no signs here (another mod's deck) shows the pencil alone.
+// Where the game window draws a mark (card sharp's design §4.4, §4.5), in
+// pixels of a 200 x 280 card: on a back, the box of each sign's picture in
+// set:ozg_marks, by the style of the back, and the box of the pencilled
+// face; on a face, the box of the speck each sign puts in its margin, by the
+// style of the face. A style with no signs here (another mod's deck) shows
+// the pencil alone and no speck.
 class OZG_MarkPlaces
 {
     static const string IMAGESET = "ozg_marks";
@@ -372,6 +528,19 @@ class OZG_MarkPlaces
     static string PencilImage(string face)
     {
         return "set:" + IMAGESET + " image:p_" + face;
+    }
+
+    // The box of the speck sign `sign` puts on a face of `style`; false:
+    // none is drawn.
+    static bool SpeckBox(string style, int sign, out int x, out int y, out int w, out int h)
+    {
+        return BoxOf(style + "_f" + sign.ToString(), x, y, w, h);
+    }
+
+    // The speck: one picture for every sign and every style.
+    static string SpeckImage()
+    {
+        return "set:" + IMAGESET + " image:speck";
     }
 
     protected static bool BoxOf(string key, out int x, out int y, out int w, out int h)
@@ -410,6 +579,7 @@ CODE_END = """    }
 
 def code(boxes):
     keys = ["pencil"] + ["%s_s%d" % (st, n) for st in STYLES for n in range(1, SIGNS + 1)]
+    keys += ["%s_f%d" % (st, n) for st in STYLES for n in range(1, SIGNS + 1)]
     body = ['        PutBox("%s", %d, %d, %d, %d);' % ((k,) + tuple(boxes[k])) for k in keys]
     return CODE_TOP + "\n".join(body) + "\n" + CODE_END
 
@@ -435,6 +605,8 @@ def main():
         pieces["p_" + face] = img.crop(keep)
     boxes["pencil"] = (keep[0], keep[1], keep[2] - keep[0], keep[3] - keep[1])
 
+    speck_pic, speck_cut = speck()
+    pieces["speck"] = speck_pic
     rows = []
     for style in STYLES:
         back = Image.open(os.path.join(CARDS, style, "back.png")).convert("RGBA")
@@ -453,8 +625,17 @@ def main():
         signs_sheet(faulted).save(os.path.join(ART, "%s_signs.png" % style))
         read = firsts["cut"].copy()
         read.alpha_composite(pencils["Kh"])
-        rows.append([back] + [firsts[k] for k in KINDS] + [read])
-        print("%s: %d signs, %d places of each kind" % (style, SIGNS, PER_KIND))
+        ink, faces = inked(style)
+        specks, spacing = speck_places(style, ink)
+        for sign, place in enumerate(specks, start=1):
+            boxes["%s_f%d" % (style, sign)] = speck_box(speck_cut, place)
+        specks_sheet(style, ink, specks, speck_pic, speck_cut).save(os.path.join(ART, "%s_specks.png" % style))
+        noticed = Image.open(os.path.join(CARDS, style, "c_Kh.png")).convert("RGBA")
+        x, y, _, _ = boxes["%s_f1" % style]
+        noticed.alpha_composite(speck_pic, (x, y))
+        rows.append([back] + [firsts[k] for k in KINDS] + [read, noticed])
+        print("%s: %d signs, %d places of each kind; %d specks round %d faces, %.1f px apart"
+              % (style, SIGNS, PER_KIND, SIGNS, faces, spacing))
     view_sheet(rows).save(os.path.join(ART, "_view.png"))
 
     sheet_img, spots = atlas(pieces)
