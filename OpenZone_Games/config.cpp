@@ -359,23 +359,33 @@ class CfgVehicles
     class OZG_Card_Xb: OZG_Card_Base { scope = 2; displayName = "$STR_OZG_CARD_XB"; ozgFace = "Xb"; hiddenSelectionsTextures[] = {"OpenZone_Games\data\cards\stalker\ozg_stalker_Xb_co.paa", "OpenZone_Games\data\cards\stalker\ozg_stalker_back_co.paa"}; };
 // <<< generated: cards
 
-    // ------------------------------------------------------------ the card sharp's tool
+    // ------------------------------------------------------------ the card sharp's kit
     //
     // It works through a recipe of the game's own crafting (OZG_Recipes.c):
-    // the tool in the hands and a card the player carries. Its model is the
-    // game's own pen, a stand-in until art of its own (card sharp's design
-    // §12). The loupe is gone (2026-11-25): a card held in the hands is
-    // studied closely by an action of its own (OZG_Study.c).
+    // the kit in the hands and a card the player carries. Until 2026-11-25
+    // it was a pen, the game's own model as a stand-in; now it is an open tin
+    // of handmade things, a model of its own (models/README.md), which stands
+    // in its model as the game's TunaCan stands and borrows its pose in the
+    // hand (OZG_Hand.c). The class keeps its name: kits already in a world
+    // and in the servers' spawn lists stay what they were. The loupe is gone
+    // (2026-11-25): a card held in the hands is studied closely by an action
+    // of its own (OZG_Study.c).
     class OZG_MarkTool: Inventory_Base
     {
         scope = 2;
         displayName = "$STR_OZG_MARKTOOL_NAME";
         descriptionShort = "$STR_OZG_MARKTOOL_DESC";
-        model = "\dz\gear\tools\Pen.p3d";
+        model = "\OpenZone_Games\models\sharpkit\ozg_sharpkit.p3d";
         animClass = "Knife";
-        itemSize[] = {1, 1};
-        rotationFlags = 17;
-        weight = 12;
+        itemSize[] = {2, 1};
+        // 0: it stands on the ground as it stands in its model, open side up,
+        // as the game's Pot does, which says nothing. 32, the TunaCan's,
+        // turned it upside down (seen 2026-11-25).
+        rotationFlags = 0;
+        weight = 200;
+        hiddenSelections[] = {"camo"};
+        hiddenSelectionsTextures[] = {"OpenZone_Games\models\sharpkit\data\ozg_sharpkit_co.paa"};
+        hiddenSelectionsMaterials[] = {"OpenZone_Games\models\sharpkit\data\ozg_sharpkit.rvmat"};
         // Its uses as the sewing kit counts them, a percentage: a use is
         // 100 / MarkUses of it, and an empty tool is gone (OZG_Recipes.Spend).
         stackedUnit = "percentage";

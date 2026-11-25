@@ -39,11 +39,14 @@ The Workshop items: [OpenZone Games](https://steamcommunity.com/sharedfiles/file
   deck's back. A deck's slots show the faces, the deck shows its back (the classic one
   carries the mark of OpenZone); a deck is held in the palm, a single card by its end, and
   both lie back up on the ground.
-- **Marks**: a card sharp's pen marks a card through the game's crafting; a card held in
-  the hands can be studied closely (an action of the card's own, a few seconds), which
-  tells whether it is marked; whoever marked a card, or studied it, sees its face pencilled
-  on its back wherever it lies back up in a game, with the mark drawn into the back's
-  pattern, and nobody else is told anything. The pen wears the game's own model for now.
+- **Marks**: a card sharp's kit marks a card through the game's crafting, three cards to a
+  kit unless the server says otherwise (`MarkUses`); a card held in the hands can be
+  studied closely (an action of the card's own, a few seconds), which tells whether it is
+  marked; whoever marked a card, or studied it, sees its face pencilled on its back
+  wherever it lies back up in a game, with the mark drawn into the back's pattern, and
+  nobody else is told anything. The kit is an open tin of handmade things, a model of the
+  mod's own: Indian ink, glue, an awl, a file, sandpaper, a razor blade, lead pips for
+  dice and picks bound with tape.
 - **Noticing**: a player who is dealt, deal after deal, marked cards he does not read
   begins after a few deals to notice them, one card at a time and by chance, and is told
   nothing: from then on that card's back shows him its mark in the pattern, and its face a
@@ -157,7 +160,7 @@ module "Ігри" (Налаштування, Шулерство, Пози), and 
 конфігів; a save reaches the players online at once. It holds the poses (a stance or the number of a gesture,
 so an animation mod's gestures can be added), the radii, the spacing of seats and of
 places, how long a place may stand idle, which games are on; whether cards may be
-marked at all (`Cheating`), the pen's uses and how long marking and studying take, and
+marked at all (`Cheating`), how many cards a kit marks and how long marking and studying take, and
 how soon and how fast a player begins to notice marks he does not read (`NoticeGrace`,
 `NoticeStep`, `NoticeMax`); how many sleights a deal (`SleightsPerDeal`), the chance each
 kind shows (`CaughtSlip`, `CaughtReplace`, `CaughtThrow`, `CaughtDeckIn`, `CaughtDeckOut`,
@@ -180,11 +183,13 @@ the lines for `types.xml`, with a nominal of 0 for an admin to raise.
 своєї колоди; у слотах колоди видно лиця, сама колода показує сорочку (на класичній — знак
 OpenZone), колоду тримають у долоні, одну карту — за край, і обидві лягають на землю
 сорочкою догори. Роздають з того, що в колоді справді є, а зібравши гру, гравець
-отримує назад ту саму колоду. Ручка шулера мітить карту через звичайне крафтування гри;
-карту в руках можна детально роздивитися (власна дія карти, кілька секунд), і це покаже,
-чи вона мічена; хто карту позначив або роздивився, бачить її лице олівцем на сорочці, де б
-вона не лежала сорочкою догори, і саму мітку в узорі сорочки; більше нікому нічого не
-кажуть. Ручка поки що має модель самої гри. Хто роздачу за
+отримує назад ту саму колоду. Шулерський набір мітить карту через звичайне крафтування
+гри, три карти на набір, якщо сервер не скаже інакше (`MarkUses`); карту в руках можна
+детально роздивитися (власна дія карти, кілька секунд), і це покаже, чи вона мічена; хто
+карту позначив або роздивився, бачить її лице олівцем на сорочці, де б вона не лежала
+сорочкою догори, і саму мітку в узорі сорочки; більше нікому нічого не кажуть. Набір —
+відкрита бляшанка з кустарним крамом, модель самого мода: туш, клей, шило, надфіль,
+наждачка, лезо, свинцеві очки для кісток і відмички, обмотані ізолентою. Хто роздачу за
 роздачею грає міченими картами, яких не читає, з часом починає їх помічати — по одній
 карті й випадково, і йому про це нічого не кажуть: відтоді на сорочці такої карти він
 бачить мітку в узорі, а на її лиці — маленьку темну цятку біля краю. Помічене лишається

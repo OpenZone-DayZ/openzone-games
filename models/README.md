@@ -1,15 +1,16 @@
 # The models of OpenZone Games
 
-Five small models, drawn from nothing by the scripts in this folder: the laid-out game, the
-deck, a single card, the fan of cards in a hand and the mark of a seat. Nothing in them is
-copied from another game or mod; meshes and textures alike are made by the scripts (the
-pictures some cards of the stalkers' deck carry are GSC Game World's, see the mod's NOTICE).
+Six small models, drawn from nothing by the scripts in this folder: the laid-out game, the
+deck, a single card, the fan of cards in a hand, the mark of a seat and the card sharp's
+kit. Nothing in them is copied from another game or mod; meshes and textures alike are made
+by the scripts (the pictures some cards of the stalkers' deck carry are GSC Game World's,
+see the mod's NOTICE).
 
 | | |
 |---|---|
 | ![place](preview/place.png) | ![deck](preview/deck.png) |
 | ![card](preview/card.png) | ![hand](preview/hand.png) |
-| ![mark](preview/mark.png) | |
+| ![mark](preview/mark.png) | ![sharpkit](preview/sharpkit.png) |
 
 The picture of the fan shows it twice: on the left as others see it, on the right the same
 fan turned round, as its holder sees it.
@@ -22,8 +23,9 @@ fan turned round, as its holder sees it.
 | `OpenZone_Games/data/cards/` | the deck sheets and their material, shared by three of the models; `ozg_card.rvmat`, the single card's material |
 | `OpenZone_Games/data/cards/<style>/` | the single card's pictures in one deck: `ozg_<style>_<face>_co.paa` for each face and `ozg_<style>_back_co.paa` (`tools/make_cards.py`) |
 | `models/src/<model>.py` | the Blender script that builds `models/src/<model>.blend` and renders `models/preview/<model>.png` |
-| `models/src/ozg_kit.py` | what the five scripts share: faces, LODs, materials, the preview |
+| `models/src/ozg_kit.py` | what the scripts share: faces, LODs, materials, the preview (the name is older than the card sharp's kit and has nothing to do with it) |
 | `models/src/make_textures.py` | draws the PNG sources of the textures (Pillow) |
+| `models/src/sharpkit_atlas.py` | where each part of the card sharp's kit lies on its one texture: `make_textures.py` draws by it, `sharpkit.py` maps by it |
 | `models/<model>/<name>.p3d` | the MLOD exported from the `.blend`: the source the shipped model is built from |
 | `models/<model>/data/*.png`, `models/cards/data/*.png` | the texture sources |
 | `models/prepare_model_root.py` | lays out the binarize root under `build/model-root` |
@@ -44,6 +46,7 @@ off the exported MLODs by `measure.py`.
 | `card/ozg_card.p3d` | 0.063 x 0.088 x 0.0003 | 36 | `face`, `back` | Geometry, View Geometry: a box 0.063 x 0.088 x 0.002; Memory: the inventory's camera |
 | `hand/ozg_hand.p3d` | 0.149 x 0.112 x 0.0045 | 32 | `card1` ... `card8` | Geometry: one box 0.06 x 0.09 x 0.01 |
 | `mark/ozg_mark.p3d` | 0.480 x 0.040 x 0.480 | 68 | `camo` | none |
+| `sharpkit/ozg_sharpkit.p3d` | 0.092 x 0.034 x 0.092 | 1212 | `camo` | Geometry and Fire Geometry: one box 0.092 x 0.018 x 0.092, 0.2 kg; View Geometry: the same, 0.034 high; Memory: the inventory's camera |
 
 Each has one visual LOD (resolution 1): at these sizes a second one would save nothing.
 Every `model.cfg` has a `CfgModels` class named as its file, no skeleton, no animations,
@@ -188,6 +191,38 @@ centre is 0, 0, 0 (measured). That point is why the model is 0.04 m high in the 
 `KEEP_ORIGIN = "box"` in `mark.py` is the other way: a real Geometry LOD, a 1 cm box on the
 floor in the middle of the ring.
 
+### sharpkit: the card sharp's kit
+
+An open tin standing in its own lid -- the tin 88 mm across and 18 mm high, the lid 91.6 mm
+-- and the handmade things a card sharp keeps in it: a squat bottle of Indian ink with ТУШ
+on its label, a tube of glue with КЛЕЙ on it, an awl with a wooden handle, a cut-down file,
+two scraps of sandpaper (a coarse brown one under the awl's handle, a fine black one on the
+floor), a razor blade, a little heap of lead pips for loading dice and two picks bent out of
+wire, their handles bound with tape. Everything takes one texture of 512 px, its parts laid
+out by `src/sharpkit_atlas.py`; the two words on the labels are Ukrainian, drawn in Oswald
+(`art/fonts/oswald`).
+
+It STANDS in the model as it stands on a table: open side towards +Y, the middle of the
+lid's underside at the origin (`autocenter = 0`; the built model's bounding centre is
+0, 0, 0). What lies in it is laid out for somebody in front of it, at +Z and above, where
+the inventory's camera is (`invView` 0.02, 0.17, 0.15), and the ink bottle's label is turned
+towards that point. `camo` is every face.
+
+Measured in the game on 2026-11-25 (diag 1.30, the NHChernobyl stand):
+
+- `rotationFlags = 32`, the TunaCan's, laid it on the ground upside down; `0` lays it open
+  side up, as the game's own Pot lies, whose config names none.
+- In the hand it borrows the TunaCan's pose (`OZG_Hand.c`, `tuna.anm`), which holds it by
+  the rim with the open side turned outwards. That is how the game holds its own open tins:
+  TunaCan_Opened takes the same pose, and Pate_Opened's `foodcan100g.anm` turns its opening
+  outwards as well.
+- The inventory, the hands slot and the item's own window show the open tin from in front
+  and above, both labels readable.
+
+The material, `data/ozg_sharpkit.rvmat`, is the place's with the shine of the game's sewing
+kit (specular 0.54, power 100, fresnel 2, 0.81). `ozg_sharpkit_smdi.paa` says where it
+shines: glass, the blade and bare steel most, the enamel less, paper, wood and sand hardly.
+
 ## The deck sheet
 
 `OpenZone_Games/data/cards/ozg_deck_<style>_co.paa`, 512 x 512, opaque, drawn by
@@ -252,6 +287,13 @@ hiddenSelectionsMaterials[] = {"OpenZone_Games\models\mark\data\ozg_mark.rvmat"}
 // a mark of another colour: both lines
 hiddenSelectionsTextures[] = {"#(argb,8,8,3)color(1.0,0.72,0.15,1.0,co)"};
 hiddenSelectionsMaterials[] = {"OpenZone_Games\models\mark\data\ozg_mark_amber.rvmat"};
+
+// the card sharp's kit
+model = "\OpenZone_Games\models\sharpkit\ozg_sharpkit.p3d";
+rotationFlags = 0;
+hiddenSelections[] = {"camo"};
+hiddenSelectionsTextures[] = {"OpenZone_Games\models\sharpkit\data\ozg_sharpkit_co.paa"};
+hiddenSelectionsMaterials[] = {"OpenZone_Games\models\sharpkit\data\ozg_sharpkit.rvmat"};
 ```
 
 `camo` and `deck` overlap on the place: the deck's faces are in both, and a texture put on
@@ -264,13 +306,14 @@ first with the mat's texture, and the deck's sheet after it.
 The texture sources, when a picture changes:
 
 ```
-python -I models/src/make_textures.py
+python -I models/src/make_textures.py [place] [deck] [mark] [card] [sharpkit]
 asset_convert(source="models/place/data/ozg_place_co.png",
               output="../../../OpenZone_Games/models/place/data/ozg_place_co.paa")
 ```
 
-and so for each PNG (`output` is read from the source's own folder): `models/place/data/*`
-and `models/mark/data/*` go to the model's own `data/`, `models/cards/data/*` to
+(with no name it draws them all) and so for each PNG (`output` is read from the source's
+own folder): `models/place/data/*`, `models/mark/data/*` and `models/sharpkit/data/*` go to
+the model's own `data/`, `models/cards/data/*` to
 `OpenZone_Games/data/cards/`. ImageToPAA picks the format by the source's name (`_co` DXT1,
 `_nohq` DXT5 with the swizzle, `_smdi` DXT1). The `.rvmat` files are kept by hand.
 
@@ -312,6 +355,8 @@ Read off the files (2026-11-24):
   the place were inlined, the selections are in the models, and `sections[]` does split
   the faces (the fan built with an empty `sections[]` is 326 bytes smaller);
 - the bounding centre each built model carries (`measure.py`): 0, 0, 0 for all five.
+- the card sharp's kit (2026-11-25) likewise: clean for `asset_check`, its bounding
+  centre 0, 0, 0; what the game showed of it is under its own heading.
 
 Seen in the game (2026-11-24, diag 1.30, the NHChernobyl stand): the deck and the card in
 the inventory, in the hand and on the ground, as written under each; both decks' cards in

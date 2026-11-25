@@ -126,14 +126,15 @@ fills itself again): take a new one with `!ozg deck`.
 
 ## Marks and studying a card
 
-The pen marks a card through the game's crafting: the pen in your hands, a card you
+The card sharp's kit (until 2026-11-25 a pen) marks a card through the game's crafting,
+three cards to a kit (`MarkUses`), and an empty kit is gone: the kit in your hands, a card you
 carry dragged onto it, then hold the left button (8 s, `MarkSeconds2`; the gesture takes
 about 2 s more). A card in a deck cannot be dragged: take it out first. A card in your
 hands is studied closely by its own action, "Study closely" (5 s, `StudySeconds`): you
 are told alone "The card is marked" or "Nothing found", and you read a marked card from
 then on. (The loupe did this until 2026-11-25; it is gone.)
 
-    oz_games {"op":"give","what":"OZG_MarkTool"}        the pen, into the hands
+    oz_games {"op":"give","what":"OZG_MarkTool"}        the kit, into the hands
     oz_games {"op":"give","what":"OZG_Card_As"}         a card, into the hands (the inventory when they are full)
 
 Without the gesture, the server's half of it:

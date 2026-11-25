@@ -1,8 +1,9 @@
 """Draw the texture sources of the models. Pillow and the standard library, nothing else.
 
-    python -I models/src/make_textures.py
+    python -I models/src/make_textures.py [place] [deck] [mark] [card] [sharpkit]
 
-It writes the PNG sources the shipped .paa are converted from (asset_convert):
+With no name it draws them all. It writes the PNG sources the shipped .paa are converted
+from (asset_convert):
 
     models/place/data/ozg_place_co.png             512  the mat: dark green felt, a lighter sewn
                                                         binding, worn
@@ -15,6 +16,13 @@ It writes the PNG sources the shipped .paa are converted from (asset_convert):
     models/mark/data/ozg_mark_smdi.png              16  no shine
     models/cards/data/ozg_card_nohq.png             16  one card: flat
     models/cards/data/ozg_card_smdi.png             16  one card: a soft sheen
+    models/sharpkit/data/ozg_sharpkit_co.png       512  the card sharp's kit: an open tin and
+                                                        the handmade things in it, every part
+                                                        where sharpkit_atlas.py puts it
+    models/sharpkit/data/ozg_sharpkit_nohq.png     512  its relief: the tin's beads, the file's
+                                                        teeth, the tape, the creased tube
+    models/sharpkit/data/ozg_sharpkit_smdi.png     256  where it shines: glass, the blade and
+                                                        bare steel most, paper and sand hardly
 
 Everything is drawn from fixed seeds: a second run gives the same pictures.
 
@@ -31,11 +39,13 @@ The deck sheet, 512 x 512, origin at the top left:
 import math
 import os
 import random
+import sys
 
-from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageOps
+from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont, ImageOps
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MODELS = os.path.dirname(HERE)
+REPO = os.path.dirname(MODELS)
 
 LANCZOS = Image.Resampling.LANCZOS
 BICUBIC = Image.Resampling.BICUBIC
@@ -469,19 +479,496 @@ def save(img, *parts):
     print("%-48s %4d x %-4d %s" % ("/".join(("models",) + parts), img.width, img.height, img.mode))
 
 
-def main():
+# ------------------------------------------------------------ the card sharp's kit
+# An open tin, standing in its lid, and the handmade things a card sharp keeps in it
+# (models/src/sharpkit.py). Every part lies on one picture, where sharpkit_atlas.py says;
+# it is drawn on a canvas twice the size and halved.
+KIT_SIZE = 512
+KIT_SMDI_SIZE = 256
+KIT_LEVEL = 100              # the height every part lies at; the relief goes up and down from it
+KIT_LEVELS_PER_MM = 400.0    # 255 levels are 0.64 mm
+KIT_PX_PER_MM = 12.0         # about: the regions are not all drawn to one scale
+KIT_RELIEF = 1.3
+KIT_FONT = os.path.join(REPO, "art", "fonts", "oswald", "Oswald[wght].ttf")
+
+ENAMEL = ((40, 48, 33), (78, 88, 60))
+STEEL = ((100, 101, 97), (170, 169, 162))
+TINPLATE = ((104, 102, 96), (174, 172, 164))
+RUST = ((64, 35, 19), (140, 80, 40))
+ALU = ((142, 144, 142), (214, 216, 212))
+WOOD = ((104, 68, 36), (182, 138, 86))
+LEAD = ((70, 72, 80), (120, 122, 130))
+SAND = ((98, 68, 40), (166, 122, 76))
+GRIME = (62, 56, 44)
+GLUE_PRINT = (204, 156, 36)
+GLUE_INK = (112, 20, 16)
+PAPER_OLD = (218, 204, 168)
+INK = (12, 12, 20)
+GLASS = (20, 22, 26)
+BAKELITE = (26, 22, 20)
+CAP_RED = (146, 30, 22)
+TAPE = (24, 24, 26)
+
+# (how strong the highlight is, how tight) for each stuff, as the _smdi's green and blue.
+KIT_SHINE = {
+    "enamel": (64, 96), "steel": (150, 140), "tin": (168, 160), "rust": (12, 18),
+    "alu": (150, 120), "print": (56, 80), "paper": (18, 26), "glass": (230, 236),
+    "bakelite": (96, 130), "red": (84, 110), "wood": (22, 28), "tape": (52, 64),
+    "lead": (40, 46), "sand": (4, 8), "blade": (205, 210), "grime": (20, 24),
+}
+
+
+def kit_atlas():
+    sys.path.insert(0, HERE)
+    import sharpkit_atlas
+    return sharpkit_atlas
+
+
+def px_blur(img, radius):
+    return img.filter(ImageFilter.GaussianBlur(radius))
+
+
+def mix(*parts):
+    """Masks added up, each scaled: mix((mask, 0.6), (other, 0.4))."""
+    out = None
+    for mask, k in parts:
+        layer = scale(mask, k)
+        out = layer if out is None else ImageChops.add(out, layer)
+    return out
+
+
+def kit_shine(size, base, *layers):
+    """The shine of a region: `base` stuff everywhere, each (mask, stuff) over it."""
+    s, t = KIT_SHINE[base]
+    strong = Image.new("L", size, s)
+    tight = Image.new("L", size, t)
+    for mask, name in layers:
+        s, t = KIT_SHINE[name]
+        strong = Image.composite(Image.new("L", size, s), strong, mask)
+        tight = Image.composite(Image.new("L", size, t), tight, mask)
+    return strong, tight
+
+
+def kit_scratches(rng, size, count, length, width=1, angle=None, spread=20.0):
+    """Thin straight scratches, white on black. With `angle` (degrees from the x axis) they
+    run that way, give or take `spread`; without it, every way."""
+    mask = Image.new("L", size, 0)
+    draw = ImageDraw.Draw(mask)
+    w, h = size
+    for _ in range(count):
+        x, y = rng.uniform(0, w), rng.uniform(0, h)
+        a = rng.uniform(0.0, 180.0) if angle is None else angle + rng.uniform(-spread, spread)
+        a = math.radians(a)
+        n = rng.uniform(*length)
+        draw.line([(x, y), (x + math.cos(a) * n, y + math.sin(a) * n)],
+                  fill=int(255 * rng.uniform(0.45, 1.0)), width=width)
+    return mask
+
+
+def band_wear(rng, size, top, bottom, lo=150, hi=200):
+    """Where the paint of a band round a tin is rubbed off: near its top edge (within `top`
+    pixels) and its bottom edge (`bottom`), broken up by noise."""
+    w, h = size
+    ramp = Image.new("L", size, 0)
+    draw = ImageDraw.Draw(ramp)
+    for y in range(h):
+        v = 0.0
+        if top:
+            v = max(v, 1.0 - y / float(top))
+        if bottom:
+            v = max(v, 1.0 - (h - 1 - y) / float(bottom))
+        draw.line([(0, y), (w, y)], fill=int(255 * max(0.0, v)))
+    noise = fbm(rng, size, (40, 12, 4), (1.0, 0.6, 0.35))
+    return curve(mix((ramp, 0.75), (noise, 0.55)), lo, hi)
+
+
+def kit_text(size, text, fit, turn=0, weight=600):
+    """`text` in white on black, Oswald, as large as fits in `fit` = (along the line, across
+    it) pixels, in the middle of a picture of `size`, turned by `turn` degrees
+    (anticlockwise, as PIL turns)."""
+    font = ImageFont.truetype(KIT_FONT, 200)
+    try:
+        font.set_variation_by_axes([weight])
+    except (OSError, AttributeError):
+        pass
+    box = font.getbbox(text)
+    tw, th = box[2] - box[0], box[3] - box[1]
+    words = Image.new("L", (tw, th), 0)
+    ImageDraw.Draw(words).text((-box[0], -box[1]), text, font=font, fill=255)
+    k = min(fit[0] / float(tw), fit[1] / float(th))
+    words = words.resize((max(1, int(tw * k)), max(1, int(th * k))), LANCZOS)
+    if turn:
+        words = words.rotate(turn, resample=BICUBIC, expand=True)
+    out = Image.new("L", size, 0)
+    out.paste(words, ((size[0] - words.width) // 2, (size[1] - words.height) // 2))
+    return out
+
+
+def blob(rng, size, cx, cy, r, drops=6):
+    """A spilt drop with a few splashes round it, white on black, soft."""
+    mask = Image.new("L", size, 0)
+    draw = ImageDraw.Draw(mask)
+    draw.ellipse([cx - r, cy - r * 0.8, cx + r, cy + r * 0.8], fill=255)
+    for _ in range(drops):
+        a = rng.uniform(0.0, 2.0 * math.pi)
+        d = r * rng.uniform(0.9, 1.9)
+        s = r * rng.uniform(0.12, 0.35)
+        x, y = cx + math.cos(a) * d, cy + math.sin(a) * d * 0.8
+        draw.ellipse([x - s, y - s, x + s, y + s], fill=255)
+    return px_blur(mask, r * 0.08)
+
+
+def kit_wall(rng, size, top, bottom, beads=()):
+    """A band of olive enamel round a tin, rubbed down to the steel at its edges and
+    scratched up and down; `beads` are the rows a raised bead runs round at."""
+    colour = tint(fbm(rng, size, (60, 18, 5), (1.0, 0.5, 0.3)), *ENAMEL)
+    bare = ImageChops.lighter(band_wear(rng, size, top, bottom),
+                              kit_scratches(rng, size, size[0] // 14, (5, 26), 2, angle=90.0))
+    for y in beads:
+        ridge = Image.new("L", size, 0)
+        ImageDraw.Draw(ridge).line([(0, y), (size[0], y)], fill=255, width=3)
+        bare = ImageChops.lighter(bare, curve(ImageChops.multiply(
+            ridge, fbm(rng, size, (30, 8), (1.0, 0.5))), 60, 130))
+    colour = Image.composite(tint(fbm(rng, size, (30, 6), (1.0, 0.4)), *STEEL), colour, bare)
+    rust = curve(ImageChops.multiply(px_blur(bare, 4), fbm(rng, size, (20, 6), (1.0, 0.5))), 70, 120)
+    colour = Image.composite(tint(fbm(rng, size, (8, 3), (1.0, 0.5)), *RUST), colour, rust)
+    height = Image.new("L", size, KIT_LEVEL)
+    for y in beads:
+        ridge = Image.new("L", size, 0)
+        ImageDraw.Draw(ridge).line([(0, y), (size[0], y)], fill=255, width=7)
+        height = ImageChops.add(height, scale(px_blur(ridge, 2.5), 60 / 255.0))
+    height = ImageChops.subtract(height, scale(bare, 10 / 255.0))
+    return (colour, height) + kit_shine(size, "enamel", (bare, "steel"), (rust, "rust"))
+
+
+def kit_tinplate(rng, size, grime_rows=0):
+    """Bare tinplate, scratched, dirtier towards its last `grime_rows` rows."""
+    colour = tint(fbm(rng, size, (70, 20, 5), (1.0, 0.5, 0.3)), *TINPLATE)
+    scr = kit_scratches(rng, size, max(12, size[0] * size[1] // 2500), (6, 40), 1)
+    colour = Image.composite(Image.new("RGB", size, TINPLATE[1]), colour, scale(scr, 0.6))
+    grime = Image.new("L", size, 0)
+    if grime_rows:
+        draw = ImageDraw.Draw(grime)
+        h = size[1]
+        for y in range(h):
+            v = max(0.0, 1.0 - (h - 1 - y) / float(grime_rows))
+            draw.line([(0, y), (size[0], y)], fill=int(200 * v))
+        grime = ImageChops.multiply(grime, fbm(rng, size, (20, 6), (1.0, 0.5)))
+        colour = Image.composite(Image.new("RGB", size, GRIME), colour, grime)
+    height = ImageChops.subtract(Image.new("L", size, KIT_LEVEL), scale(scr, 8 / 255.0))
+    return (colour, height) + kit_shine(size, "tin", (curve(grime, 60, 140), "grime"))
+
+
+def kit_floor(rng, size, stains):
+    """The floor inside the tin: tinplate gone dull, grime where it meets the wall, rust
+    specks, and what was spilt there: `stains` = (fx, fy, radius_px, colour, stuff)."""
+    colour, height, strong, tight = kit_tinplate(rng, size)
+    w, h = size
+    disc = Image.new("L", size, 0)
+    ImageDraw.Draw(disc).ellipse([4, 4, w - 5, h - 5], fill=255)
+    edge = ImageChops.subtract(disc, px_blur(disc, 18))
+    edge = ImageChops.lighter(edge, ImageChops.invert(disc))
+    grime = curve(mix((edge, 0.9), (fbm(rng, size, (40, 10), (1.0, 0.5)), 0.5)), 110, 200)
+    colour = Image.composite(Image.new("RGB", size, GRIME), colour, grime)
+    rust = curve(fbm(rng, size, (14, 5, 2), (1.0, 0.6, 0.4)), 205, 235)
+    rust = ImageChops.lighter(rust, curve(ImageChops.multiply(grime, fbm(rng, size, (10, 4), (1.0, 0.5))), 120, 170))
+    colour = Image.composite(tint(fbm(rng, size, (6, 2), (1.0, 0.5)), *RUST), colour, rust)
+    marks = [(grime, "grime"), (rust, "rust")]
+    for fx, fy, r, tone, stuff in stains:
+        spot = blob(rng, size, fx * w, fy * h, r)
+        colour = Image.composite(Image.new("RGB", size, tone), colour, spot)
+        marks.append((curve(spot, 100, 160), stuff))
+    return (colour, height) + kit_shine(size, "tin", *marks)
+
+
+def kit_glue(rng, size):
+    """The glue tube, opened out: yellow print on aluminium, a pale panel with КЛЕЙ (glue)
+    running along the tube, creased where it was squeezed. The flattened end is at the top
+    of the picture; round the tube runs along x, its middle the panel's."""
+    w, h = size
+    colour = tint(fbm(rng, size, (40, 10), (1.0, 0.5)), (186, 140, 30), GLUE_PRINT)
+    bare = Image.new("L", size, 0)
+    draw = ImageDraw.Draw(bare)
+    draw.rectangle([0, 0, w, 14], fill=255)
+    draw.rectangle([0, h - 12, w, h], fill=255)
+    panel = Image.new("L", size, 0)
+    ImageDraw.Draw(panel).rectangle([int(w * 0.28), int(h * 0.12), int(w * 0.72), int(h * 0.90)], fill=255)
+    colour = Image.composite(Image.new("RGB", size, (226, 214, 182)), colour, panel)
+    words = kit_text(size, "КЛЕЙ", (int(h * 0.66), int(w * 0.34)), turn=-90, weight=700)
+    colour = Image.composite(Image.new("RGB", size, GLUE_INK), colour, words)
+    small = Image.new("L", size, 0)
+    draw = ImageDraw.Draw(small)
+    for i in range(4):
+        x = int(w * 0.64) + 0 * i
+        y0 = int(h * 0.18) + i * 4
+        draw.line([(x - 3 - i * 6, y0), (x - 3 - i * 6, int(h * 0.84))], fill=200, width=2)
+    colour = Image.composite(Image.new("RGB", size, (150, 120, 60)), colour, scale(small, 0.7))
+    creases = kit_scratches(rng, size, 26, (w * 0.3, w * 0.9), 2, angle=0.0, spread=25.0)
+    bare = ImageChops.lighter(bare, curve(ImageChops.multiply(creases, fbm(rng, size, (12, 4), (1.0, 0.5))), 90, 150))
+    colour = Image.composite(tint(fbm(rng, size, (20, 5), (1.0, 0.5)), *ALU), colour, bare)
+    colour = Image.composite(Image.new("RGB", size, (70, 56, 30)), colour, scale(px_blur(creases, 1.2), 0.35))
+    height = ImageChops.subtract(Image.new("L", size, KIT_LEVEL), scale(px_blur(creases, 1.5), 40 / 255.0))
+    return (colour, height) + kit_shine(size, "print", (bare, "alu"), (panel, "paper"))
+
+
+def kit_crimp(rng, size):
+    """The tube's flattened end: aluminium pressed into ridges across it."""
+    colour = tint(fbm(rng, size, (24, 6), (1.0, 0.5)), *ALU)
+    ridges = Image.new("L", size, 0)
+    draw = ImageDraw.Draw(ridges)
+    for y in range(size[1] // 3, size[1], 10):
+        draw.line([(0, y), (size[0], y)], fill=255, width=3)
+    colour = Image.composite(Image.new("RGB", size, ALU[0]), colour, scale(ridges, 0.5))
+    stripe = Image.new("L", size, 0)
+    ImageDraw.Draw(stripe).rectangle([0, 0, size[0], size[1] // 4], fill=255)
+    colour = Image.composite(Image.new("RGB", size, GLUE_PRINT), colour, stripe)
+    height = ImageChops.add(Image.new("L", size, KIT_LEVEL), scale(px_blur(ridges, 1.5), 50 / 255.0))
+    return (colour, height) + kit_shine(size, "alu", (stripe, "print"))
+
+
+def kit_ribbed(rng, size, tone, stuff, ribs, glass_rows=0):
+    """A cap: plastic with ribs round it, and, under `glass_rows`, the bottle's neck."""
+    colour = tint(fbm(rng, size, (16, 4), (1.0, 0.5)), tuple(max(0, c - 18) for c in tone), tone)
+    lines = Image.new("L", size, 0)
+    draw = ImageDraw.Draw(lines)
+    step = size[0] / float(ribs)
+    for i in range(ribs):
+        x = int(i * step)
+        draw.line([(x, 0), (x, size[1])], fill=255, width=2)
+    colour = Image.composite(Image.new("RGB", size, tuple(min(255, c + 40) for c in tone)), colour, scale(lines, 0.5))
+    height = ImageChops.add(Image.new("L", size, KIT_LEVEL), scale(px_blur(lines, 1.2), 40 / 255.0))
+    glass = Image.new("L", size, 0)
+    if glass_rows:
+        ImageDraw.Draw(glass).rectangle([0, size[1] - glass_rows, size[0], size[1]], fill=255)
+        colour = Image.composite(Image.new("RGB", size, GLASS), colour, glass)
+        height = Image.composite(Image.new("L", size, KIT_LEVEL), height, glass)
+    return (colour, height) + kit_shine(size, stuff, (glass, "glass"))
+
+
+def kit_ink(rng, size):
+    """The ink bottle, opened out: dark glass full of ink, the shine of it in two soft
+    stripes, and a paper label with ТУШ (Indian ink) on the side that faces out. Round the
+    bottle runs along x, the label in its middle; the foot is at the bottom."""
+    w, h = size
+    colour = Image.new("RGB", size, GLASS)
+    shine = Image.new("L", size, 0)
+    draw = ImageDraw.Draw(shine)
+    for fx in (0.36, 0.40, 0.84):
+        draw.line([(int(w * fx), 0), (int(w * fx), h)], fill=255, width=4)
+    shine = px_blur(shine, 3)
+    colour = Image.composite(Image.new("RGB", size, (120, 126, 136)), colour, scale(shine, 0.55))
+    label = Image.new("L", size, 0)
+    ImageDraw.Draw(label).rectangle([int(w * 0.30), int(h * 0.16), int(w * 0.70), int(h * 0.80)], fill=255)
+    paper = tint(fbm(rng, size, (20, 6), (1.0, 0.5)), (186, 170, 132), PAPER_OLD)
+    colour = Image.composite(paper, colour, label)
+    words = kit_text((w, int(h * 0.66)), "ТУШ", (int(w * 0.27), int(h * 0.34)), weight=700)
+    word_layer = Image.new("L", size, 0)
+    word_layer.paste(words, (0, int(h * 0.14)))
+    colour = Image.composite(Image.new("RGB", size, INK), colour, word_layer)
+    line = Image.new("L", size, 0)
+    ImageDraw.Draw(line).line([(int(w * 0.36), int(h * 0.70)), (int(w * 0.64), int(h * 0.70))], fill=255, width=3)
+    colour = Image.composite(Image.new("RGB", size, INK), colour, line)
+    dribble = blob(rng, size, w * 0.62, h * 0.28, 7, drops=3)
+    colour = Image.composite(Image.new("RGB", size, INK), colour, scale(dribble, 0.9))
+    height = Image.new("L", size, KIT_LEVEL)
+    return (colour, height) + kit_shine(size, "glass", (label, "paper"))
+
+
+def kit_wood(rng, size):
+    """The awl's handle, opened out: pale wood with its grain along the handle, black with
+    hands round the middle, the butt end battered."""
+    w, h = size
+    grain = Image.new("L", size, 0)
+    draw = ImageDraw.Draw(grain)
+    for _ in range(46):
+        x = rng.uniform(0, w)
+        wobble = rng.uniform(2, 6)
+        pts = [(x + math.sin(y / rng.uniform(14, 30)) * wobble, y) for y in range(0, h + 8, 8)]
+        draw.line(pts, fill=int(rng.uniform(90, 255)), width=int(rng.choice((1, 2, 2, 3))))
+    base = tint(fbm(rng, size, (40, 10), (1.0, 0.5)), WOOD[0], WOOD[1])
+    colour = Image.composite(Image.new("RGB", size, WOOD[0]), base, scale(px_blur(grain, 0.8), 0.7))
+    band = Image.new("L", size, 0)
+    draw = ImageDraw.Draw(band)
+    for y in range(h):
+        t = abs(y / float(h) - 0.55) / 0.30
+        draw.line([(0, y), (w, y)], fill=int(255 * max(0.0, 1.0 - t)))
+    grime = curve(ImageChops.multiply(band, fbm(rng, size, (16, 5), (1.0, 0.6))), 50, 160)
+    colour = Image.composite(Image.new("RGB", size, (58, 40, 26)), colour, scale(grime, 0.8))
+    height = ImageChops.subtract(Image.new("L", size, KIT_LEVEL), scale(px_blur(grain, 1.0), 14 / 255.0))
+    return (colour, height) + kit_shine(size, "wood", (curve(grime, 120, 200), "tape"))
+
+
+def kit_file(rng, size):
+    """The file's cut faces: its teeth cut across it both ways, the handle end knurled."""
+    w, h = size
+    colour = tint(fbm(rng, size, (30, 6), (1.0, 0.5)), (78, 80, 82), (132, 134, 136))
+    teeth = Image.new("L", size, 0)
+    draw = ImageDraw.Draw(teeth)
+    grip = int(w * 0.30)
+    for x in range(grip - h, w + h, 7):
+        draw.line([(x, 0), (x + h * 0.6, h)], fill=255, width=2)
+    for x in range(grip - h, w + h, 11):
+        draw.line([(x + h * 0.4, 0), (x, h)], fill=170, width=2)
+    cut = Image.new("L", size, 0)
+    ImageDraw.Draw(cut).rectangle([grip, 0, w, h], fill=255)
+    teeth = ImageChops.multiply(teeth, cut)
+    knurl = Image.new("L", size, 0)
+    draw = ImageDraw.Draw(knurl)
+    for x in range(-h, grip, 6):
+        draw.line([(x, 0), (x + h, h)], fill=255, width=1)
+        draw.line([(x + h, 0), (x, h)], fill=255, width=1)
+    knurl = ImageChops.multiply(knurl, ImageChops.invert(cut))
+    marks = ImageChops.lighter(teeth, knurl)
+    colour = Image.composite(Image.new("RGB", size, (172, 174, 176)), colour, scale(marks, 0.55))
+    height = ImageChops.add(Image.new("L", size, KIT_LEVEL - 20), scale(px_blur(marks, 0.8), 50 / 255.0))
+    return (colour, height) + kit_shine(size, "steel")
+
+
+def kit_plain(rng, size, tones, stuff, lines=0, angle=0.0):
+    """One stuff all over, with `lines` faint strokes `angle` degrees from the x axis."""
+    colour = tint(fbm(rng, size, (20, 5), (1.0, 0.5)), *tones)
+    height = Image.new("L", size, KIT_LEVEL)
+    if lines:
+        strokes = kit_scratches(rng, size, lines, (size[0] * 0.2, size[0] * 0.8), 2, angle=angle, spread=4.0)
+        colour = Image.composite(Image.new("RGB", size, tones[1]), colour, scale(strokes, 0.4))
+        height = ImageChops.add(height, scale(px_blur(strokes, 1.0), 20 / 255.0))
+    return (colour, height) + kit_shine(size, stuff)
+
+
+def kit_sand(rng, size, tones=SAND, grain=0.6, worn_tone=(128, 118, 104), where=(0.55, 0.5)):
+    """A scrap of sandpaper: grit of `tones`, rubbed smooth and grey where it did its work."""
+    w, h = size
+    grit = Image.frombytes("L", size, rng.randbytes(w * h))
+    colour = tint(ImageOps.autocontrast(px_blur(grit, grain)), *tones)
+    worn = curve(blob(rng, size, w * where[0], h * where[1], w * 0.22, drops=2), 40, 200)
+    colour = Image.composite(Image.new("RGB", size, worn_tone), colour, scale(worn, 0.7))
+    edge = Image.new("L", size, 255)
+    ImageDraw.Draw(edge).rectangle([8, 8, w - 9, h - 9], fill=0)
+    colour = Image.composite(Image.new("RGB", size, (200, 186, 150)), colour, px_blur(edge, 2))
+    height = ImageChops.add(Image.new("L", size, KIT_LEVEL - 10), scale(px_blur(grit, 0.8), 24 / 255.0))
+    return (colour, height) + kit_shine(size, "sand")
+
+
+def kit_blade(rng, size):
+    """A double-edged razor blade, its long side along x: bright steel, the ground edges
+    brighter still, and the slot down its middle that shows what it lies on."""
+    w, h = size
+    colour = tint(fbm(rng, size, (30, 8), (1.0, 0.5)), (150, 152, 156), (196, 198, 202))
+    edges = Image.new("L", size, 0)
+    draw = ImageDraw.Draw(edges)
+    draw.rectangle([0, 0, w, 12], fill=255)
+    draw.rectangle([0, h - 13, w, h], fill=255)
+    colour = Image.composite(Image.new("RGB", size, (224, 226, 230)), colour, edges)
+    slot = Image.new("L", size, 0)
+    draw = ImageDraw.Draw(slot)
+    cy = h // 2
+    draw.rounded_rectangle([int(w * 0.16), cy - 7, int(w * 0.84), cy + 7], radius=7, fill=255)
+    for fx in (0.12, 0.88):
+        draw.ellipse([int(w * fx) - 13, cy - 13, int(w * fx) + 13, cy + 13], fill=255)
+    for fx in (0.36, 0.64):
+        draw.rectangle([int(w * fx) - 5, cy - 18, int(w * fx) + 5, cy + 18], fill=255)
+    colour = Image.composite(Image.new("RGB", size, (64, 60, 52)), colour, slot)
+    spots = curve(fbm(rng, size, (10, 3), (1.0, 0.5)), 215, 240)
+    colour = Image.composite(tint(fbm(rng, size, (6, 2), (1.0, 0.5)), *RUST), colour, spots)
+    height = Image.composite(Image.new("L", size, KIT_LEVEL - 40), Image.new("L", size, KIT_LEVEL), slot)
+    return (colour, height) + kit_shine(size, "blade", (slot, "grime"), (spots, "rust"))
+
+
+def sharpkit_maps():
+    """The colour, relief and shine of the kit, as the three PNGs."""
+    atlas = kit_atlas()
+    rng = random.Random(1125)
+    n = atlas.CANVAS
+    colour = Image.new("RGB", (n, n), STEEL[0])
+    height = Image.new("L", (n, n), KIT_LEVEL)
+    strong = Image.new("L", (n, n), KIT_SHINE["steel"][0])
+    tight = Image.new("L", (n, n), KIT_SHINE["steel"][1])
+
+    def size_of(name):
+        x0, y0, x1, y1 = atlas.REGIONS[name]
+        return (x1 - x0, y1 - y0)
+
+    parts = {
+        # Ink spilt by the bottle and glue that ran out of the tube, where sharpkit.py
+        # stands them (the floor: +X to the right, +Z down).
+        "floor": kit_floor(rng, size_of("floor"), [(0.35, 0.15, 26, INK, "glass"),
+                                                   (0.34, 0.80, 16, (150, 112, 40), "print")]),
+        "bottom": kit_plain(rng, size_of("bottom"), STEEL, "steel", lines=10, angle=30.0),
+        "wall": kit_wall(rng, size_of("wall"), 18, 10, beads=(30, 62)),
+        "inner": kit_tinplate(rng, size_of("inner"), grime_rows=28),
+        "lid": kit_wall(rng, size_of("lid"), 10, 6),
+        "rim": kit_plain(rng, size_of("rim"), STEEL, "steel", lines=30, angle=0.0),
+        "glue": kit_glue(rng, size_of("glue")),
+        "crimp": kit_crimp(rng, size_of("crimp")),
+        "glue_cap": kit_ribbed(rng, size_of("glue_cap"), CAP_RED, "red", ribs=18),
+        "ink": kit_ink(rng, size_of("ink")),
+        "ink_cap": kit_ribbed(rng, size_of("ink_cap"), BAKELITE, "bakelite", ribs=24, glass_rows=32),
+        "wood": kit_wood(rng, size_of("wood")),
+        "file": kit_file(rng, size_of("file")),
+        "steel": kit_plain(rng, size_of("steel"), STEEL, "steel", lines=40, angle=0.0),
+        "tape": kit_plain(rng, size_of("tape"), (TAPE, (52, 52, 56)), "tape", lines=16, angle=70.0),
+        "lead": kit_plain(rng, size_of("lead"), LEAD, "lead"),
+        "sand": kit_sand(rng, size_of("sand")),
+        "sand2": kit_sand(rng, size_of("sand2"), ((34, 34, 38), (90, 90, 96)), 0.35,
+                          (112, 110, 106), (0.38, 0.62)),
+        "blade": kit_blade(rng, size_of("blade")),
+    }
+    for name, (c, hgt, s, t) in parts.items():
+        x0, y0 = atlas.REGIONS[name][:2]
+        colour.paste(c, (x0, y0))
+        height.paste(hgt, (x0, y0))
+        strong.paste(s, (x0, y0))
+        tight.paste(t, (x0, y0))
+
+    out = (KIT_SIZE, KIT_SIZE)
+    smdi = (KIT_SMDI_SIZE, KIT_SMDI_SIZE)
+    return (colour.resize(out, LANCZOS),
+            normal_map(height, out, KIT_RELIEF, KIT_LEVELS_PER_MM, KIT_PX_PER_MM),
+            Image.merge("RGB", (Image.new("L", smdi, 255), strong.resize(smdi, BOX), tight.resize(smdi, BOX))))
+
+
+def draw_place():
     layers = place_layers()
     save(place_colour(layers), "place", "data", "ozg_place_co.png")
     save(normal_map(place_height(layers), (PLACE_SIZE, PLACE_SIZE), PLACE_RELIEF, LEVELS_PER_MM, PX),
          "place", "data", "ozg_place_nohq.png")
     save(place_shine(layers), "place", "data", "ozg_place_smdi.png")
+
+
+def draw_deck():
     save(deck_relief(), "cards", "data", "ozg_deck_nohq.png")
     save(deck_shine(), "cards", "data", "ozg_deck_smdi.png")
+
+
+def draw_mark():
     save(flat(16, (128, 128, 255)), "mark", "data", "ozg_mark_nohq.png")
     save(flat(16, (255, 0, 0)), "mark", "data", "ozg_mark_smdi.png")
+
+
+def draw_card():
     # One card: flat, with the soft sheen of a coated card on both sides.
     save(flat(16, (128, 128, 255)), "cards", "data", "ozg_card_nohq.png")
     save(flat(16, (255, 22, 77)), "cards", "data", "ozg_card_smdi.png")
+
+
+def draw_sharpkit():
+    colour, relief, shine = sharpkit_maps()
+    save(colour, "sharpkit", "data", "ozg_sharpkit_co.png")
+    save(relief, "sharpkit", "data", "ozg_sharpkit_nohq.png")
+    save(shine, "sharpkit", "data", "ozg_sharpkit_smdi.png")
+
+
+DRAWN = {"place": draw_place, "deck": draw_deck, "mark": draw_mark, "card": draw_card,
+         "sharpkit": draw_sharpkit}
+
+
+def main():
+    wanted = sys.argv[1:] or list(DRAWN)
+    for name in wanted:
+        if name not in DRAWN:
+            sys.exit("nothing called %r is drawn here; there are %s" % (name, ", ".join(DRAWN)))
+    for name in wanted:
+        DRAWN[name]()
 
 
 if __name__ == "__main__":

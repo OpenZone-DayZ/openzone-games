@@ -227,8 +227,8 @@ STR_OZG_CARD_XR,Червоний джокер,Red joker
 STR_OZG_CARD_XB,Чорний джокер,Black joker
 # <<< generated: cards
 # -- the card sharp's tools
-STR_OZG_MARKTOOL_NAME,Ручка шулера,Card sharp's pen
-STR_OZG_MARKTOOL_DESC,"Мітить карту так, що ви впізнаєте її лице з сорочки. Візьміть ручку в руки й перетягніть на неї карту, яку несете.","Marks a card so that you know its face by its back. Take the pen in your hands and drag a card you carry onto it."
+STR_OZG_MARKTOOL_NAME,Шулерський набір,Card sharp's kit
+STR_OZG_MARKTOOL_DESC,"Бляшанка з кустарним крамом шулера: туш, клей, шило, надфіль, лезо, свинцеві очки для кісток і відмички. Мітить карту так, що ви впізнаєте її лице з сорочки. Візьміть набір у руки й перетягніть на нього карту, яку несете.","A tin of a card sharp's handmade gear: Indian ink, glue, an awl, a file, a razor blade, lead pips for dice and picks. Marks a card so that you know its face by its back. Take the kit in your hands and drag a card you carry onto it."
 STR_OZG_MARKTOOL_ACT,Позначити карту,Mark the card
 STR_OZG_STUDY_ACT,Детально роздивитися,Study closely
 STR_OZG_STUDY_MARKED,Карта мічена,The card is marked
@@ -571,7 +571,7 @@ STR_OZG_VPP_F_WATCHRADIUS,"бачить гру той, хто ближче, м",
 STR_OZG_VPP_F_IDLE,"гра без гравців складається, хв","a game with no players folds after, min"
 STR_OZG_VPP_F_HOSTAWAY,"господаря немає — роль переходить, хв","host away: the role passes after, min"
 STR_OZG_VPP_F_MARKSECONDS,"мітки вільних місць, с","free seats marked for, s"
-STR_OZG_VPP_F_MARKUSES,позначок одним інструментом,marks per tool
+STR_OZG_VPP_F_MARKUSES,позначок одним набором,marks per kit
 STR_OZG_VPP_F_MARKSECONDS2,"крапити одну карту, с","marking one card, s"
 STR_OZG_VPP_F_STUDY,"роздивитися карту, с","studying a card, s"
 STR_OZG_VPP_F_KNOWERS,"знають крап однієї карти, гравців","players who know a card's mark, most"

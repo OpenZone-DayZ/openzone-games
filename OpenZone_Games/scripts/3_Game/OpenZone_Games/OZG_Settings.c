@@ -90,9 +90,10 @@ class OZG_Settings : OZ_ConfigBase
     // 2: the marks. 3: squatting is SFP's squat where SFP runs. 4: noticing.
     // 5: sleights. 6: the loupe gone, its LoupeSeconds the StudySeconds of
     // studying a card closely. 7: the later games (stakes-and-games design).
+    // 8: the pen became the card sharp's kit, good for three marks.
     override int LatestVersion()
     {
-        return 7;
+        return 8;
     }
 
     // Every game of the mod, the order the host steps through them in.
@@ -183,7 +184,7 @@ class OZG_Settings : OZ_ConfigBase
         AllGames(GameIds);
         DebugLog = 0;
         Cheating = 1;
-        MarkUses = 20;
+        MarkUses = 3;
         MarkSeconds2 = 8;
         StudySeconds = 5;
         MarkKnowers = 16;
@@ -199,7 +200,7 @@ class OZG_Settings : OZ_ConfigBase
         if (from < 2)
         {
             Cheating = 1;
-            MarkUses = 20;
+            MarkUses = 3;
             MarkSeconds2 = 8;
             StudySeconds = 5;
             MarkKnowers = 16;
@@ -245,6 +246,10 @@ class OZG_Settings : OZ_ConfigBase
                     GameIds.Insert(all[g]);
             }
         }
+        // Version 7's tool was a pen good for twenty marks; the kit that took
+        // its place is good for three. A number an admin chose stays his.
+        if (from < 8 && MarkUses == 20)
+            MarkUses = 3;
         Version = LatestVersion();
         return true;
     }
@@ -348,7 +353,7 @@ class OZG_Settings : OZ_ConfigBase
             Cheating = 1;
         if (MarkUses < 1)
         {
-            MarkUses = 20;
+            MarkUses = 3;
             warnings++;
         }
         if (MarkSeconds2 < 1)

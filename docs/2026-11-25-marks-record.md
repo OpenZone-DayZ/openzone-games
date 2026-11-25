@@ -103,3 +103,21 @@ NHChernobyl, diag 1.30, a client at 1920 x 1080 and at 3840 x 1600.
   noticer's sign is not drawn.
 - The sleights and the dealer's choice (phase 4).
 - The pen's and the loupe's own models (design §12).
+
+## Later the same day: the pen became the card sharp's kit
+
+At the owner's word the pen gave way to a card sharp's kit, which is meant to load dice as
+well once the mod has dice, and is good for three marks by default. The class stays
+`OZG_MarkTool`, so pens already in a world and in spawn lists become kits; `MarkUses` went
+from 20 to 3, and a settings file of version 7 that kept the twenty is moved to three
+(version 8; a number an admin chose stays). The kit is a model of the mod's own, an open
+tin of handmade things: Indian ink, glue, an awl, a file, two scraps of sandpaper, a razor
+blade, lead pips for dice and two taped picks (`models/README.md`, "sharpkit").
+
+Seen on the stand (diag 1.30, NHChernobyl): the stand's settings file went from version 7
+with twenty uses to version 8 with three; three marks by the stand's `craft` op left the
+kit at 66.67, 33.33 and 0, and the empty kit was gone from the hands; the kit in the
+inventory, the hands slot and its own window in English and in Ukrainian; on the ground
+open side up; VPP's "Card sharping" page shows "marks per kit" / "позначок одним набором",
+default 3. Not done again with the kit: the drag of a card onto it with the real mouse and
+the hold, which the pen went through above; the recipe and the class are the same.
