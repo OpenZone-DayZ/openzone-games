@@ -138,6 +138,8 @@ class OZG_VerbOps
             return OZG_WorldOps.OpDeckReads(args, detail);
         if (op == "sleights")
             return OZG_WorldOps.OpSleights(args, detail);
+        if (op == "gfuzz")
+            return OZG_GFuzz.Run(args, detail);
         // -- ops of the later phases go above this line --
         detail = "unknown op '" + op + "'; known: " + KnownOps();
         return false;

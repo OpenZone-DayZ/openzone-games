@@ -680,6 +680,11 @@ class OZG_Durak : OZG_Game
 
     // Any card with a rank and a suit: a card of a rank durak does not deal
     // (a deuce) is simply a low one. A joker has neither.
+    override bool HasSleights()
+    {
+        return true;
+    }
+
     override bool SleightTakes(string face)
     {
         return OZG_Cards.RankOf(face) >= 0 && OZG_Cards.SuitOf(face) != "";

@@ -28,6 +28,8 @@ class OZG_Module : CF_ModuleWorld
         // module may have registered its game before this one ran.
         if (!OZG_Games.Sample(OZG_DurakConst.GAME_ID))
             OZG_Games.Register(new OZG_Durak());
+        if (!OZG_Games.Sample(OZG_OchkoConst.GAME_ID))
+            OZG_Games.Register(new OZG_Ochko());
         // -- games register above this line --
 
         if (!GetGame().IsServer())

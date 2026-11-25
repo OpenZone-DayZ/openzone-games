@@ -333,6 +333,54 @@ class OZG_Game
         return "";
     }
 
+    // ---- stakes and the rest the later games ask (stakes-and-games design §2) --
+
+    // Does this game play for stacks the host hands out (design §3)?
+    bool UsesStakes()
+    {
+        return false;
+    }
+
+    // Before Begin: the chips of each seat dealt in, beside `seats`.
+    void TakeStacks(array<int> seats, array<int> amounts)
+    {
+    }
+
+    // The chips of a seat now; -1 when the game keeps none.
+    int StackOf(int seat)
+    {
+        return -1;
+    }
+
+    // May sleights and the dealer's three touch this game (card sharp's
+    // design §6)? Durak's answer is yes; the later games' no.
+    bool HasSleights()
+    {
+        return false;
+    }
+
+    // How the log words a move of this game: a key of the string table and
+    // its arguments (`c:<card>` a card, `s:<seat>` a seat's name, anything
+    // else as it is). Empty for a move the window words itself (durak's).
+    void MoveWords(string move, array<string> into)
+    {
+        into.Clear();
+    }
+
+    // A legal move for the stand's bots: the first the game offers, unless a
+    // game knows better. "" when the seat has none.
+    string BotMove(int seat, OZG_Random chance)
+    {
+        array<string> can = new array<string>();
+        Moves(seat, can);
+        if (can.Count() == 0)
+            return "";
+        OZG_Random dice = chance;
+        if (!dice)
+            dice = new OZG_Random();
+        return can[dice.Below(can.Count())];
+    }
+
     // ---- what every game shares ----------------------------------------------
 
     // The value chosen for an option, or the fallback when none was.
