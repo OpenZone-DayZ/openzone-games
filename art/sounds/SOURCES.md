@@ -12,3 +12,8 @@ git) and encodes each with ffmpeg's `libvorbis`, quality 4, with ffmpeg's
 bit-exact flags, into the `.ogg` the mod carries. The design gives a sound
 15 m (design §17); the loudness of each is the `volume` of its shader in the
 script's table.
+
+The six sounds of the sleights (card sharp's design §6.1: `slip`, `swap`, `toss`,
+`deckin`, `deckout`, `pick`, added 2026-11-25) are made the same way and are
+quieter (`volume` 0.30): each is played on the client of the one who does the
+sleight and on the clients of those who saw it, never through the place.

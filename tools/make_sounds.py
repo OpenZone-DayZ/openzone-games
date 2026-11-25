@@ -1,9 +1,12 @@
 # Makes the sounds of the table (design §17) from numbers: a riffle shuffle, a
 # deal's quick run, the trump turned up, a card laid on the table, a card slid
 # over another, the table taken, a bout swept to the discards, cards drawn, the
-# deck put down on the mat and picked up. Every sound is shaped noise and a few
-# damped tones, drawn with a fixed seed: the same files every run. No recording
-# and nobody else's sound is in them (art/sounds/SOURCES.md).
+# deck put down on the mat and picked up; and the sleights' (card sharp's design
+# §6.1), quieter, each played on one client alone: a card slipped out of a
+# pocket, swapped, tossed onto the discards, pushed into the deck, drawn out of
+# it, cards set on top of it. Every sound is shaped noise and a few damped
+# tones, drawn with a fixed seed: the same files every run. No recording and
+# nobody else's sound is in them (art/sounds/SOURCES.md).
 #
 # Usage: python -I tools/make_sounds.py [--ffmpeg <ffmpeg.exe>] [--root <dir>]
 #
@@ -45,6 +48,14 @@ SOUNDS = [
     ("draw", "Draw", 1108, 0.35, "cards drawn from the stock"),
     ("putdown", "PutDown", 1109, 0.45, "the deck put down on the mat"),
     ("pickup", "PickUp", 1110, 0.40, "the deck picked up"),
+    # The sleights (card sharp's design §6.1): heard by the one who does it
+    # and by those who saw it, each on his own client, never through the place.
+    ("slip", "Slip", 1111, 0.30, "a sleight: a card slipped out of a pocket into the hand"),
+    ("swap", "Swap", 1112, 0.30, "a sleight: a card of the hand swapped for one from a pocket"),
+    ("toss", "Toss", 1113, 0.30, "a sleight: a card tossed onto the discards"),
+    ("deckin", "DeckIn", 1114, 0.30, "a sleight: a card pushed into the deck"),
+    ("deckout", "DeckOut", 1115, 0.30, "a sleight: a card drawn out of the deck"),
+    ("pick", "Pick", 1116, 0.30, "a sleight: cards set on top of the deck for the dealer"),
 ]
 
 
@@ -211,8 +222,62 @@ def pickup(rng):
     return out
 
 
+def slip(rng):
+    out = np.zeros(n_of(450))
+    put(out, rub(rng, 170, 400, 2500, 0.5), 0, 0.45)        # out of the pocket: cloth
+    put(out, rub(rng, 90, 2000, 7000, 0.4), 150, 0.40)      # slid in among the cards
+    put(out, snap(rng, 1800, 7000, 5.0), 245, 0.35)         # it joins the fan
+    return out
+
+
+def swap(rng):
+    out = np.zeros(n_of(600))
+    put(out, rub(rng, 90, 2000, 7000, 0.35), 0, 0.40)       # a card slid out of the fan
+    put(out, rub(rng, 160, 400, 2500, 0.5), 80, 0.40)       # the pocket
+    put(out, rub(rng, 90, 2000, 7000, 0.45), 230, 0.40)     # the other slid in
+    put(out, snap(rng, 1800, 7000, 5.0), 325, 0.30)
+    return out
+
+
+def toss(rng):
+    out = np.zeros(n_of(450))
+    put(out, snap(rng, 3000, 10000, 4.0), 0, 0.45)          # flicked off the fingers
+    put(out, rub(rng, 110, 2500, 8000, 0.3), 5, 0.20)       # through the air, a breath
+    put(out, snap(rng, 900, 5000, 9.0), 120, 0.60)          # onto the heap
+    put(out, knock(rng, 150, 8), 120, 0.15)
+    return out
+
+
+def deckin(rng):
+    out = np.zeros(n_of(450))
+    put(out, rub(rng, 170, 1500, 6500, 0.7), 0, 0.45)       # pushed along the deck's edge
+    put(out, knock(rng, 165, 10), 175, 0.40)                # home among the others
+    put(out, snap(rng, 1200, 5500, 6.0), 176, 0.30)
+    return out
+
+
+def deckout(rng):
+    out = np.zeros(n_of(500))
+    put(out, snap(rng, 2500, 9000, 3.5), 0, 0.30)           # caught by a fingernail
+    put(out, rub(rng, 150, 2000, 8000, 0.3), 10, 0.45)      # drawn out of the deck
+    put(out, rub(rng, 140, 400, 2500, 0.5), 170, 0.35)      # into the pocket
+    return out
+
+
+def pick(rng):
+    out = np.zeros(n_of(550))
+    for at in (0.0, 120.0):                                 # cards set on top, one, two
+        put(out, rub(rng, 80, 2000, 7000, 0.35), at, 0.35)
+        put(out, snap(rng, 1500, 6500, 5.0), at + 85, 0.30)
+    put(out, knock(rng, 170, 11), 300, 0.35)                # the deck squared
+    put(out, snap(rng, 1200, 5000, 6.0), 301, 0.25)
+    return out
+
+
 MAKERS = {"shuffle": shuffle, "deal": deal, "trump": trump, "lay": lay, "beat": beat,
-          "take": take, "sweep": sweep, "draw": draw, "putdown": putdown, "pickup": pickup}
+          "take": take, "sweep": sweep, "draw": draw, "putdown": putdown, "pickup": pickup,
+          "slip": slip, "swap": swap, "toss": toss, "deckin": deckin, "deckout": deckout,
+          "pick": pick}
 
 
 def finish(x):

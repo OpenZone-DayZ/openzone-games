@@ -34,3 +34,23 @@ The stand:
   `per=3 slip=30 swap=25 throw=0 deckin=100 deckout=20 pick=77 spot=100 picks=2 putright=5`
   (the five out of bounds put back to their defaults, 0 and 100 kept); `all=100` and
   `all=0` set the seven; the file kept the time it was migrated at.
+
+## Task 2: the sleights' sounds
+
+Built: six rows more in `tools/make_sounds.py`'s table, ids 11 to 16 -- `slip` (a card out of
+a pocket and into the hand), `swap` (a card slid out of the fan, the pocket, the other slid
+in), `toss` (a card flicked onto the heap), `deckin` (pushed along the deck's edge and
+home), `deckout` (caught by a nail and drawn out, into the pocket), `pick` (two cards set
+on top, the deck squared); shaped noise and damped tones as the table's ten, at `volume`
+0.30 (the table's are 0.35 to 0.45): each is played on one client alone (design §6.1).
+`art/sounds/SOURCES.md` says so.
+
+The stand:
+
+- the table: `slip 296 ms 6431 B a77e22625e89`, `swap 375 ms 7350 B d864fa51fb7a`, `toss 199
+  ms 5461 B 81f95f3df9fa`, `deckin 255 ms 6018 B 0e02b3fd4a37`, `deckout 330 ms 6777 B
+  03633e518bd8`, `pick 386 ms 6913 B e27e1e0509e8`; the same digests on a second run, and
+  the ten older sounds' digests the same as their record's;
+- a client (English, 1920 x 1080) sent `shake ... sound=<name>` for the six, two seconds
+  apart: six `dbg: sound <name> on local: started=1` in its script log; no line naming
+  `OZG_` or `SoundSetName` in its script log, its RPT or its error log.

@@ -16,7 +16,13 @@ class OZG_SoundIds
     static const int DRAW = 8;    // cards drawn from the stock
     static const int PUTDOWN = 9;    // the deck put down on the mat
     static const int PICKUP = 10;    // the deck picked up
-    static const int LAST = 10;
+    static const int SLIP = 11;    // a sleight: a card slipped out of a pocket into the hand
+    static const int SWAP = 12;    // a sleight: a card of the hand swapped for one from a pocket
+    static const int TOSS = 13;    // a sleight: a card tossed onto the discards
+    static const int DECKIN = 14;    // a sleight: a card pushed into the deck
+    static const int DECKOUT = 15;    // a sleight: a card drawn out of the deck
+    static const int PICK = 16;    // a sleight: cards set on top of the deck for the dealer
+    static const int LAST = 16;
 
     // Beside every id from 0 (none): its name, its set and its length.
     static void Fill(array<string> names, array<string> sets, array<int> lengths)
@@ -54,5 +60,23 @@ class OZG_SoundIds
         names.Insert("pickup");
         sets.Insert("OZG_PickUp_SoundSet");
         lengths.Insert(304);
+        names.Insert("slip");
+        sets.Insert("OZG_Slip_SoundSet");
+        lengths.Insert(296);
+        names.Insert("swap");
+        sets.Insert("OZG_Swap_SoundSet");
+        lengths.Insert(375);
+        names.Insert("toss");
+        sets.Insert("OZG_Toss_SoundSet");
+        lengths.Insert(199);
+        names.Insert("deckin");
+        sets.Insert("OZG_DeckIn_SoundSet");
+        lengths.Insert(255);
+        names.Insert("deckout");
+        sets.Insert("OZG_DeckOut_SoundSet");
+        lengths.Insert(330);
+        names.Insert("pick");
+        sets.Insert("OZG_Pick_SoundSet");
+        lengths.Insert(386);
     }
 }

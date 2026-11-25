@@ -559,6 +559,42 @@ class CfgSoundShaders
         volume = 0.40;
         range = 15;
     };
+    class OZG_Slip_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_slip", 1}};
+        volume = 0.30;
+        range = 15;
+    };
+    class OZG_Swap_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_swap", 1}};
+        volume = 0.30;
+        range = 15;
+    };
+    class OZG_Toss_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_toss", 1}};
+        volume = 0.30;
+        range = 15;
+    };
+    class OZG_DeckIn_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_deckin", 1}};
+        volume = 0.30;
+        range = 15;
+    };
+    class OZG_DeckOut_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_deckout", 1}};
+        volume = 0.30;
+        range = 15;
+    };
+    class OZG_Pick_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_pick", 1}};
+        volume = 0.30;
+        range = 15;
+    };
 };
 class CfgSoundSets
 {
@@ -602,6 +638,30 @@ class CfgSoundSets
     class OZG_PickUp_SoundSet: baseCharacter_SoundSet
     {
         soundShaders[] = {"OZG_PickUp_SoundShader"};
+    };
+    class OZG_Slip_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_Slip_SoundShader"};
+    };
+    class OZG_Swap_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_Swap_SoundShader"};
+    };
+    class OZG_Toss_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_Toss_SoundShader"};
+    };
+    class OZG_DeckIn_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_DeckIn_SoundShader"};
+    };
+    class OZG_DeckOut_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_DeckOut_SoundShader"};
+    };
+    class OZG_Pick_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_Pick_SoundShader"};
     };
 };
 // <<< generated: sounds
