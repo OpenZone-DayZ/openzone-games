@@ -331,9 +331,10 @@ def card():
         image("OZG_CardGlow", f(fx - gm, fy - gm, fw + 2 * gm, fh + 2 * gm), 1, "ozg_table_glow_ca", "1 1 1 1",
               [("visible", 0)]),
         image("OZG_CardFace", f(fx, fy, fw, fh), 2),
-        # A read back's mark (tools/make_marks.py): the sign and the pencilled
-        # face, placed by the script in pixels inside the frame, so that they
-        # turn with the card.
+        # The marks (tools/make_marks.py), placed by the script in pixels
+        # inside the frame, so that they turn with the card: on a back the
+        # sign of a card read or noticed, and a read card's pencilled face; on
+        # a face, in the same sign picture, a noticed card's speck.
         image("OZG_CardSign", exact(0, 0, 1, 1), 3, None, "1 1 1 1", [("visible", 0)]),
         image("OZG_CardPencil", exact(0, 0, 1, 1), 4, None, "1 1 1 1", [("visible", 0)]),
     ]

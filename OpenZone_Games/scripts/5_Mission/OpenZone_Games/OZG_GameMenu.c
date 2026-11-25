@@ -786,17 +786,47 @@ class OZG_GameMenu : UIScriptedMenu
         return -1;
     }
 
-    // A read on a back of w x h units: the sign where its fault lies and the
-    // face in pencil in the top corner (design §4.4), inside the card's frame
-    // so that they turn with it. The places are pixels of a 200 x 280 card
-    // (OZG_MarkPlaces, tools/make_marks.py); the face lies in the middle of
-    // the frame, 5 : 7, as tools/make_layouts.py lays it.
-    protected void MarkBack(Widget card, float w, float h, OZG_WRead r)
+    // Which of this player's notices a back of the seat `seat` (-1: the top
+    // of the stock) in the look `look` shows: the first notice of a back
+    // there in that look that no back drawn before took (`used`); -1: none.
+    // As a read, a notice lies on the first free back of its look.
+    protected int NoticeAt(int seat, int look, array<int> used)
     {
-        ImageWidget sign = ImageWidget.Cast(card.FindAnyWidget("OZG_CardSign"));
-        ImageWidget pencil = ImageWidget.Cast(card.FindAnyWidget("OZG_CardPencil"));
-        if (!sign || !pencil)
-            return;
+        if (!m_V || !m_V.Notices)
+            return -1;
+        for (int i = 0; i < m_V.Notices.Count(); i++)
+        {
+            OZG_WNotice n = m_V.Notices[i];
+            if (n.CardName != "" || n.Seat != seat || n.Look != look)
+                continue;
+            if (used.Find(i) >= 0)
+                continue;
+            used.Insert(i);
+            return i;
+        }
+        return -1;
+    }
+
+    // The notice on the face of the card `card`, wherever it lies face up
+    // for this player; -1: none.
+    protected int NoticeOn(string card)
+    {
+        if (!m_V || !m_V.Notices || card == "")
+            return -1;
+        for (int i = 0; i < m_V.Notices.Count(); i++)
+        {
+            if (m_V.Notices[i].CardName == card)
+                return i;
+        }
+        return -1;
+    }
+
+    // A picture of set:ozg_marks laid into the frame of a card of w x h
+    // units, at a box given in pixels of a 200 x 280 card (OZG_MarkPlaces,
+    // tools/make_marks.py), so that it turns with the card. The face lies in
+    // the middle of the frame, 5 : 7, as tools/make_layouts.py lays it.
+    protected void LayMark(ImageWidget pic, string image, float w, float h, int x, int y, int bw, int bh)
+    {
         float side = BoxOf(w, h) * m_K;
         float d = CARD_BOX * Math.Sqrt(74);
         float faceW = side * 5 / d;
@@ -805,27 +835,61 @@ class OZG_GameMenu : UIScriptedMenu
         float top = (side - faceH) * 0.5;
         float kx = faceW / OZG_MarkPlaces.CARD_W;
         float ky = faceH / OZG_MarkPlaces.CARD_H;
+        pic.LoadImageFile(0, image);
+        pic.SetImage(0);
+        pic.SetPos(left + x * kx, top + y * ky);
+        pic.SetSize(bw * kx, bh * ky);
+        pic.Show(true);
+    }
+
+    // A read on a back of w x h units: the sign where its fault lies and the
+    // face in pencil in the top corner (design §4.4).
+    protected void MarkBack(Widget card, float w, float h, OZG_WRead r)
+    {
+        SignBack(card, w, h, r.Look, r.Sign);
+        ImageWidget pencil = ImageWidget.Cast(card.FindAnyWidget("OZG_CardPencil"));
+        if (!pencil)
+            return;
         int x;
         int y;
         int bw;
         int bh;
-        string style = OZG_Decks.StyleAt(r.Look);
-        if (OZG_MarkPlaces.SignBox(style, r.Sign, x, y, bw, bh))
-        {
-            sign.LoadImageFile(0, OZG_MarkPlaces.SignImage(style, r.Sign));
-            sign.SetImage(0);
-            sign.SetPos(left + x * kx, top + y * ky);
-            sign.SetSize(bw * kx, bh * ky);
-            sign.Show(true);
-        }
         if (OZG_MarkPlaces.PencilBox(x, y, bw, bh))
-        {
-            pencil.LoadImageFile(0, OZG_MarkPlaces.PencilImage(r.Face));
-            pencil.SetImage(0);
-            pencil.SetPos(left + x * kx, top + y * ky);
-            pencil.SetSize(bw * kx, bh * ky);
-            pencil.Show(true);
-        }
+            LayMark(pencil, OZG_MarkPlaces.PencilImage(r.Face), w, h, x, y, bw, bh);
+    }
+
+    // A sign on a back of w x h units, the fault where it lies in the back's
+    // pattern (design §4.5): beside a reader's pencil, and all that a noticer
+    // sees there.
+    protected void SignBack(Widget card, float w, float h, int look, int sign)
+    {
+        ImageWidget pic = ImageWidget.Cast(card.FindAnyWidget("OZG_CardSign"));
+        if (!pic)
+            return;
+        string style = OZG_Decks.StyleAt(look);
+        int x;
+        int y;
+        int bw;
+        int bh;
+        if (OZG_MarkPlaces.SignBox(style, sign, x, y, bw, bh))
+            LayMark(pic, OZG_MarkPlaces.SignImage(style, sign), w, h, x, y, bw, bh);
+    }
+
+    // A noticed card on its face of w x h units: a small dark speck in the
+    // margin, where its sign puts it (design §4.5), in the frame's sign
+    // picture -- a face shows no fault of the back.
+    protected void SpeckFace(Widget card, float w, float h, OZG_WNotice n)
+    {
+        ImageWidget pic = ImageWidget.Cast(card.FindAnyWidget("OZG_CardSign"));
+        if (!pic)
+            return;
+        string style = OZG_Decks.StyleAt(n.Look);
+        int x;
+        int y;
+        int bw;
+        int bh;
+        if (OZG_MarkPlaces.SpeckBox(style, n.Sign, x, y, bw, bh))
+            LayMark(pic, OZG_MarkPlaces.SpeckImage(), w, h, x, y, bw, bh);
     }
 
     // ------------------------------------------------------------ drawing
@@ -1089,10 +1153,12 @@ class OZG_GameMenu : UIScriptedMenu
 
     // A fan of backs: `count` cards about (x, y), turned by `turn`, the cards'
     // own looks in `looks` (the lowest first), the hand of the seat `seat`: a
-    // back this player reads there carries its mark (design §4.4).
+    // back this player reads there carries its mark (design §4.4), a back he
+    // notices its sign (§4.5).
     protected void PaintFan(float x, float y, float turn, float scale, int count, array<int> looks, int seat)
     {
         array<int> used = new array<int>();
+        array<int> noticed = new array<int>();
         float spread = m_Look.FanSpread;
         if (count > 1 && spread * (count - 1) > m_Look.FanFan)
             spread = m_Look.FanFan / (count - 1);
@@ -1115,8 +1181,13 @@ class OZG_GameMenu : UIScriptedMenu
             string back = PictureOf("back", look);
             Widget card = Card(m_FanPics, back, cx, cy, w, h, a + turn, 0, true);
             int readNo = ReadAt(seat, look, used);
+            int noticeNo = -1;
+            if (readNo < 0)
+                noticeNo = NoticeAt(seat, look, noticed);
             if (card && readNo >= 0)
                 MarkBack(card, w, h, m_V.Reads[readNo]);
+            if (card && noticeNo >= 0)
+                SignBack(card, w, h, look, m_V.Notices[noticeNo].Sign);
         }
     }
 
@@ -1167,7 +1238,11 @@ class OZG_GameMenu : UIScriptedMenu
             if (m_Pub.StockCount > 0)
             {
                 string trump = "c_" + OZG_Cards.FaceOf(m_Pub.TrumpCard);
-                Card(m_TablePics, PictureOf(trump, m_Pub.TrumpLook), tx, ty, pw, ph, 90, 0, true);
+                Widget trumpPic = Card(m_TablePics, PictureOf(trump, m_Pub.TrumpLook), tx, ty, pw, ph, 90, 0, true);
+                // A trump this player notices shows its speck (design §4.5).
+                int trumpNotice = NoticeOn(m_Pub.TrumpCard);
+                if (trumpPic && trumpNotice >= 0)
+                    SpeckFace(trumpPic, pw, ph, m_V.Notices[trumpNotice]);
             }
             else
             {
@@ -1180,6 +1255,7 @@ class OZG_GameMenu : UIScriptedMenu
             layers = 6;
         int k;
         array<int> stockUsed = new array<int>();
+        array<int> stockNoticed = new array<int>();
         for (k = 0; k < layers; k++)
         {
             // The top card shows the look of the one drawn next.
@@ -1189,12 +1265,18 @@ class OZG_GameMenu : UIScriptedMenu
             float sx = m_Look.StockX - k * 1.2 + pw * 0.5;
             float sy = m_Look.StockY - k * 1.6 + ph * 0.5;
             Widget layer = Card(m_TablePics, PictureOf("back", look), sx, sy, pw, ph, 0, 0, true);
-            // The top card: a back this player reads carries its mark (design §4.4).
+            // The top card: a back this player reads carries its mark (design
+            // §4.4), a back he notices its sign (§4.5).
             int topRead = -1;
+            int topNotice = -1;
             if (k == layers - 1)
                 topRead = ReadAt(-1, look, stockUsed);
+            if (k == layers - 1 && topRead < 0)
+                topNotice = NoticeAt(-1, look, stockNoticed);
             if (layer && topRead >= 0)
                 MarkBack(layer, pw, ph, m_V.Reads[topRead]);
+            if (layer && topNotice >= 0)
+                SignBack(layer, pw, ph, look, m_V.Notices[topNotice].Sign);
         }
 
         // The discards: a careless heap, a back for every two cards.
@@ -1284,7 +1366,11 @@ class OZG_GameMenu : UIScriptedMenu
             // One step at a time: a long expression does not compile.
             string attackFace = "c_" + OZG_Cards.FaceOf(m_Pub.AttackCards[i]);
             int attackLook = LookAt(m_Pub.AttackLooks, i);
-            Card(m_TablePics, PictureOf(attackFace, attackLook), cx, cy, w, h, 0, glow, true);
+            Widget attackPic = Card(m_TablePics, PictureOf(attackFace, attackLook), cx, cy, w, h, 0, glow, true);
+            // A card of the table this player notices shows its speck (design §4.5).
+            int attackNotice = NoticeOn(m_Pub.AttackCards[i]);
+            if (attackPic && attackNotice >= 0)
+                SpeckFace(attackPic, w, h, m_V.Notices[attackNotice]);
             m_AtkX.Insert(cx);
             m_AtkY.Insert(cy);
             m_AtkW.Insert(w);
@@ -1297,7 +1383,10 @@ class OZG_GameMenu : UIScriptedMenu
             {
                 string beatenFace = "c_" + OZG_Cards.FaceOf(beaten);
                 int beatenLook = LookAt(m_Pub.DefenceLooks, i);
-                Card(m_TablePics, PictureOf(beatenFace, beatenLook), cx + ox, cy + oy, w, h, 12, 0, true);
+                Widget beatenPic = Card(m_TablePics, PictureOf(beatenFace, beatenLook), cx + ox, cy + oy, w, h, 12, 0, true);
+                int beatenNotice = NoticeOn(beaten);
+                if (beatenPic && beatenNotice >= 0)
+                    SpeckFace(beatenPic, w, h, m_V.Notices[beatenNotice]);
             }
         }
     }
@@ -1371,6 +1460,10 @@ class OZG_GameMenu : UIScriptedMenu
             Widget pic = Card(m_HandPics, PictureOf(cardFace, cardLook), x, y, m_Look.CardW, m_Look.CardH, a, glow, true);
             if (!pic)
                 continue;
+            // A card of the hand this player notices shows its speck (design §4.5).
+            int handNotice = NoticeOn(card);
+            if (handNotice >= 0)
+                SpeckFace(pic, m_Look.CardW, m_Look.CardH, m_V.Notices[handNotice]);
             m_HandW.Insert(pic);
             m_HandCodes.Insert(card);
             m_HandX.Insert(x);
