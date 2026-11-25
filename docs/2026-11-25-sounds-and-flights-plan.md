@@ -95,7 +95,7 @@ Ten sounds, synthesized by a script with fixed seeds, encoded to Ogg Vorbis, and
 **Interfaces:**
 - Produces: `class OZG_SoundIds` (3_Game) with `static const int SHUFFLE = 1, DEAL = 2, TRUMP = 3, LAY = 4, BEAT = 5, TAKE = 6, SWEEP = 7, DRAW = 8, PUTDOWN = 9, PICKUP = 10, LAST = 10` and `static void Fill(array<string> names, array<string> sets, array<int> lengths)` (from id 0, "none"); the sound sets `OZG_Shuffle_SoundSet`, `OZG_Deal_SoundSet`, `OZG_Trump_SoundSet`, `OZG_Lay_SoundSet`, `OZG_Beat_SoundSet`, `OZG_Take_SoundSet`, `OZG_Sweep_SoundSet`, `OZG_Draw_SoundSet`, `OZG_PutDown_SoundSet`, `OZG_PickUp_SoundSet`. The fourth phase adds its sleights' sounds as rows of `SOUNDS` in the script.
 
-- [ ] **Step 1: The script**
+- [x] **Step 1: The script**
 
 Create `tools/make_sounds.py` with the Write tool (it carries backslashes):
 
@@ -462,7 +462,7 @@ if __name__ == "__main__":
 
 `np.random.RandomState` is numpy's frozen legacy stream: a seed gives the same numbers in every numpy version.
 
-- [ ] **Step 2: The config's place for the sounds**
+- [x] **Step 2: The config's place for the sounds**
 
 In `OpenZone_Games/config.cpp` (with the Edit tool), replace
 
@@ -529,7 +529,7 @@ with
 // <<< generated: sounds
 ```
 
-- [ ] **Step 3: Where the sounds come from**
+- [x] **Step 3: Where the sounds come from**
 
 Create `art/sounds/SOURCES.md`:
 
@@ -550,7 +550,7 @@ bit-exact flags, into the `.ogg` the mod carries. The design gives a sound
 script's table.
 ```
 
-- [ ] **Step 4: Make them**
+- [x] **Step 4: Make them**
 
 Run `python -I tools/make_sounds.py`. Expected output (the script was run so, its outputs pointed at a scratch folder with `--root`, when this plan was written):
 
@@ -576,7 +576,7 @@ Run it a second time: the same ten digests (seeded). Then:
 
 A digest that differs from the table above while the second run repeats the first is not a fault (another numpy or ffmpeg build); write the new table into the record.
 
-- [ ] **Step 5: Build and boot**
+- [x] **Step 5: Build and boot**
 
 `mod_lint`: no refusals. A stand cycle (Global Constraints). Then:
 
@@ -584,7 +584,7 @@ A digest that differs from the table above while the second run repeats the firs
 - `log_verdict` says `pass`; `log_tail(pattern="SoundShader", n=600)` holds no line.
 - `client_start(language="English")`, `job_wait`, `client_verdict(since=<client_start's value>)` says `pass`, and the client's newest `.RPT` in `E:\dayzmod\testserver\clientprofile` holds no line with `OZG_` and `Sound` (a base class not found, a file not found).
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add tools/make_sounds.py art/sounds/SOURCES.md OpenZone_Games/sounds OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_SoundIds.c OpenZone_Games/config.cpp
@@ -608,7 +608,7 @@ A client plays a sound of the table on a thing, for its own player and nobody el
 - Consumes: `OZG_SoundIds.Fill` and the ids (Task 1).
 - Produces (3_Game): `class OZG_Sounds` with `static const int QUIET_MS = 1000; SLOTS = 3; ID_ROOM = 32; COUNT_UNIT = 32768; COUNT_ROOM = 65536;`, `static int IdOf(string name)` (0: no such sound), `static string NameOf(int id)`, `static string SetOf(int id)`, `static int LengthOf(int id)` (ms), `static string NamesOf(array<int> ids)` ("-" for none), `static int PackLot(int was, array<int> ids)`, `static int QuietOf(int packed)`, `static int CountOf(int packed)`, `static void IdsOf(int packed, array<int> into)`, `static bool PlayLocal(string name, Object where)`, `static bool PlayIdLocal(int id, Object where, string why)`; `class OZG_SoundRun` with `void OZG_SoundRun(Object thing, string why)` and `void AddLot(array<int> ids)`. `OZG_Const.OP_SHAKE = "shake"`; `class OZG_WShake { string PlaceId; string RegionName; string SoundName; }`; `static OZG_Place OZG_Place.OZG_ById(string id)`. Stand op `shake id=<place> [region=] [sound=] [who=me]`.
 
-- [ ] **Step 1: The sounds on a client**
+- [x] **Step 1: The sounds on a client**
 
 Create `OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Sounds.c`:
 
@@ -872,7 +872,7 @@ class OZG_SoundRun
 }
 ```
 
-- [ ] **Step 2: The message `shake`**
+- [x] **Step 2: The message `shake`**
 
 In `OZG_Const.c` (Edit tool), replace
 
@@ -931,7 +931,7 @@ class OZG_WShake
 }
 ```
 
-- [ ] **Step 3: A place by its id**
+- [x] **Step 3: A place by its id**
 
 In `OZG_Items.c`, in `class OZG_Place`, replace
 
@@ -966,7 +966,7 @@ with
     }
 ```
 
-- [ ] **Step 4: The client hears it**
+- [x] **Step 4: The client hears it**
 
 In `OZG_MissionGameplay.c` (Edit tool), in `OZG_SvcRes`, replace
 
@@ -994,7 +994,7 @@ with
         if (op == OZG_Const.OP_SEATS || op == OZG_Const.OP_VIEW)
 ```
 
-- [ ] **Step 5: The stand sends it**
+- [x] **Step 5: The stand sends it**
 
 In `OZG_WorldOps.c`, at the end of `class OZG_WorldOps` (before the closing brace on the file's last line), add:
 
@@ -1047,7 +1047,7 @@ with
 
 and in `KnownOps()` append `, shake` to the end of its second line (the line that begins `known = known + ", ring, level`; it ends `..., craft, reads";`, or with the ops of the card sharp's phase 3 after `reads` once that phase has landed).
 
-- [ ] **Step 6: Lint, compile, build, hear each**
+- [x] **Step 6: Lint, compile, build, hear each**
 
 Every new name of this task has two words or the mod's prefix (`PackLot`, `PlayDue`, `OZG_ById`, `OpShake`...): no `knowledge_find` is needed. `mod_lint`: no refusals. `client_compile_check`, `job_wait`, `log_verdict(source="client")` = `pass`. A stand cycle, `client_start(language="English")`, `job_wait`, `world_ready`, `world_teleport "6095.4 107.65 6028.9"`, then:
 
@@ -1060,7 +1060,7 @@ Expected: `laid <id> seats=7 kind=1`; `shake sent to <uid>: region= sound=shuffl
 
 Gather the game: `oz_games {"op":"gather","id":"<id>"}`.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Sounds.c OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Const.c OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Wire.c OpenZone_Games/scripts/4_World/OpenZone_Games/OZG_Items.c OpenZone_Games/scripts/5_Mission/OpenZone_Games/OZG_MissionGameplay.c OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_WorldOps.c OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_Verb.c
@@ -1082,7 +1082,7 @@ The place gains one synchronised number: a count and up to three sounds (design 
 - Consumes: `OZG_Sounds.PackLot`, `QuietOf`, `CountOf`, `IdsOf`, `NamesOf`, `QUIET_MS`, `OZG_SoundRun` (Task 2).
 - Produces: `class OZG_SoundPulse` with `int NextNumber(int packed, array<int> ids)` (server), `string LastLot()`, `void HeardNumber(int packed, Object thing, string why)` (client). On `OZG_Place` and on `OZG_Deck_Base` alike (server): `void OZG_Hear(array<int> ids)`, `void OZG_HearOne(int id)`, `void OZG_Quiet()`, `int OZG_SoundNumber()`, `string OZG_SoundLast()`. Stand op `sound [id=<place> | in=me] [play=<name>[,<name>..]]`.
 
-- [ ] **Step 1: What a thing does with its number**
+- [x] **Step 1: What a thing does with its number**
 
 At the end of `OZG_Sounds.c` (Edit tool: after the closing brace of `class OZG_SoundRun`) add:
 
@@ -1145,7 +1145,7 @@ class OZG_SoundPulse
 }
 ```
 
-- [ ] **Step 2: The deck's number**
+- [x] **Step 2: The deck's number**
 
 In `OZG_Items.c`, in `class OZG_Deck_Base`, replace
 
@@ -1229,7 +1229,7 @@ with
     }
 ```
 
-- [ ] **Step 3: The place's number**
+- [x] **Step 3: The place's number**
 
 In `class OZG_Place`, replace
 
@@ -1372,7 +1372,7 @@ with
     }
 ```
 
-- [ ] **Step 4: The stand reads a number and puts a lot on a place**
+- [x] **Step 4: The stand reads a number and puts a lot on a place**
 
 In `OZG_WorldOps.c`, at the end of `class OZG_WorldOps` (before its closing brace), add:
 
@@ -1457,7 +1457,7 @@ with
 
 and in `KnownOps()` append `, sound` to the end of its second line.
 
-- [ ] **Step 5: Lint, compile, build, check (design §17: "every client near it ... a client arriving later does not replay old sounds")**
+- [x] **Step 5: Lint, compile, build, check (design §17: "every client near it ... a client arriving later does not replay old sounds")**
 
 `knowledge_find(kind="class", name=...)` is not needed: every new name has two words or a prefix. `mod_lint`, `client_compile_check` (`pass`), a stand cycle, `client_start(language="English")`, `job_wait`, `world_ready`, `world_teleport "6095.4 107.65 6028.9"`, `lay` as in Task 2 (`laid <id> ...`). Then, in order:
 
@@ -1485,7 +1485,7 @@ The client's log, in order:
 
 **The deck**: `oz_games {"op":"give","what":"OZG_Deck_Classic"}` (into the hands), `oz_games {"op":"sound","in":"me"}` → `deck: count=0 now=- last=-`. Gather the game: `oz_games {"op":"gather","id":"<id>"}`; `oz_games {"op":"undeck"}` deletes the decks the player carries.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Sounds.c OpenZone_Games/scripts/4_World/OpenZone_Games/OZG_Items.c OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_WorldOps.c OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_Verb.c
@@ -1507,7 +1507,7 @@ A game says which sounds each change made, in their order (design §17's list); 
 - Consumes: `OZG_SoundIds.*` (Task 1); `OZG_Place.OZG_Hear`, `OZG_HearOne`, `OZG_Deck_Base.OZG_HearOne` (Task 3); `OZG_Sounds.NamesOf` (Task 2).
 - Produces: on `OZG_Game`: `protected void HearSound(int sound)` and `void TakeHeard(array<int> into)`; on `OZG_Session`: `protected void PassHeard()`; durak's lots: Begin `shuffle,deal,trump`; `a:` and `t:` `lay`; `d:` `beat`; a bout closed `sweep` or `take`, then `draw` when the stock gave cards; a seat dropped `sweep` (when cards went) then `draw`. Bench op `heard`.
 
-- [ ] **Step 1: A game hears**
+- [x] **Step 1: A game hears**
 
 In `OZG_Game.c` (Edit tool), replace
 
@@ -1553,7 +1553,7 @@ with
     // ---- a game being played -------------------------------------------------
 ```
 
-- [ ] **Step 2: What durak makes heard**
+- [x] **Step 2: What durak makes heard**
 
 In `OZG_Durak.c` (Edit tool), replace
 
@@ -1732,7 +1732,7 @@ with
         DrawAll((at + 1) % m_S.SeatList.Count(), -1);
 ```
 
-- [ ] **Step 3: The session passes the lot to the place**
+- [x] **Step 3: The session passes the lot to the place**
 
 In `OZG_Session.c` (Edit tool), replace
 
@@ -1772,7 +1772,7 @@ with
     }
 ```
 
-- [ ] **Step 4: The deck put down and gathered up**
+- [x] **Step 4: The deck put down and gathered up**
 
 In `OZG_Items.c`, in `class OZG_Place`, replace
 
@@ -1834,7 +1834,7 @@ with
             to.ServerTakeEntityToHands(deck);
 ```
 
-- [ ] **Step 5: The bench says what its game made heard**
+- [x] **Step 5: The bench says what its game made heard**
 
 In `OZG_Bench.c` (Edit tool), replace
 
@@ -1890,7 +1890,7 @@ with
 
 and in `KnownOps()` append `, heard` to the end of its first line (`string known = "status, ..., fuzz";`).
 
-- [ ] **Step 6: Lint, build, the rules' sounds on the bench**
+- [x] **Step 6: Lint, build, the rules' sounds on the bench**
 
 `mod_lint`, a stand cycle (no client needed for this step), `world_ready`. The deal of the phase 1 measurements' table 1 (`docs/measurements/2026-11-24/rules.md`, rows 1.1 to 1.8), then its second bout, one change at a time:
 
@@ -1934,7 +1934,7 @@ A row that answers otherwise is written down with what it said, and the rule it 
 
 The rules are untouched: `oz_games {"op":"fuzz","games":"300","seed":"11","drop":"5","away":"30"}` answers `fuzz: 300 games, ...` with no `DEFECT`.
 
-- [ ] **Step 7: A game heard on the stand**
+- [x] **Step 7: A game heard on the stand**
 
 `client_start(language="English")`, `job_wait`, `world_ready`, `world_teleport "6095.4 107.65 6028.9"`. Then:
 
@@ -1957,7 +1957,7 @@ Gathering: `oz_games {"op":"chat","text":"!ozg clear"}` (the bots go), `oz_games
 
 The ear is the owner's: when the owner takes the stand over, a game laid out by hand (`!ozg deck`, "Choose placement", the hologram, "Lay out the game") is the real path of the deck put down (it lands in the place a tick after the place is made), and every sound of a game can be heard with two bots (`!ozg bots`). Say so in the report of the working session, with the commands of Task 7's section of `docs/test-commands.md`.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Game.c OpenZone_Games/scripts/3_Game/OpenZone_Games/OZG_Durak.c OpenZone_Games/scripts/4_World/OpenZone_Games/OZG_Session.c OpenZone_Games/scripts/4_World/OpenZone_Games/OZG_Sessions.c OpenZone_Games/scripts/4_World/OpenZone_Games/OZG_Items.c OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_Bench.c OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_Verb.c
@@ -1980,7 +1980,7 @@ The window gains a layer of flights over the table and the plates, a registry of
 - Consumes: `OZG_WShake` (Task 2); `OZG_TableLook` and the window as they are.
 - Produces (5_Mission): `class OZG_CardSpot { float X; float Y; float W; float H; float Turn; static OZG_CardSpot Make(float x, float y, float w, float h, float turn); }` (the middle, the size and the clockwise turn of a card, in layout units of the 1600 x 900 window); `class OZG_Flight`; `class OZG_Flights` with `OZG_Flight Launch(Widget card, string pictureLand, OZG_CardSpot from, OZG_CardSpot to, float delay, float seconds, string reveal)`, `void Tick(float dt, float k, array<string> landed)`, `void Finish(array<string> landed)`, `int Count()`, `static float EaseOf(float t)`; `class OZG_Shakes` with `void Start(string region)`, `bool Busy()`, `void Tick(float dt, array<string> ended)`, `bool Offset(string region, out float dx, out float dy)`, `void Clear()` (`SECONDS` 0.45, `SIZE` 4 units, `HZ` 17). On `OZG_GameMenu`: `static const string SLOT_TRUMP = "t"`, `REGION_STOCK = "stock"`, `REGION_DISCARDS = "discards"`; `static string SlotOfFan(int seat, int index)`, `SlotOfHand(int index)`, `SlotOfBout(int index, bool defence)`, `SlotOfHeap(int k)`, `RegionOfSeat(int seat)`; `OZG_CardSpot SpotOfFan(OZG_WView v, int seat, int index, int count)` (null: no fan of that seat in `v`; index -1: the fan's middle), `SpotOfHand(int index, int count)`, `SpotOfStock(int stockCount)`, `SpotOfTrump()`, `SpotOfDiscards(int k)`, `SpotOfBout(int count, int index, bool defence)`; `string PictureOfFace(string card, int look)`, `PictureOfBack(int look)`; `int HeapOf(int discardCount)`; `void SortHand(array<string> held, string trumpSuit, array<string> into)`; `OZG_Flight Fly(string picture, string pictureLand, OZG_CardSpot from, OZG_CardSpot to, float delay, float seconds, string reveal)`; `void HideSlot(string key)`; `void ShakeRegion(string region)`; `protected void LandAll()`.
 
-- [ ] **Step 1: The engine**
+- [x] **Step 1: The engine**
 
 Create `OpenZone_Games/scripts/5_Mission/OpenZone_Games/OZG_Flights.c`:
 
@@ -2248,7 +2248,7 @@ class OZG_Shakes
 }
 ```
 
-- [ ] **Step 2: The layer of flights**
+- [x] **Step 2: The layer of flights**
 
 In `tools/make_layouts.py`, replace
 
@@ -2267,7 +2267,7 @@ with
 
 Run `python -I tools/make_layouts.py`; `git status --short OpenZone_Games/gui/layouts` lists `ozg_win_classic.layout` and `ozg_win_stalker.layout` alone, each with one `FrameWidgetClass OZG_Air` more (`ignorepointer 1`, `priority 35`).
 
-- [ ] **Step 3: The window's registry, places and flights**
+- [x] **Step 3: The window's registry, places and flights**
 
 In `OZG_GameMenu.c`:
 
@@ -3132,7 +3132,7 @@ with
 
 and the part of a line `Card(m_HandPics, PictureOf(cardFace, cardLook), x, y, m_Look.CardW, m_Look.CardH, a, glow, true);` with `Card(m_HandPics, PictureOf(cardFace, cardLook), x, y, m_Look.CardW, m_Look.CardH, a, glow, true, SlotOfHand(i));`. `HandCardAt` repeats `PaintHand`'s arithmetic for the flights, and the two must agree.
 
-- [ ] **Step 4: The `shake` message shakes its region**
+- [x] **Step 4: The `shake` message shakes its region**
 
 In `OZG_MissionGameplay.c` (Edit tool) replace
 
@@ -3152,7 +3152,7 @@ with
             return;
 ```
 
-- [ ] **Step 5: Lint, compile, build, look**
+- [x] **Step 5: Lint, compile, build, look**
 
 Before the build, `knowledge_find(kind="class", name=...)` for `Launch`, `Tick`, `Finish`, `Count`, `Start`, `Busy`, `Offset`, `Clear`, `Fly`: none may be a class of the game or of a mod the stand loads (CF, the core, VPP, SFP, the NewHorizon mods). `mod_lint` (it reads the two `.layout` too), `client_compile_check` = `pass`, a stand cycle, `client_start(language="English")`, `job_wait`, `world_ready`, `world_teleport "6095.4 107.65 6028.9"`. Then:
 
@@ -3181,7 +3181,7 @@ The stalkers' look: `oz_games {"op":"ask","id":"<id>","who":"me","ask":"fold"}` 
 
 Send the owner the shots (`SendUserFile`).
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add OpenZone_Games/scripts/5_Mission/OpenZone_Games/OZG_Flights.c tools/make_layouts.py OpenZone_Games/gui/layouts/ozg_win_classic.layout OpenZone_Games/gui/layouts/ozg_win_stalker.layout OpenZone_Games/scripts/5_Mission/OpenZone_Games/OZG_GameMenu.c OpenZone_Games/scripts/5_Mission/OpenZone_Games/OZG_MissionGameplay.c
@@ -3202,7 +3202,7 @@ When a newer view of the same game arrives, the window draws it as before, then 
 - Consumes: from Task 5 every public name of `OZG_GameMenu` listed there and `OZG_CardSpot`; `OZG_Sounds.LengthOf`, `OZG_SoundIds.SHUFFLE`, `DEAL` (Tasks 1, 2); `OZG_WView`, `OZG_DurakPublic`, `OZG_DurakPrivate`, `OZG_Cards.OfMove`, `SuitOf`.
 - Produces: `class OZG_FlightPlan` with `static void Make(OZG_GameMenu menu, OZG_WView wasV, OZG_DurakPublic was, OZG_DurakPrivate wasOwn, OZG_WView nowV, OZG_DurakPublic now, OZG_DurakPrivate nowOwn)`; a debug line a view `flights rev <r>: dealt n, trump 1 | laid n, swept n | taken n, drawn n`.
 
-- [ ] **Step 1: The plan of a view's flights**
+- [x] **Step 1: The plan of a view's flights**
 
 Create `OpenZone_Games/scripts/5_Mission/OpenZone_Games/OZG_FlightPlan.c`:
 
@@ -3858,7 +3858,7 @@ class OZG_FlightPlan
 }
 ```
 
-- [ ] **Step 2: The window flies after a newer view**
+- [x] **Step 2: The window flies after a newer view**
 
 In `OZG_GameMenu.c`, in `Redraw`, replace
 
@@ -3937,7 +3937,7 @@ with
 
 (`durak` is the local `Redraw` already declares.)
 
-- [ ] **Step 3: Lint, compile, build, watch the cards fly**
+- [x] **Step 3: Lint, compile, build, watch the cards fly**
 
 `knowledge_find(kind="class", name="Make")`: no class of the game or of a loaded mod. `mod_lint`, `client_compile_check` = `pass`, a stand cycle, `client_start(language="English")`, `job_wait`, `world_ready`, `world_teleport "6095.4 107.65 6028.9"`, then `lay` (classic), `sit` seat 0, `bots` `n=2` `on=0` (they wait), and open the window (`client_type` with `j`).
 
@@ -3965,7 +3965,7 @@ Send the shots of each kind to the owner.
 
 Send the owner the key shots: the deal in the air, a card laid, a sweep, a take, the stalkers' table.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add OpenZone_Games/scripts/5_Mission/OpenZone_Games/OZG_FlightPlan.c OpenZone_Games/scripts/5_Mission/OpenZone_Games/OZG_GameMenu.c
@@ -3983,7 +3983,7 @@ What was built and measured goes where the next reader looks for it.
 - Modify: `docs/test-commands.md`, `README.md`, this plan (its ticks)
 - Outside the repository: `E:\openzone\docs\specs\2026-11-23-openzone-games-design.md` (§17's status), `E:\openzone\docs\specs\2026-11-24-openzone-games-cardsharp-design.md` (§10, one line); the skills `E:\dayzmod\dayz-agentic-modding-mcp\skills\dayz-modding` and `E:\dayzmod\dayz-modding-skill\openzone`; the memory `project-table-games.md`
 
-- [ ] **Step 1: The record**
+- [x] **Step 1: The record**
 
 Create `docs/2026-11-25-sounds-and-flights-record.md` in the shape of `docs/2026-11-25-marks-record.md`: a heading `# Sounds and flights of cards: record`, the date and what the owner asked, and these sections, each filled from the steps' answers and never from this plan's expectations:
 - **What was built**: a table, a task a row, with its commit.
@@ -3991,7 +3991,7 @@ Create `docs/2026-11-25-sounds-and-flights-record.md` in the shape of `docs/2026
 - **Where the build differs from the design**: the number carries up to three sounds, not one ("the last sound"), so that a deal and a closing move are one lot played in order; it goes quiet a second after each lot; the deck, not the place, carries the gathering's sound (the place is deleted in the same frame); a deck made anew for a place that held none is not heard; the client half of the card sharp's `shake` built before its fourth phase (the stand sends it); the deal's cards wait for the shuffle's length and spread over the run's; a card another seat holds flies as a back; the drawing order of the flights after a drop starts from the opener, not from the seat after the dropped one; what else came up.
 - **Not done**: the sleights' own sounds (the fourth phase adds them to `tools/make_sounds.py`'s table); the owner's ear on the loudness of each sound.
 
-- [ ] **Step 2: What a person tries**
+- [x] **Step 2: What a person tries**
 
 In `docs/test-commands.md`, before `## The verb for scripts`, add:
 
@@ -4022,7 +4022,7 @@ The regions of a shake are `seat<n>`, `discards` and `stock`.
 
 In the paragraph under `## The verb for scripts`: in its list of the world's ops, after `` `face`, `` add `` `sound`, `shake`, ``; in its sentence on the ops of the rules alone (`` (`begin`, `play`, `fuzz` and the rest) ``) add `` `heard` `` after `` `fuzz` ``. (The card sharp's phase 3 adds its own ops to the same paragraph; keep them.)
 
-- [ ] **Step 3: The README**
+- [x] **Step 3: The README**
 
 In `README.md`, in the status list, after the bullet `- **Marks**: ...` (the whole bullet, and the bullet of noticing when the card sharp's phase 3 has added one after it), add:
 
@@ -4071,7 +4071,7 @@ In `## Українською`, after the sentence `Ручка й лупа по�
 у відбій або в руку того, хто бере.
 ```
 
-- [ ] **Step 4: The designs' status**
+- [x] **Step 4: The designs' status**
 
 In `E:\openzone\docs\specs\2026-11-23-openzone-games-design.md` (not a repository), §17: "Not built yet." becomes the date it was built and checked, the record's path, and the open line (the sleights' sounds wait for the card sharp's fourth phase; the loudness is the owner's ear). In the card sharp's design, §10, one line: the shake, the local sound and the flight are built (`OZG_GameMenu.ShakeRegion`, `OZG_Sounds.PlayLocal`, `OZG_GameMenu.Fly`), and the client already handles `shake`.
 
@@ -4083,7 +4083,7 @@ Each fact measured here about the engine goes into the public skill with neutral
 
 `C:\Users\56869\.claude\projects\E--openzone\memory\project-table-games.md` gains a paragraph: sounds and flights built (the date, the commits), what was measured, what is open; its `description` line says so. `MEMORY.md` stays under 17.1 KB.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add docs/2026-11-25-sounds-and-flights-record.md docs/test-commands.md README.md docs/2026-11-25-sounds-and-flights-plan.md

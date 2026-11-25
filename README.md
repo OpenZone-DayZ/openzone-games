@@ -44,6 +44,13 @@ first game is durak, podkidnoy and perevodnoy. Class prefix `OZG_`; runs with
   nothing: from then on that card's back shows him its mark in the pattern, and its face a
   small dark speck near the edge. What he noticed stays on the card; the count of deals
   starts again with every restart and every game laid out anew.
+- **Sounds and flights**: a game is heard by everybody near it, players, watchers and
+  passers-by: the deck put down and gathered up, the shuffle, the deal's quick run,
+  the trump turned up, a card laid and a card laid over it, the table taken or swept
+  to the discards, cards drawn. Every sound is the mod's own, made by a script from
+  numbers. In the window the cards fly: from the stock into the hands at a deal and a
+  draw, from a hand onto the table, from the table to the discards or into the taker's
+  hand.
 - **Seats** are worked out around the mat in one of three layouts: standing or sitting on
   the floor below a raised thing the mat lies on (a table, a wall's top, a crate), or
   sitting on the level of the mat itself. A player turns to the mat, is shown the free
@@ -71,7 +78,8 @@ design note lives beside the repositories of the series, in
 `docs/specs/2026-11-24-openzone-games-cardsharp-design.md`; its second phase, marks, is
 built ([docs/2026-11-25-marks-record.md](docs/2026-11-25-marks-record.md)), and its third,
 noticing ([docs/2026-11-25-noticing-record.md](docs/2026-11-25-noticing-record.md));
-sleights are not.
+sleights are not. The table's sounds and the cards in the air:
+[docs/2026-11-25-sounds-and-flights-record.md](docs/2026-11-25-sounds-and-flights-record.md).
 
 No key, no `mod.cpp`, no Workshop item: nothing is published without the owner's word.
 
@@ -79,11 +87,11 @@ No key, no `mod.cpp`, no Workshop item: nothing is published without the owner's
 
 | Path | What |
 |---|---|
-| `OpenZone_Games/` | the mod: scripts, config, layouts, card imagesets, the table's textures and fonts, models |
+| `OpenZone_Games/` | the mod: scripts, config, layouts, card imagesets, the table's textures and fonts, models, sounds |
 | `OpenZone_Games_Bridge/` | stand tool, server only: the `oz_games` verb, bots, the `!ozg` chat commands, `stage` (a table set out to be looked at) |
 | `TableGamesProbe/`, `TableGamesProbe_Bridge/` | stand tool of the first measurements ([docs/probe.md](docs/probe.md)) |
-| `tools/` | `make_cards.py` (the two decks' art), `make_marks.py` (the marks on the cards: a sign on a back, a reader's pencil, a speck on a face), `make_card_items.py` (the card items, their slots and names), `make_table.py` (the window's tables, frames, plates, shadows; `steel.py` is the trade screen's steel), `build_fonts.py` (the window's own fonts), `make_layouts.py` (the window), `stringtable.py`, `analyze.py` |
-| `art/` | sources of the cards, of the tables (`art/table`) and the fonts (Oswald, PT Mono; SIL Open Font License; their list in `art/fonts/fonts.json`) |
+| `tools/` | `make_cards.py` (the two decks' art), `make_marks.py` (the marks on the cards: a sign on a back, a reader's pencil, a speck on a face), `make_sounds.py` (the table's sounds, made from numbers), `make_card_items.py` (the card items, their slots and names), `make_table.py` (the window's tables, frames, plates, shadows; `steel.py` is the trade screen's steel), `build_fonts.py` (the window's own fonts), `make_layouts.py` (the window), `stringtable.py`, `analyze.py` |
+| `art/` | sources of the cards, of the tables (`art/table`) and the fonts (Oswald, PT Mono; SIL Open Font License; their list in `art/fonts/fonts.json`); how the sounds are made (`art/sounds/SOURCES.md`) |
 | `models/` | sources of the five models and how they are built ([models/README.md](models/README.md)) |
 | `docs/` | plans, records, measurements, an example for a server's economy |
 
@@ -123,7 +131,12 @@ OpenZone), колоду тримають у долоні, одну карту �
 карті й випадково, і йому про це нічого не кажуть: відтоді на сорочці такої карти він
 бачить мітку в узорі, а на її лиці — маленьку темну цятку біля краю. Помічене лишається
 на карті, а лік роздач починається знову після кожного рестарту й кожної нової
-розкладки. З колодою в руках
+розкладки. Гру чути всім поруч — гравцям, глядачам і перехожим: колоду кладуть на
+килимок і збирають, тасують, швидко роздають, відкривають козир, карту кладуть на стіл і
+б'ють іншою, стіл забирає той, хто відбивався, або його змітають у відбій, добирають
+карти з колоди. Кожен звук — власний: його робить скрипт моду з чисел, без жодного
+запису. У вікні карти летять: з колоди в руки під час роздачі й добору, з руки на стіл,
+зі столу у відбій або в руку того, хто бере. З колодою в руках
 гравець обирає місце, голограма килимка показує, скільки там місць і яких, або чому місце
 не годиться. Місця навколо обчислює мод: стоячи біля столу або сидячи на землі. Партію
 тримає сервер, а вікно — картярський стіл у вигляді колоди: зелене сукно в темно-зеленому

@@ -181,21 +181,44 @@ With a game laid out (`<id>`) whose cards somebody who is not at the table marke
 cards, and a reader never notices: a table where you alone notice. `noticer` makes an id
 a noticer by hand, as a won roll would.
 
+## Sounds and flights
+
+Every change of a game is heard by every client near the place, whether its window
+is open or not: the deck put down when a game is laid out and gathered up when it is
+folded, the shuffle, the deal's quick run and the trump turned up, a card laid on the
+table and a card laid over it, the table taken or swept to the discards, cards drawn
+from the stock. The sounds are the mod's own, made from numbers by
+`tools/make_sounds.py`. With the core's debug switch on, a client's script log names
+every sound it plays (`dbg: sound lay on place <id>: started=1`).
+
+In the window the cards fly: from the stock into every hand at a deal, while the deal
+is heard, the trump turned up last; from a hand onto the table; from the table to the
+discards or into the taker's hand; from the stock into the hands after a bout. The
+log says what flew (`dbg: flights rev 12: laid 1, swept 4, drawn 3`).
+
+    oz_games {"op":"sound","id":"<id>"}                              the place's sound number: its count, what it carries now, its last lot
+    oz_games {"op":"sound","id":"<id>","play":"shuffle,deal,trump"}  a lot put on the place, as a deal puts it
+    oz_games {"op":"sound","in":"me"}                                the number of the deck in your hands (gathered up)
+    oz_games {"op":"shake","id":"<id>","region":"seat1","sound":"lay"}   what a player who saw a sleight will be sent: the sound for him alone, seat 1's fan shaken
+    oz_games {"op":"heard"}                                          the bench: what its game made heard since the last ask
+
+The regions of a shake are `seat<n>`, `discards` and `stock`.
+
 ## The verb for scripts
 
 The same and more through the MCP bridge, `world_exec(verb="oz_games", args={"op": ...})`:
 `ring`, `level`, `lay`, `places`, `sess`, `seats`, `puppet`, `move`, `ask`, `sit`,
-`ticks`, `gather`, `hand`, `give`, `chat`, `bots`, `auto`, `face`, and for the cards
-`cards` (the deck a player carries, counted), `pull` (cards of the named faces out of a
-carried deck or a laid-out one, and gone), `undeck` (a player's decks deleted), `stuff`
-(cards of a face and a look into a laid-out game: the deck's free slots, then beside
+`ticks`, `gather`, `hand`, `give`, `chat`, `bots`, `auto`, `face`, `sound`, `shake`, and
+for the cards `cards` (the deck a player carries, counted), `pull` (cards of the named
+faces out of a carried deck or a laid-out one, and gone), `undeck` (a player's decks
+deleted), `stuff` (cards of a face and a look into a laid-out game: the deck's free slots, then beside
 it), `held` (what a place holds: its deck, and how many cards beside it), `loose` (the
 cards lying on the ground near a point; `sweep=1` deletes them). For noticing:
 `noticecfg`, `noticer`, `notices`, `whole` and `redeal` (above). `lay` takes `deck=`
 (a deck's class), `give` too. The header of each op in
 `OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_WorldOps.c` says what
-it takes. The ops of the rules alone (`begin`, `play`, `fuzz` and the rest) are in the
-plan of phase 1; `begin` now takes `cards=` and `looks=`, the cards a deal is dealt
+it takes. The ops of the rules alone (`begin`, `play`, `fuzz`, `heard` and the rest) are
+in the plan of phase 1; `begin` now takes `cards=` and `looks=`, the cards a deal is dealt
 from and the looks of their backs, as a session hands them over. `auto` plays fifteen
 to twenty moves a call (a session lets a player make so many a second): ask again
 until the session says `st=2`.
