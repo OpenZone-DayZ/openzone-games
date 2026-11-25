@@ -109,6 +109,8 @@ class OZG_Aim
 
     // Server.
     protected static ref map<string, int> s_ServerMode = new map<string, int>();
+    // The layout the placer's hologram judged, sent with the lay-out action.
+    protected static ref map<string, int> s_ServerLayout = new map<string, int>();
 
     // The key's round: the mod's guess, standing, sitting, on the floor. Not
     // the order of the numbers: those are what was saved before there were
@@ -151,9 +153,31 @@ class OZG_Aim
         return OZG_Const.MODE_AUTO;
     }
 
+    static void ServerSetLayout(PlayerBase player, int layout)
+    {
+        string uid = OZG_Who.Uid(player);
+        if (uid == "")
+            return;
+        s_ServerLayout.Set(uid, layout);
+    }
+
+    // Whether the game this player lays out is played standing: the client's
+    // own hologram says so, the server goes by what the client sent.
+    static bool LaysStanding(PlayerBase player)
+    {
+        int layout = s_Layout;
+        if (GetGame().IsDedicatedServer())
+        {
+            layout = OZG_Const.MODE_STANDING;
+            s_ServerLayout.Find(OZG_Who.Uid(player), layout);
+        }
+        return layout == OZG_Const.MODE_STANDING;
+    }
+
     static void Reset()
     {
         s_ServerMode.Clear();
+        s_ServerLayout.Clear();
         s_Stamp = 0;
     }
 }

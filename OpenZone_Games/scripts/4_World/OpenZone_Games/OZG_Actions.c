@@ -52,6 +52,7 @@ class OZG_Mine
 class OZG_LayOutReceive : PlaceObjectActionReciveData
 {
     int m_OZG_Mode;
+    int m_OZG_Layout;
 }
 
 class OZG_ActionLayOut : ActionDeployObject
@@ -61,10 +62,32 @@ class OZG_ActionLayOut : ActionDeployObject
         m_Text = "#STR_OZG_ACTION_LAY_OUT";
     }
 
+    // The game picks a deploy's animation by the item's itemBehaviour
+    // (actiondeployobject.c:306). A deck has none (m_ItemBehaviour -1), so the
+    // command stayed 0, CMD_ACTIONFB_DRINK, a prone one: the placer lay down
+    // and drank. A deck is laid out with the hands, the way a garden slot is
+    // fertilised (actionfertilizeslot.c): the full-body interaction.
+    override void SetupAnimation(ItemBase item)
+    {
+        m_CommandUID = DayZPlayerConstants.CMD_ACTIONFB_INTERACT;
+    }
+
+    // Standing for a game played standing, crouched for one sat at or played
+    // on the floor. A full-body action is not hidden by its stance mask
+    // (actionbase.c:931): the mask is the stance the engine takes for it
+    // (animatedactionbase.c:343).
+    override protected int GetStanceMaskEx(PlayerBase player, ActionTarget target, ItemBase item)
+    {
+        if (OZG_Aim.LaysStanding(player))
+            return DayZPlayerConstants.STANCEMASK_ERECT;
+        return DayZPlayerConstants.STANCEMASK_CROUCH;
+    }
+
     override void WriteToContext(ParamsWriteContext ctx, ActionData action_data)
     {
         super.WriteToContext(ctx, action_data);
         ctx.Write(OZG_Aim.s_Mode);
+        ctx.Write(OZG_Aim.s_Layout);
     }
 
     override bool ReadFromContext(ParamsReadContext ctx, out ActionReciveData action_recive_data)
@@ -76,9 +99,15 @@ class OZG_ActionLayOut : ActionDeployObject
         int mode = 0;
         if (!ctx.Read(mode))
             return false;
+        int layout = 0;
+        if (!ctx.Read(layout))
+            return false;
         OZG_LayOutReceive mine = OZG_LayOutReceive.Cast(action_recive_data);
         if (mine)
+        {
             mine.m_OZG_Mode = mode;
+            mine.m_OZG_Layout = layout;
+        }
         return true;
     }
 
@@ -87,7 +116,10 @@ class OZG_ActionLayOut : ActionDeployObject
         super.HandleReciveData(action_recive_data, action_data);
         OZG_LayOutReceive mine = OZG_LayOutReceive.Cast(action_recive_data);
         if (mine && action_data && action_data.m_Player)
+        {
             OZG_Aim.ServerSetMode(action_data.m_Player, mine.m_OZG_Mode);
+            OZG_Aim.ServerSetLayout(action_data.m_Player, mine.m_OZG_Layout);
+        }
     }
 
     // The game deletes a kit it has placed, here (actiondeployobject.c:230).
