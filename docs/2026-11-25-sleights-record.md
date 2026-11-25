@@ -344,3 +344,42 @@ The stand:
 - `Cheating` 0 in the file and the server restarted: the action refused by its own check
   ("the action's own Can() said no"), and no "Study closely" offered with the card in the
   hands.
+
+## The pencil and the speck where the card is seen (the owner's word, 2026-11-25)
+
+Not larger, not darker: on the part of a card that is seen in play. Phase 3's record had
+found most specks of the fanned hand under the next card. Where the window lays a card
+under another, the reader's pencil and the noticer's speck are moved there now
+(`OZG_Cover.c`; the sign in a back's pattern stays where it is):
+
+- **every fan** (the hand, and the other seats' fans of backs): each card but the last has
+  the next one over its right side, turned on by the fan's step about a pivot below the
+  cards, so its left side is seen, wider at the top -- the seen width at a height is (the
+  pivot's distance minus the height from the middle) times the step;
+- **the trump** lies a quarter turned under the stock, its top end out by (the trump's
+  right end minus the stock's right edge);
+- **an attack card** has the card that beat it over it, 18 and 22 units off and turned 12°:
+  only a band along its top and a strip down its left narrowing to the bottom are seen.
+
+A mark's box is kept where it is when it is seen whole; else mirrored across the card, up
+and down, or both (the sign's place kept as well as it can be); else moved to the seen
+part's edge (a fan's pencil against the left edge when more than ten cards crowd it, the
+seen strip then narrower than the pencil). The pencil of a fan of up to ten cards never
+moves: the strip at its height is wider than it.
+
+The stand, every card of a classic and of a stalkers' game marked by an id at no seat and
+the client's player made the noticer of all (`mark who=marker1`, `noticer face=all`), a
+deal, a six of spades and a seven of diamonds beaten:
+
+- classic (`client-1795617721022.png`, `client-1795617748642.png`): the five specks of the
+  hand on the cards' left margins (`marks-classic-hand-specks.png`), the beaten six's speck
+  on its top margin clear of the nine over it, the nine's on its own bottom
+  (`marks-classic-bout-speck.png`), the trump's on its end out of the stock
+  (`marks-classic-trump-speck.png`);
+- stalkers' (`client-1795617798400.png`): the hand five of five
+  (`marks-stalker-hand-specks.png`), the beaten seven's speck on its top margin, the queen's
+  on its left (`marks-stalker-bout-speck.png`), the trump's on its end
+  (`marks-stalker-trump-speck.png`);
+- the pencils of read backs in six-card fans, classic (`client-1795617824978.png`,
+  `marks-classic-fan-pencils.png`) and stalkers' (`client-1795617879650.png`,
+  `marks-stalker-fan-pencils.png`): every one in the seen strip, faint as drawn.

@@ -1490,8 +1490,9 @@ class OZG_GameMenu : UIScriptedMenu
     }
 
     // A read on a back of w x h units: the sign where its fault lies and the
-    // face in pencil in the top corner (design §4.4).
-    protected void MarkBack(Widget card, float w, float h, OZG_WRead r)
+    // face in pencil in the top corner (design §4.4), moved where the card is
+    // seen when another lies over it (`cover`, OZG_Cover; null: nothing does).
+    protected void MarkBack(Widget card, float w, float h, OZG_WRead r, OZG_Cover cover = null)
     {
         SignBack(card, w, h, r.Look, r.Sign);
         ImageWidget pencil = ImageWidget.Cast(card.FindAnyWidget("OZG_CardPencil"));
@@ -1501,8 +1502,11 @@ class OZG_GameMenu : UIScriptedMenu
         int y;
         int bw;
         int bh;
-        if (OZG_MarkPlaces.PencilBox(x, y, bw, bh))
-            LayMark(pencil, OZG_MarkPlaces.PencilImage(r.Face), w, h, x, y, bw, bh);
+        if (!OZG_MarkPlaces.PencilBox(x, y, bw, bh))
+            return;
+        if (cover)
+            cover.PutSeen(x, y, bw, bh);
+        LayMark(pencil, OZG_MarkPlaces.PencilImage(r.Face), w, h, x, y, bw, bh);
     }
 
     // A sign on a back of w x h units, the fault where it lies in the back's
@@ -1524,8 +1528,9 @@ class OZG_GameMenu : UIScriptedMenu
 
     // A noticed card on its face of w x h units: a small dark speck in the
     // margin, where its sign puts it (design §4.5), in the frame's sign
-    // picture -- a face shows no fault of the back.
-    protected void SpeckFace(Widget card, float w, float h, OZG_WNotice n)
+    // picture -- a face shows no fault of the back. Moved where the card is
+    // seen when another lies over it (`cover`, OZG_Cover).
+    protected void SpeckFace(Widget card, float w, float h, OZG_WNotice n, OZG_Cover cover = null)
     {
         ImageWidget pic = ImageWidget.Cast(card.FindAnyWidget("OZG_CardSign"));
         if (!pic)
@@ -1535,8 +1540,11 @@ class OZG_GameMenu : UIScriptedMenu
         int y;
         int bw;
         int bh;
-        if (OZG_MarkPlaces.SpeckBox(style, n.Sign, x, y, bw, bh))
-            LayMark(pic, OZG_MarkPlaces.SpeckImage(), w, h, x, y, bw, bh);
+        if (!OZG_MarkPlaces.SpeckBox(style, n.Sign, x, y, bw, bh))
+            return;
+        if (cover)
+            cover.PutSeen(x, y, bw, bh);
+        LayMark(pic, OZG_MarkPlaces.SpeckImage(), w, h, x, y, bw, bh);
     }
 
     // ------------------------------------------------------------ drawing
@@ -1863,8 +1871,12 @@ class OZG_GameMenu : UIScriptedMenu
             int noticeNo = -1;
             if (readNo < 0)
                 noticeNo = NoticeAt(seat, look, noticed);
+            // Every card but the last has the next one over its right side.
+            OZG_Cover over = null;
+            if (i < count - 1)
+                over = OZG_Cover.MakeFan(r, spread, w, h);
             if (card && readNo >= 0)
-                MarkBack(card, w, h, m_V.Reads[readNo]);
+                MarkBack(card, w, h, m_V.Reads[readNo], over);
             if (card && noticeNo >= 0)
                 SignBack(card, w, h, look, m_V.Notices[noticeNo].Sign);
         }
@@ -1927,10 +1939,18 @@ class OZG_GameMenu : UIScriptedMenu
             {
                 string trump = "c_" + OZG_Cards.FaceOf(m_Pub.TrumpCard);
                 Widget trumpPic = Card(m_TablePics, PictureOf(trump, m_Pub.TrumpLook), tx, ty, pw, ph, 90, 0, true, SLOT_TRUMP, REGION_STOCK);
-                // A trump this player notices shows its speck (design §4.5).
+                // A trump this player notices shows its speck (design §4.5),
+                // on the top end that comes out from under the stock (turned
+                // a quarter clockwise, its top points right).
                 int trumpNotice = NoticeOn(m_Pub.TrumpCard);
+                OZG_Cover underStock = null;
+                if (m_Pub.StockCount > 1)
+                {
+                    float sticks = tx + ph * 0.5 - (m_Look.StockX + pw);
+                    underStock = OZG_Cover.MakeTop(sticks / ph);
+                }
                 if (trumpPic && trumpNotice >= 0)
-                    SpeckFace(trumpPic, pw, ph, m_V.Notices[trumpNotice]);
+                    SpeckFace(trumpPic, pw, ph, m_V.Notices[trumpNotice], underStock);
             }
             else
             {
@@ -2055,18 +2075,21 @@ class OZG_GameMenu : UIScriptedMenu
             string attackFace = "c_" + OZG_Cards.FaceOf(m_Pub.AttackCards[i]);
             int attackLook = LookAt(m_Pub.AttackLooks, i);
             Widget attackPic = Card(m_TablePics, PictureOf(attackFace, attackLook), cx, cy, w, h, 0, glow, true, SlotOfBout(i, false));
-            // A card of the table this player notices shows its speck (design §4.5).
+            string beaten = "";
+            if (i < m_Pub.DefenceCards.Count())
+                beaten = m_Pub.DefenceCards[i];
+            // A card of the table this player notices shows its speck (design
+            // §4.5), clear of the card that beat it.
             int attackNotice = NoticeOn(m_Pub.AttackCards[i]);
+            OZG_Cover underBeat = null;
+            if (beaten != "")
+                underBeat = OZG_Cover.MakeBout(ox, oy, 12, w, h);
             if (attackPic && attackNotice >= 0)
-                SpeckFace(attackPic, w, h, m_V.Notices[attackNotice]);
+                SpeckFace(attackPic, w, h, m_V.Notices[attackNotice], underBeat);
             m_AtkX.Insert(cx);
             m_AtkY.Insert(cy);
             m_AtkW.Insert(w);
             m_AtkH.Insert(h);
-
-            string beaten = "";
-            if (i < m_Pub.DefenceCards.Count())
-                beaten = m_Pub.DefenceCards[i];
             if (beaten != "")
             {
                 string beatenFace = "c_" + OZG_Cards.FaceOf(beaten);
@@ -2174,10 +2197,14 @@ class OZG_GameMenu : UIScriptedMenu
             Widget pic = Card(m_HandPics, PictureOf(cardFace, cardLook), x, y, m_Look.CardW, m_Look.CardH, a, glow, true, SlotOfHand(i));
             if (!pic)
                 continue;
-            // A card of the hand this player notices shows its speck (design §4.5).
+            // A card of the hand this player notices shows its speck (design
+            // §4.5), on the left side the next card leaves.
             int handNotice = NoticeOn(card);
+            OZG_Cover nextOver = null;
+            if (i < n - 1)
+                nextOver = OZG_Cover.MakeFan(r, spread, m_Look.CardW, m_Look.CardH);
             if (handNotice >= 0)
-                SpeckFace(pic, m_Look.CardW, m_Look.CardH, m_V.Notices[handNotice]);
+                SpeckFace(pic, m_Look.CardW, m_Look.CardH, m_V.Notices[handNotice], nextOver);
             m_HandW.Insert(pic);
             m_HandCodes.Insert(card);
             m_HandX.Insert(x);
