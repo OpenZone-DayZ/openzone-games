@@ -494,7 +494,7 @@ STR_OZG_VPP_CHEAT_NOTE,"Вимкнене зупиняє все разом: кр�
 STR_OZG_VPP_CAUGHT_NOTE,Спершу сервер кидає цей шанс: чи хитрість видно взагалі. Якщо видно — кожен інший гравець за столом кидає свій «помічає».,"The server rolls this chance first: whether the sleight shows at all. If it does, every other player at the table rolls his own ""spots it""."
 STR_OZG_VPP_POSES_SUB,Як гравець сидить або стоїть за грою. Жест — номер анімації: мод анімацій приносить свої.,How a player sits or stands at a game. A gesture is an animation's number: an animation mod brings its own.
 STR_OZG_VPP_NEW_POSE,+ Нова поза,+ New pose
-STR_OZG_VPP_POSES_ORDER,Гравець перемикає пози свого виду в порядку цього списку; сідає з першою.,A player steps through the poses of his kind in the order of this list and sits down in the first.
+STR_OZG_VPP_POSES_ORDER,Гравець перемикає пози свого виду в порядку цього списку й сідає з першою; порядок змінюють «Вище» і «Нижче».,A player steps through the poses of his kind in the order of this list and sits down in the first; Up and Down change the order.
 STR_OZG_VPP_PF_ID,Iдентифікатор,Id
 STR_OZG_VPP_PF_LABEL,Ключ назви в таблиці рядків,Name key in the string table
 STR_OZG_VPP_PF_KIND,Вид,Kind
@@ -505,11 +505,10 @@ STR_OZG_VPP_GESTURE_NOTE,"Жест, якого гра не знає, не лам
 STR_OZG_VPP_UP,Вище,Up
 STR_OZG_VPP_DOWN,Нижче,Down
 STR_OZG_VPP_DEL_POSE,Видалити позу,Delete the pose
-STR_OZG_FACT_GAMES,ігор увімкнено,games on
-STR_OZG_FACT_PLACES,розкладено ігор,games laid out
-STR_OZG_FACT_PLAYING,ігор іде зараз,games being played
-STR_OZG_FACT_SEATED,гравців за іграми,players seated
-STR_OZG_FACT_SHARP,шулерство,card sharping
+STR_OZG_FACT_GAMES,Iгор увімкнено,Games on
+STR_OZG_FACT_PLACES,Розкладено,Laid out
+STR_OZG_FACT_PLAYING,Грають,Being played
+STR_OZG_FACT_SEATED,Гравців,Players
 STR_OZG_VPP_ASK_DROP,Скасувати незбережені зміни?,Drop the unsaved changes?
 STR_OZG_VPP_ASK_SAVE,Зберегти налаштування ігор?,Save the games settings?
 STR_OZG_VPP_CHANGED,змінено,changed

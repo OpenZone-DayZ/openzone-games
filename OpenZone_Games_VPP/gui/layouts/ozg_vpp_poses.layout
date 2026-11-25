@@ -292,7 +292,7 @@ FrameWidgetClass OzgPoPane {
      visible 1
      ignorepointer 1
      position 16 38
-     size 487 595
+     size 487 577
      hexactpos 1
      vexactpos 1
      hexactsize 1
@@ -304,7 +304,7 @@ FrameWidgetClass OzgPoPane {
       ScrollWidgetClass OzgPoListScroll {
        visible 1
        position 0 0
-       size 487 595
+       size 487 577
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -333,12 +333,12 @@ FrameWidgetClass OzgPoPane {
       }
      }
     }
-    TextWidgetClass gq12 {
+    RichTextWidgetClass gq12 {
      visible 1
      ignorepointer 1
      color 0.627 0.624 0.6 1
-     position 28 641
-     size 475 14
+     position 28 622
+     size 466 36
      hexactpos 1
      vexactpos 1
      hexactsize 1
@@ -346,11 +346,14 @@ FrameWidgetClass OzgPoPane {
      priority 6
      userID 65728
      text "#STR_OZG_VPP_POSES_ORDER"
-     font "OpenZone_VPP/gui/fonts/ozv_sans28"
+     font "OpenZone_VPP/gui/fonts/ozv_sdf_sans32"
      "exact text" 1
      "exact text size" 13
+     wrap 1
+     "size to text h" 0
+     "size to text v" 0
      "text halign" left
-     "text valign" center
+     "text valign" top
     }
    }
   }

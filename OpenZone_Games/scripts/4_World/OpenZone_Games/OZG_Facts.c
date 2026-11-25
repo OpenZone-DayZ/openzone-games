@@ -1,7 +1,8 @@
 // The games' card on Ядро › Огляд (the core's OZ_AdminFacts, VPP rework design
 // 4.3): which games are on, the places laid out, the games being played and the
-// players seated at them, whether card sharping is on; the problems the last
-// load found in the settings.
+// players seated at them; the problems the last load found in the settings. The
+// core writes the facts on one line of the card's width: four short ones fit it
+// in both languages, a fifth did not (seen 2026-11-25).
 //
 // "Reload every module" reads the settings file again, as the start does, and
 // sends what a client holds of it to everyone online.
@@ -42,11 +43,6 @@ class OZG_Facts : OZ_AdminFactsProvider
         OZG_Sessions.Counts(playing, seated);
         card.Add("#STR_OZG_FACT_PLAYING", playing.ToString());
         card.Add("#STR_OZG_FACT_SEATED", seated.ToString());
-
-        string sharp = "#STR_OZG_VPP_OFF";
-        if (cfg.Cheating == 1)
-            sharp = "#STR_OZG_VPP_ON";
-        card.Add("#STR_OZG_FACT_SHARP", sharp);
     }
 
     override bool Reload(array<string> said)

@@ -822,8 +822,13 @@ modded class OZ_VppAdminMenu
         if (need * perDeal < most)
             need++;
         int full = grace + need;
-        string fmt = Widget.TranslateString("#STR_OZG_VPP_NOTICE_LINE");
-        string line = string.Format(fmt, deals.ToString(), chance.ToString(), most.ToString(), full.ToString());
+        // Put in by hand: string.Format drops a percent sign that no digit follows
+        // ("%2 %;" came out "20 ;", measured 2026-11-25), and the line has two.
+        string line = Widget.TranslateString("#STR_OZG_VPP_NOTICE_LINE");
+        line.Replace("%1", deals.ToString());
+        line.Replace("%2", chance.ToString());
+        line.Replace("%3", most.ToString());
+        line.Replace("%4", full.ToString());
         OzgSay("OzgShNotice", line, cMuted);
     }
 
@@ -845,15 +850,14 @@ modded class OZ_VppAdminMenu
 
     // ================================================= Налаштування › Ігри
 
-    // A row for every game this machine knows, in the order the host steps through
-    // them: the games of another mod too.
+    // A row for every game this machine knows, the games of another mod too.
     private void OzgBuildGames()
     {
         if (!m_OzgGameRows)
             return;
         m_OzgGameRows.Clear();
         array<string> ids = new array<string>();
-        OZG_Games.Ids(ids);
+        OzgGameOrder(ids);
         Widget row;
         for (int i = 0; i < ids.Count(); i++)
         {
@@ -920,25 +924,57 @@ modded class OZ_VppAdminMenu
         OzgPaintDirty();
     }
 
-    // The games on, in the order of the registry, and every id of the file this machine
-    // does not know kept as it was: a game of a mod that is not loaded here.
-    private void OzgGamesInto(array<string> into)
+    // The games in the order of the file -- the order the host's button steps through,
+    // and its first is the game a new place starts with -- then those the file does not
+    // name, in the order of the registry.
+    private void OzgGameOrder(array<string> into)
     {
         into.Clear();
         array<string> ids = new array<string>();
         OZG_Games.Ids(ids);
         int i;
+        string id;
+        if (m_OzgCfg)
+        {
+            for (i = 0; i < m_OzgCfg.GameIds.Count(); i++)
+            {
+                id = m_OzgCfg.GameIds[i];
+                if (ids.Find(id) >= 0 && into.Find(id) < 0)
+                    into.Insert(id);
+            }
+        }
         for (i = 0; i < ids.Count(); i++)
         {
-            if (m_OzgGamesOn.Find(ids[i]) >= 0)
+            if (into.Find(ids[i]) < 0)
                 into.Insert(ids[i]);
         }
-        if (!m_OzgCfg)
-            return;
-        for (i = 0; i < m_OzgCfg.GameIds.Count(); i++)
+    }
+
+    // The games on, for the file: the file's own order kept, a game ticked anew after
+    // them, and every id of the file this machine does not know kept where it was (a
+    // game of a mod that is not loaded here).
+    private void OzgGamesInto(array<string> into)
+    {
+        into.Clear();
+        array<string> ids = new array<string>();
+        OZG_Games.Ids(ids);
+        array<string> order = new array<string>();
+        OzgGameOrder(order);
+        int i;
+        string id;
+        if (m_OzgCfg)
         {
-            string id = m_OzgCfg.GameIds[i];
-            if (ids.Find(id) < 0 && into.Find(id) < 0)
+            for (i = 0; i < m_OzgCfg.GameIds.Count(); i++)
+            {
+                id = m_OzgCfg.GameIds[i];
+                if (ids.Find(id) < 0 || m_OzgGamesOn.Find(id) >= 0)
+                    into.Insert(id);
+            }
+        }
+        for (i = 0; i < order.Count(); i++)
+        {
+            id = order[i];
+            if (m_OzgGamesOn.Find(id) >= 0 && into.Find(id) < 0)
                 into.Insert(id);
         }
     }
@@ -1363,7 +1399,7 @@ modded class OZ_VppAdminMenu
 
         // Налаштування: the games, the boxes, the log.
         array<string> ids = new array<string>();
-        OZG_Games.Ids(ids);
+        OzgGameOrder(ids);
         group = Widget.TranslateString("#STR_OZG_VPP_G_GAMES");
         int i;
         bool fileOn;
