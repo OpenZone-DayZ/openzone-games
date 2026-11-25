@@ -55,6 +55,28 @@ class OZG_Sessions
         return null;
     }
 
+    // For the admin window's card (OZG_Facts): the places where a deal is being
+    // played, and the seats held by somebody, kept seats with them.
+    static void Counts(out int playing, out int seated)
+    {
+        playing = 0;
+        seated = 0;
+        for (int i = 0; i < s_ById.Count(); i++)
+        {
+            OZG_Session s = s_ById.GetElement(i);
+            if (!s || !s.m_R)
+                continue;
+            if (s.m_R.St == OZG_Const.ST_PLAYING)
+                playing++;
+            for (int k = 0; k < s.m_R.Seats.Count(); k++)
+            {
+                OZG_SeatRec seat = s.m_R.Seats[k];
+                if (seat && seat.Uid != "")
+                    seated++;
+            }
+        }
+    }
+
     // The session where this player holds a seat: one seat a player, in the
     // whole world.
     static OZG_Session SeatedIn(string uid)
@@ -490,6 +512,12 @@ class OZG_SettingsApplier : OZ_AdminCfgApplier
         c.Validate(warnings);
         OZ_ConfigLoader<OZG_Settings>.Save(OZG_Cfg.PATH, OZG_Cfg.TAG, c, true);
         OZG_Cfg.ServerLoad();
+        // What a client holds of the settings (the poses, the radii, whether
+        // card sharping is on) rides in the core's sync packet, which a client
+        // gets when it connects and does not ask for again: everyone online
+        // gets it anew, or they would play by the old numbers until they
+        // reconnect.
+        OZ_SyncSender.SendAll("games settings edited");
         return true;
     }
 }

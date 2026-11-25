@@ -17,7 +17,18 @@ name = "openzone-games"
 # TableGamesProbe        -- client + server stand tool of 2026-11-23: the rays,
 #                           the ring of places, the live hologram's report.
 # TableGamesProbe_Bridge -- server only: the `tgp` verb.
-mods = ["OpenZone_Games", "OpenZone_Games_Bridge", "TableGamesProbe", "TableGamesProbe_Bridge"]
+# OpenZone_Games_VPP     -- the module "Ігри" of the OpenZone admin window (settings,
+#                           card sharping, poses), a glue pbo that hard-requires VPP
+#                           Admin Tools and the core's OpenZone_VPP. It is in `mods`
+#                           because this stand loads both (dayz-mcp.local.toml); a
+#                           machine without them takes it out again.
+mods = ["OpenZone_Games", "OpenZone_Games_VPP", "OpenZone_Games_Bridge", "TableGamesProbe", "TableGamesProbe_Bridge"]
+# The css2layout demos (`_demo_*.layout`, ignored by git) are written beside the pages they
+# show, inside OpenZone_Games_VPP; the game never loads them, so they stay out of the pbo.
+# `exclude` replaces the MCP's default list, which is repeated here; `stage` packs a copy
+# without them instead of refusing the build.
+exclude = [".git", "*.blend", "*.blend1", ".gitignore", ".gitattributes", "README.md", "*.ps1", "_demo_*.layout"]
+stage = true
 # The mod's own models (OpenZone_Games/models/<model>): the binarized .p3d, its
 # model.cfg and data/ are committed there; their MLOD sources are in models/<model>/.
 # binarize has no root switch: the root is its working directory, and every path

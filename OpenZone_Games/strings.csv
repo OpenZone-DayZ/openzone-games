@@ -462,3 +462,116 @@ STR_OZG_BRIDGE_ROLE_DUMMY,болван,dummy
 STR_OZG_BRIDGE_ST_CALL,Торгується %1,%1 to call
 STR_OZG_BRIDGE_ST_DUMMY,%1 ходить за болвана (%2),%1 plays from the dummy (%2)
 STR_OZG_BRIDGE_YOU_DUMMY,Ходіть картою болвана,Play a card of the dummy
+STR_OZG_VPP_MOD,Iгри,Games
+STR_OZ_VPP_MARK_GAMES,IГ,GA
+STR_OZG_VPP_PAGE_SET,Налаштування,Settings
+STR_OZG_VPP_PAGE_SHARP,Шулерство,Card sharping
+STR_OZG_VPP_PAGE_POSES,Пози,Poses
+STR_OZG_VPP_SET_TITLE,Налаштування ігор,Games settings
+STR_OZG_VPP_SET_SUB,"Які ігри є за столами, стіл і місця, присутність і час. Усе це — файл OZ_Games_Settings.json.","Which games are played, the table and its seats, presence and time. All of it is the file OZ_Games_Settings.json."
+STR_OZG_VPP_OPEN_FILE,Відкрити як файл,Open as a file
+STR_OZG_VPP_GAMES_NOTE,"Вимкнену гру господар не вибере й не роздасть; роздача, що вже йде, догравається.",The host can neither choose nor deal a game that is switched off; a deal already under way is played out.
+STR_OZG_VPP_DEBUG,Докладний журнал мода,Detailed log of the mod
+STR_OZG_VPP_DEBUG_NOTE,"Докладні рядки ігор у журналі сервера, навіть коли налагодження ядра вимкнене.","The games' detailed lines in the server's log, even with the core's debugging off."
+STR_OZG_VPP_CANCEL,Скасувати,Cancel
+STR_OZG_VPP_SAVE,Зберегти,Save
+STR_OZG_VPP_G_GAMES,IГРИ,GAMES
+STR_OZG_VPP_G_LOG,ЖУРНАЛ,LOG
+STR_OZG_VPP_G_TABLE,СТIЛ,TABLE
+STR_OZG_VPP_G_PRESENCE,ПРИСУТНIСТЬ,PRESENCE
+STR_OZG_VPP_G_TIME,ЧАС,TIME
+STR_OZG_VPP_G_SHARP,ШУЛЕРСТВО,CARD SHARPING
+STR_OZG_VPP_G_NOTICE,ПОМIЧАННЯ,NOTICING
+STR_OZG_VPP_G_SLEIGHT,СПРИТНIСТЬ РУК,SLEIGHT OF HAND
+STR_OZG_VPP_G_CAUGHT,"ШАНС ПОПАСТИСЯ, %","CHANCE TO BE SEEN, %"
+STR_OZG_VPP_G_POSE,ПОЗА,POSE
+STR_OZG_VPP_G_CHECK,ПЕРЕВIРКА,CHECK
+STR_OZG_VPP_COL_KIND,ВИД,KIND
+STR_OZG_VPP_COL_GESTURE,ЖЕСТ,GESTURE
+STR_OZG_VPP_SHARP_SUB,"Крап, помічання й спритність рук. Шанси кидає сервер; гравцям їх не видно.","Marks, noticing and sleight of hand. The server rolls the chances; the players never see them."
+STR_OZG_VPP_CHEAT,Шулерство дозволене,Card sharping allowed
+STR_OZG_VPP_CHEAT_NOTE,"Вимкнене зупиняє все разом: крапити, роздивлятися карти й хитрувати не можна.","Off stops it all at once: no marking, no studying cards, no sleights."
+STR_OZG_VPP_CAUGHT_NOTE,Спершу сервер кидає цей шанс: чи хитрість видно взагалі. Якщо видно — кожен інший гравець за столом кидає свій «помічає».,"The server rolls this chance first: whether the sleight shows at all. If it does, every other player at the table rolls his own ""spots it""."
+STR_OZG_VPP_POSES_SUB,Як гравець сидить або стоїть за грою. Жест — номер анімації: мод анімацій приносить свої.,How a player sits or stands at a game. A gesture is an animation's number: an animation mod brings its own.
+STR_OZG_VPP_NEW_POSE,+ Нова поза,+ New pose
+STR_OZG_VPP_POSES_ORDER,Гравець перемикає пози свого виду в порядку цього списку; сідає з першою.,A player steps through the poses of his kind in the order of this list and sits down in the first.
+STR_OZG_VPP_PF_ID,Iдентифікатор,Id
+STR_OZG_VPP_PF_LABEL,Ключ назви в таблиці рядків,Name key in the string table
+STR_OZG_VPP_PF_KIND,Вид,Kind
+STR_OZG_VPP_PF_STANCE,Стійка,Stance
+STR_OZG_VPP_PF_GESTURE,"Жест, номер","Gesture, number"
+STR_OZG_VPP_PF_GESTURE_NOTE,0 — лише стійка,0: the stance alone
+STR_OZG_VPP_GESTURE_NOTE,"Жест, якого гра не знає, не ламає позу: діє стійка.",A gesture the game does not know breaks nothing: the stance acts.
+STR_OZG_VPP_UP,Вище,Up
+STR_OZG_VPP_DOWN,Нижче,Down
+STR_OZG_VPP_DEL_POSE,Видалити позу,Delete the pose
+STR_OZG_FACT_GAMES,ігор увімкнено,games on
+STR_OZG_FACT_PLACES,розкладено ігор,games laid out
+STR_OZG_FACT_PLAYING,ігор іде зараз,games being played
+STR_OZG_FACT_SEATED,гравців за іграми,players seated
+STR_OZG_FACT_SHARP,шулерство,card sharping
+STR_OZG_VPP_ASK_DROP,Скасувати незбережені зміни?,Drop the unsaved changes?
+STR_OZG_VPP_ASK_SAVE,Зберегти налаштування ігор?,Save the games settings?
+STR_OZG_VPP_CHANGED,змінено,changed
+STR_OZG_VPP_CHK_COUNT,стоячи: %1 · сидячи: %2,standing: %1 · sitting: %2
+STR_OZG_VPP_CHK_GEST_NO,жесту %1 на цьому клієнті немає — діятиме стійка,this client has no gesture %1: the stance acts
+STR_OZG_VPP_CHK_GEST_NONE,без жесту — лише стійка,no gesture: the stance alone
+STR_OZG_VPP_CHK_GEST_OK,жест %1 є на цьому клієнті,this client has gesture %1
+STR_OZG_VPP_CHK_IDS_OK,ідентифікатори не повторюються,no id is used twice
+STR_OZG_VPP_CHK_ID_EMPTY,у пози «%1» немає ідентифікатора,"the pose ""%1"" has no id"
+STR_OZG_VPP_CHK_ID_TWICE,ідентифікатор %1 — двічі,the id %1 is used twice
+STR_OZG_VPP_DEFAULT,типово,default
+STR_OZG_VPP_H_ATLEAST,не менше %1,at least %1
+STR_OZG_VPP_H_BAD_FILE,не читається:,does not read:
+STR_OZG_VPP_H_DROPPED,Незбережені зміни скасовано,The unsaved changes are dropped
+STR_OZG_VPP_H_KEPT,Файл прийшов знову; ваші незбережені зміни лишилися,The file came again; your unsaved changes stay
+STR_OZG_VPP_H_NOT_LOADED,Файл ще не прийшов із сервера,The file has not come from the server yet
+STR_OZG_VPP_H_NO_JSON,Не вдалося скласти файл,The file could not be made
+STR_OZG_VPP_H_NUMBER,треба число,a number is needed
+STR_OZG_VPP_H_RANGE,від %1 до %2,from %1 to %2
+STR_OZG_VPP_H_WATCH,"не менше, ніж «грає той, хто ближче»",no less than the radius of who plays
+STR_OZG_VPP_H_WHOLE,треба ціле число,a whole number is needed
+STR_OZG_VPP_KIND_SIT,сидячи,sitting
+STR_OZG_VPP_KIND_STAND,стоячи,standing
+STR_OZG_VPP_LIST_CHANGED,список змінено,the list changed
+STR_OZG_VPP_NEVER,0 — ніколи,0: never
+STR_OZG_VPP_NOTICE_LINE,Після %1 роздач — %2 %; %3 % — з %4-ї роздачі.,After %1 deals: %2 %; %3 % from deal %4 on.
+STR_OZG_VPP_NOTICE_OFF,Помічання вимкнене: шанс завжди 0 %.,Noticing is off: the chance is always 0 %.
+STR_OZG_VPP_NO_CHANGES,Незбережених змін немає,No unsaved changes
+STR_OZG_VPP_NO_POSE,Поз немає,No poses
+STR_OZG_VPP_OFF,вимк.,off
+STR_OZG_VPP_OFF_DEFAULT,типово вимкнено,off by default
+STR_OZG_VPP_ON,увімк.,on
+STR_OZG_VPP_ON_DEFAULT,типово увімкнено,on by default
+STR_OZG_VPP_PLAYERS_ONE,гравців %1,%1 players
+STR_OZG_VPP_PLAYERS_RANGE,гравців %1–%2,%1–%2 players
+STR_OZG_VPP_SAYS,у грі: %1,in the game: %1
+STR_OZG_VPP_ST_CROUCH,присісти,crouch
+STR_OZG_VPP_ST_ERECT,випрямитися,stand up straight
+STR_OZG_VPP_ST_KEEP,не міняти,leave as it is
+STR_OZG_VPP_UNSAVED,Незбережені зміни:,Unsaved changes:
+STR_OZG_VPP_F_MAXSEATS,"місць за грою, найбільше","seats at a game, most"
+STR_OZG_VPP_F_SEATSPACING,"між місцями, м","between seats, m"
+STR_OZG_VPP_F_SEATREACH,"дотягнутися до місця, м","reach of a seat, m"
+STR_OZG_VPP_F_PLACESPACING,"між розкладеними іграми, м","between laid-out games, m"
+STR_OZG_VPP_F_ACTRADIUS,"грає той, хто ближче, м","plays who is closer than, m"
+STR_OZG_VPP_F_WATCHRADIUS,"бачить гру той, хто ближче, м","sees the game who is closer than, m"
+STR_OZG_VPP_F_IDLE,"гра без гравців складається, хв","a game with no players folds after, min"
+STR_OZG_VPP_F_HOSTAWAY,"господаря немає — роль переходить, хв","host away: the role passes after, min"
+STR_OZG_VPP_F_MARKSECONDS,"мітки вільних місць, с","free seats marked for, s"
+STR_OZG_VPP_F_MARKUSES,позначок одним інструментом,marks per tool
+STR_OZG_VPP_F_MARKSECONDS2,"крапити одну карту, с","marking one card, s"
+STR_OZG_VPP_F_STUDY,"роздивитися карту, с","studying a card, s"
+STR_OZG_VPP_F_KNOWERS,"знають крап однієї карти, гравців","players who know a card's mark, most"
+STR_OZG_VPP_F_GRACE,роздач до першого шансу,deals before the first chance
+STR_OZG_VPP_F_STEP,"шанс росте за роздачу, %","the chance grows per deal, %"
+STR_OZG_VPP_F_NOTICEMAX,"шанс щонайбільше, %","the chance at most, %"
+STR_OZG_VPP_F_SLEIGHTS,хитрощів гравцеві за роздачу,sleights per player per deal
+STR_OZG_VPP_F_PICKS,карт здавач вибирає собі,cards the dealer picks for himself
+STR_OZG_VPP_F_SPOT,"кожен інший помічає, %","each other player spots it, %"
+STR_OZG_VPP_F_C_SLIP,підкинути з кишені,slip in from a pocket
+STR_OZG_VPP_F_C_SWAP,підмінити карту,swap a card
+STR_OZG_VPP_F_C_THROW,скинути у відбій,throw to the discards
+STR_OZG_VPP_F_C_DECKIN,покласти в колоду з кишені,put into the deck from a pocket
+STR_OZG_VPP_F_C_DECKOUT,витягти з колоди в кишеню,draw out of the deck into a pocket
+STR_OZG_VPP_F_C_PICK,здати собі,deal to yourself

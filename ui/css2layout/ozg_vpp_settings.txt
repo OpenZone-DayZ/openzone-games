@@ -1,0 +1,80 @@
+settings: GamesSettings.dc.html -> OpenZone_Games_VPP/gui/layouts/ozg_vpp_settings.layout
+design size 1360 x 812, measured again one, two and three steps of 240 x 160 larger
+widgets: 120; 3 of them the browser re-flows as the page grows (the rule keeps them as designed)
+
+FILES
+  OpenZone_Games_VPP/gui/layouts/ozg_vpp_settings.layout
+  OpenZone_Games_VPP/gui/layouts/ozg_vpp_game_row.layout
+  OpenZone_Games_VPP/gui/layouts/_demo_ozg_vpp_settings.layout
+
+NAMED WIDGETS OF THE PAGE (FindAnyWidget)
+  BtnOzgSetOpen  ButtonWidget (parts: BtnOzgSetOpenEdge, BtnOzgSetOpenBg)
+  OzgSetLeg0  Frame (parts: OzgSetLeg0Bar)
+  OzgSetLeg0Text  TextWidget (a caption: recolour only)
+  OzgGames  Frame
+  OzgGamesRows  WrapSpacer: the list's rows go here (ozg_vpp_game_row); its ScrollWidget is OzgGamesScroll
+  OzgSetLeg4  Frame (parts: OzgSetLeg4Bar)
+  OzgSetLeg4Text  TextWidget (a caption: recolour only)
+  BtnOzgDebug  ButtonWidget
+  OzgDebugTick  ButtonWidget (a checkbox; parts: OzgDebugTickEdge, OzgDebugTickBg); its mark is OzgDebugTickMark: show it when on
+  OzgD_DebugLog  TextWidget (filled by script)
+  OzgSetLeg1  Frame (parts: OzgSetLeg1Bar)
+  OzgSetLeg1Text  TextWidget (a caption: recolour only)
+  OzgL_MaxSeats  TextWidget (filled by script)
+  OzgD_MaxSeats  TextWidget (filled by script)
+  OzgBox_MaxSeats  Frame (parts: OzgBox_MaxSeatsEdge, OzgBox_MaxSeatsBg)
+  Ozg_MaxSeats  EditBox
+  OzgL_SeatSpacing  TextWidget (filled by script)
+  OzgD_SeatSpacing  TextWidget (filled by script)
+  OzgBox_SeatSpacing  Frame (parts: OzgBox_SeatSpacingEdge, OzgBox_SeatSpacingBg)
+  Ozg_SeatSpacing  EditBox
+  OzgL_SeatReach  TextWidget (filled by script)
+  OzgD_SeatReach  TextWidget (filled by script)
+  OzgBox_SeatReach  Frame (parts: OzgBox_SeatReachEdge, OzgBox_SeatReachBg)
+  Ozg_SeatReach  EditBox
+  OzgL_PlaceSpacing  TextWidget (filled by script)
+  OzgD_PlaceSpacing  TextWidget (filled by script)
+  OzgBox_PlaceSpacing  Frame (parts: OzgBox_PlaceSpacingEdge, OzgBox_PlaceSpacingBg)
+  Ozg_PlaceSpacing  EditBox
+  OzgSetLeg2  Frame (parts: OzgSetLeg2Bar)
+  OzgSetLeg2Text  TextWidget (a caption: recolour only)
+  OzgL_ActRadius  TextWidget (filled by script)
+  OzgD_ActRadius  TextWidget (filled by script)
+  OzgBox_ActRadius  Frame (parts: OzgBox_ActRadiusEdge, OzgBox_ActRadiusBg)
+  Ozg_ActRadius  EditBox
+  OzgL_WatchRadius  TextWidget (filled by script)
+  OzgD_WatchRadius  TextWidget (filled by script)
+  OzgBox_WatchRadius  Frame (parts: OzgBox_WatchRadiusEdge, OzgBox_WatchRadiusBg)
+  Ozg_WatchRadius  EditBox
+  OzgSetLeg3  Frame (parts: OzgSetLeg3Bar)
+  OzgSetLeg3Text  TextWidget (a caption: recolour only)
+  OzgL_IdleMinutes  TextWidget (filled by script)
+  OzgD_IdleMinutes  TextWidget (filled by script)
+  OzgBox_IdleMinutes  Frame (parts: OzgBox_IdleMinutesEdge, OzgBox_IdleMinutesBg)
+  Ozg_IdleMinutes  EditBox
+  OzgL_HostAwayMinutes  TextWidget (filled by script)
+  OzgD_HostAwayMinutes  TextWidget (filled by script)
+  OzgBox_HostAwayMinutes  Frame (parts: OzgBox_HostAwayMinutesEdge, OzgBox_HostAwayMinutesBg)
+  Ozg_HostAwayMinutes  EditBox
+  OzgL_MarkSeconds  TextWidget (filled by script)
+  OzgD_MarkSeconds  TextWidget (filled by script)
+  OzgBox_MarkSeconds  Frame (parts: OzgBox_MarkSecondsEdge, OzgBox_MarkSecondsBg)
+  Ozg_MarkSeconds  EditBox
+  OzgSetDirty  TextWidget (filled by script)
+  BtnOzgSetDrop  ButtonWidget (parts: BtnOzgSetDropEdge, BtnOzgSetDropBg)
+  BtnOzgSetSave  ButtonWidget (parts: BtnOzgSetSaveBg)
+
+ROW TEMPLATES
+  ozg_vpp_game_row.layout  root OZG_VppGameRow (Button), 5 in the sample, 393 x 38 units, list OzgGamesRows
+      OZG_VppGameRow  ButtonWidget (parts: OZG_VppGameRowEdge, OZG_VppGameRowBg)
+      OzgGameTick  ButtonWidget (a checkbox; parts: OzgGameTickEdge, OzgGameTickBg); its mark is OzgGameTickMark: show it when on
+      OzgGameName  TextWidget (filled by script)
+      OzgGameNote  TextWidget (filled by script)
+
+CSS THE ENGINE HAS NO ANSWER FOR
+  border-radius  x18
+
+RESIZE: WHERE THE BROWSER RE-FLOWS (a text unwraps, a box changes its row); the first of them
+  Panel gs6
+  Panel gs9
+  Frame OzgSetLeg4

@@ -1,0 +1,95 @@
+sharp: GamesSharp.dc.html -> OpenZone_Games_VPP/gui/layouts/ozg_vpp_sharp.layout
+design size 1360 x 812, measured again one, two and three steps of 240 x 160 larger
+widgets: 146; 1 of them the browser re-flows as the page grows (the rule keeps them as designed)
+
+FILES
+  OpenZone_Games_VPP/gui/layouts/ozg_vpp_sharp.layout
+  OpenZone_Games_VPP/gui/layouts/_demo_ozg_vpp_sharp.layout
+
+NAMED WIDGETS OF THE PAGE (FindAnyWidget)
+  BtnOzgShOpen  ButtonWidget (parts: BtnOzgShOpenEdge, BtnOzgShOpenBg)
+  OzgShLeg0  Frame (parts: OzgShLeg0Bar)
+  OzgShLeg0Text  TextWidget (a caption: recolour only)
+  BtnOzgCheat  ButtonWidget
+  OzgCheatTick  ButtonWidget (a checkbox; parts: OzgCheatTickEdge, OzgCheatTickBg); its mark is OzgCheatTickMark: show it when on
+  OzgD_Cheating  TextWidget (filled by script)
+  OzgL_MarkUses  TextWidget (filled by script)
+  OzgD_MarkUses  TextWidget (filled by script)
+  OzgBox_MarkUses  Frame (parts: OzgBox_MarkUsesEdge, OzgBox_MarkUsesBg)
+  Ozg_MarkUses  EditBox
+  OzgL_MarkSeconds2  TextWidget (filled by script)
+  OzgD_MarkSeconds2  TextWidget (filled by script)
+  OzgBox_MarkSeconds2  Frame (parts: OzgBox_MarkSeconds2Edge, OzgBox_MarkSeconds2Bg)
+  Ozg_MarkSeconds2  EditBox
+  OzgL_StudySeconds  TextWidget (filled by script)
+  OzgD_StudySeconds  TextWidget (filled by script)
+  OzgBox_StudySeconds  Frame (parts: OzgBox_StudySecondsEdge, OzgBox_StudySecondsBg)
+  Ozg_StudySeconds  EditBox
+  OzgL_MarkKnowers  TextWidget (filled by script)
+  OzgD_MarkKnowers  TextWidget (filled by script)
+  OzgBox_MarkKnowers  Frame (parts: OzgBox_MarkKnowersEdge, OzgBox_MarkKnowersBg)
+  Ozg_MarkKnowers  EditBox
+  OzgShLeg1  Frame (parts: OzgShLeg1Bar)
+  OzgShLeg1Text  TextWidget (a caption: recolour only)
+  OzgL_NoticeGrace  TextWidget (filled by script)
+  OzgD_NoticeGrace  TextWidget (filled by script)
+  OzgBox_NoticeGrace  Frame (parts: OzgBox_NoticeGraceEdge, OzgBox_NoticeGraceBg)
+  Ozg_NoticeGrace  EditBox
+  OzgL_NoticeStep  TextWidget (filled by script)
+  OzgD_NoticeStep  TextWidget (filled by script)
+  OzgBox_NoticeStep  Frame (parts: OzgBox_NoticeStepEdge, OzgBox_NoticeStepBg)
+  Ozg_NoticeStep  EditBox
+  OzgL_NoticeMax  TextWidget (filled by script)
+  OzgD_NoticeMax  TextWidget (filled by script)
+  OzgBox_NoticeMax  Frame (parts: OzgBox_NoticeMaxEdge, OzgBox_NoticeMaxBg)
+  Ozg_NoticeMax  EditBox
+  OzgShNotice  TextWidget (filled by script)
+  OzgShLeg2  Frame (parts: OzgShLeg2Bar)
+  OzgShLeg2Text  TextWidget (a caption: recolour only)
+  OzgL_SleightsPerDeal  TextWidget (filled by script)
+  OzgD_SleightsPerDeal  TextWidget (filled by script)
+  OzgBox_SleightsPerDeal  Frame (parts: OzgBox_SleightsPerDealEdge, OzgBox_SleightsPerDealBg)
+  Ozg_SleightsPerDeal  EditBox
+  OzgL_DealerPicks  TextWidget (filled by script)
+  OzgD_DealerPicks  TextWidget (filled by script)
+  OzgBox_DealerPicks  Frame (parts: OzgBox_DealerPicksEdge, OzgBox_DealerPicksBg)
+  Ozg_DealerPicks  EditBox
+  OzgL_SpotPercent  TextWidget (filled by script)
+  OzgD_SpotPercent  TextWidget (filled by script)
+  OzgBox_SpotPercent  Frame (parts: OzgBox_SpotPercentEdge, OzgBox_SpotPercentBg)
+  Ozg_SpotPercent  EditBox
+  OzgShLeg3  Frame (parts: OzgShLeg3Bar)
+  OzgShLeg3Text  TextWidget (a caption: recolour only)
+  OzgL_CaughtSlip  TextWidget (filled by script)
+  OzgD_CaughtSlip  TextWidget (filled by script)
+  OzgBox_CaughtSlip  Frame (parts: OzgBox_CaughtSlipEdge, OzgBox_CaughtSlipBg)
+  Ozg_CaughtSlip  EditBox
+  OzgL_CaughtReplace  TextWidget (filled by script)
+  OzgD_CaughtReplace  TextWidget (filled by script)
+  OzgBox_CaughtReplace  Frame (parts: OzgBox_CaughtReplaceEdge, OzgBox_CaughtReplaceBg)
+  Ozg_CaughtReplace  EditBox
+  OzgL_CaughtThrow  TextWidget (filled by script)
+  OzgD_CaughtThrow  TextWidget (filled by script)
+  OzgBox_CaughtThrow  Frame (parts: OzgBox_CaughtThrowEdge, OzgBox_CaughtThrowBg)
+  Ozg_CaughtThrow  EditBox
+  OzgL_CaughtDeckIn  TextWidget (filled by script)
+  OzgD_CaughtDeckIn  TextWidget (filled by script)
+  OzgBox_CaughtDeckIn  Frame (parts: OzgBox_CaughtDeckInEdge, OzgBox_CaughtDeckInBg)
+  Ozg_CaughtDeckIn  EditBox
+  OzgL_CaughtDeckOut  TextWidget (filled by script)
+  OzgD_CaughtDeckOut  TextWidget (filled by script)
+  OzgBox_CaughtDeckOut  Frame (parts: OzgBox_CaughtDeckOutEdge, OzgBox_CaughtDeckOutBg)
+  Ozg_CaughtDeckOut  EditBox
+  OzgL_CaughtPick  TextWidget (filled by script)
+  OzgD_CaughtPick  TextWidget (filled by script)
+  OzgBox_CaughtPick  Frame (parts: OzgBox_CaughtPickEdge, OzgBox_CaughtPickBg)
+  Ozg_CaughtPick  EditBox
+  OzgShDirty  TextWidget (filled by script)
+  BtnOzgShDrop  ButtonWidget (parts: BtnOzgShDropEdge, BtnOzgShDropBg)
+  BtnOzgShSave  ButtonWidget (parts: BtnOzgShSaveBg)
+
+CSS THE ENGINE HAS NO ANSWER FOR
+  border-radius  x23
+
+RESIZE: WHERE THE BROWSER RE-FLOWS (a text unwraps, a box changes its row); the first of them
+  Panel gh6

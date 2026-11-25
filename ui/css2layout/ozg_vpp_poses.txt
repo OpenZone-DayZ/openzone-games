@@ -1,0 +1,48 @@
+poses: GamesPoses.dc.html -> OpenZone_Games_VPP/gui/layouts/ozg_vpp_poses.layout
+design size 1360 x 812, measured again one, two and three steps of 240 x 160 larger
+widgets: 99; 0 of them the browser re-flows as the page grows (the rule keeps them as designed)
+
+FILES
+  OpenZone_Games_VPP/gui/layouts/ozg_vpp_poses.layout
+  OpenZone_Games_VPP/gui/layouts/ozg_vpp_pose_row.layout
+  OpenZone_Games_VPP/gui/layouts/_demo_ozg_vpp_poses.layout
+
+NAMED WIDGETS OF THE PAGE (FindAnyWidget)
+  BtnOzgPoNew  ButtonWidget (parts: BtnOzgPoNewEdge, BtnOzgPoNewBg)
+  BtnOzgPoOpen  ButtonWidget (parts: BtnOzgPoOpenEdge, BtnOzgPoOpenBg)
+  OzgPoList  Frame
+  OzgPoListRows  WrapSpacer: the list's rows go here (ozg_vpp_pose_row); its ScrollWidget is OzgPoListScroll
+  OzgPoTitle  TextWidget (filled by script)
+  OzgPoLeg0  Frame (parts: OzgPoLeg0Bar)
+  OzgPoLeg0Text  TextWidget (a caption: recolour only)
+  OzgPoF_Id  EditBox
+  OzgPoF_Label  EditBox
+  OzgPoF_Says  TextWidget (filled by script)
+  OzgPoF_Kind  ButtonWidget (a select: the script cycles or lists its options ["сидячи", "стоячи"]); its caption is OzgPoF_KindText
+  OzgPoF_Stance  ButtonWidget (a select: the script cycles or lists its options ["не міняти", "випрямитися", "присісти"]); its caption is OzgPoF_StanceText
+  OzgPoF_Gesture  EditBox
+  OzgPoLeg1  Frame (parts: OzgPoLeg1Bar)
+  OzgPoLeg1Text  TextWidget (a caption: recolour only)
+  OzgPoDot0  ImageWidget (the sign ✓: icon check)
+  OzgPoChk0  TextWidget (filled by script)
+  OzgPoDot1  ImageWidget (the sign ✓: icon check)
+  OzgPoChk1  TextWidget (filled by script)
+  OzgPoDot2  ImageWidget (the sign ✓: icon check)
+  OzgPoChk2  TextWidget (filled by script)
+  BtnOzgPoUp  ButtonWidget (parts: BtnOzgPoUpEdge, BtnOzgPoUpBg)
+  BtnOzgPoDown  ButtonWidget (parts: BtnOzgPoDownEdge, BtnOzgPoDownBg)
+  BtnOzgPoDel  ButtonWidget (parts: BtnOzgPoDelEdge, BtnOzgPoDelBg)
+  OzgPoDirty  TextWidget (filled by script)
+  BtnOzgPoDrop  ButtonWidget (parts: BtnOzgPoDropEdge, BtnOzgPoDropBg)
+  BtnOzgPoSave  ButtonWidget (parts: BtnOzgPoSaveBg)
+
+ROW TEMPLATES
+  ozg_vpp_pose_row.layout  root OZG_VppPoseRow (Button), 5 in the sample, 487 x 46 units, list OzgPoListRows
+      OZG_VppPoseRow  ButtonWidget (parts: OZG_VppPoseRowEdge, OZG_VppPoseRowBg)
+      OzgPoRowName  TextWidget (filled by script)
+      OzgPoRowId  TextWidget (filled by script)
+      OzgPoRowKind  TextWidget (filled by script)
+      OzgPoRowGesture  TextWidget (filled by script)
+
+CSS THE ENGINE HAS NO ANSWER FOR
+  border-radius  x15

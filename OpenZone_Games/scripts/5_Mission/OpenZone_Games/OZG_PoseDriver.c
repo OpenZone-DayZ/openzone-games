@@ -146,6 +146,20 @@ class OZG_PoseDriver
         return "stance " + pose.Stance + " asked for";
     }
 
+    // Whether this client's game has the gesture, asked of its own character's
+    // gestures: the admin window's Пози page says so beside a pose. False with
+    // no character to ask.
+    static bool GestureKnown(int gesture)
+    {
+        PlayerBase player = PlayerBase.Cast(GetGame().GetPlayer());
+        if (!player)
+            return false;
+        EmoteManager emotes = player.GetEmoteManager();
+        if (!emotes)
+            return false;
+        return Knows(emotes, gesture);
+    }
+
     // Whether the game has this gesture: the mod that brings it is loaded.
     protected static bool Knows(EmoteManager emotes, int gesture)
     {

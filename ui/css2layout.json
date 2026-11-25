@@ -1,0 +1,55 @@
+{
+  "note": "The pages of OpenZone Games in the OpenZone window of VPP, converted from the mockup (docs/specs/2026-11-12-openzone-vpp-mockup/project, boards Games*.dc.html) by `python -m dayz_mcp.css2layout ui/css2layout.json [page] [--demo]` (the MCP repository's src). The fonts, the icons and how to mark a page: the core's ui/css2layout.json and docs/specs/2026-11-13-openzone-vpp-page-guide.md.",
+  "extends": "../../openzone-core/ui/css2layout.json",
+  "out": "../OpenZone_Games_VPP/gui/layouts",
+  "prefix": "OpenZone_Games_VPP/gui/layouts",
+  "report": "css2layout",
+  "runtime": null,
+  "strings": {
+    "files": [
+      "../OpenZone_Games/stringtable.csv"
+    ],
+    "column": "original",
+    "fold": {
+      "І": "I"
+    },
+    "pending": [
+      "css2layout/strings.pending.json"
+    ]
+  },
+  "pages": {
+    "settings": {
+      "page": "GamesSettings.dc.html",
+      "size": [
+        1360,
+        812
+      ],
+      "layout": "ozg_vpp_settings",
+      "root": "OzgSetPane",
+      "auto": "gs",
+      "hidden": true
+    },
+    "sharp": {
+      "page": "GamesSharp.dc.html",
+      "size": [
+        1360,
+        812
+      ],
+      "layout": "ozg_vpp_sharp",
+      "root": "OzgShPane",
+      "auto": "gh",
+      "hidden": true
+    },
+    "poses": {
+      "page": "GamesPoses.dc.html",
+      "size": [
+        1360,
+        812
+      ],
+      "layout": "ozg_vpp_poses",
+      "root": "OzgPoPane",
+      "auto": "gq",
+      "hidden": true
+    }
+  }
+}

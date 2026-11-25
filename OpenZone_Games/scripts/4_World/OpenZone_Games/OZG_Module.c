@@ -50,6 +50,8 @@ class OZG_Module : CF_ModuleWorld
         // a client needs of it rides in the core's sync packet.
         OZG_Cfg.ServerLoad();
         OZ_AdminCfg.Register(OZG_Cfg.ADMIN_NAME, OZG_Cfg.PATH, new OZG_SettingsApplier(), OZG_Cfg.ADMIN_OWNER);
+        // The games' card on the core's overview in the admin window.
+        OZ_AdminFacts.Register(new OZG_Facts());
         OZ_SyncExtras.OnFill().Insert(OZG_Fill);
 
         OZ_ServiceRegistry.Register(OZG_Const.SERVICE, new OZG_Service());
