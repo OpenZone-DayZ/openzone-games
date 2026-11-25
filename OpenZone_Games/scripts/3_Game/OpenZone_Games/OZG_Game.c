@@ -84,6 +84,85 @@ class OZG_Game
         }
     }
 
+    // The dealer's choice (card sharp's design §6.5): before Begin, the
+    // cards named (names of the cards handed with TakeCards) are dealt to
+    // the seat `seat` first, and the rest of the deal is by chance.
+    protected int m_FirstSeat = -1;
+    protected ref array<string> m_FirstCards;
+
+    void DealFirst(int seat, array<string> names)
+    {
+        m_FirstSeat = seat;
+        m_FirstCards = new array<string>();
+        if (names)
+            m_FirstCards.Copy(names);
+    }
+
+    // ---- sleights (card sharp's design §6.7) ---------------------------------
+    //
+    // A sleight moves a card the rules do not move: into a hand, out of it,
+    // onto the discards. The session moves the items and tells the game of
+    // every card it brings in or takes out; the game keeps its own record of
+    // the deal true (every card of it somewhere exactly once) and settles
+    // whatever the change leaves to settle. A game with no hands refuses all.
+
+    // May a sleight bring a card of this face into a hand of this game?
+    bool SleightTakes(string face)
+    {
+        return false;
+    }
+
+    // A name for one more card of `face` that this deal has not used, its
+    // cards gone included.
+    string SleightName(string face)
+    {
+        return "";
+    }
+
+    // Does the hand of `seat` hold the card `card`?
+    bool SleightHolds(int seat, string card)
+    {
+        return false;
+    }
+
+    // The card `card` (a record the session made from the item) joins the
+    // hand of `seat`.
+    bool SleightIn(int seat, OZG_DealCard card, out string refusal)
+    {
+        refusal = OZG_Const.NO_GAME;
+        return false;
+    }
+
+    // The card `card` leaves the hand of `seat`, and the deal.
+    bool SleightOut(int seat, string card, out string refusal)
+    {
+        refusal = OZG_Const.NO_GAME;
+        return false;
+    }
+
+    // The card `card` leaves the hand of `seat` and the deal, and `instead`
+    // takes its place: the count stays.
+    bool SleightSwap(int seat, string card, OZG_DealCard instead, out string refusal)
+    {
+        refusal = OZG_Const.NO_GAME;
+        return false;
+    }
+
+    // The card `card` goes from the hand of `seat` onto the discards; it
+    // stays a card of the deal.
+    bool SleightDiscard(int seat, string card, out string refusal)
+    {
+        refusal = OZG_Const.NO_GAME;
+        return false;
+    }
+
+    // Every card of the deal as it stands now, copies: what finds a card's
+    // item again (OZG_DeckRead.MatchDeal).
+    void DealtRecords(array<ref OZG_DealCard> into)
+    {
+        into.Clear();
+    }
+
     // ---- what is heard -------------------------------------------------------
 
     // The sounds the last change made, in the order it made them: ids of

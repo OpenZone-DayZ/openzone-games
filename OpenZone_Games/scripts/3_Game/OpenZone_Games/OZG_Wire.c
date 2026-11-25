@@ -18,11 +18,81 @@ class OZG_WAsk
     string OptId;
     string OptValue;
     int    PoseNo;
+    // A sleight (card sharp's design §9): the card of the player's pockets it
+    // takes, by its item's network id ("<low>.<high>", OZG_Keys); the server
+    // checks the item is his.
+    string CardKey;
+    // The dealer's three, in the deal itself: "in=<key>,..;out=<key>|*,..;
+    // pick=<key>,.." -- cards of his pockets into the deck, cards out of it
+    // (a key he reads, or * for any), cards he reads dealt to him first.
+    string Stack;
 
     void OZG_WAsk()
     {
         SeatNo = -1;
     }
+}
+
+// An item's network id as a text both sides read the same: the key a client
+// names a card by in a sleight, and the server finds it by.
+class OZG_Keys
+{
+    static string Of(Object thing)
+    {
+        if (!thing)
+            return "";
+        int low;
+        int high;
+        thing.GetNetworkID(low, high);
+        return low.ToString() + "." + high.ToString();
+    }
+
+    static Object Find(string key)
+    {
+        int dot = key.IndexOf(".");
+        if (dot <= 0)
+            return null;
+        string low = key.Substring(0, dot);
+        string high = key.Substring(dot + 1, key.Length() - dot - 1);
+        if (low == "" || high == "")
+            return null;
+        return GetGame().GetObjectByNetworkId(low.ToInt(), high.ToInt());
+    }
+}
+
+// A card of the deck the dealer reads, told to him before a deal (card
+// sharp's design §6.5): its key, to be named in the stack, its face, the look
+// of its back and its sign.
+class OZG_WDeckCard
+{
+    string Key;
+    string Face;
+    int    Look;
+    int    Sign;
+
+    static OZG_WDeckCard Make(string key, string face, int look, int sign)
+    {
+        OZG_WDeckCard c = new OZG_WDeckCard();
+        c.Key = key;
+        c.Face = face;
+        c.Look = look;
+        c.Sign = sign;
+        return c;
+    }
+}
+
+// What the one who did a sleight is told (card sharp's design §6.1, §9): the
+// kind, the card that came into his hand and the cards that went out of it,
+// by their names in the game, and the sound to play for him. Never sent to
+// anybody else.
+class OZG_WSleight
+{
+    string PlaceId;
+    int    Rev;
+    string Kind;
+    string CameIn;
+    string WentOut;
+    string SoundName;
 }
 
 // One seat as a client sees it.
@@ -125,6 +195,15 @@ class OZG_WView
     ref array<ref OZG_WRead> Reads;
     // What this client's player notices (design §4.5); empty as the reads.
     ref array<ref OZG_WNotice> Notices;
+    // Sleights (card sharp's design §6): how many this player did in this
+    // deal, and how many he may; SleightsMost 0 when he may do none now (a
+    // watcher, a seat not dealt in, Cheating 0). For the dealer between deals:
+    // how many cards he may choose for his hand, and the cards of the deck he
+    // reads (§6.5).
+    int    SleightsUsed;
+    int    SleightsMost;
+    int    PicksMost;
+    ref array<ref OZG_WDeckCard> DeckReads;
 
     void OZG_WView()
     {
@@ -135,6 +214,7 @@ class OZG_WView
         Log = new array<string>();
         Reads = new array<ref OZG_WRead>();
         Notices = new array<ref OZG_WNotice>();
+        DeckReads = new array<ref OZG_WDeckCard>();
         Mine = -1;
         HostSeat = -1;
     }

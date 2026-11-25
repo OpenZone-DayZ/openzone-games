@@ -104,6 +104,7 @@ class OZG_Durak : OZG_Game
         if (!dice)
             dice = new OZG_Random();
         dice.Shuffle(deck);
+        DealerFirst(seats, deck);
 
         // Six to each seat, a seat at a time; what is left is the stock.
         int at = 0;
@@ -137,6 +138,28 @@ class OZG_Durak : OZG_Game
         HearSound(OZG_SoundIds.DEAL);
         HearSound(OZG_SoundIds.TRUMP);
         return true;
+    }
+
+    // The dealer's choice (card sharp's design §6.5): the cards he chose go
+    // to the first places of his six in the shuffled deck, swapped with what
+    // lay there; the rest stays as chance laid it. A card the deck does not
+    // hold is passed over.
+    protected void DealerFirst(array<int> seats, array<string> deck)
+    {
+        if (!m_FirstCards || m_FirstCards.Count() == 0)
+            return;
+        int d = seats.Find(m_FirstSeat);
+        if (d < 0)
+            return;
+        int k = 0;
+        for (int p = 0; p < m_FirstCards.Count() && k < OZG_DurakConst.HAND; p++)
+        {
+            int at = deck.Find(m_FirstCards[p]);
+            if (at < 0)
+                continue;
+            deck.SwapItems(d * OZG_DurakConst.HAND + k, at);
+            k++;
+        }
     }
 
     // Who lays the first card of the game (rule 2). After a game with a durak
@@ -647,6 +670,216 @@ class OZG_Durak : OZG_Game
         OpenBout(NextLive(at));
     }
 
+    // ---- sleights (card sharp's design §6.7) ---------------------------------
+    //
+    // A copy beats and is beaten like its twin: the rules ask ranks and suits,
+    // never names. A hand may be of any length, the discards grow by what is
+    // thrown, a stock ends when it ends. Nothing of a sleight is heard and
+    // nothing goes into the log: the session plays its sound for the one who
+    // did it and for those who saw it alone.
+
+    // Any card with a rank and a suit: a card of a rank durak does not deal
+    // (a deuce) is simply a low one. A joker has neither.
+    override bool SleightTakes(string face)
+    {
+        return OZG_Cards.RankOf(face) >= 0 && OZG_Cards.SuitOf(face) != "";
+    }
+
+    override string SleightName(string face)
+    {
+        string plain = OZG_Cards.FaceOf(face);
+        if (plain == "" || !m_S)
+            return "";
+        for (int k = 0; k < 100000; k++)
+        {
+            string name = OZG_Cards.CopyNamed(plain, k);
+            if (!DealtCard(name) && m_S.Gone.Find(name) < 0)
+                return name;
+        }
+        return "";
+    }
+
+    override bool SleightHolds(int seat, string card)
+    {
+        if (!m_S || card == "")
+            return false;
+        int i = IndexOfSeat(seat);
+        if (i < 0)
+            return false;
+        return m_S.SeatList[i].Held.Find(card) >= 0;
+    }
+
+    // A seat in play in a game not over: what every sleight needs. Says why
+    // not.
+    protected bool SleightSeat(int seat, out int i, out string refusal)
+    {
+        refusal = "";
+        i = -1;
+        if (!m_S || m_S.Ended == 1)
+        {
+            refusal = OZG_Const.NO_OVER;
+            return false;
+        }
+        i = IndexOfSeat(seat);
+        if (i < 0 || m_S.SeatList[i].Gone != OZG_DurakConst.IN_PLAY)
+        {
+            refusal = OZG_Const.NO_SEAT;
+            return false;
+        }
+        return true;
+    }
+
+    // A card that may come in: a card durak takes, by a name the deal has
+    // not used.
+    protected bool Newcomer(OZG_DealCard card, out string refusal)
+    {
+        refusal = "";
+        if (!card || !OZG_Cards.IsCard(card.Name) || !SleightTakes(card.Name))
+        {
+            refusal = OZG_Const.NO_CARD;
+            return false;
+        }
+        if (DealtCard(card.Name) || m_S.Gone.Find(card.Name) >= 0)
+        {
+            refusal = OZG_Const.NO_CARD;
+            return false;
+        }
+        return true;
+    }
+
+    // The record of a card of the deal out, its name kept among the gone.
+    protected void Forget(string card)
+    {
+        for (int d = 0; d < m_S.Dealt.Count(); d++)
+        {
+            if (m_S.Dealt[d] && m_S.Dealt[d].Name == card)
+            {
+                m_S.Dealt.RemoveOrdered(d);
+                break;
+            }
+        }
+        if (m_S.Gone.Find(card) < 0)
+            m_S.Gone.Insert(card);
+    }
+
+    override bool SleightIn(int seat, OZG_DealCard card, out string refusal)
+    {
+        int i;
+        if (!SleightSeat(seat, i, refusal))
+            return false;
+        if (!Newcomer(card, refusal))
+            return false;
+        m_S.Dealt.Insert(card.Copy());
+        m_S.SeatList[i].Held.Insert(card.Name);
+        Mend();
+        return true;
+    }
+
+    override bool SleightOut(int seat, string card, out string refusal)
+    {
+        int i;
+        if (!SleightSeat(seat, i, refusal))
+            return false;
+        array<string> held = m_S.SeatList[i].Held;
+        int at = held.Find(card);
+        if (at < 0)
+        {
+            refusal = OZG_Const.NO_CARD;
+            return false;
+        }
+        held.RemoveOrdered(at);
+        Forget(card);
+        Mend();
+        return true;
+    }
+
+    override bool SleightSwap(int seat, string card, OZG_DealCard instead, out string refusal)
+    {
+        int i;
+        if (!SleightSeat(seat, i, refusal))
+            return false;
+        array<string> held = m_S.SeatList[i].Held;
+        int at = held.Find(card);
+        if (at < 0)
+        {
+            refusal = OZG_Const.NO_CARD;
+            return false;
+        }
+        if (!Newcomer(instead, refusal))
+            return false;
+        // The new card takes the old one's place in the hand: the count, and
+        // the order, stay.
+        held[at] = instead.Name;
+        Forget(card);
+        m_S.Dealt.Insert(instead.Copy());
+        Mend();
+        return true;
+    }
+
+    override bool SleightDiscard(int seat, string card, out string refusal)
+    {
+        int i;
+        if (!SleightSeat(seat, i, refusal))
+            return false;
+        array<string> held = m_S.SeatList[i].Held;
+        int at = held.Find(card);
+        if (at < 0)
+        {
+            refusal = OZG_Const.NO_CARD;
+            return false;
+        }
+        held.RemoveOrdered(at);
+        m_S.DiscardCards.Insert(card);
+        Mend();
+        return true;
+    }
+
+    override void DealtRecords(array<ref OZG_DealCard> into)
+    {
+        into.Clear();
+        if (!m_S)
+            return;
+        for (int i = 0; i < m_S.Dealt.Count(); i++)
+        {
+            if (m_S.Dealt[i])
+                into.Insert(m_S.Dealt[i].Copy());
+        }
+    }
+
+    // After a sleight changed a hand: what the rules would have settled.
+    // With cards on the table the bout may now close (Settle), its draws and
+    // its end with it. With the table empty the bout waits for its opener,
+    // who needs a card to open with: an opener whose hand a sleight emptied
+    // draws up from the stock, as he would at a bout's end; with the stock
+    // gone a seat with no cards is out (MarkOut), the game may be over, and
+    // the next seat with cards opens. The defender and the limit are worked
+    // out anew, his hand may have changed.
+    protected void Mend()
+    {
+        if (m_S.Ended == 1)
+            return;
+        if (m_S.AttackCards.Count() > 0)
+        {
+            Settle();
+            return;
+        }
+        OZG_DurakSeat opening = m_S.SeatList[m_S.Opener];
+        if (opening.Gone == OZG_DurakConst.IN_PLAY && opening.Held.Count() == 0)
+            DrawUp(m_S.Opener);
+        MarkOut();
+        if (Finish(false))
+            return;
+        int opener = m_S.Opener;
+        bool stuck = m_S.SeatList[opener].Gone != OZG_DurakConst.IN_PLAY;
+        if (!stuck)
+            stuck = m_S.SeatList[opener].Held.Count() == 0;
+        if (stuck)
+            opener = NextLive(opener);
+        if (opener < 0)
+            return;
+        OpenBout(opener);
+    }
+
     // ---- who is waited for ---------------------------------------------------
 
     override int HeldCount(int seat)
@@ -1135,10 +1368,17 @@ class OZG_Durak : OZG_Game
             s.Dealt = plain;
             s.Version = OZG_DurakConst.VERSION;
         }
+        // A game saved before sleights: nothing of it was taken out.
+        if (s.Version == 3)
+            s.Version = OZG_DurakConst.VERSION;
         if (s.Version != OZG_DurakConst.VERSION)
             return false;
         if (!s.Dealt)
             return false;
+        array<string> gone = new array<string>();
+        if (s.Gone)
+            gone.Copy(s.Gone);
+        s.Gone = gone;
         // Every record made anew by script (the core's rule for what the JSON
         // loader filled).
         array<ref OZG_DealCard> made = new array<ref OZG_DealCard>();
@@ -1274,6 +1514,8 @@ class OZG_Durak : OZG_Game
         text = text + " hands=" + HandsLine();
         if (m_S.Ended == 0)
             text = text + " waits=" + WaitsLine();
+        if (m_S.Gone.Count() > 0)
+            text = text + " gone=" + m_S.Gone.Count().ToString();
         return text;
     }
 
@@ -1352,6 +1594,8 @@ class OZG_Durak : OZG_Game
         }
         text = text + "table[" + TableLine() + "] ";
         text = text + "stock[" + OZG_Cards.Line(m_S.StockCards) + "]";
+        if (m_S.Gone.Count() > 0)
+            text = text + " gone[" + OZG_Cards.Line(m_S.Gone) + "]";
         return text;
     }
 }

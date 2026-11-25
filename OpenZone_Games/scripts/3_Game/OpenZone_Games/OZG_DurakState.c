@@ -9,7 +9,7 @@ class OZG_DurakConst
     static const string VARIANT_TRANSFER = "perevodnoy";
 
     // The format of a saved game.
-    static const int VERSION = 3;
+    static const int VERSION = 4;
     // Cards dealt to a seat, and drawn up to after a bout.
     static const int HAND = 6;
     // Attack cards in one bout, and in the first bout of a game.
@@ -65,6 +65,7 @@ class OZG_DurakSeat
 // writes, so a field here is a field of the saved game: a change of meaning is
 // a change of VERSION.
 // 3: a dealt card keeps its mark (Sign, Readers, Noticers).
+// 4: the cards sleights took out of the deal (Gone).
 class OZG_DurakState
 {
     int Version;
@@ -97,9 +98,13 @@ class OZG_DurakState
     int DurakSeat;
     // 1: the last cards left both hands at once.
     int Tie;
-    // Every card this deal began with, in the order it was handed over: its
-    // name and what it is like. Sound counts against it.
+    // Every card of the deal, in the order it was handed over: its name and
+    // what it is like. A sleight adds the cards it brings in and takes away
+    // those it takes out (card sharp's design §6.7). Sound counts against it.
     ref array<ref OZG_DealCard> Dealt;
+    // The names of the cards sleights took out of the deal, never given to a
+    // card again in this deal.
+    ref array<string> Gone;
 
     void OZG_DurakState()
     {
@@ -109,6 +114,7 @@ class OZG_DurakState
         AttackCards = new array<string>();
         DefenceCards = new array<string>();
         Dealt = new array<ref OZG_DealCard>();
+        Gone = new array<string>();
         DurakSeat = -1;
     }
 }

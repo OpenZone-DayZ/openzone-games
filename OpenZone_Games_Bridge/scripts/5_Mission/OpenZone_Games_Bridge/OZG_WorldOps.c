@@ -318,7 +318,31 @@ class OZG_WorldOps
         return true;
     }
 
+    // An ask made later (ask ... after=<ms>): a shot of the window can then be
+    // taken while what it starts is on its way, the bridge answering a command
+    // later than a card flies.
+    static void AskLater(string placeId, string uid, string what, string move, string how, string stack)
+    {
+        OZG_Session s = OZG_Sessions.ById(placeId);
+        PlayerBase p = OZG_Sessions.PlayerOf(uid);
+        if (!s || !p)
+        {
+            OZG_Log.Info("stand: a later ask " + what + " found no session or nobody");
+            return;
+        }
+        OZG_WAsk ask = new OZG_WAsk();
+        ask.PlaceId = placeId;
+        ask.Move = move;
+        ask.How = how;
+        ask.Stack = stack;
+        string why = s.Ask(p, what, ask);
+        if (why == "")
+            why = "ok";
+        OZG_Log.Info("stand: a later ask " + what + " by " + uid + ": " + why);
+    }
+
     // ask id= who= ask=<op> [seat=] [move=] [how=] [opt=] [val=] [pose=]
+    // [stack=] [after=<ms>]
     static bool OpAsk(map<string, string> args, out string detail)
     {
         OZG_Session s = Sess(args, detail);
@@ -332,6 +356,16 @@ class OZG_WorldOps
             return false;
         }
         string what = OZG_VerbOps.Arg(args, "ask", "");
+        int after = OZG_VerbOps.Arg(args, "after", "0").ToInt();
+        if (after > 0)
+        {
+            string move = OZG_VerbOps.Arg(args, "move", "");
+            string how = OZG_VerbOps.Arg(args, "how", "");
+            string stack = OZG_VerbOps.Arg(args, "stack", "");
+            GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(AskLater, after, false, s.Id(), uid, what, move, how, stack);
+            detail = "ask " + what + " by " + uid + " in " + after.ToString() + " ms";
+            return true;
+        }
         OZG_WAsk ask = new OZG_WAsk();
         ask.PlaceId = s.Id();
         ask.SeatNo = OZG_VerbOps.Arg(args, "seat", "-1").ToInt();
@@ -340,6 +374,7 @@ class OZG_WorldOps
         ask.OptId = OZG_VerbOps.Arg(args, "opt", "");
         ask.OptValue = OZG_VerbOps.Arg(args, "val", "");
         ask.PoseNo = OZG_VerbOps.Arg(args, "pose", "0").ToInt();
+        ask.Stack = OZG_VerbOps.Arg(args, "stack", "");
 
         if (what == OZG_Const.OP_FOLD)
         {
@@ -1317,11 +1352,28 @@ class OZG_WorldOps
         return true;
     }
 
+    // One shake message to one player, as the session sends it.
+    static void ShakeNow(string placeId, string uid, string region, string sound)
+    {
+        PlayerBase p = OZG_Sessions.PlayerOf(uid);
+        if (!p || !p.GetIdentity())
+            return;
+        OZG_WShake w = new OZG_WShake();
+        w.PlaceId = placeId;
+        w.RegionName = region;
+        w.SoundName = sound;
+        string body;
+        string err;
+        JsonFileLoader<OZG_WShake>.MakeData(w, body, err, false);
+        OZ_Rpc.ServiceRespond(p.GetIdentity(), OZG_Const.SERVICE, OZG_Const.OP_SHAKE, true, body, "");
+    }
+
     // shake [id=<place>] [region=seat<n>|discards|stock] [sound=<name>]
-    // [who=me|<id>]: the card sharp's message to a player who saw a sleight
-    // (card sharp's design §9), sent as the fourth phase will send it: his
-    // client plays the sound for him alone and, when his window is open on
-    // that place, shakes the region.
+    // [who=me|<id>] [repeat=<n>] [gap=<ms>]: the card sharp's message to a
+    // player who saw a sleight (card sharp's design §9), as the session sends
+    // it: his client plays the sound for him alone and, when his window is
+    // open on that place, shakes the region. repeat= sends it n times, gap=
+    // ms apart (500 by default): long enough for a shot to find a shake.
     static bool OpShake(map<string, string> args, out string detail)
     {
         OZG_Session s = Sess(args, detail);
@@ -1334,16 +1386,16 @@ class OZG_WorldOps
             detail = "shake: nobody is '" + uid + "'";
             return false;
         }
-        OZG_WShake w = new OZG_WShake();
-        w.PlaceId = s.Id();
-        w.RegionName = OZG_VerbOps.Arg(args, "region", "");
-        w.SoundName = OZG_VerbOps.Arg(args, "sound", "");
-        string body;
-        string err;
-        JsonFileLoader<OZG_WShake>.MakeData(w, body, err, false);
-        OZ_Rpc.ServiceRespond(p.GetIdentity(), OZG_Const.SERVICE, OZG_Const.OP_SHAKE, true, body, "");
-        detail = "shake sent to " + uid + ": region=" + w.RegionName;
-        detail = detail + " sound=" + w.SoundName;
+        string region = OZG_VerbOps.Arg(args, "region", "");
+        string sound = OZG_VerbOps.Arg(args, "sound", "");
+        int repeat = OZG_VerbOps.Arg(args, "repeat", "1").ToInt();
+        int gap = OZG_VerbOps.Arg(args, "gap", "500").ToInt();
+        ShakeNow(s.Id(), uid, region, sound);
+        for (int k = 1; k < repeat; k++)
+            GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(ShakeNow, k * gap, false, s.Id(), uid, region, sound);
+        detail = "shake sent to " + uid + ": region=" + region + " sound=" + sound;
+        if (repeat > 1)
+            detail = detail + " x" + repeat.ToString() + " every " + gap.ToString() + " ms";
         return true;
     }
 

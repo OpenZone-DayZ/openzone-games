@@ -262,6 +262,17 @@ class OZG_Bench
             chance = new OZG_BenchSeeded(seed.ToInt());
         }
 
+        // first=<seat>:<card> <card>..: the dealer's choice (card sharp's
+        // design §6.5), dealt to that seat first.
+        string first = OZG_VerbOps.Arg(args, "first", "");
+        int colon = first.IndexOf(":");
+        if (colon > 0)
+        {
+            array<string> chosen = new array<string>();
+            OZG_Cards.Parse(first.Substring(colon + 1, first.Length() - colon - 1), chosen);
+            game.DealFirst(first.Substring(0, colon).ToInt(), chosen);
+        }
+
         // A refusal of the game is an answer, and the game on the bench stays.
         string refusal;
         if (!game.Begin(seats, options, chance, OZG_VerbOps.Arg(args, "hint", ""), refusal))
@@ -332,6 +343,53 @@ class OZG_Bench
         if (skipped > 0)
             marks = marks + " skipped=" + skipped.ToString();
         detail = marks + " | " + s_Game.Brief();
+        return true;
+    }
+
+    // cheat seat=<n> kind=in|out|swap|discard [card=<name>] [face=<face>]
+    // [look=<n>]: a sleight's change told to the game on the bench as a
+    // session tells it (card sharp's design §6.7): `in` a card of `face`
+    // joins the hand under a name the deal has not used, `out` the card
+    // `card` leaves the hand and the deal, `swap` both at once, `discard` the
+    // card goes to the discards. The answer says the names, whether the state
+    // adds up, and the brief.
+    static bool OpCheat(map<string, string> args, out string detail)
+    {
+        if (!HasGame(detail))
+            return false;
+        int seat = OZG_VerbOps.Arg(args, "seat", "0").ToInt();
+        string kind = OZG_VerbOps.Arg(args, "kind", "in");
+        string card = OZG_VerbOps.Arg(args, "card", "");
+        string face = OZG_VerbOps.Arg(args, "face", "As");
+        int look = OZG_VerbOps.Arg(args, "look", "0").ToInt();
+        string refusal;
+        bool done = false;
+        string named = "";
+        if (kind == "in" || kind == "swap")
+            named = s_Game.SleightName(face);
+        OZG_DealCard rec = OZG_DealCard.Make(named, look);
+        if (kind == "in")
+            done = s_Game.SleightIn(seat, rec, refusal);
+        else if (kind == "out")
+            done = s_Game.SleightOut(seat, card, refusal);
+        else if (kind == "swap")
+            done = s_Game.SleightSwap(seat, card, rec, refusal);
+        else if (kind == "discard")
+            done = s_Game.SleightDiscard(seat, card, refusal);
+        else
+            refusal = "kind is in, out, swap or discard";
+        string why;
+        string sound = "yes";
+        if (!s_Game.Sound(why))
+            sound = "no (" + why + ")";
+        detail = kind + " " + card;
+        if (named != "")
+            detail = detail + " -> " + named;
+        if (done)
+            detail = detail + ": ok";
+        else
+            detail = detail + ": no " + refusal;
+        detail = detail + " sound=" + sound + " | " + s_Game.Brief();
         return true;
     }
 

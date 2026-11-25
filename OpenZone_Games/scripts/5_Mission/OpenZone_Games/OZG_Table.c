@@ -41,6 +41,8 @@ class OZG_Table
             v.Reads = new array<ref OZG_WRead>();
         if (!v.Notices)
             v.Notices = new array<ref OZG_WNotice>();
+        if (!v.DeckReads)
+            v.DeckReads = new array<ref OZG_WDeckCard>();
 
         OZG_TableView view = new OZG_TableView();
         view.HeadPart = v;
