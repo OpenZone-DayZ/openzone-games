@@ -99,6 +99,12 @@ Date: 2026-11-25/26. The owner's words, in this order (chat, Russian; here in En
     it reads better -- as if they cast that classic shadow of theirs forward."
 35. (2026-11-26) "That is all, all the decisions are made: make the mockups ready with
     animation and sounds. Do not touch the stand for now."
+36. (2026-11-26, on the classic sign cast forward like a shadow) "No, the shadow must as it
+    were envelop the chess figurines, so that the figurines are as it were inscribed in the
+    classic shape": the classic piece stands in its square as on the classic board, dark
+    and half seen, and the figurine, smaller, stands within it, on its foot.
+37. (2026-11-26) "That is it, go on: the mockups, and then move them into the game. Work by
+    yourself." "Do everything in this session."
 
 What the words leave open is decided below and named in §14.
 
@@ -531,5 +537,15 @@ Decided while building (2026-11-26, `2026-11-26-boards-and-dice-record.md`):
     after the cut, 72 views of 700x900 differ in 214 pixels, shadows of the cut faces in
     the renderer (the game draws shadows from a shadow level of its own). The levels of
     detail below this one are made when the set goes into the game.
+  - **In the window** (words 29, 34, 36): pictures of the figurines themselves, from six
+    views (front, rear, right, left at 15 degrees up; front and rear at 50). "At the table"
+    your own figures show their backs and the other side's their faces, so black sees it
+    the other way round. Each figurine is inscribed in its classic piece: the classic set's
+    picture stands in the square as on the classic board, dark at 36%, and the figurine
+    stands on its foot within it, as wide as the foot allows (4 px past it either side) and
+    no higher than 80% of it, so that the crown, the cross, the battlements or the ball
+    stay above its head. Off, every figurine stands whole in its square at one scale for
+    all, the kings tallest. The mockups are on the design canvas, boards "Шахи · сталкерські
+    фігури" and "Шашки · сталкерські".
 - A chess clock, the doubling cube, general (word 8).
 - Bots stronger than the first legal move a game offers.
