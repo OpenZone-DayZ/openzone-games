@@ -46,6 +46,8 @@ Date: 2026-11-25/26. The owner's words, in this order (chat, Russian; here in En
     needs no green field: the board by itself, and it must take almost all (most) of our
     mod's game overlay." "The stalker chess is a board in the stalker style and pieces in
     the stalker style, the rules the same."
+18. (2026-11-26, of three directions proposed) "Stalkers against mutants, but the list of
+    pieces is to be approved."
 
 What the words leave open is decided below and named in §14.
 
@@ -425,8 +427,9 @@ Decided while building (2026-11-26, `2026-11-26-boards-and-dice-record.md`):
 ## 15. Not in this design
 
 - **The stalker chess**: the owner's (word 6). It is a look, not a game (word 17): a
-  board and pieces in the stalker style, the rules of chess; directions proposed to the
-  owner on 2026-11-26, his to choose.
+  board and pieces in the stalker style, the rules of chess. Chosen (word 18): stalkers
+  against mutants, figurines; which figure stands for which piece waits for the owner's
+  approval of the list.
 - **The classic knight** is to be made again (word 17): with new models of the pieces,
   their own or the CC0 chess set of Poly Haven, as the owner chooses.
 - A chess clock, the doubling cube, general (word 8).
