@@ -438,6 +438,20 @@ class OZG_Bench
         return true;
     }
 
+    // said: what the game on the bench said for the log since the last ask (the last
+    // move's own words, then the lines said beside them), and the lists emptied.
+    static bool OpSaid(out string detail)
+    {
+        if (!HasGame(detail))
+            return false;
+        array<string> lines = new array<string>();
+        string move = s_Game.TakeSaid(lines);
+        detail = "move=[" + move + "]";
+        for (int i = 0; i < lines.Count(); i++)
+            detail = detail + " said=[" + lines[i] + "]";
+        return true;
+    }
+
     // all: every hand, the table and the stock.
     static bool OpAll(out string detail)
     {

@@ -36,6 +36,8 @@ class OZG_VerbOps
             return OZG_Bench.OpBrief(detail);
         if (op == "heard")
             return OZG_Bench.OpHeard(detail);
+        if (op == "said")
+            return OZG_Bench.OpSaid(detail);
         if (op == "all")
             return OZG_Bench.OpAll(detail);
         if (op == "can")

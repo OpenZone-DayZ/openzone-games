@@ -207,6 +207,7 @@ log says what flew (`dbg: flights rev 12: laid 1, swept 4, drawn 3`).
     oz_games {"op":"sound","in":"me"}                                the number of the deck in your hands (gathered up)
     oz_games {"op":"shake","id":"<id>","region":"seat1","sound":"lay"}   what a player who saw a sleight will be sent: the sound for him alone, seat 1's fan shaken
     oz_games {"op":"heard"}                                          the bench: what its game made heard since the last ask
+    oz_games {"op":"said"}                                           the bench: what its game said for the log (the last move's words, the lines beside)
 
 The regions of a shake are `seat<n>`, `discards` and `stock`.
 
