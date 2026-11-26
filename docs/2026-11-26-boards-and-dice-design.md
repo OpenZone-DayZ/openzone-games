@@ -74,6 +74,9 @@ Date: 2026-11-25/26. The owner's words, in this order (chat, Russian; here in En
     straight in the fist"; "better remove the green patch under his feet"; "turn the guide
     too", "and the chimera" (to look ahead).
 27. (2026-11-26) "Now line up the heights."
+28. (2026-11-26, of the set at ~4,000, a third less and half, shown side by side) "We take
+    the triangles halved; check them for unseen ones there too" -- the poses are frozen,
+    "remove the triangles that are not needed".
 
 What the words leave open is decided below and named in §14.
 
@@ -494,9 +497,17 @@ Decided while building (2026-11-26, `2026-11-26-boards-and-dice-record.md`):
     rook are as big as their square holds: a rifle and the body behind it hold Strelok at
     46.4 mm and the exoskeleton at 44.6; a body's length holds the chimera at 29.9 and the
     pseudogiant at 32.7; the boar is 20.6 high (40 asked, held by its length).
-  - **Triangles**, each figure with its weapon or held thing and its base (316): the
-    kings, queens and rooks about 3,995; bishops 3,566 and 3,316; knights 3,396 and
-    3,316; pawns 3,215 and 2,815. The whole board 107,392 at the finest level; the levels
-    of detail below it are made when the set goes into the game.
+  - **Triangles** (word 28): every budget halved -- the body, the weapon or held thing,
+    the base (156) -- and then the faces no eye above the board sees are cut: none of
+    288 directions over the board (5-88 degrees up, every 10 degrees round) reaches the
+    sky from any of seven points of the face. The base keeps its bottom (it shows when a
+    piece is turned over in the inventory). Each figure, all in: Sidorovich 1,827, Strelok
+    1,856, the exoskeleton 1,907, the scientist 1,662, the guide 1,539, the rookie 1,492;
+    the controller 1,896, the chimera 1,926, the pseudogiant 1,929, the bloodsucker 1,629,
+    the snork 1,644, the boar 1,377 -- 45-50% of the approved ~4,000 (that variant is
+    kept). The whole board 51,077 (halved alone 53,636; at ~4,000, 107,392). Before and
+    after the cut, 72 views of 700x900 differ in 214 pixels, shadows of the cut faces in
+    the renderer (the game draws shadows from a shadow level of its own). The levels of
+    detail below this one are made when the set goes into the game.
 - A chess clock, the doubling cube, general (word 8).
 - Bots stronger than the first legal move a game offers.
