@@ -41,6 +41,11 @@ Date: 2026-11-25/26. The owner's words, in this order (chat, Russian; here in En
 16. (2026-11-26, before the mockups of the windows) "I want to release several different
     models of chess sets and boards (as with decks). And the pieces on one board may be
     from different sets."
+17. (2026-11-26, on the mockups) "The knight pieces are absolutely awful. Think more about
+    how to make the 'stalker' chess and what to replace the piece models with." "The board
+    needs no green field: the board by itself, and it must take almost all (most) of our
+    mod's game overlay." "The stalker chess is a board in the stalker style and pieces in
+    the stalker style, the rules the same."
 
 What the words leave open is decided below and named in §14.
 
@@ -262,6 +267,9 @@ die opens a round in which ones are not wild (palifico). The last with dice wins
 
 The frame of the table window stays; a game of another set kind draws another table.
 
+- **The board takes most of the window** (the owner's word 17): the board itself, as large
+  as the window's height allows, with nothing round it -- no table, felt or field; the
+  players, the moves, the log and the buttons in narrow columns at its sides.
 - **The board**: the 8 x 8 field the way its side has it (black sees it turned), a click
   on a piece lights its moves, a click on a lit square plays the move; the last move
   marked, a check marked; the pieces taken beside the board, the moves listed; promotion
@@ -416,6 +424,10 @@ Decided while building (2026-11-26, `2026-11-26-boards-and-dice-record.md`):
 
 ## 15. Not in this design
 
-- **The stalker chess**: the owner's (word 6).
+- **The stalker chess**: the owner's (word 6). It is a look, not a game (word 17): a
+  board and pieces in the stalker style, the rules of chess; directions proposed to the
+  owner on 2026-11-26, his to choose.
+- **The classic knight** is to be made again (word 17): with new models of the pieces,
+  their own or the CC0 chess set of Poly Haven, as the owner chooses.
 - A chess clock, the doubling cube, general (word 8).
 - Bots stronger than the first legal move a game offers.
