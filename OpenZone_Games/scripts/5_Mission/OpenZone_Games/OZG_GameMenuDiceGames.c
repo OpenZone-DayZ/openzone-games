@@ -27,7 +27,8 @@ modded class OZG_GameMenu
     protected string m_DGSwapKey = "";
     protected int m_DGSwapAt = -1;
     protected string m_DGSwapPickKey = "";
-    protected static const float DG_SWAP_H = 171;
+    protected int m_DGSwapTarget = -1;
+    protected static const float DG_SWAP_H = 250;
     // the moves of a face's two buttons (throw / stop, bid / do not believe)
     protected string m_DGMoveA = "";
     protected string m_DGMoveB = "";
@@ -432,20 +433,10 @@ modded class OZG_GameMenu
     // The look of die `k` a seat throws (the view's SeatDiceLooks); "" for the set's.
     protected string DGLookOf(int seatNo, int k)
     {
-        if (!m_V || seatNo < 0)
-            return "";
-        string head = seatNo.ToString() + "=";
-        for (int i = 0; i < m_V.SeatDiceLooks.Count(); i++)
-        {
-            string line = m_V.SeatDiceLooks[i];
-            if (line.IndexOf(head) != 0)
-                continue;
-            array<string> looks = new array<string>();
-            line.Substring(head.Length(), line.Length() - head.Length()).Split(",", looks);
-            if (k >= 0 && k < looks.Count())
-                return looks[k];
-            return "";
-        }
+        array<string> looks = new array<string>();
+        DGSeatLooks(seatNo, looks);
+        if (k >= 0 && k < looks.Count())
+            return looks[k];
         return "";
     }
 
@@ -501,8 +492,11 @@ modded class OZG_GameMenu
         return m_DWActBottom;
     }
 
-    // The swap panel of the four at `top` (units of the column): the swaps left, what the
-    // pockets hold, the button. Its bottom, or `top` when it is not shown.
+    // The swap panel of the four at `top` (units of the column): the swaps left; the dice
+    // he carries and the dice he is about to throw, a row each, one of each picked by him
+    // and by nobody else (the owner's word: the game does not decide for the person); what
+    // the picked die is; the button, live once both are picked and a swap may be done.
+    // Its bottom, or `top` when it is not shown.
     protected float DGPaintSwap(float top, string face)
     {
         Widget panel = BW("OZG_DSwapS");
@@ -514,10 +508,14 @@ modded class OZG_GameMenu
         if (!panel || !shown)
             return top;
         panel.SetPos(12 * m_K, top * m_K);
-        BWSetText("OZG_DSwapSInfo", Tr2("STR_OZG_DWIN_SWAP_LEFT", m_V.DiceSwapsLeft.ToString(), m_V.DiceSwapsMost.ToString()));
-        // the die to swap in: the one picked, else a loaded one he knows, else the first
-        int pick = -1;
+        string leftText = m_V.DiceSwapsLeft.ToString();
+        string mostText = m_V.DiceSwapsMost.ToString();
+        BWSetText("OZG_DSwapSInfo", Tr2("STR_OZG_DWIN_SWAP_LEFT", leftText, mostText));
+        BWSetText("OZG_DSwapSFrom", OZG_Text.Upper(Tr("STR_OZG_DWIN_SWAP_FROM")));
+        BWSetText("OZG_DSwapSFor", OZG_Text.Upper(Tr("STR_OZG_DWIN_SWAP_FOR")));
+        // the pocket die he picked, by its key; none until he picks one
         int i;
+        int pick = -1;
         int pockets = m_V.PocketDice.Count();
         for (i = 0; i < pockets; i++)
         {
@@ -525,21 +523,7 @@ modded class OZG_GameMenu
                 pick = i;
         }
         if (pick < 0)
-        {
-            for (i = 0; i < pockets; i++)
-            {
-                if (pick < 0)
-                    pick = i;
-                if (i < m_V.PocketLoads.Count() && m_V.PocketLoads[i] > 0)
-                {
-                    pick = i;
-                    break;
-                }
-            }
-            if (pick >= 0)
-                m_DGSwapPickKey = m_V.PocketDice[pick];
-        }
-        // the pocket dice as pictures: each in its look, the loaded face up when he knows it
+            m_DGSwapPickKey = "";
         for (i = 0; i < 7; i++)
         {
             string pn = "OZG_DSPocket" + i.ToString();
@@ -567,6 +551,44 @@ modded class OZG_GameMenu
             BWShow(pn + "Badge", loaded > 0);
             if (loaded > 0)
                 BWSetText(pn + "BadgeText", loaded.ToString());
+        }
+        // the dice he is about to throw: each in its look, its place on it
+        int mineNo = m_V.Mine;
+        array<string> looks = new array<string>();
+        DGSeatLooks(mineNo, looks);
+        int targets = looks.Count();
+        if (targets == 0)
+            targets = m_V.MyDiceLoads.Count();
+        if (m_DGSwapTarget >= targets)
+            m_DGSwapTarget = -1;
+        for (i = 0; i < 5; i++)
+        {
+            string tn = "OZG_DSTarget" + i.ToString();
+            bool thrown = i < targets;
+            BWShow(tn, thrown);
+            if (!thrown)
+                continue;
+            string tlook = DWLook();
+            if (i < looks.Count() && looks[i] != "")
+                tlook = looks[i];
+            ImageWidget tpic = ImageWidget.Cast(BW(tn + "Pic"));
+            if (tpic)
+            {
+                tpic.LoadImageFile(0, "set:ozg_dice image:" + tlook + "_0");
+                tpic.SetImage(0);
+            }
+            int place = i + 1;
+            BWSetText(tn + "Num", place.ToString());
+            int numInk = DGC(29, 23, 18);
+            bool dark = tlook == "black" || tlook == "red" || tlook == "stalker_black" || tlook == "stalker_red";
+            if (dark)
+                numInk = DGC(246, 239, 226);
+            BWInk(tn + "Num", numInk);
+            BWShow(tn + "Ring", i == m_DGSwapTarget);
+            int tload = DGMyLoad(i);
+            BWShow(tn + "Badge", tload > 0);
+            if (tload > 0)
+                BWSetText(tn + "BadgeText", tload.ToString());
         }
         int load = 0;
         int step = 0;
@@ -605,63 +627,66 @@ modded class OZG_GameMenu
         string playWord = Tr(OZG_Const.LOAD_STEP + playStep.ToString());
         string loadFace = load.ToString();
         string loadWord = Tr(OZG_Const.LOAD_STEP + step.ToString());
+        string afterWords = when;
+        if (m_DGSwapTarget < 0)
+            afterWords = Tr("STR_OZG_DWIN_SWAP_CHOOSE_FOR");
         string text;
-        if (playing > 0)
+        if (pick >= 0 && load > 0)
+            text = Tr2("STR_OZG_DWIN_SWAP_PICK_LOADED", loadFace, loadWord) + " " + afterWords;
+        else if (pick >= 0)
+            text = Tr("STR_OZG_DWIN_SWAP_PICK_PLAIN") + " " + afterWords;
+        else if (playing > 0)
             text = Tr2("STR_OZG_DWIN_SWAP_IN_PLAY", playFace, playWord);
-        else if (pick < 0)
+        else if (pockets == 0)
             text = Tr("STR_OZG_DWIN_SWAP_NONE");
-        else if (load > 0)
-            text = Tr2("STR_OZG_DWIN_SWAP_PICK_LOADED", loadFace, loadWord) + " " + when;
         else
-            text = Tr("STR_OZG_DWIN_SWAP_PICK_PLAIN") + " " + when;
+            text = Tr("STR_OZG_DWIN_SWAP_CHOOSE") + " " + when;
         DGLines("OZG_DSwapSText0", "OZG_DSwapSText1", text, 336);
-        // the button
-        bool can = m_V.DiceSwapNow == 1 && pick >= 0;
-        string label = notNow;
-        int target = 0;
+        // the button: live once both are picked and a swap may be done now
+        bool both = pick >= 0 && m_DGSwapTarget >= 0;
+        bool can = m_V.DiceSwapNow == 1 && both;
+        string label;
+        int targetNo = m_DGSwapTarget + 1;
+        string targetText = targetNo.ToString();
         if (m_V.DiceSwapsLeft <= 0)
-        {
             label = Tr("STR_OZG_DWIN_SWAP_NO_MORE");
-        }
-        else if (pick < 0)
-        {
+        else if (pockets == 0)
             label = Tr("STR_OZG_DWIN_SWAP_NOTHING");
-        }
-        else if (can)
+        else if (m_V.DiceSwapNow != 1)
+            label = notNow;
+        else if (!both)
+            label = Tr("STR_OZG_DWIN_SWAP_PICK_BOTH");
+        else if (face == "perudo")
+            label = Tr1("STR_OZG_DWIN_SWAP_DO_UNDER", targetText);
+        else
+            label = Tr1("STR_OZG_DWIN_SWAP_DO", targetText);
+        if (can)
         {
-            if (face == "pig")
-            {
-                label = Tr("STR_OZG_DWIN_SWAP_BTN_HOST");
-                if (m_V.OwnDiceSeats.Find(m_V.Mine) >= 0)
-                    label = Tr("STR_OZG_DWIN_SWAP_BTN_OWN");
-            }
-            else if (face == "poker")
-            {
-                target = 2;
-                label = Tr1("STR_OZG_DWIN_SWAP_BTN_N_PLAIN", "3");
-                if (load > 0)
-                    label = Tr1("STR_OZG_DWIN_SWAP_BTN_N", "3");
-            }
-            else if (face == "high")
-            {
-                label = Tr("STR_OZG_DWIN_SWAP_BTN_FIRST_PLAIN");
-                if (load > 0)
-                    label = Tr("STR_OZG_DWIN_SWAP_BTN_FIRST");
-            }
-            else
-            {
-                label = Tr("STR_OZG_DWIN_SWAP_BTN_UNDER_PLAIN");
-                if (load > 0)
-                    label = Tr1("STR_OZG_DWIN_SWAP_BTN_UNDER", load.ToString());
-            }
             m_DGSwapKey = m_V.PocketDice[pick];
-            m_DGSwapAt = target;
+            m_DGSwapAt = m_DGSwapTarget;
         }
         int fill = DGC(36, 26, 18);
         if (can)
             fill = DGC(58, 44, 28);
         DGButton("OZG_DSwapSBtn", label, fill, DGC(107, 82, 51), DGC(239, 228, 204));
         return top + DG_SWAP_H;
+    }
+
+    // The looks of the dice a seat throws (the view's SeatDiceLooks), in their order.
+    protected void DGSeatLooks(int seatNo, array<string> into)
+    {
+        into.Clear();
+        if (!m_V || seatNo < 0)
+            return;
+        string head = seatNo.ToString() + "=";
+        for (int i = 0; i < m_V.SeatDiceLooks.Count(); i++)
+        {
+            string line = m_V.SeatDiceLooks[i];
+            if (line.IndexOf(head) != 0)
+                continue;
+            line.Substring(head.Length(), line.Length() - head.Length()).Split(",", into);
+            return;
+        }
     }
 
     // A face for a die whose load he does not know: the same each time it is drawn (the
@@ -1751,6 +1776,8 @@ modded class OZG_GameMenu
         {
             if (m_DGSwapKey != "" && m_DGSwapAt >= 0)
             {
+                m_DGSwapPickKey = "";
+                m_DGSwapTarget = -1;
                 OZG_WAsk ask = new OZG_WAsk();
                 ask.PlaceId = m_PlaceId;
                 ask.CardKey = m_DGSwapKey;
@@ -1766,7 +1793,23 @@ modded class OZG_GameMenu
         {
             int p = n.Substring(12, 1).ToInt();
             if (m_V && p >= 0 && p < m_V.PocketDice.Count())
-                m_DGSwapPickKey = m_V.PocketDice[p];
+            {
+                string key = m_V.PocketDice[p];
+                if (key == m_DGSwapPickKey)
+                    m_DGSwapPickKey = "";
+                else
+                    m_DGSwapPickKey = key;
+            }
+            BoardWinPaint();
+            return true;
+        }
+        if (n.IndexOf("OZG_DSTarget") == 0 && n.Length() == 13)
+        {
+            int t = n.Substring(12, 1).ToInt();
+            if (t == m_DGSwapTarget)
+                m_DGSwapTarget = -1;
+            else
+                m_DGSwapTarget = t;
             BoardWinPaint();
             return true;
         }

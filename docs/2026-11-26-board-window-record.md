@@ -106,11 +106,14 @@ game? Why did you stop when I said do it to the end and test?" And on the swap p
 - **The games say their lines for the log** (`OZG_Game.Say`, `SayMove`): a throw and what
   came up, a turn burnt, a round won, a showdown and who loses a die. A move's own words
   stand for its line ("Тарас кидає 4." instead of "Тарас кидає кості").
-- **The swap panel of the four** shows the dice carried as pictures (their colour, the face
-  a known load is on, in a grey disc), one picked by a click; the view's head says the
-  swaps left, whether one may be done now and what the player knows of each die. Every die
-  on the felt is drawn in its own colour (`SeatDiceLooks`). Perudo takes a swap at a
-  round's start, before the first bid; the die lies from the next round.
+- **The swap panel of the four** has two rows of dice, both picked by the player (the
+  owner: "when it is active there is always a choice of which die for which; the game does
+  not decide for the person"): the dice carried as pictures (their colour, the face a known
+  load is on, in a grey disc) and the dice he is about to throw (their colour, their place);
+  nothing is picked for him and the button lives once both are. The view's head says the
+  swaps left, whether one may be done now, what the player knows of each die and the colour
+  of every die a seat throws; every die on the felt is drawn in its own colour. Perudo takes
+  a swap at a round's start, before the first bid; the die lies from the next round.
 - **An engine fault found on the way, in perudo since it was made**: its bid line and its
   showdown wrote the bidder's or the loser's seat for the count -- `W3(key,
   count.ToString(), face.ToString(), OZG_Words.SeatArg(seat))`, two calls of `ToString` in

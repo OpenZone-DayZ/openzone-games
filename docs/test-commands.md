@@ -396,10 +396,13 @@ bots play; open the window with `OZG_ActionWatch` (within two metres):
     oz_games {"op":"ask","id":"<place>","who":"me","ask":"deal"}
     oz_games {"op":"bots","id":"<place>","n":"0","on":"1"}
 
-The swap panel of these four shows the dice you carry as pictures, each in its colour, the
-face it is loaded on up and in a grey disc when you know it; click one to pick it, the
-button swaps it in (dice poker for die 3, high roll for die 1, pig for the die, perudo into
-your can before the round's first bid). Every die on the felt shows its own colour: a red
+The swap panel of these four has two rows: "З кишені", the dice you carry as pictures, each
+in its colour, the face it is loaded on up and in a grey disc when you know it; "Замість
+кістки", the dice you are about to throw, each in its colour with its place on it. Nothing
+is picked for you: click one in each row (a click again lets it go); the button comes alive
+once both are picked and a swap may be done (dice poker and high roll before the throw, pig
+in your turn, perudo into your can before the round's first bid). Every die on the felt
+shows its own colour: a red
 die swapped in among white ones shows red to everybody. Give yourself dice to carry with
 `give what=OZG_Die_Red` (or `OZG_Die`, the white one, `OZG_Die_Black`, `OZG_Die_Stalker`) and load one with `loaddie`.
 

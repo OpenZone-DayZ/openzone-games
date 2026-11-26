@@ -758,31 +758,43 @@ def dice_games_column():
     return c
 
 
-SWAP_H = 171
+SWAP_H = 250
+
+
+def swap_die(n, x, y, numbered):
+    """A die of the swap panel: a button 38 square, its gold ring when picked, its picture,
+    its place among the dice thrown (the row of those), the face a known load is on."""
+    kids = [shape(n + "Ring", -3, -3, 44, 44, 9, rgb("#e7c27a"), 0, overlap=0, extra=[("visible", 0)]),
+            image(n + "Pic", exact(0, 0, 38, 38), 1, None)]
+    if numbered:
+        kids.append(text(n + "Num", 0, 0, 38, 38, 16, "b", "#1d1712", 2, "center", ""))
+    kids.append(frame(n + "Badge", exact(25, -7, 18, 18), 3, [
+        image(n + "BadgeRing", exact(-1.5, -1.5, 21, 21), 0, "ozg_disc_ca", rgb("#1a120a")),
+        image(n + "BadgeBg", exact(0, 0, 18, 18), 1, "ozg_disc_ca", rgb("#5b6470")),
+        text(n + "BadgeText", 0, 0, 18, 18, 10, "b", "#eef2f6", 2, "center", "")], [("visible", 0)]))
+    return button(n, x, y, 38, 38, 6, kids, visible=0, clip=0)
 
 
 def swap_simple():
     """The swap panel of dice poker, pig, high roll and perudo (the canvas: its title and
-    the swaps left, two lines, one button), with the dice in the pockets as pictures between
-    them (the owner's word of 2026-11-26: the dice may differ, as cards do): each in its
-    look, the face it is loaded on up and in a disc over its corner when he knows it, the
-    one picked in a gold ring."""
+    the swaps left, two lines, one button), with two rows of dice between them, both picked
+    by the player (the owner's words of 2026-11-26: the dice may differ, as cards do; when
+    the panel is active there is always the choice of which die for which, the game does
+    not decide for him): the dice he carries, each in its look with the face it is loaded
+    on up and in a grey disc when he knows it, and the dice he is about to throw, each in
+    its look with its place among them. The one picked in each row in a gold ring."""
     k = [box("OZG_DSwapSBox", 0, 0, 360, SWAP_H, 6, "#2a1d12", BTN_EDGE, prio=0),
          text("OZG_DSwapSTitle", 12, 10, 220, 21, 16, "p", INK, 2, "left", "#STR_OZG_DWIN_SWAP_TITLE"),
-         text("OZG_DSwapSInfo", 150, 13, 198, 15, 12, "s", MUTED, 2, "right")]
+         text("OZG_DSwapSInfo", 150, 13, 198, 15, 12, "s", MUTED, 2, "right"),
+         text("OZG_DSwapSFrom", 12, 36, 336, 14, 11, "s", GOLD, 2)]
     for i in range(7):
-        n = "OZG_DSPocket%d" % i
-        k.append(button(n, 12 + i * 46, 39, 38, 38, 6, [
-            shape(n + "Ring", -3, -3, 44, 44, 9, rgb("#e7c27a"), 0, overlap=0, extra=[("visible", 0)]),
-            image(n + "Pic", exact(0, 0, 38, 38), 1, None),
-            frame(n + "Badge", exact(25, -7, 18, 18), 3, [
-                image(n + "BadgeRing", exact(-1.5, -1.5, 21, 21), 0, "ozg_disc_ca", rgb("#1a120a")),
-                image(n + "BadgeBg", exact(0, 0, 18, 18), 1, "ozg_disc_ca", rgb("#5b6470")),
-                text(n + "BadgeText", 0, 0, 18, 18, 10, "b", "#eef2f6", 2, "center", "")],
-                  [("visible", 0)])], visible=0, clip=0))
-    k += [text("OZG_DSwapSText0", 12, 85, 336, 17, 13, "s", MUTED, 2),
-          text("OZG_DSwapSText1", 12, 102, 336, 17, 13, "s", MUTED, 2),
-          btn("OZG_DSwapSBtn", 12, 125, 336, 36, 4, "#241a12", BTN_EDGE, "", 13, "s", INK, prio=6)]
+        k.append(swap_die("OZG_DSPocket%d" % i, 12 + i * 46, 54, False))
+    k.append(text("OZG_DSwapSFor", 12, 100, 336, 14, 11, "s", GOLD, 2))
+    for i in range(5):
+        k.append(swap_die("OZG_DSTarget%d" % i, 12 + i * 46, 118, True))
+    k += [text("OZG_DSwapSText0", 12, 164, 336, 17, 13, "s", MUTED, 2),
+          text("OZG_DSwapSText1", 12, 181, 336, 17, 13, "s", MUTED, 2),
+          btn("OZG_DSwapSBtn", 12, 204, 336, 36, 4, "#241a12", BTN_EDGE, "", 13, "s", INK, prio=6)]
     return frame("OZG_DSwapS", exact(12, 180, 360, SWAP_H), 6, k, [("visible", 0)])
 
 

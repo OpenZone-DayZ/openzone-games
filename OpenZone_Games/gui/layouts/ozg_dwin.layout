@@ -14812,7 +14812,7 @@ FrameWidgetClass OZG_DWin {
      ignorepointer 1
      clipchildren 0
      position 12 180
-     size 360 171
+     size 360 250
      hexactpos 1
      vexactpos 1
      hexactsize 1
@@ -14824,7 +14824,7 @@ FrameWidgetClass OZG_DWin {
        ignorepointer 1
        clipchildren 0
        position 0 0
-       size 360 171
+       size 360 250
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -14835,7 +14835,7 @@ FrameWidgetClass OZG_DWin {
          ignorepointer 1
          clipchildren 0
          position 0 0
-         size 360 171
+         size 360 250
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -14875,7 +14875,7 @@ FrameWidgetClass OZG_DWin {
           ImageWidgetClass OZG_DSwapSBoxEdgeBL {
            ignorepointer 1
            color 0.420 0.322 0.200 1
-           position 0 165
+           position 0 244
            size 6 6
            hexactpos 1
            vexactpos 1
@@ -14890,7 +14890,7 @@ FrameWidgetClass OZG_DWin {
           ImageWidgetClass OZG_DSwapSBoxEdgeBR {
            ignorepointer 1
            color 0.420 0.322 0.200 1
-           position 354 165
+           position 354 244
            size 6 6
            hexactpos 1
            vexactpos 1
@@ -14905,7 +14905,7 @@ FrameWidgetClass OZG_DWin {
           PanelWidgetClass OZG_DSwapSBoxEdgeM {
            ignorepointer 1
            position 0 5.75
-           size 360 159.5
+           size 360 238.5
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -14928,7 +14928,7 @@ FrameWidgetClass OZG_DWin {
           }
           PanelWidgetClass OZG_DSwapSBoxEdgeB {
            ignorepointer 1
-           position 5.75 165
+           position 5.75 244
            size 348.5 6
            hexactpos 1
            vexactpos 1
@@ -14944,7 +14944,7 @@ FrameWidgetClass OZG_DWin {
          ignorepointer 1
          clipchildren 0
          position 1 1
-         size 358 169
+         size 358 248
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -14984,7 +14984,7 @@ FrameWidgetClass OZG_DWin {
           ImageWidgetClass OZG_DSwapSBoxBgBL {
            ignorepointer 1
            color 0.165 0.114 0.071 1
-           position 0 164
+           position 0 243
            size 5 5
            hexactpos 1
            vexactpos 1
@@ -14999,7 +14999,7 @@ FrameWidgetClass OZG_DWin {
           ImageWidgetClass OZG_DSwapSBoxBgBR {
            ignorepointer 1
            color 0.165 0.114 0.071 1
-           position 353 164
+           position 353 243
            size 5 5
            hexactpos 1
            vexactpos 1
@@ -15014,7 +15014,7 @@ FrameWidgetClass OZG_DWin {
           PanelWidgetClass OZG_DSwapSBoxBgM {
            ignorepointer 1
            position 0 4.75
-           size 358 159.5
+           size 358 238.5
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -15037,7 +15037,7 @@ FrameWidgetClass OZG_DWin {
           }
           PanelWidgetClass OZG_DSwapSBoxBgB {
            ignorepointer 1
-           position 4.75 164
+           position 4.75 243
            size 348.5 5
            hexactpos 1
            vexactpos 1
@@ -15085,9 +15085,26 @@ FrameWidgetClass OZG_DWin {
        "text valign" center
        priority 2
       }
+      TextWidgetClass OZG_DSwapSFrom {
+       ignorepointer 1
+       position 12 36
+       size 336 14
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.788 0.643 0.361 1
+       text ""
+       font "gui/fonts/etelkatextpro22"
+       "exact text" 1
+       "exact text size" 13
+       "text halign" left
+       "text valign" center
+       priority 2
+      }
       ButtonWidgetClass OZG_DSPocket0 {
        visible 0
-       position 12 39
+       position 12 54
        size 38 38
        hexactpos 1
        vexactpos 1
@@ -15287,7 +15304,7 @@ FrameWidgetClass OZG_DWin {
       }
       ButtonWidgetClass OZG_DSPocket1 {
        visible 0
-       position 58 39
+       position 58 54
        size 38 38
        hexactpos 1
        vexactpos 1
@@ -15487,7 +15504,7 @@ FrameWidgetClass OZG_DWin {
       }
       ButtonWidgetClass OZG_DSPocket2 {
        visible 0
-       position 104 39
+       position 104 54
        size 38 38
        hexactpos 1
        vexactpos 1
@@ -15687,7 +15704,7 @@ FrameWidgetClass OZG_DWin {
       }
       ButtonWidgetClass OZG_DSPocket3 {
        visible 0
-       position 150 39
+       position 150 54
        size 38 38
        hexactpos 1
        vexactpos 1
@@ -15887,7 +15904,7 @@ FrameWidgetClass OZG_DWin {
       }
       ButtonWidgetClass OZG_DSPocket4 {
        visible 0
-       position 196 39
+       position 196 54
        size 38 38
        hexactpos 1
        vexactpos 1
@@ -16087,7 +16104,7 @@ FrameWidgetClass OZG_DWin {
       }
       ButtonWidgetClass OZG_DSPocket5 {
        visible 0
-       position 242 39
+       position 242 54
        size 38 38
        hexactpos 1
        vexactpos 1
@@ -16287,7 +16304,7 @@ FrameWidgetClass OZG_DWin {
       }
       ButtonWidgetClass OZG_DSPocket6 {
        visible 0
-       position 288 39
+       position 288 54
        size 38 38
        hexactpos 1
        vexactpos 1
@@ -16485,9 +16502,1111 @@ FrameWidgetClass OZG_DWin {
         }
        }
       }
+      TextWidgetClass OZG_DSwapSFor {
+       ignorepointer 1
+       position 12 100
+       size 336 14
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.788 0.643 0.361 1
+       text ""
+       font "gui/fonts/etelkatextpro22"
+       "exact text" 1
+       "exact text size" 13
+       "text halign" left
+       "text valign" center
+       priority 2
+      }
+      ButtonWidgetClass OZG_DSTarget0 {
+       visible 0
+       position 12 118
+       size 38 38
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       text ""
+       priority 6
+       style Empty
+       clipchildren 0
+       {
+        FrameWidgetClass OZG_DSTarget0Ring {
+         ignorepointer 1
+         clipchildren 0
+         position -3 -3
+         size 44 44
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 0
+         visible 0
+         {
+          ImageWidgetClass OZG_DSTarget0RingTL {
+           ignorepointer 1
+           color 0.906 0.761 0.478 1
+           position 0 0
+           size 9 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_rc_tl_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          ImageWidgetClass OZG_DSTarget0RingTR {
+           ignorepointer 1
+           color 0.906 0.761 0.478 1
+           position 35 0
+           size 9 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_rc_tr_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          ImageWidgetClass OZG_DSTarget0RingBL {
+           ignorepointer 1
+           color 0.906 0.761 0.478 1
+           position 0 35
+           size 9 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_rc_bl_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          ImageWidgetClass OZG_DSTarget0RingBR {
+           ignorepointer 1
+           color 0.906 0.761 0.478 1
+           position 35 35
+           size 9 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_rc_br_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          PanelWidgetClass OZG_DSTarget0RingM {
+           ignorepointer 1
+           position 0 9
+           size 44 26
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           color 0.906 0.761 0.478 1
+           style rover_sim_colorable
+           priority 0
+          }
+          PanelWidgetClass OZG_DSTarget0RingT {
+           ignorepointer 1
+           position 9 0
+           size 26 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           color 0.906 0.761 0.478 1
+           style rover_sim_colorable
+           priority 0
+          }
+          PanelWidgetClass OZG_DSTarget0RingB {
+           ignorepointer 1
+           position 9 35
+           size 26 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           color 0.906 0.761 0.478 1
+           style rover_sim_colorable
+           priority 0
+          }
+         }
+        }
+        ImageWidgetClass OZG_DSTarget0Pic {
+         ignorepointer 1
+         color 1 1 1 1
+         position 0 0
+         size 38 38
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 1
+         mode blend
+         "src alpha" 1
+         "stretch mode" stretch_w_h
+        }
+        TextWidgetClass OZG_DSTarget0Num {
+         ignorepointer 1
+         position 0 0
+         size 38 38
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         color 0.114 0.090 0.071 1
+         text ""
+         font "gui/fonts/MetronBook-Bold22"
+         "exact text" 1
+         "exact text size" 19
+         "text halign" center
+         "text valign" center
+         priority 2
+        }
+        FrameWidgetClass OZG_DSTarget0Badge {
+         ignorepointer 1
+         clipchildren 0
+         position 25 -7
+         size 18 18
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 3
+         visible 0
+         {
+          ImageWidgetClass OZG_DSTarget0BadgeRing {
+           ignorepointer 1
+           color 0.102 0.071 0.039 1
+           position -1.5 -1.5
+           size 21 21
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_disc_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          ImageWidgetClass OZG_DSTarget0BadgeBg {
+           ignorepointer 1
+           color 0.357 0.392 0.439 1
+           position 0 0
+           size 18 18
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 1
+           image0 "OpenZone_Games/gui/textures/ozg_disc_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          TextWidgetClass OZG_DSTarget0BadgeText {
+           ignorepointer 1
+           position 0 0
+           size 18 18
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           color 0.933 0.949 0.965 1
+           text ""
+           font "gui/fonts/MetronBook-Bold22"
+           "exact text" 1
+           "exact text size" 12
+           "text halign" center
+           "text valign" center
+           priority 2
+          }
+         }
+        }
+       }
+      }
+      ButtonWidgetClass OZG_DSTarget1 {
+       visible 0
+       position 58 118
+       size 38 38
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       text ""
+       priority 6
+       style Empty
+       clipchildren 0
+       {
+        FrameWidgetClass OZG_DSTarget1Ring {
+         ignorepointer 1
+         clipchildren 0
+         position -3 -3
+         size 44 44
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 0
+         visible 0
+         {
+          ImageWidgetClass OZG_DSTarget1RingTL {
+           ignorepointer 1
+           color 0.906 0.761 0.478 1
+           position 0 0
+           size 9 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_rc_tl_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          ImageWidgetClass OZG_DSTarget1RingTR {
+           ignorepointer 1
+           color 0.906 0.761 0.478 1
+           position 35 0
+           size 9 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_rc_tr_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          ImageWidgetClass OZG_DSTarget1RingBL {
+           ignorepointer 1
+           color 0.906 0.761 0.478 1
+           position 0 35
+           size 9 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_rc_bl_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          ImageWidgetClass OZG_DSTarget1RingBR {
+           ignorepointer 1
+           color 0.906 0.761 0.478 1
+           position 35 35
+           size 9 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_rc_br_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          PanelWidgetClass OZG_DSTarget1RingM {
+           ignorepointer 1
+           position 0 9
+           size 44 26
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           color 0.906 0.761 0.478 1
+           style rover_sim_colorable
+           priority 0
+          }
+          PanelWidgetClass OZG_DSTarget1RingT {
+           ignorepointer 1
+           position 9 0
+           size 26 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           color 0.906 0.761 0.478 1
+           style rover_sim_colorable
+           priority 0
+          }
+          PanelWidgetClass OZG_DSTarget1RingB {
+           ignorepointer 1
+           position 9 35
+           size 26 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           color 0.906 0.761 0.478 1
+           style rover_sim_colorable
+           priority 0
+          }
+         }
+        }
+        ImageWidgetClass OZG_DSTarget1Pic {
+         ignorepointer 1
+         color 1 1 1 1
+         position 0 0
+         size 38 38
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 1
+         mode blend
+         "src alpha" 1
+         "stretch mode" stretch_w_h
+        }
+        TextWidgetClass OZG_DSTarget1Num {
+         ignorepointer 1
+         position 0 0
+         size 38 38
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         color 0.114 0.090 0.071 1
+         text ""
+         font "gui/fonts/MetronBook-Bold22"
+         "exact text" 1
+         "exact text size" 19
+         "text halign" center
+         "text valign" center
+         priority 2
+        }
+        FrameWidgetClass OZG_DSTarget1Badge {
+         ignorepointer 1
+         clipchildren 0
+         position 25 -7
+         size 18 18
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 3
+         visible 0
+         {
+          ImageWidgetClass OZG_DSTarget1BadgeRing {
+           ignorepointer 1
+           color 0.102 0.071 0.039 1
+           position -1.5 -1.5
+           size 21 21
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_disc_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          ImageWidgetClass OZG_DSTarget1BadgeBg {
+           ignorepointer 1
+           color 0.357 0.392 0.439 1
+           position 0 0
+           size 18 18
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 1
+           image0 "OpenZone_Games/gui/textures/ozg_disc_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          TextWidgetClass OZG_DSTarget1BadgeText {
+           ignorepointer 1
+           position 0 0
+           size 18 18
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           color 0.933 0.949 0.965 1
+           text ""
+           font "gui/fonts/MetronBook-Bold22"
+           "exact text" 1
+           "exact text size" 12
+           "text halign" center
+           "text valign" center
+           priority 2
+          }
+         }
+        }
+       }
+      }
+      ButtonWidgetClass OZG_DSTarget2 {
+       visible 0
+       position 104 118
+       size 38 38
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       text ""
+       priority 6
+       style Empty
+       clipchildren 0
+       {
+        FrameWidgetClass OZG_DSTarget2Ring {
+         ignorepointer 1
+         clipchildren 0
+         position -3 -3
+         size 44 44
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 0
+         visible 0
+         {
+          ImageWidgetClass OZG_DSTarget2RingTL {
+           ignorepointer 1
+           color 0.906 0.761 0.478 1
+           position 0 0
+           size 9 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_rc_tl_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          ImageWidgetClass OZG_DSTarget2RingTR {
+           ignorepointer 1
+           color 0.906 0.761 0.478 1
+           position 35 0
+           size 9 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_rc_tr_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          ImageWidgetClass OZG_DSTarget2RingBL {
+           ignorepointer 1
+           color 0.906 0.761 0.478 1
+           position 0 35
+           size 9 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_rc_bl_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          ImageWidgetClass OZG_DSTarget2RingBR {
+           ignorepointer 1
+           color 0.906 0.761 0.478 1
+           position 35 35
+           size 9 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_rc_br_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          PanelWidgetClass OZG_DSTarget2RingM {
+           ignorepointer 1
+           position 0 9
+           size 44 26
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           color 0.906 0.761 0.478 1
+           style rover_sim_colorable
+           priority 0
+          }
+          PanelWidgetClass OZG_DSTarget2RingT {
+           ignorepointer 1
+           position 9 0
+           size 26 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           color 0.906 0.761 0.478 1
+           style rover_sim_colorable
+           priority 0
+          }
+          PanelWidgetClass OZG_DSTarget2RingB {
+           ignorepointer 1
+           position 9 35
+           size 26 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           color 0.906 0.761 0.478 1
+           style rover_sim_colorable
+           priority 0
+          }
+         }
+        }
+        ImageWidgetClass OZG_DSTarget2Pic {
+         ignorepointer 1
+         color 1 1 1 1
+         position 0 0
+         size 38 38
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 1
+         mode blend
+         "src alpha" 1
+         "stretch mode" stretch_w_h
+        }
+        TextWidgetClass OZG_DSTarget2Num {
+         ignorepointer 1
+         position 0 0
+         size 38 38
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         color 0.114 0.090 0.071 1
+         text ""
+         font "gui/fonts/MetronBook-Bold22"
+         "exact text" 1
+         "exact text size" 19
+         "text halign" center
+         "text valign" center
+         priority 2
+        }
+        FrameWidgetClass OZG_DSTarget2Badge {
+         ignorepointer 1
+         clipchildren 0
+         position 25 -7
+         size 18 18
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 3
+         visible 0
+         {
+          ImageWidgetClass OZG_DSTarget2BadgeRing {
+           ignorepointer 1
+           color 0.102 0.071 0.039 1
+           position -1.5 -1.5
+           size 21 21
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_disc_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          ImageWidgetClass OZG_DSTarget2BadgeBg {
+           ignorepointer 1
+           color 0.357 0.392 0.439 1
+           position 0 0
+           size 18 18
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 1
+           image0 "OpenZone_Games/gui/textures/ozg_disc_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          TextWidgetClass OZG_DSTarget2BadgeText {
+           ignorepointer 1
+           position 0 0
+           size 18 18
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           color 0.933 0.949 0.965 1
+           text ""
+           font "gui/fonts/MetronBook-Bold22"
+           "exact text" 1
+           "exact text size" 12
+           "text halign" center
+           "text valign" center
+           priority 2
+          }
+         }
+        }
+       }
+      }
+      ButtonWidgetClass OZG_DSTarget3 {
+       visible 0
+       position 150 118
+       size 38 38
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       text ""
+       priority 6
+       style Empty
+       clipchildren 0
+       {
+        FrameWidgetClass OZG_DSTarget3Ring {
+         ignorepointer 1
+         clipchildren 0
+         position -3 -3
+         size 44 44
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 0
+         visible 0
+         {
+          ImageWidgetClass OZG_DSTarget3RingTL {
+           ignorepointer 1
+           color 0.906 0.761 0.478 1
+           position 0 0
+           size 9 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_rc_tl_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          ImageWidgetClass OZG_DSTarget3RingTR {
+           ignorepointer 1
+           color 0.906 0.761 0.478 1
+           position 35 0
+           size 9 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_rc_tr_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          ImageWidgetClass OZG_DSTarget3RingBL {
+           ignorepointer 1
+           color 0.906 0.761 0.478 1
+           position 0 35
+           size 9 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_rc_bl_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          ImageWidgetClass OZG_DSTarget3RingBR {
+           ignorepointer 1
+           color 0.906 0.761 0.478 1
+           position 35 35
+           size 9 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_rc_br_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          PanelWidgetClass OZG_DSTarget3RingM {
+           ignorepointer 1
+           position 0 9
+           size 44 26
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           color 0.906 0.761 0.478 1
+           style rover_sim_colorable
+           priority 0
+          }
+          PanelWidgetClass OZG_DSTarget3RingT {
+           ignorepointer 1
+           position 9 0
+           size 26 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           color 0.906 0.761 0.478 1
+           style rover_sim_colorable
+           priority 0
+          }
+          PanelWidgetClass OZG_DSTarget3RingB {
+           ignorepointer 1
+           position 9 35
+           size 26 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           color 0.906 0.761 0.478 1
+           style rover_sim_colorable
+           priority 0
+          }
+         }
+        }
+        ImageWidgetClass OZG_DSTarget3Pic {
+         ignorepointer 1
+         color 1 1 1 1
+         position 0 0
+         size 38 38
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 1
+         mode blend
+         "src alpha" 1
+         "stretch mode" stretch_w_h
+        }
+        TextWidgetClass OZG_DSTarget3Num {
+         ignorepointer 1
+         position 0 0
+         size 38 38
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         color 0.114 0.090 0.071 1
+         text ""
+         font "gui/fonts/MetronBook-Bold22"
+         "exact text" 1
+         "exact text size" 19
+         "text halign" center
+         "text valign" center
+         priority 2
+        }
+        FrameWidgetClass OZG_DSTarget3Badge {
+         ignorepointer 1
+         clipchildren 0
+         position 25 -7
+         size 18 18
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 3
+         visible 0
+         {
+          ImageWidgetClass OZG_DSTarget3BadgeRing {
+           ignorepointer 1
+           color 0.102 0.071 0.039 1
+           position -1.5 -1.5
+           size 21 21
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_disc_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          ImageWidgetClass OZG_DSTarget3BadgeBg {
+           ignorepointer 1
+           color 0.357 0.392 0.439 1
+           position 0 0
+           size 18 18
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 1
+           image0 "OpenZone_Games/gui/textures/ozg_disc_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          TextWidgetClass OZG_DSTarget3BadgeText {
+           ignorepointer 1
+           position 0 0
+           size 18 18
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           color 0.933 0.949 0.965 1
+           text ""
+           font "gui/fonts/MetronBook-Bold22"
+           "exact text" 1
+           "exact text size" 12
+           "text halign" center
+           "text valign" center
+           priority 2
+          }
+         }
+        }
+       }
+      }
+      ButtonWidgetClass OZG_DSTarget4 {
+       visible 0
+       position 196 118
+       size 38 38
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       text ""
+       priority 6
+       style Empty
+       clipchildren 0
+       {
+        FrameWidgetClass OZG_DSTarget4Ring {
+         ignorepointer 1
+         clipchildren 0
+         position -3 -3
+         size 44 44
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 0
+         visible 0
+         {
+          ImageWidgetClass OZG_DSTarget4RingTL {
+           ignorepointer 1
+           color 0.906 0.761 0.478 1
+           position 0 0
+           size 9 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_rc_tl_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          ImageWidgetClass OZG_DSTarget4RingTR {
+           ignorepointer 1
+           color 0.906 0.761 0.478 1
+           position 35 0
+           size 9 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_rc_tr_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          ImageWidgetClass OZG_DSTarget4RingBL {
+           ignorepointer 1
+           color 0.906 0.761 0.478 1
+           position 0 35
+           size 9 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_rc_bl_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          ImageWidgetClass OZG_DSTarget4RingBR {
+           ignorepointer 1
+           color 0.906 0.761 0.478 1
+           position 35 35
+           size 9 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_rc_br_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          PanelWidgetClass OZG_DSTarget4RingM {
+           ignorepointer 1
+           position 0 9
+           size 44 26
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           color 0.906 0.761 0.478 1
+           style rover_sim_colorable
+           priority 0
+          }
+          PanelWidgetClass OZG_DSTarget4RingT {
+           ignorepointer 1
+           position 9 0
+           size 26 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           color 0.906 0.761 0.478 1
+           style rover_sim_colorable
+           priority 0
+          }
+          PanelWidgetClass OZG_DSTarget4RingB {
+           ignorepointer 1
+           position 9 35
+           size 26 9
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           color 0.906 0.761 0.478 1
+           style rover_sim_colorable
+           priority 0
+          }
+         }
+        }
+        ImageWidgetClass OZG_DSTarget4Pic {
+         ignorepointer 1
+         color 1 1 1 1
+         position 0 0
+         size 38 38
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 1
+         mode blend
+         "src alpha" 1
+         "stretch mode" stretch_w_h
+        }
+        TextWidgetClass OZG_DSTarget4Num {
+         ignorepointer 1
+         position 0 0
+         size 38 38
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         color 0.114 0.090 0.071 1
+         text ""
+         font "gui/fonts/MetronBook-Bold22"
+         "exact text" 1
+         "exact text size" 19
+         "text halign" center
+         "text valign" center
+         priority 2
+        }
+        FrameWidgetClass OZG_DSTarget4Badge {
+         ignorepointer 1
+         clipchildren 0
+         position 25 -7
+         size 18 18
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 3
+         visible 0
+         {
+          ImageWidgetClass OZG_DSTarget4BadgeRing {
+           ignorepointer 1
+           color 0.102 0.071 0.039 1
+           position -1.5 -1.5
+           size 21 21
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           image0 "OpenZone_Games/gui/textures/ozg_disc_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          ImageWidgetClass OZG_DSTarget4BadgeBg {
+           ignorepointer 1
+           color 0.357 0.392 0.439 1
+           position 0 0
+           size 18 18
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 1
+           image0 "OpenZone_Games/gui/textures/ozg_disc_ca.paa"
+           mode blend
+           "src alpha" 1
+           "stretch mode" stretch_w_h
+          }
+          TextWidgetClass OZG_DSTarget4BadgeText {
+           ignorepointer 1
+           position 0 0
+           size 18 18
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           color 0.933 0.949 0.965 1
+           text ""
+           font "gui/fonts/MetronBook-Bold22"
+           "exact text" 1
+           "exact text size" 12
+           "text halign" center
+           "text valign" center
+           priority 2
+          }
+         }
+        }
+       }
+      }
       TextWidgetClass OZG_DSwapSText0 {
        ignorepointer 1
-       position 12 85
+       position 12 164
        size 336 17
        hexactpos 1
        vexactpos 1
@@ -16504,7 +17623,7 @@ FrameWidgetClass OZG_DWin {
       }
       TextWidgetClass OZG_DSwapSText1 {
        ignorepointer 1
-       position 12 102
+       position 12 181
        size 336 17
        hexactpos 1
        vexactpos 1
@@ -16521,7 +17640,7 @@ FrameWidgetClass OZG_DWin {
       }
       ButtonWidgetClass OZG_DSwapSBtn {
        visible 1
-       position 12 125
+       position 12 204
        size 336 36
        hexactpos 1
        vexactpos 1
