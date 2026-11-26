@@ -34,6 +34,7 @@ FrameWidgetClass OZG_DG_pig {
      priority 0
      {
       FrameWidgetClass OZG_DPgRow0BoxEdge {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 0 0
@@ -45,6 +46,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 0
        {
         ImageWidgetClass OZG_DPgRow0BoxEdgeTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.290 0.216 0.149 1
          position 0 0
@@ -58,8 +60,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow0BoxEdgeTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.290 0.216 0.149 1
          position 936 0
@@ -73,8 +77,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow0BoxEdgeBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.290 0.216 0.149 1
          position 0 46
@@ -88,8 +94,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow0BoxEdgeBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.290 0.216 0.149 1
          position 936 46
@@ -103,11 +111,13 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DPgRow0BoxEdgeM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 7.75
-         size 944 38.5
+         position 0 7
+         size 944 40
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -117,9 +127,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow0BoxEdgeT {
+         inheritalpha 1
          ignorepointer 1
-         position 7.75 0
-         size 928.5 8
+         position 7 0
+         size 930 9
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -129,9 +140,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow0BoxEdgeB {
+         inheritalpha 1
          ignorepointer 1
-         position 7.75 46
-         size 928.5 8
+         position 7 45
+         size 930 9
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -143,6 +155,7 @@ FrameWidgetClass OZG_DG_pig {
        }
       }
       FrameWidgetClass OZG_DPgRow0BoxBg {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 1 1
@@ -154,6 +167,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 1
        {
         ImageWidgetClass OZG_DPgRow0BoxBgTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 0
@@ -167,8 +181,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow0BoxBgTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 935 0
@@ -182,8 +198,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow0BoxBgBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 45
@@ -197,8 +215,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow0BoxBgBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 935 45
@@ -212,11 +232,13 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DPgRow0BoxBgM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 6.75
-         size 942 38.5
+         position 0 6
+         size 942 40
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -226,9 +248,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow0BoxBgT {
+         inheritalpha 1
          ignorepointer 1
-         position 6.75 0
-         size 928.5 7
+         position 6 0
+         size 930 8
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -238,9 +261,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow0BoxBgB {
+         inheritalpha 1
          ignorepointer 1
-         position 6.75 45
-         size 928.5 7
+         position 6 44
+         size 930 8
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -254,6 +278,7 @@ FrameWidgetClass OZG_DG_pig {
      }
     }
     TextWidgetClass OZG_DPgRow0Name {
+     inheritalpha 1
      ignorepointer 1
      position 16 17
      size 140 20
@@ -271,6 +296,7 @@ FrameWidgetClass OZG_DG_pig {
      priority 3
     }
     TextWidgetClass OZG_DPgRow0NameB {
+     inheritalpha 1
      ignorepointer 1
      position 16 17
      size 140 20
@@ -280,7 +306,7 @@ FrameWidgetClass OZG_DG_pig {
      vexactsize 1
      color 0.937 0.894 0.800 1
      text ""
-     font "gui/fonts/MetronBook-Bold22"
+     font "gui/fonts/MetronBook-Bold28"
      "exact text" 1
      "exact text size" 19
      "text halign" left
@@ -289,6 +315,7 @@ FrameWidgetClass OZG_DG_pig {
      visible 0
     }
     FrameWidgetClass OZG_DPgRow0Bar {
+     inheritalpha 1
      ignorepointer 1
      clipchildren 1
      position 170 20
@@ -300,6 +327,7 @@ FrameWidgetClass OZG_DG_pig {
      priority 3
      {
       FrameWidgetClass OZG_DPgRow0BarTrack {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 0 0
@@ -311,6 +339,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 0
        {
         ImageWidgetClass OZG_DPgRow0BarTrackTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.227 0.173 0.110 1
          position 0 0
@@ -324,8 +353,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow0BarTrackTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.227 0.173 0.110 1
          position 667 0
@@ -339,8 +370,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow0BarTrackBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.227 0.173 0.110 1
          position 0 7
@@ -354,8 +387,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow0BarTrackBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.227 0.173 0.110 1
          position 667 7
@@ -369,11 +404,13 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DPgRow0BarTrackM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 7
-         size 674 0
+         position 0 6
+         size 674 2
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -383,9 +420,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow0BarTrackT {
+         inheritalpha 1
          ignorepointer 1
-         position 7 0
-         size 660 7
+         position 6 0
+         size 662 8
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -395,9 +433,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow0BarTrackB {
+         inheritalpha 1
          ignorepointer 1
-         position 7 7
-         size 660 7
+         position 6 6
+         size 662 8
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -409,6 +448,7 @@ FrameWidgetClass OZG_DG_pig {
        }
       }
       FrameWidgetClass OZG_DPgRow0BarFill {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 1
        position 0 0
@@ -420,6 +460,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 1
        {
         FrameWidgetClass OZG_DPgRow0BarFillShape {
+         inheritalpha 1
          ignorepointer 1
          clipchildren 0
          position 0 0
@@ -431,6 +472,7 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
          {
           ImageWidgetClass OZG_DPgRow0BarFillShapeTL {
+           inheritalpha 1
            ignorepointer 1
            color 0.788 0.643 0.361 1
            position 0 0
@@ -444,8 +486,10 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow0BarFillShapeTR {
+           inheritalpha 1
            ignorepointer 1
            color 0.788 0.643 0.361 1
            position 667 0
@@ -459,8 +503,10 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow0BarFillShapeBL {
+           inheritalpha 1
            ignorepointer 1
            color 0.788 0.643 0.361 1
            position 0 7
@@ -474,8 +520,10 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow0BarFillShapeBR {
+           inheritalpha 1
            ignorepointer 1
            color 0.788 0.643 0.361 1
            position 667 7
@@ -489,11 +537,13 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           PanelWidgetClass OZG_DPgRow0BarFillShapeM {
+           inheritalpha 1
            ignorepointer 1
-           position 0 7
-           size 674 0
+           position 0 6
+           size 674 2
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -503,9 +553,10 @@ FrameWidgetClass OZG_DG_pig {
            priority 0
           }
           PanelWidgetClass OZG_DPgRow0BarFillShapeT {
+           inheritalpha 1
            ignorepointer 1
-           position 7 0
-           size 660 7
+           position 6 0
+           size 662 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -515,9 +566,10 @@ FrameWidgetClass OZG_DG_pig {
            priority 0
           }
           PanelWidgetClass OZG_DPgRow0BarFillShapeB {
+           inheritalpha 1
            ignorepointer 1
-           position 7 7
-           size 660 7
+           position 6 6
+           size 662 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -531,6 +583,7 @@ FrameWidgetClass OZG_DG_pig {
        }
       }
       FrameWidgetClass OZG_DPgRow0BarTurn {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 1
        position 0 0
@@ -542,6 +595,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 2
        {
         FrameWidgetClass OZG_DPgRow0BarTurnShape {
+         inheritalpha 1
          ignorepointer 1
          clipchildren 0
          position 0 0
@@ -553,8 +607,9 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
          {
           ImageWidgetClass OZG_DPgRow0BarTurnShapeTL {
+           inheritalpha 1
            ignorepointer 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            position 0 0
            size 7 7
            hexactpos 1
@@ -566,10 +621,12 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow0BarTurnShapeTR {
+           inheritalpha 1
            ignorepointer 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            position 667 0
            size 7 7
            hexactpos 1
@@ -581,10 +638,12 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow0BarTurnShapeBL {
+           inheritalpha 1
            ignorepointer 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            position 0 7
            size 7 7
            hexactpos 1
@@ -596,10 +655,12 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow0BarTurnShapeBR {
+           inheritalpha 1
            ignorepointer 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            position 667 7
            size 7 7
            hexactpos 1
@@ -611,40 +672,44 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           PanelWidgetClass OZG_DPgRow0BarTurnShapeM {
+           inheritalpha 1
            ignorepointer 1
-           position 0 7
-           size 674 0
+           position 0 6
+           size 674 2
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            style rover_sim_colorable
            priority 0
           }
           PanelWidgetClass OZG_DPgRow0BarTurnShapeT {
+           inheritalpha 1
            ignorepointer 1
-           position 7 0
-           size 660 7
+           position 6 0
+           size 662 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            style rover_sim_colorable
            priority 0
           }
           PanelWidgetClass OZG_DPgRow0BarTurnShapeB {
+           inheritalpha 1
            ignorepointer 1
-           position 7 7
-           size 660 7
+           position 6 6
+           size 662 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            style rover_sim_colorable
            priority 0
           }
@@ -655,6 +720,7 @@ FrameWidgetClass OZG_DG_pig {
      }
     }
     TextWidgetClass OZG_DPgRow0Score {
+     inheritalpha 1
      ignorepointer 1
      position 858 12
      size 70 30
@@ -697,6 +763,7 @@ FrameWidgetClass OZG_DG_pig {
      priority 0
      {
       FrameWidgetClass OZG_DPgRow1BoxEdge {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 0 0
@@ -708,6 +775,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 0
        {
         ImageWidgetClass OZG_DPgRow1BoxEdgeTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.290 0.216 0.149 1
          position 0 0
@@ -721,8 +789,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow1BoxEdgeTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.290 0.216 0.149 1
          position 936 0
@@ -736,8 +806,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow1BoxEdgeBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.290 0.216 0.149 1
          position 0 46
@@ -751,8 +823,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow1BoxEdgeBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.290 0.216 0.149 1
          position 936 46
@@ -766,11 +840,13 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DPgRow1BoxEdgeM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 7.75
-         size 944 38.5
+         position 0 7
+         size 944 40
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -780,9 +856,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow1BoxEdgeT {
+         inheritalpha 1
          ignorepointer 1
-         position 7.75 0
-         size 928.5 8
+         position 7 0
+         size 930 9
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -792,9 +869,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow1BoxEdgeB {
+         inheritalpha 1
          ignorepointer 1
-         position 7.75 46
-         size 928.5 8
+         position 7 45
+         size 930 9
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -806,6 +884,7 @@ FrameWidgetClass OZG_DG_pig {
        }
       }
       FrameWidgetClass OZG_DPgRow1BoxBg {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 1 1
@@ -817,6 +896,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 1
        {
         ImageWidgetClass OZG_DPgRow1BoxBgTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 0
@@ -830,8 +910,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow1BoxBgTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 935 0
@@ -845,8 +927,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow1BoxBgBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 45
@@ -860,8 +944,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow1BoxBgBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 935 45
@@ -875,11 +961,13 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DPgRow1BoxBgM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 6.75
-         size 942 38.5
+         position 0 6
+         size 942 40
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -889,9 +977,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow1BoxBgT {
+         inheritalpha 1
          ignorepointer 1
-         position 6.75 0
-         size 928.5 7
+         position 6 0
+         size 930 8
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -901,9 +990,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow1BoxBgB {
+         inheritalpha 1
          ignorepointer 1
-         position 6.75 45
-         size 928.5 7
+         position 6 44
+         size 930 8
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -917,6 +1007,7 @@ FrameWidgetClass OZG_DG_pig {
      }
     }
     TextWidgetClass OZG_DPgRow1Name {
+     inheritalpha 1
      ignorepointer 1
      position 16 17
      size 140 20
@@ -934,6 +1025,7 @@ FrameWidgetClass OZG_DG_pig {
      priority 3
     }
     TextWidgetClass OZG_DPgRow1NameB {
+     inheritalpha 1
      ignorepointer 1
      position 16 17
      size 140 20
@@ -943,7 +1035,7 @@ FrameWidgetClass OZG_DG_pig {
      vexactsize 1
      color 0.937 0.894 0.800 1
      text ""
-     font "gui/fonts/MetronBook-Bold22"
+     font "gui/fonts/MetronBook-Bold28"
      "exact text" 1
      "exact text size" 19
      "text halign" left
@@ -952,6 +1044,7 @@ FrameWidgetClass OZG_DG_pig {
      visible 0
     }
     FrameWidgetClass OZG_DPgRow1Bar {
+     inheritalpha 1
      ignorepointer 1
      clipchildren 1
      position 170 20
@@ -963,6 +1056,7 @@ FrameWidgetClass OZG_DG_pig {
      priority 3
      {
       FrameWidgetClass OZG_DPgRow1BarTrack {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 0 0
@@ -974,6 +1068,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 0
        {
         ImageWidgetClass OZG_DPgRow1BarTrackTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.227 0.173 0.110 1
          position 0 0
@@ -987,8 +1082,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow1BarTrackTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.227 0.173 0.110 1
          position 667 0
@@ -1002,8 +1099,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow1BarTrackBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.227 0.173 0.110 1
          position 0 7
@@ -1017,8 +1116,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow1BarTrackBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.227 0.173 0.110 1
          position 667 7
@@ -1032,11 +1133,13 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DPgRow1BarTrackM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 7
-         size 674 0
+         position 0 6
+         size 674 2
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1046,9 +1149,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow1BarTrackT {
+         inheritalpha 1
          ignorepointer 1
-         position 7 0
-         size 660 7
+         position 6 0
+         size 662 8
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1058,9 +1162,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow1BarTrackB {
+         inheritalpha 1
          ignorepointer 1
-         position 7 7
-         size 660 7
+         position 6 6
+         size 662 8
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1072,6 +1177,7 @@ FrameWidgetClass OZG_DG_pig {
        }
       }
       FrameWidgetClass OZG_DPgRow1BarFill {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 1
        position 0 0
@@ -1083,6 +1189,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 1
        {
         FrameWidgetClass OZG_DPgRow1BarFillShape {
+         inheritalpha 1
          ignorepointer 1
          clipchildren 0
          position 0 0
@@ -1094,6 +1201,7 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
          {
           ImageWidgetClass OZG_DPgRow1BarFillShapeTL {
+           inheritalpha 1
            ignorepointer 1
            color 0.788 0.643 0.361 1
            position 0 0
@@ -1107,8 +1215,10 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow1BarFillShapeTR {
+           inheritalpha 1
            ignorepointer 1
            color 0.788 0.643 0.361 1
            position 667 0
@@ -1122,8 +1232,10 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow1BarFillShapeBL {
+           inheritalpha 1
            ignorepointer 1
            color 0.788 0.643 0.361 1
            position 0 7
@@ -1137,8 +1249,10 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow1BarFillShapeBR {
+           inheritalpha 1
            ignorepointer 1
            color 0.788 0.643 0.361 1
            position 667 7
@@ -1152,11 +1266,13 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           PanelWidgetClass OZG_DPgRow1BarFillShapeM {
+           inheritalpha 1
            ignorepointer 1
-           position 0 7
-           size 674 0
+           position 0 6
+           size 674 2
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -1166,9 +1282,10 @@ FrameWidgetClass OZG_DG_pig {
            priority 0
           }
           PanelWidgetClass OZG_DPgRow1BarFillShapeT {
+           inheritalpha 1
            ignorepointer 1
-           position 7 0
-           size 660 7
+           position 6 0
+           size 662 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -1178,9 +1295,10 @@ FrameWidgetClass OZG_DG_pig {
            priority 0
           }
           PanelWidgetClass OZG_DPgRow1BarFillShapeB {
+           inheritalpha 1
            ignorepointer 1
-           position 7 7
-           size 660 7
+           position 6 6
+           size 662 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -1194,6 +1312,7 @@ FrameWidgetClass OZG_DG_pig {
        }
       }
       FrameWidgetClass OZG_DPgRow1BarTurn {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 1
        position 0 0
@@ -1205,6 +1324,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 2
        {
         FrameWidgetClass OZG_DPgRow1BarTurnShape {
+         inheritalpha 1
          ignorepointer 1
          clipchildren 0
          position 0 0
@@ -1216,8 +1336,9 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
          {
           ImageWidgetClass OZG_DPgRow1BarTurnShapeTL {
+           inheritalpha 1
            ignorepointer 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            position 0 0
            size 7 7
            hexactpos 1
@@ -1229,10 +1350,12 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow1BarTurnShapeTR {
+           inheritalpha 1
            ignorepointer 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            position 667 0
            size 7 7
            hexactpos 1
@@ -1244,10 +1367,12 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow1BarTurnShapeBL {
+           inheritalpha 1
            ignorepointer 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            position 0 7
            size 7 7
            hexactpos 1
@@ -1259,10 +1384,12 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow1BarTurnShapeBR {
+           inheritalpha 1
            ignorepointer 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            position 667 7
            size 7 7
            hexactpos 1
@@ -1274,40 +1401,44 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           PanelWidgetClass OZG_DPgRow1BarTurnShapeM {
+           inheritalpha 1
            ignorepointer 1
-           position 0 7
-           size 674 0
+           position 0 6
+           size 674 2
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            style rover_sim_colorable
            priority 0
           }
           PanelWidgetClass OZG_DPgRow1BarTurnShapeT {
+           inheritalpha 1
            ignorepointer 1
-           position 7 0
-           size 660 7
+           position 6 0
+           size 662 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            style rover_sim_colorable
            priority 0
           }
           PanelWidgetClass OZG_DPgRow1BarTurnShapeB {
+           inheritalpha 1
            ignorepointer 1
-           position 7 7
-           size 660 7
+           position 6 6
+           size 662 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            style rover_sim_colorable
            priority 0
           }
@@ -1318,6 +1449,7 @@ FrameWidgetClass OZG_DG_pig {
      }
     }
     TextWidgetClass OZG_DPgRow1Score {
+     inheritalpha 1
      ignorepointer 1
      position 858 12
      size 70 30
@@ -1360,6 +1492,7 @@ FrameWidgetClass OZG_DG_pig {
      priority 0
      {
       FrameWidgetClass OZG_DPgRow2BoxEdge {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 0 0
@@ -1371,6 +1504,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 0
        {
         ImageWidgetClass OZG_DPgRow2BoxEdgeTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.290 0.216 0.149 1
          position 0 0
@@ -1384,8 +1518,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow2BoxEdgeTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.290 0.216 0.149 1
          position 936 0
@@ -1399,8 +1535,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow2BoxEdgeBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.290 0.216 0.149 1
          position 0 46
@@ -1414,8 +1552,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow2BoxEdgeBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.290 0.216 0.149 1
          position 936 46
@@ -1429,11 +1569,13 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DPgRow2BoxEdgeM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 7.75
-         size 944 38.5
+         position 0 7
+         size 944 40
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1443,9 +1585,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow2BoxEdgeT {
+         inheritalpha 1
          ignorepointer 1
-         position 7.75 0
-         size 928.5 8
+         position 7 0
+         size 930 9
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1455,9 +1598,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow2BoxEdgeB {
+         inheritalpha 1
          ignorepointer 1
-         position 7.75 46
-         size 928.5 8
+         position 7 45
+         size 930 9
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1469,6 +1613,7 @@ FrameWidgetClass OZG_DG_pig {
        }
       }
       FrameWidgetClass OZG_DPgRow2BoxBg {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 1 1
@@ -1480,6 +1625,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 1
        {
         ImageWidgetClass OZG_DPgRow2BoxBgTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 0
@@ -1493,8 +1639,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow2BoxBgTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 935 0
@@ -1508,8 +1656,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow2BoxBgBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 45
@@ -1523,8 +1673,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow2BoxBgBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 935 45
@@ -1538,11 +1690,13 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DPgRow2BoxBgM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 6.75
-         size 942 38.5
+         position 0 6
+         size 942 40
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1552,9 +1706,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow2BoxBgT {
+         inheritalpha 1
          ignorepointer 1
-         position 6.75 0
-         size 928.5 7
+         position 6 0
+         size 930 8
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1564,9 +1719,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow2BoxBgB {
+         inheritalpha 1
          ignorepointer 1
-         position 6.75 45
-         size 928.5 7
+         position 6 44
+         size 930 8
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1580,6 +1736,7 @@ FrameWidgetClass OZG_DG_pig {
      }
     }
     TextWidgetClass OZG_DPgRow2Name {
+     inheritalpha 1
      ignorepointer 1
      position 16 17
      size 140 20
@@ -1597,6 +1754,7 @@ FrameWidgetClass OZG_DG_pig {
      priority 3
     }
     TextWidgetClass OZG_DPgRow2NameB {
+     inheritalpha 1
      ignorepointer 1
      position 16 17
      size 140 20
@@ -1606,7 +1764,7 @@ FrameWidgetClass OZG_DG_pig {
      vexactsize 1
      color 0.937 0.894 0.800 1
      text ""
-     font "gui/fonts/MetronBook-Bold22"
+     font "gui/fonts/MetronBook-Bold28"
      "exact text" 1
      "exact text size" 19
      "text halign" left
@@ -1615,6 +1773,7 @@ FrameWidgetClass OZG_DG_pig {
      visible 0
     }
     FrameWidgetClass OZG_DPgRow2Bar {
+     inheritalpha 1
      ignorepointer 1
      clipchildren 1
      position 170 20
@@ -1626,6 +1785,7 @@ FrameWidgetClass OZG_DG_pig {
      priority 3
      {
       FrameWidgetClass OZG_DPgRow2BarTrack {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 0 0
@@ -1637,6 +1797,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 0
        {
         ImageWidgetClass OZG_DPgRow2BarTrackTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.227 0.173 0.110 1
          position 0 0
@@ -1650,8 +1811,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow2BarTrackTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.227 0.173 0.110 1
          position 667 0
@@ -1665,8 +1828,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow2BarTrackBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.227 0.173 0.110 1
          position 0 7
@@ -1680,8 +1845,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow2BarTrackBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.227 0.173 0.110 1
          position 667 7
@@ -1695,11 +1862,13 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DPgRow2BarTrackM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 7
-         size 674 0
+         position 0 6
+         size 674 2
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1709,9 +1878,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow2BarTrackT {
+         inheritalpha 1
          ignorepointer 1
-         position 7 0
-         size 660 7
+         position 6 0
+         size 662 8
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1721,9 +1891,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow2BarTrackB {
+         inheritalpha 1
          ignorepointer 1
-         position 7 7
-         size 660 7
+         position 6 6
+         size 662 8
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1735,6 +1906,7 @@ FrameWidgetClass OZG_DG_pig {
        }
       }
       FrameWidgetClass OZG_DPgRow2BarFill {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 1
        position 0 0
@@ -1746,6 +1918,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 1
        {
         FrameWidgetClass OZG_DPgRow2BarFillShape {
+         inheritalpha 1
          ignorepointer 1
          clipchildren 0
          position 0 0
@@ -1757,6 +1930,7 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
          {
           ImageWidgetClass OZG_DPgRow2BarFillShapeTL {
+           inheritalpha 1
            ignorepointer 1
            color 0.788 0.643 0.361 1
            position 0 0
@@ -1770,8 +1944,10 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow2BarFillShapeTR {
+           inheritalpha 1
            ignorepointer 1
            color 0.788 0.643 0.361 1
            position 667 0
@@ -1785,8 +1961,10 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow2BarFillShapeBL {
+           inheritalpha 1
            ignorepointer 1
            color 0.788 0.643 0.361 1
            position 0 7
@@ -1800,8 +1978,10 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow2BarFillShapeBR {
+           inheritalpha 1
            ignorepointer 1
            color 0.788 0.643 0.361 1
            position 667 7
@@ -1815,11 +1995,13 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           PanelWidgetClass OZG_DPgRow2BarFillShapeM {
+           inheritalpha 1
            ignorepointer 1
-           position 0 7
-           size 674 0
+           position 0 6
+           size 674 2
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -1829,9 +2011,10 @@ FrameWidgetClass OZG_DG_pig {
            priority 0
           }
           PanelWidgetClass OZG_DPgRow2BarFillShapeT {
+           inheritalpha 1
            ignorepointer 1
-           position 7 0
-           size 660 7
+           position 6 0
+           size 662 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -1841,9 +2024,10 @@ FrameWidgetClass OZG_DG_pig {
            priority 0
           }
           PanelWidgetClass OZG_DPgRow2BarFillShapeB {
+           inheritalpha 1
            ignorepointer 1
-           position 7 7
-           size 660 7
+           position 6 6
+           size 662 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -1857,6 +2041,7 @@ FrameWidgetClass OZG_DG_pig {
        }
       }
       FrameWidgetClass OZG_DPgRow2BarTurn {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 1
        position 0 0
@@ -1868,6 +2053,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 2
        {
         FrameWidgetClass OZG_DPgRow2BarTurnShape {
+         inheritalpha 1
          ignorepointer 1
          clipchildren 0
          position 0 0
@@ -1879,8 +2065,9 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
          {
           ImageWidgetClass OZG_DPgRow2BarTurnShapeTL {
+           inheritalpha 1
            ignorepointer 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            position 0 0
            size 7 7
            hexactpos 1
@@ -1892,10 +2079,12 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow2BarTurnShapeTR {
+           inheritalpha 1
            ignorepointer 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            position 667 0
            size 7 7
            hexactpos 1
@@ -1907,10 +2096,12 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow2BarTurnShapeBL {
+           inheritalpha 1
            ignorepointer 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            position 0 7
            size 7 7
            hexactpos 1
@@ -1922,10 +2113,12 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow2BarTurnShapeBR {
+           inheritalpha 1
            ignorepointer 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            position 667 7
            size 7 7
            hexactpos 1
@@ -1937,40 +2130,44 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           PanelWidgetClass OZG_DPgRow2BarTurnShapeM {
+           inheritalpha 1
            ignorepointer 1
-           position 0 7
-           size 674 0
+           position 0 6
+           size 674 2
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            style rover_sim_colorable
            priority 0
           }
           PanelWidgetClass OZG_DPgRow2BarTurnShapeT {
+           inheritalpha 1
            ignorepointer 1
-           position 7 0
-           size 660 7
+           position 6 0
+           size 662 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            style rover_sim_colorable
            priority 0
           }
           PanelWidgetClass OZG_DPgRow2BarTurnShapeB {
+           inheritalpha 1
            ignorepointer 1
-           position 7 7
-           size 660 7
+           position 6 6
+           size 662 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            style rover_sim_colorable
            priority 0
           }
@@ -1981,6 +2178,7 @@ FrameWidgetClass OZG_DG_pig {
      }
     }
     TextWidgetClass OZG_DPgRow2Score {
+     inheritalpha 1
      ignorepointer 1
      position 858 12
      size 70 30
@@ -2023,6 +2221,7 @@ FrameWidgetClass OZG_DG_pig {
      priority 0
      {
       FrameWidgetClass OZG_DPgRow3BoxEdge {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 0 0
@@ -2034,6 +2233,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 0
        {
         ImageWidgetClass OZG_DPgRow3BoxEdgeTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.290 0.216 0.149 1
          position 0 0
@@ -2047,8 +2247,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow3BoxEdgeTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.290 0.216 0.149 1
          position 936 0
@@ -2062,8 +2264,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow3BoxEdgeBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.290 0.216 0.149 1
          position 0 46
@@ -2077,8 +2281,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow3BoxEdgeBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.290 0.216 0.149 1
          position 936 46
@@ -2092,11 +2298,13 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DPgRow3BoxEdgeM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 7.75
-         size 944 38.5
+         position 0 7
+         size 944 40
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2106,9 +2314,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow3BoxEdgeT {
+         inheritalpha 1
          ignorepointer 1
-         position 7.75 0
-         size 928.5 8
+         position 7 0
+         size 930 9
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2118,9 +2327,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow3BoxEdgeB {
+         inheritalpha 1
          ignorepointer 1
-         position 7.75 46
-         size 928.5 8
+         position 7 45
+         size 930 9
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2132,6 +2342,7 @@ FrameWidgetClass OZG_DG_pig {
        }
       }
       FrameWidgetClass OZG_DPgRow3BoxBg {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 1 1
@@ -2143,6 +2354,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 1
        {
         ImageWidgetClass OZG_DPgRow3BoxBgTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 0
@@ -2156,8 +2368,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow3BoxBgTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 935 0
@@ -2171,8 +2385,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow3BoxBgBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 45
@@ -2186,8 +2402,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow3BoxBgBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 935 45
@@ -2201,11 +2419,13 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DPgRow3BoxBgM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 6.75
-         size 942 38.5
+         position 0 6
+         size 942 40
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2215,9 +2435,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow3BoxBgT {
+         inheritalpha 1
          ignorepointer 1
-         position 6.75 0
-         size 928.5 7
+         position 6 0
+         size 930 8
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2227,9 +2448,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow3BoxBgB {
+         inheritalpha 1
          ignorepointer 1
-         position 6.75 45
-         size 928.5 7
+         position 6 44
+         size 930 8
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2243,6 +2465,7 @@ FrameWidgetClass OZG_DG_pig {
      }
     }
     TextWidgetClass OZG_DPgRow3Name {
+     inheritalpha 1
      ignorepointer 1
      position 16 17
      size 140 20
@@ -2260,6 +2483,7 @@ FrameWidgetClass OZG_DG_pig {
      priority 3
     }
     TextWidgetClass OZG_DPgRow3NameB {
+     inheritalpha 1
      ignorepointer 1
      position 16 17
      size 140 20
@@ -2269,7 +2493,7 @@ FrameWidgetClass OZG_DG_pig {
      vexactsize 1
      color 0.937 0.894 0.800 1
      text ""
-     font "gui/fonts/MetronBook-Bold22"
+     font "gui/fonts/MetronBook-Bold28"
      "exact text" 1
      "exact text size" 19
      "text halign" left
@@ -2278,6 +2502,7 @@ FrameWidgetClass OZG_DG_pig {
      visible 0
     }
     FrameWidgetClass OZG_DPgRow3Bar {
+     inheritalpha 1
      ignorepointer 1
      clipchildren 1
      position 170 20
@@ -2289,6 +2514,7 @@ FrameWidgetClass OZG_DG_pig {
      priority 3
      {
       FrameWidgetClass OZG_DPgRow3BarTrack {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 0 0
@@ -2300,6 +2526,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 0
        {
         ImageWidgetClass OZG_DPgRow3BarTrackTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.227 0.173 0.110 1
          position 0 0
@@ -2313,8 +2540,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow3BarTrackTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.227 0.173 0.110 1
          position 667 0
@@ -2328,8 +2557,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow3BarTrackBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.227 0.173 0.110 1
          position 0 7
@@ -2343,8 +2574,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow3BarTrackBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.227 0.173 0.110 1
          position 667 7
@@ -2358,11 +2591,13 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DPgRow3BarTrackM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 7
-         size 674 0
+         position 0 6
+         size 674 2
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2372,9 +2607,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow3BarTrackT {
+         inheritalpha 1
          ignorepointer 1
-         position 7 0
-         size 660 7
+         position 6 0
+         size 662 8
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2384,9 +2620,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow3BarTrackB {
+         inheritalpha 1
          ignorepointer 1
-         position 7 7
-         size 660 7
+         position 6 6
+         size 662 8
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2398,6 +2635,7 @@ FrameWidgetClass OZG_DG_pig {
        }
       }
       FrameWidgetClass OZG_DPgRow3BarFill {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 1
        position 0 0
@@ -2409,6 +2647,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 1
        {
         FrameWidgetClass OZG_DPgRow3BarFillShape {
+         inheritalpha 1
          ignorepointer 1
          clipchildren 0
          position 0 0
@@ -2420,6 +2659,7 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
          {
           ImageWidgetClass OZG_DPgRow3BarFillShapeTL {
+           inheritalpha 1
            ignorepointer 1
            color 0.788 0.643 0.361 1
            position 0 0
@@ -2433,8 +2673,10 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow3BarFillShapeTR {
+           inheritalpha 1
            ignorepointer 1
            color 0.788 0.643 0.361 1
            position 667 0
@@ -2448,8 +2690,10 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow3BarFillShapeBL {
+           inheritalpha 1
            ignorepointer 1
            color 0.788 0.643 0.361 1
            position 0 7
@@ -2463,8 +2707,10 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow3BarFillShapeBR {
+           inheritalpha 1
            ignorepointer 1
            color 0.788 0.643 0.361 1
            position 667 7
@@ -2478,11 +2724,13 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           PanelWidgetClass OZG_DPgRow3BarFillShapeM {
+           inheritalpha 1
            ignorepointer 1
-           position 0 7
-           size 674 0
+           position 0 6
+           size 674 2
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -2492,9 +2740,10 @@ FrameWidgetClass OZG_DG_pig {
            priority 0
           }
           PanelWidgetClass OZG_DPgRow3BarFillShapeT {
+           inheritalpha 1
            ignorepointer 1
-           position 7 0
-           size 660 7
+           position 6 0
+           size 662 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -2504,9 +2753,10 @@ FrameWidgetClass OZG_DG_pig {
            priority 0
           }
           PanelWidgetClass OZG_DPgRow3BarFillShapeB {
+           inheritalpha 1
            ignorepointer 1
-           position 7 7
-           size 660 7
+           position 6 6
+           size 662 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -2520,6 +2770,7 @@ FrameWidgetClass OZG_DG_pig {
        }
       }
       FrameWidgetClass OZG_DPgRow3BarTurn {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 1
        position 0 0
@@ -2531,6 +2782,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 2
        {
         FrameWidgetClass OZG_DPgRow3BarTurnShape {
+         inheritalpha 1
          ignorepointer 1
          clipchildren 0
          position 0 0
@@ -2542,8 +2794,9 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
          {
           ImageWidgetClass OZG_DPgRow3BarTurnShapeTL {
+           inheritalpha 1
            ignorepointer 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            position 0 0
            size 7 7
            hexactpos 1
@@ -2555,10 +2808,12 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow3BarTurnShapeTR {
+           inheritalpha 1
            ignorepointer 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            position 667 0
            size 7 7
            hexactpos 1
@@ -2570,10 +2825,12 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow3BarTurnShapeBL {
+           inheritalpha 1
            ignorepointer 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            position 0 7
            size 7 7
            hexactpos 1
@@ -2585,10 +2842,12 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow3BarTurnShapeBR {
+           inheritalpha 1
            ignorepointer 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            position 667 7
            size 7 7
            hexactpos 1
@@ -2600,40 +2859,44 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           PanelWidgetClass OZG_DPgRow3BarTurnShapeM {
+           inheritalpha 1
            ignorepointer 1
-           position 0 7
-           size 674 0
+           position 0 6
+           size 674 2
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            style rover_sim_colorable
            priority 0
           }
           PanelWidgetClass OZG_DPgRow3BarTurnShapeT {
+           inheritalpha 1
            ignorepointer 1
-           position 7 0
-           size 660 7
+           position 6 0
+           size 662 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            style rover_sim_colorable
            priority 0
           }
           PanelWidgetClass OZG_DPgRow3BarTurnShapeB {
+           inheritalpha 1
            ignorepointer 1
-           position 7 7
-           size 660 7
+           position 6 6
+           size 662 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            style rover_sim_colorable
            priority 0
           }
@@ -2644,6 +2907,7 @@ FrameWidgetClass OZG_DG_pig {
      }
     }
     TextWidgetClass OZG_DPgRow3Score {
+     inheritalpha 1
      ignorepointer 1
      position 858 12
      size 70 30
@@ -2686,6 +2950,7 @@ FrameWidgetClass OZG_DG_pig {
      priority 0
      {
       FrameWidgetClass OZG_DPgRow4BoxEdge {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 0 0
@@ -2697,6 +2962,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 0
        {
         ImageWidgetClass OZG_DPgRow4BoxEdgeTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.290 0.216 0.149 1
          position 0 0
@@ -2710,8 +2976,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow4BoxEdgeTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.290 0.216 0.149 1
          position 936 0
@@ -2725,8 +2993,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow4BoxEdgeBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.290 0.216 0.149 1
          position 0 46
@@ -2740,8 +3010,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow4BoxEdgeBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.290 0.216 0.149 1
          position 936 46
@@ -2755,11 +3027,13 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DPgRow4BoxEdgeM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 7.75
-         size 944 38.5
+         position 0 7
+         size 944 40
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2769,9 +3043,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow4BoxEdgeT {
+         inheritalpha 1
          ignorepointer 1
-         position 7.75 0
-         size 928.5 8
+         position 7 0
+         size 930 9
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2781,9 +3056,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow4BoxEdgeB {
+         inheritalpha 1
          ignorepointer 1
-         position 7.75 46
-         size 928.5 8
+         position 7 45
+         size 930 9
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2795,6 +3071,7 @@ FrameWidgetClass OZG_DG_pig {
        }
       }
       FrameWidgetClass OZG_DPgRow4BoxBg {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 1 1
@@ -2806,6 +3083,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 1
        {
         ImageWidgetClass OZG_DPgRow4BoxBgTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 0
@@ -2819,8 +3097,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow4BoxBgTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 935 0
@@ -2834,8 +3114,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow4BoxBgBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 45
@@ -2849,8 +3131,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow4BoxBgBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 935 45
@@ -2864,11 +3148,13 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DPgRow4BoxBgM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 6.75
-         size 942 38.5
+         position 0 6
+         size 942 40
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2878,9 +3164,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow4BoxBgT {
+         inheritalpha 1
          ignorepointer 1
-         position 6.75 0
-         size 928.5 7
+         position 6 0
+         size 930 8
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2890,9 +3177,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow4BoxBgB {
+         inheritalpha 1
          ignorepointer 1
-         position 6.75 45
-         size 928.5 7
+         position 6 44
+         size 930 8
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2906,6 +3194,7 @@ FrameWidgetClass OZG_DG_pig {
      }
     }
     TextWidgetClass OZG_DPgRow4Name {
+     inheritalpha 1
      ignorepointer 1
      position 16 17
      size 140 20
@@ -2923,6 +3212,7 @@ FrameWidgetClass OZG_DG_pig {
      priority 3
     }
     TextWidgetClass OZG_DPgRow4NameB {
+     inheritalpha 1
      ignorepointer 1
      position 16 17
      size 140 20
@@ -2932,7 +3222,7 @@ FrameWidgetClass OZG_DG_pig {
      vexactsize 1
      color 0.937 0.894 0.800 1
      text ""
-     font "gui/fonts/MetronBook-Bold22"
+     font "gui/fonts/MetronBook-Bold28"
      "exact text" 1
      "exact text size" 19
      "text halign" left
@@ -2941,6 +3231,7 @@ FrameWidgetClass OZG_DG_pig {
      visible 0
     }
     FrameWidgetClass OZG_DPgRow4Bar {
+     inheritalpha 1
      ignorepointer 1
      clipchildren 1
      position 170 20
@@ -2952,6 +3243,7 @@ FrameWidgetClass OZG_DG_pig {
      priority 3
      {
       FrameWidgetClass OZG_DPgRow4BarTrack {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 0 0
@@ -2963,6 +3255,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 0
        {
         ImageWidgetClass OZG_DPgRow4BarTrackTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.227 0.173 0.110 1
          position 0 0
@@ -2976,8 +3269,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow4BarTrackTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.227 0.173 0.110 1
          position 667 0
@@ -2991,8 +3286,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow4BarTrackBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.227 0.173 0.110 1
          position 0 7
@@ -3006,8 +3303,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow4BarTrackBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.227 0.173 0.110 1
          position 667 7
@@ -3021,11 +3320,13 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DPgRow4BarTrackM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 7
-         size 674 0
+         position 0 6
+         size 674 2
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3035,9 +3336,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow4BarTrackT {
+         inheritalpha 1
          ignorepointer 1
-         position 7 0
-         size 660 7
+         position 6 0
+         size 662 8
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3047,9 +3349,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow4BarTrackB {
+         inheritalpha 1
          ignorepointer 1
-         position 7 7
-         size 660 7
+         position 6 6
+         size 662 8
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3061,6 +3364,7 @@ FrameWidgetClass OZG_DG_pig {
        }
       }
       FrameWidgetClass OZG_DPgRow4BarFill {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 1
        position 0 0
@@ -3072,6 +3376,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 1
        {
         FrameWidgetClass OZG_DPgRow4BarFillShape {
+         inheritalpha 1
          ignorepointer 1
          clipchildren 0
          position 0 0
@@ -3083,6 +3388,7 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
          {
           ImageWidgetClass OZG_DPgRow4BarFillShapeTL {
+           inheritalpha 1
            ignorepointer 1
            color 0.788 0.643 0.361 1
            position 0 0
@@ -3096,8 +3402,10 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow4BarFillShapeTR {
+           inheritalpha 1
            ignorepointer 1
            color 0.788 0.643 0.361 1
            position 667 0
@@ -3111,8 +3419,10 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow4BarFillShapeBL {
+           inheritalpha 1
            ignorepointer 1
            color 0.788 0.643 0.361 1
            position 0 7
@@ -3126,8 +3436,10 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow4BarFillShapeBR {
+           inheritalpha 1
            ignorepointer 1
            color 0.788 0.643 0.361 1
            position 667 7
@@ -3141,11 +3453,13 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           PanelWidgetClass OZG_DPgRow4BarFillShapeM {
+           inheritalpha 1
            ignorepointer 1
-           position 0 7
-           size 674 0
+           position 0 6
+           size 674 2
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3155,9 +3469,10 @@ FrameWidgetClass OZG_DG_pig {
            priority 0
           }
           PanelWidgetClass OZG_DPgRow4BarFillShapeT {
+           inheritalpha 1
            ignorepointer 1
-           position 7 0
-           size 660 7
+           position 6 0
+           size 662 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3167,9 +3482,10 @@ FrameWidgetClass OZG_DG_pig {
            priority 0
           }
           PanelWidgetClass OZG_DPgRow4BarFillShapeB {
+           inheritalpha 1
            ignorepointer 1
-           position 7 7
-           size 660 7
+           position 6 6
+           size 662 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3183,6 +3499,7 @@ FrameWidgetClass OZG_DG_pig {
        }
       }
       FrameWidgetClass OZG_DPgRow4BarTurn {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 1
        position 0 0
@@ -3194,6 +3511,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 2
        {
         FrameWidgetClass OZG_DPgRow4BarTurnShape {
+         inheritalpha 1
          ignorepointer 1
          clipchildren 0
          position 0 0
@@ -3205,8 +3523,9 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
          {
           ImageWidgetClass OZG_DPgRow4BarTurnShapeTL {
+           inheritalpha 1
            ignorepointer 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            position 0 0
            size 7 7
            hexactpos 1
@@ -3218,10 +3537,12 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow4BarTurnShapeTR {
+           inheritalpha 1
            ignorepointer 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            position 667 0
            size 7 7
            hexactpos 1
@@ -3233,10 +3554,12 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow4BarTurnShapeBL {
+           inheritalpha 1
            ignorepointer 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            position 0 7
            size 7 7
            hexactpos 1
@@ -3248,10 +3571,12 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow4BarTurnShapeBR {
+           inheritalpha 1
            ignorepointer 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            position 667 7
            size 7 7
            hexactpos 1
@@ -3263,40 +3588,44 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           PanelWidgetClass OZG_DPgRow4BarTurnShapeM {
+           inheritalpha 1
            ignorepointer 1
-           position 0 7
-           size 674 0
+           position 0 6
+           size 674 2
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            style rover_sim_colorable
            priority 0
           }
           PanelWidgetClass OZG_DPgRow4BarTurnShapeT {
+           inheritalpha 1
            ignorepointer 1
-           position 7 0
-           size 660 7
+           position 6 0
+           size 662 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            style rover_sim_colorable
            priority 0
           }
           PanelWidgetClass OZG_DPgRow4BarTurnShapeB {
+           inheritalpha 1
            ignorepointer 1
-           position 7 7
-           size 660 7
+           position 6 6
+           size 662 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            style rover_sim_colorable
            priority 0
           }
@@ -3307,6 +3636,7 @@ FrameWidgetClass OZG_DG_pig {
      }
     }
     TextWidgetClass OZG_DPgRow4Score {
+     inheritalpha 1
      ignorepointer 1
      position 858 12
      size 70 30
@@ -3349,6 +3679,7 @@ FrameWidgetClass OZG_DG_pig {
      priority 0
      {
       FrameWidgetClass OZG_DPgRow5BoxEdge {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 0 0
@@ -3360,6 +3691,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 0
        {
         ImageWidgetClass OZG_DPgRow5BoxEdgeTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.290 0.216 0.149 1
          position 0 0
@@ -3373,8 +3705,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow5BoxEdgeTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.290 0.216 0.149 1
          position 936 0
@@ -3388,8 +3722,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow5BoxEdgeBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.290 0.216 0.149 1
          position 0 46
@@ -3403,8 +3739,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow5BoxEdgeBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.290 0.216 0.149 1
          position 936 46
@@ -3418,11 +3756,13 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DPgRow5BoxEdgeM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 7.75
-         size 944 38.5
+         position 0 7
+         size 944 40
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3432,9 +3772,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow5BoxEdgeT {
+         inheritalpha 1
          ignorepointer 1
-         position 7.75 0
-         size 928.5 8
+         position 7 0
+         size 930 9
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3444,9 +3785,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow5BoxEdgeB {
+         inheritalpha 1
          ignorepointer 1
-         position 7.75 46
-         size 928.5 8
+         position 7 45
+         size 930 9
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3458,6 +3800,7 @@ FrameWidgetClass OZG_DG_pig {
        }
       }
       FrameWidgetClass OZG_DPgRow5BoxBg {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 1 1
@@ -3469,6 +3812,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 1
        {
         ImageWidgetClass OZG_DPgRow5BoxBgTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 0
@@ -3482,8 +3826,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow5BoxBgTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 935 0
@@ -3497,8 +3843,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow5BoxBgBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 45
@@ -3512,8 +3860,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow5BoxBgBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 935 45
@@ -3527,11 +3877,13 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DPgRow5BoxBgM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 6.75
-         size 942 38.5
+         position 0 6
+         size 942 40
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3541,9 +3893,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow5BoxBgT {
+         inheritalpha 1
          ignorepointer 1
-         position 6.75 0
-         size 928.5 7
+         position 6 0
+         size 930 8
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3553,9 +3906,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow5BoxBgB {
+         inheritalpha 1
          ignorepointer 1
-         position 6.75 45
-         size 928.5 7
+         position 6 44
+         size 930 8
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3569,6 +3923,7 @@ FrameWidgetClass OZG_DG_pig {
      }
     }
     TextWidgetClass OZG_DPgRow5Name {
+     inheritalpha 1
      ignorepointer 1
      position 16 17
      size 140 20
@@ -3586,6 +3941,7 @@ FrameWidgetClass OZG_DG_pig {
      priority 3
     }
     TextWidgetClass OZG_DPgRow5NameB {
+     inheritalpha 1
      ignorepointer 1
      position 16 17
      size 140 20
@@ -3595,7 +3951,7 @@ FrameWidgetClass OZG_DG_pig {
      vexactsize 1
      color 0.937 0.894 0.800 1
      text ""
-     font "gui/fonts/MetronBook-Bold22"
+     font "gui/fonts/MetronBook-Bold28"
      "exact text" 1
      "exact text size" 19
      "text halign" left
@@ -3604,6 +3960,7 @@ FrameWidgetClass OZG_DG_pig {
      visible 0
     }
     FrameWidgetClass OZG_DPgRow5Bar {
+     inheritalpha 1
      ignorepointer 1
      clipchildren 1
      position 170 20
@@ -3615,6 +3972,7 @@ FrameWidgetClass OZG_DG_pig {
      priority 3
      {
       FrameWidgetClass OZG_DPgRow5BarTrack {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 0 0
@@ -3626,6 +3984,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 0
        {
         ImageWidgetClass OZG_DPgRow5BarTrackTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.227 0.173 0.110 1
          position 0 0
@@ -3639,8 +3998,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow5BarTrackTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.227 0.173 0.110 1
          position 667 0
@@ -3654,8 +4015,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow5BarTrackBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.227 0.173 0.110 1
          position 0 7
@@ -3669,8 +4032,10 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgRow5BarTrackBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.227 0.173 0.110 1
          position 667 7
@@ -3684,11 +4049,13 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DPgRow5BarTrackM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 7
-         size 674 0
+         position 0 6
+         size 674 2
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3698,9 +4065,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow5BarTrackT {
+         inheritalpha 1
          ignorepointer 1
-         position 7 0
-         size 660 7
+         position 6 0
+         size 662 8
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3710,9 +4078,10 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
         }
         PanelWidgetClass OZG_DPgRow5BarTrackB {
+         inheritalpha 1
          ignorepointer 1
-         position 7 7
-         size 660 7
+         position 6 6
+         size 662 8
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3724,6 +4093,7 @@ FrameWidgetClass OZG_DG_pig {
        }
       }
       FrameWidgetClass OZG_DPgRow5BarFill {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 1
        position 0 0
@@ -3735,6 +4105,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 1
        {
         FrameWidgetClass OZG_DPgRow5BarFillShape {
+         inheritalpha 1
          ignorepointer 1
          clipchildren 0
          position 0 0
@@ -3746,6 +4117,7 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
          {
           ImageWidgetClass OZG_DPgRow5BarFillShapeTL {
+           inheritalpha 1
            ignorepointer 1
            color 0.788 0.643 0.361 1
            position 0 0
@@ -3759,8 +4131,10 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow5BarFillShapeTR {
+           inheritalpha 1
            ignorepointer 1
            color 0.788 0.643 0.361 1
            position 667 0
@@ -3774,8 +4148,10 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow5BarFillShapeBL {
+           inheritalpha 1
            ignorepointer 1
            color 0.788 0.643 0.361 1
            position 0 7
@@ -3789,8 +4165,10 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow5BarFillShapeBR {
+           inheritalpha 1
            ignorepointer 1
            color 0.788 0.643 0.361 1
            position 667 7
@@ -3804,11 +4182,13 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           PanelWidgetClass OZG_DPgRow5BarFillShapeM {
+           inheritalpha 1
            ignorepointer 1
-           position 0 7
-           size 674 0
+           position 0 6
+           size 674 2
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3818,9 +4198,10 @@ FrameWidgetClass OZG_DG_pig {
            priority 0
           }
           PanelWidgetClass OZG_DPgRow5BarFillShapeT {
+           inheritalpha 1
            ignorepointer 1
-           position 7 0
-           size 660 7
+           position 6 0
+           size 662 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3830,9 +4211,10 @@ FrameWidgetClass OZG_DG_pig {
            priority 0
           }
           PanelWidgetClass OZG_DPgRow5BarFillShapeB {
+           inheritalpha 1
            ignorepointer 1
-           position 7 7
-           size 660 7
+           position 6 6
+           size 662 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3846,6 +4228,7 @@ FrameWidgetClass OZG_DG_pig {
        }
       }
       FrameWidgetClass OZG_DPgRow5BarTurn {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 1
        position 0 0
@@ -3857,6 +4240,7 @@ FrameWidgetClass OZG_DG_pig {
        priority 2
        {
         FrameWidgetClass OZG_DPgRow5BarTurnShape {
+         inheritalpha 1
          ignorepointer 1
          clipchildren 0
          position 0 0
@@ -3868,8 +4252,9 @@ FrameWidgetClass OZG_DG_pig {
          priority 0
          {
           ImageWidgetClass OZG_DPgRow5BarTurnShapeTL {
+           inheritalpha 1
            ignorepointer 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            position 0 0
            size 7 7
            hexactpos 1
@@ -3881,10 +4266,12 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow5BarTurnShapeTR {
+           inheritalpha 1
            ignorepointer 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            position 667 0
            size 7 7
            hexactpos 1
@@ -3896,10 +4283,12 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow5BarTurnShapeBL {
+           inheritalpha 1
            ignorepointer 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            position 0 7
            size 7 7
            hexactpos 1
@@ -3911,10 +4300,12 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DPgRow5BarTurnShapeBR {
+           inheritalpha 1
            ignorepointer 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            position 667 7
            size 7 7
            hexactpos 1
@@ -3926,40 +4317,44 @@ FrameWidgetClass OZG_DG_pig {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           PanelWidgetClass OZG_DPgRow5BarTurnShapeM {
+           inheritalpha 1
            ignorepointer 1
-           position 0 7
-           size 674 0
+           position 0 6
+           size 674 2
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            style rover_sim_colorable
            priority 0
           }
           PanelWidgetClass OZG_DPgRow5BarTurnShapeT {
+           inheritalpha 1
            ignorepointer 1
-           position 7 0
-           size 660 7
+           position 6 0
+           size 662 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            style rover_sim_colorable
            priority 0
           }
           PanelWidgetClass OZG_DPgRow5BarTurnShapeB {
+           inheritalpha 1
            ignorepointer 1
-           position 7 7
-           size 660 7
+           position 6 6
+           size 662 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.906 0.761 0.478 0.45
+           color 0.533 0.439 0.275 1
            style rover_sim_colorable
            priority 0
           }
@@ -3970,6 +4365,7 @@ FrameWidgetClass OZG_DG_pig {
      }
     }
     TextWidgetClass OZG_DPgRow5Score {
+     inheritalpha 1
      ignorepointer 1
      position 858 12
      size 70 30
@@ -4035,6 +4431,7 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgPillBoxEdgeTR {
          ignorepointer 1
@@ -4050,6 +4447,7 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgPillBoxEdgeBL {
          ignorepointer 1
@@ -4065,6 +4463,7 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgPillBoxEdgeBR {
          ignorepointer 1
@@ -4080,11 +4479,12 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DPgPillBoxEdgeM {
          ignorepointer 1
-         position 0 24.75
-         size 113 0.5
+         position 0 24
+         size 113 2
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -4095,8 +4495,8 @@ FrameWidgetClass OZG_DG_pig {
         }
         PanelWidgetClass OZG_DPgPillBoxEdgeT {
          ignorepointer 1
-         position 24.75 0
-         size 63.5 25
+         position 24 0
+         size 65 26
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -4107,8 +4507,8 @@ FrameWidgetClass OZG_DG_pig {
         }
         PanelWidgetClass OZG_DPgPillBoxEdgeB {
          ignorepointer 1
-         position 24.75 25
-         size 63.5 25
+         position 24 24
+         size 65 26
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -4144,6 +4544,7 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgPillBoxBgTR {
          ignorepointer 1
@@ -4159,6 +4560,7 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgPillBoxBgBL {
          ignorepointer 1
@@ -4174,6 +4576,7 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DPgPillBoxBgBR {
          ignorepointer 1
@@ -4189,11 +4592,12 @@ FrameWidgetClass OZG_DG_pig {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DPgPillBoxBgM {
          ignorepointer 1
-         position 0 23.75
-         size 111 0.5
+         position 0 23
+         size 111 2
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -4204,8 +4608,8 @@ FrameWidgetClass OZG_DG_pig {
         }
         PanelWidgetClass OZG_DPgPillBoxBgT {
          ignorepointer 1
-         position 23.75 0
-         size 63.5 24
+         position 23 0
+         size 65 25
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -4216,8 +4620,8 @@ FrameWidgetClass OZG_DG_pig {
         }
         PanelWidgetClass OZG_DPgPillBoxBgB {
          ignorepointer 1
-         position 23.75 24
-         size 63.5 24
+         position 23 23
+         size 65 25
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -4233,7 +4637,7 @@ FrameWidgetClass OZG_DG_pig {
     TextWidgetClass OZG_DPgPillLabel {
      ignorepointer 1
      position 20 17.5
-     size 60 15
+     size 160 15
      hexactpos 1
      vexactpos 1
      hexactsize 1

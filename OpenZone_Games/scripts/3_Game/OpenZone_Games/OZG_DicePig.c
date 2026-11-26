@@ -332,7 +332,7 @@ class OZG_HighRoll extends OZG_DiceGame
         if (at >= 0)
             m_InIt.RemoveOrdered(at);
         if (m_InIt.Count() == 1)
-            HrSettle();
+            HrSettle(m_InIt[0]);
     }
 
     // The next seat of those throwing that has not thrown, from the turn on.
@@ -401,12 +401,14 @@ class OZG_HighRoll extends OZG_DiceGame
             if (m_Total[m_InIt[i]] == best)
                 tied.Insert(m_InIt[i]);
         }
-        m_InIt.Copy(tied);
-        if (m_InIt.Count() == 1)
+        // one is the highest: the pot is his; those who threw with him stay in the throwing
+        // (the window dims only who fell out of a tie's throw again)
+        if (tied.Count() == 1)
         {
-            HrSettle();
+            HrSettle(tied[0]);
             return;
         }
+        m_InIt.Copy(tied);
         m_Hist.Insert("tie " + best.ToString());
         Say(OZG_Words.W1("STR_OZG_HIGHROLL_SAID_TIE", best.ToString()));
         for (i = 0; i < m_InIt.Count(); i++)
@@ -417,22 +419,26 @@ class OZG_HighRoll extends OZG_DiceGame
         m_Turn = m_InIt[0];
     }
 
-    protected void HrSettle()
+    protected void HrSettle(int winner)
     {
-        if (m_InIt.Count() == 0)
+        if (winner < 0 || winner >= m_Chips.Count())
             return;
-        int winner = m_InIt[0];
         m_Won = winner;
         m_Chips[winner] = m_Chips[winner] + m_Pot;
         string pot = m_Pot.ToString();
-        if (m_Total[winner] >= 0)
-            Say(OZG_Words.W3("STR_OZG_HIGHROLL_SAID_WON", OZG_Words.SeatArg(m_Seats[winner]), m_Total[winner].ToString(), pot));
+        // the words made first (dice poker's view says why)
+        int winnerSeat = m_Seats[winner];
+        int winnerTotal = m_Total[winner];
+        string winnerArg = OZG_Words.SeatArg(winnerSeat);
+        string totalText = winnerTotal.ToString();
+        if (winnerTotal >= 0)
+            Say(OZG_Words.W3("STR_OZG_HIGHROLL_SAID_WON", winnerArg, totalText, pot));
         else
-            Say(OZG_Words.W2("STR_OZG_HIGHROLL_SAID_TAKES", OZG_Words.SeatArg(m_Seats[winner]), pot));
+            Say(OZG_Words.W2("STR_OZG_HIGHROLL_SAID_TAKES", winnerArg, pot));
         m_Pot = 0;
         for (int i = 0; i < m_Put.Count(); i++)
             m_Put[i] = 0;
-        DgFinish(OZG_Words.W2("STR_OZG_HIGHROLL_END", OZG_Words.SeatArg(m_Seats[winner]), pot));
+        DgFinish(OZG_Words.W2("STR_OZG_HIGHROLL_END", winnerArg, pot));
     }
 
     override void Moves(int seat, array<string> into)

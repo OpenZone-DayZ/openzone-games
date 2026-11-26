@@ -112,6 +112,7 @@ modded class OZG_Session
     override protected string DealPieces(OZG_Game game, array<int> seats, array<int> amounts, map<string, string> options, string hint)
     {
         CheatInit();
+        ThrownLooksForget();
         string why = super.DealPieces(game, seats, amounts, options, hint);
         if (why == "")
         {
@@ -271,7 +272,9 @@ modded class OZG_Session
         array<EntityAI> mineDice;
         if (!m_SeatDice || !m_SeatDice.Find(seat, mineDice) || !mineDice)
             return;
-        for (int k = 0; k < mineDice.Count(); k++)
+        // the dice he throws now: the first so many of his (perudo loses them)
+        int thrown = m_Game.DiceThrown(seat);
+        for (int k = 0; k < mineDice.Count() && k < thrown; k++)
         {
             OZG_Die_Base own = OZG_Die_Base.Cast(mineDice[k]);
             int ownFace = 0;
@@ -315,6 +318,9 @@ modded class OZG_Session
         array<EntityAI> mineDice;
         if (!m_SeatDice || !m_SeatDice.Find(mine, mineDice) || ask.SeatNo < 0 || ask.SeatNo >= mineDice.Count())
             return OZG_Const.SAY_DSWAP_NO_DIE;
+        // only a die he is about to throw goes out
+        if (ask.SeatNo >= m_Game.DiceThrown(mine))
+            return OZG_Const.SAY_DSWAP_NO_DIE;
         EntityAI goingOut = mineDice[ask.SeatNo];
         OZG_Die_Base comingIn = OZG_Die_Base.Cast(OZG_Keys.Find(ask.CardKey));
         if (!goingOut || !comingIn || comingIn == goingOut)
@@ -322,7 +328,7 @@ modded class OZG_Session
         if (comingIn.GetHierarchyRootPlayer() != player)
             return OZG_Const.SAY_DSWAP_NO_DIE;
         if (!OZG_DiceCheat.Exchange(goingOut, comingIn, player))
-            return OZG_Const.SAY_SLEIGHT_NO_ROOM;
+            return OZG_Const.SAY_DSWAP_NO_ROOM;
 
         // The die in its place for every seat that throws it (the host's
         // dice are everybody's), the loads handed to the game again.
@@ -391,6 +397,7 @@ modded class OZG_Session
         m_Game.TakeThrows(seats, idx, faces);
         if (seats.Count() == 0)
             return;
+        ThrownLooksNote(seats, idx);
         for (int w = 0; w < seats.Count(); w++)
         {
             if (seats[w] >= 0 && seats[w] < m_R.Seats.Count())
@@ -505,6 +512,15 @@ class OZG_DiceCheat
         OZG_Place place = OZG_Place.Cast(goingOut.GetHierarchyRoot());
         if (place)
             place.OZG_Open();
+        // No free place in his pockets: refused (the caller says "no room"), a sleight with
+        // nowhere to palm the die. An exchange in place was tried on the stand 2026-11-26
+        // and left: over the ground (the outgoing die there, the incoming one into the slot,
+        // the outgoing one into the place it left) the last step failed whenever the
+        // incoming die had sat in a slot of a can he carries -- where a die given to full
+        // pockets goes: LocationCanAddEntity said no to that slot for the die on the ground,
+        // at once and a second later, and the die stayed at his feet; the engine's
+        // ServerLocationSwap answered false for the pair and moved nothing; the plain
+        // LocationSwap moved both on the server and told no client.
         InventoryLocation pocket = new InventoryLocation;
         if (!player.GetInventory().FindFreeLocationFor(goingOut, FindInventoryLocationType.ANY_CARGO, pocket))
             return false;

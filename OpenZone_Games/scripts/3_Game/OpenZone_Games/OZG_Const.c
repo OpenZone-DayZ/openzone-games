@@ -200,6 +200,7 @@ class OZG_Const
     static const string SAY_DSWAP_NOT_NOW = "STR_OZG_SAY_DSWAP_NOT_NOW";
     static const string SAY_DSWAP_ONE = "STR_OZG_SAY_DSWAP_ONE";
     static const string SAY_DSWAP_NO_DIE = "STR_OZG_SAY_DSWAP_NO_DIE";
+    static const string SAY_DSWAP_NO_ROOM = "STR_OZG_SAY_DSWAP_NO_ROOM";
     static const string SAY_DSWAP_SEEN = "STR_OZG_SAY_DSWAP_SEEN";
     static const string SAY_LOAD_NOTICED = "STR_OZG_SAY_LOAD_NOTICED";
     static const string SAY_LOAD_OPENED = "STR_OZG_SAY_LOAD_OPENED";

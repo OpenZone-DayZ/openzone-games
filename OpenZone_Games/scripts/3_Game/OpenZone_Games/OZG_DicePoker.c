@@ -41,6 +41,13 @@ class OZG_DicePoker extends OZG_DiceGame
     protected int m_RoundFirst;
     // Words: how the last round ended.
     protected string m_LastRound;
+    // The last round as it lay when it was decided, for the window (the canvas's step
+    // "розкриття"): its number, the seat that took it (-1: a draw, -2: none yet), every
+    // seat's dice ("" for a seat that threw none), the seats that had folded.
+    protected int m_ShownRound;
+    protected int m_ShownWinner = -2;
+    protected ref array<string> m_ShownHands;
+    protected string m_ShownFolded;
 
     void OZG_DicePoker()
     {
@@ -50,6 +57,7 @@ class OZG_DicePoker extends OZG_DiceGame
         m_Hand = new array<ref array<int>>();
         m_In = new array<int>();
         m_Pending = new array<int>();
+        m_ShownHands = new array<string>();
     }
 
     override string GameId()
@@ -107,6 +115,8 @@ class OZG_DicePoker extends OZG_DiceGame
         }
         m_Round = 0;
         m_LastRound = "";
+        m_ShownWinner = -2;
+        m_ShownHands.Clear();
         m_RoundFirst = m_Turn;
         DpRound(true);
         return true;
@@ -388,7 +398,31 @@ class OZG_DicePoker extends OZG_DiceGame
         m_LastRound = OZG_Words.W0("STR_OZG_DPOKER_DRAW");
         m_Hist.Insert("draw");
         Say(OZG_Words.W0("STR_OZG_DPOKER_SAID_DRAW"));
+        DpKeepShown(-1);
         DpRound(false);
+    }
+
+    // The round as it lies now, kept for the window before the next one clears the hands.
+    protected void DpKeepShown(int winner)
+    {
+        m_ShownRound = m_Round;
+        m_ShownWinner = -1;
+        if (winner >= 0 && winner < m_Seats.Count())
+            m_ShownWinner = m_Seats[winner];
+        m_ShownHands.Clear();
+        m_ShownFolded = "";
+        for (int s = 0; s < m_Seats.Count(); s++)
+        {
+            array<int> hand = m_Hand[s];
+            string laid = OZG_DiceText.Line(hand);
+            m_ShownHands.Insert(laid);
+            if (m_In[s] == 1)
+                continue;
+            int foldedSeat = m_Seats[s];
+            if (m_ShownFolded != "")
+                m_ShownFolded = m_ShownFolded + ",";
+            m_ShownFolded = m_ShownFolded + foldedSeat.ToString();
+        }
     }
 
     // A hand's name as an argument ("k:" its key).
@@ -415,6 +449,7 @@ class OZG_DicePoker extends OZG_DiceGame
             DgFinish(OZG_Words.W2("STR_OZG_DPOKER_END", OZG_Words.SeatArg(m_Seats[i]), pot));
             return;
         }
+        DpKeepShown(i);
         m_RoundFirst = DgNextIndex(m_RoundFirst);
         DpRound(true);
     }
@@ -516,8 +551,21 @@ class OZG_DicePoker extends OZG_DiceGame
         for (int i = 0; i < m_Seats.Count(); i++)
         {
             // the chips, the rounds won, what it put in the pot (the window's plates)
-            string line = OZG_Words.W3("STR_OZG_DPOKER_SEAT", m_Chips[i].ToString(), m_Wins[i].ToString(), m_Put[i].ToString());
-            OZG_GSeat g = DgPlate(m_Seats[i], OZG_Words.W1("STR_OZG_DICE_SHOWN", OZG_DiceText.Line(m_Hand[i])), line);
+            // every value into a local before a call takes it: written as
+            // DgPlate(m_Seats[i], W1(key, OZG_DiceText.Line(m_Hand[i])), line), the seat came
+            // out as the last die of its hand -- an element read is a call too, and the
+            // hand's reads inside Line took the seat's place (the stand, 2026-11-26: Taras
+            // of seat 0 with 5 4 3 2 5 thrown was "seat 6" in the window; dayz-modding
+            // enforce-script.md, two calls of one function)
+            int seatNo = m_Seats[i];
+            string chipsText = m_Chips[i].ToString();
+            string winsText = m_Wins[i].ToString();
+            string putText = m_Put[i].ToString();
+            string line = OZG_Words.W3("STR_OZG_DPOKER_SEAT", chipsText, winsText, putText);
+            array<int> hand = m_Hand[i];
+            string handText = OZG_DiceText.Line(hand);
+            string role = OZG_Words.W1("STR_OZG_DICE_SHOWN", handText);
+            OZG_GSeat g = DgPlate(seatNo, role, line);
             if (m_In[i] == 0)
                 g.Out = 1;
             v.SeatList.Insert(g);
@@ -535,6 +583,28 @@ class OZG_DicePoker extends OZG_DiceGame
             raiser = m_Seats[m_Raiser];
         state.Line = m_Phase.ToString() + "|" + m_Round.ToString() + "|" + m_Raise.ToString() + "|" + raiser.ToString() + "|" + m_Stake.ToString();
         v.Zones.Insert(state);
+        // the round before, until somebody throws in this one: its number, who took it, the
+        // seats that had folded, the dice of every seat as they lay
+        bool thrownNow = false;
+        for (int t = 0; t < m_Hand.Count(); t++)
+        {
+            if (m_Hand[t].Count() > 0)
+                thrownNow = true;
+        }
+        if (!m_Over && !thrownNow && m_ShownWinner != -2 && m_ShownHands.Count() == m_Seats.Count())
+        {
+            OZG_GZone open = new OZG_GZone();
+            open.Id = "dpoker_open";
+            string openLine = m_ShownRound.ToString() + "|" + m_ShownWinner.ToString() + "|" + m_ShownFolded;
+            for (int h = 0; h < m_ShownHands.Count(); h++)
+            {
+                int openSeat = m_Seats[h];
+                string openHand = m_ShownHands[h];
+                openLine = openLine + "|" + openSeat.ToString() + "=" + openHand;
+            }
+            open.Line = openLine;
+            v.Zones.Insert(open);
+        }
         if (m_LastRound != "")
         {
             OZG_GZone last = new OZG_GZone();
@@ -597,7 +667,14 @@ class OZG_DicePoker extends OZG_DiceGame
             col++;
         }
         if (i >= 0 && m_Hand[i].Count() > 0)
-            v.Status = OZG_Words.W2("STR_OZG_DPOKER_YOURS", OZG_DiceText.Line(m_Hand[i]), OZG_Words.KeyArg("STR_OZG_DPOKER_HAND_" + (DpRank(m_Hand[i]) / 10000).ToString()));
+        {
+            // the words made first (PublicView says why)
+            array<int> own = m_Hand[i];
+            string ownText = OZG_DiceText.Line(own);
+            int ownKind = DpRank(own) / 10000;
+            string ownHand = OZG_Words.KeyArg("STR_OZG_DPOKER_HAND_" + ownKind.ToString());
+            v.Status = OZG_Words.W2("STR_OZG_DPOKER_YOURS", ownText, ownHand);
+        }
         return DgPrivateText(v);
     }
 

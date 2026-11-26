@@ -122,7 +122,11 @@ game? Why did you stop when I said do it to the end and test?" And on the swap p
   The words are made into locals first now (dayz-modding enforce-script.md took the fact);
   the faces' painters copy a seat's fields into locals before handing them on.
 
-## Not checked, and open
+## Not checked, and open (as it stood at midday)
+
+Settled later the same day, in the afternoon above and the evening below: the kit's wheel,
+the tumble's motion, short nardy and giveaway, and dice poker, pig, high roll and perudo,
+which have faces of their own now.
 
 - Not checked on the stand: the kit's wheel (the MCP has no wheel); the sounds by ear (the
   server packs them, the client plays them as it plays the cards'); a board's moves by the
@@ -139,3 +143,133 @@ game? Why did you stop when I said do it to the end and test?" And on the swap p
 - The two `NULL pointer to instance` of the client and the server are vanilla's
   `DayZPlayerInventory.OnHandleStoredJunctureData`, each at a moment the bridge moved the
   kit between the hands and the backpack.
+
+## The evening: the dice finished and tested
+
+The owner: "Finish the dice." And, the stand given back: "the stand is yours, finish and
+test everything to the end." Everything below was looked at in the game, on the final
+build, at 1920 x 1080 (Ukrainian and English) and at 3840 x 1600 (1.48 pixels a unit, the
+owner's window); what was not is named at the end.
+
+### Found and set right
+
+- **A turned die lost its corners.** A turned ImageWidget is cut to its own unturned box
+  (dayz-modding gui-layouts §38): every die, its shadow and its ring lie in a frame 1 / 0.6
+  of their side now, and the frame is turned (`ozg_bwturn.layout`, `BWTurnPic`). Seen at
+  rest and in the tumble (eight frames grabbed).
+- **A seat's name read "місце N" on dice poker's cards.** Not the painter: the server's
+  `PublicView` handed `m_Seats[i]` and a word made of `m_Hand[i]` to one call, and the
+  callee got the hand's last die for the seat. An element read in an argument list is a
+  "call" too (dayz-modding enforce-script.md took the fact); the views make locals first.
+- **The engine blends in linear light.** The canvas's half-transparent gold over the track
+  came out a third brighter (one opaque colour now); a 0.6 black dim left 64 % of the board
+  (the alpha that leaves the canvas's 40 % is 1 - 0.4^2.2 = 0.87); a card dimmed by
+  alpha wants another alpha for its box than for the words on it (`DGDim`: 0.59 / 0.66 for
+  the canvas's .55, 0.53 / 0.62 for .5, 0.48 / 0.58 for .45).
+- **Rounded boxes at 1.48 pixels a unit.** A panel fills whole pixels from the floor of its
+  place; a picture is drawn at the place itself. Past half a pixel the two part by one
+  pixel: a card at 1392.59, 355.56 had its bands from pixel 1392, 355 and its corner
+  pictures from 1393, 356, and the felt showed along two sides of three corners. So:
+  the bands of an opaque shape lie a whole unit over its corners (`make_board_win.py`
+  `shape`), a shape fitted by the script is laid in whole pixels with the bands a pixel
+  over (`BWFit`, the kit's `Fit7`), and a box drawn through -- a dimmed card, where an
+  overlap shows twice as dense -- is laid with no overlap and moved to a quarter of a pixel
+  on the screen (`DGBoxSnug`), where both rules agree. Seen clean on the cards of a folded
+  seat, of a seat out of a tie's throw and on pig's row of a seat that left.
+- **A tight bold atlas.** `MetronBook-Bold28` drawn larger than it is shows the row of
+  glyphs under each letter as specks (dashes under the h, d, n and l of a card's name at
+  size 20, which is 29.6 px here; at 19, 28.1 px, none): no bold text above 19.
+- **The game over** in the dice window: the canvas's "Гру закінчено" with the game's own
+  words, "Нова гра" for the host and "Подивитися на стіл".
+- **Before the first deal** a face is drawn from the seats (`DGLobbyView`), as the canvas's
+  boards stand before their first stake.
+- **Dice poker**: the round that was decided stays four seconds as it lay (phase
+  "розкриття", the hands of everybody, the folded seats dimmed), kept by the server until
+  somebody throws in the next round; the stakes' step and its hint.
+- **Perudo**: the showdown stays 2.6 s with everybody's dice, what counts ringed in gold,
+  and stays for good when the game is over; a seat's targets are the dice it has left; a
+  player out of the game is told so ("У вас не лишилося кісток — ви вибули.") and has no
+  swap panel; the can's picture lost a faint line (its corners were cut with pie slices).
+  The canvas's "Вскриття" is "Розкриття" in the game: the Ukrainian word.
+- **High roll**: a single highest no longer drops the others from the table's list (the
+  losers of the last throw stay to be seen); a seat's stake is said while the stakes are
+  made only.
+- **Pig** with six seats: the die, the pill and the words stayed on the felt's rim; the gap
+  above the die gives way first, then the die (112 for 128).
+- **A name longer than its room** is cut with an ellipsis, its "(ви)" kept (`DGNameIn`):
+  "Survivor (ви)" ran into "кості господаря" on a card of six.
+- **The swap panel**: any number of dice carried (seven a row, two rows in sight, the
+  engine's scroll for more: the wheel and real clicks seen on eighteen); the words in
+  three lines when they need them; the panel repaints when a swap is sent.
+- **Thousand** has the same panel now (its own had room for four pocket dice, each drawn
+  as a six), its thrown dice lie in their own colours, and the dice to put aside are picked
+  on the felt and put aside by one button, "Відкласти обрані", as its canvas has it (its
+  moves came as a row of small buttons, their words cut to nothing); a picked die has the
+  canvas's outline of its own shape.
+- **A refusal said nothing in the dice window**: its note box was named `OZG_DSeen`, which
+  no script knew. It is `OZG_BSeen` as the board window's. The swap refused for room has
+  words of its own ("У кишенях немає вільного місця для кістки, яку знімаєте").
+- **Words of a set without cards**: "Місце N вибуло з гри" for the log's "Карти місця N
+  скинуто", the fold's question about a can instead of a board with pieces, "Встати з-за
+  столу" at the felt.
+- **English**: three label boxes were too narrow for their translations ("THIS TURN" lost
+  half its N); the five dice windows were read through in English.
+- **The log** shows the newest entries that fit and wraps a long one (three lines at most).
+
+### Tried and left: a swap with no free pocket
+
+It is refused, as before the evening. An exchange in place was tried three ways on the
+stand. Over the ground (the outgoing die to the player's feet, the incoming one into the
+slot, the outgoing one into the place it left) the last step failed whenever the incoming
+die had sat in a slot of a can the player carries -- where a die given to full pockets
+goes: `LocationCanAddEntity` said no to that slot for the die on the ground, at once and
+again a second later, and the die stayed at his feet. `GameInventory.ServerLocationSwap`
+answered false for the pair and moved nothing. The plain `LocationSwap` moved both on the
+server and told no client. `OZG_DiceCheat.Exchange` has the same words.
+
+### What the stand answered
+
+- Server and client verdicts pass on the final build (the only warnings SFP's
+  `Credits.json`).
+- The rules alone, on the final server: dice poker 60 deals of 5 (3289 moves), perudo 40
+  of 5 (4807), high roll 200 of 6 (1338), pig 60 of 4 (8487), thousand 2 of 3 with a save
+  loaded back every 150 moves (2687): 0 defects.
+- Played with bots and looked at: pig (four and six seats, a seat removed by the host),
+  high roll (four and six seats, a tie's throw-off, the winner, the game over), dice poker
+  (six seats, two folded, the showdown's step, dice picked with the real mouse), perudo
+  (four and six seats, palifico, a showdown, a player out), thousand (a swap by the real
+  mouse refused for room and done, three fours picked on the felt and put aside).
+- After the changes to every rounded shape, at 3840 x 1600: chess with its game over,
+  giveaway, corners, short nardy (never looked at before), the kit's window.
+
+### Where the game is not the canvas, on purpose
+
+- The dice window's game over has two buttons (a new game for the host, a look at the
+  table for everybody); the canvas's boards have "Почати знову" in their header.
+- Before a deal the right column has the table's own panel (begin, pose, leave, fold), not
+  the canvas's "Поставити N".
+- Dice poker's showdown passes by itself after four seconds; the canvas waits for
+  "Наступний раунд", and at a table nobody holds the others up.
+- The swap panel has two rows of dice and a button, in thousand too (the owner: the dice's
+  pictures belong there, the dice may differ; the game does not decide for the person).
+- High roll's cards stand three in a row from five seats on, pig's die is smaller with six
+  (the canvas has four seats).
+- The bold name on high roll's card is 19 for the canvas's 20 (the atlas, above).
+
+### Not checked, and open
+
+- Not checked: the sounds by ear; anything that needs a second person (what another player
+  is shown when a swap is seen); perudo's card of a player out at 3840 x 1600 (the same
+  code as the three that were); the board games and the kit in English; chess and draughts
+  at 1920 x 1080 after the shapes' change (seen at 3840 x 1600); the stalker sets.
+- A step of one pixel where a corner meets a band, on opaque boxes at 1.48 pixels a unit
+  whose place has a fraction past a half: the overlap hides the gap, not the step. The cure
+  is what the dimmed cards have -- every shape at a quarter of a pixel -- and wants a pass
+  over every window.
+- Thousand: the dice put aside are drawn in the set's colour (their zone carries faces
+  only); the swap's targets are all five dice though fewer may be thrown; after a server
+  restart in mid-game the swap panel stays away until the next deal (the server no longer
+  holds the deal's dice).
+- The pocket row is as fresh as the last view: a die given by the bridge shows after the
+  next change of the game.
+- Nardy's own "Підмінити кістку" was not looked at this evening.

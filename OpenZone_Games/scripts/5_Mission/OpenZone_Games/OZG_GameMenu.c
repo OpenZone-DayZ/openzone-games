@@ -2619,10 +2619,20 @@ class OZG_GameMenu : UIScriptedMenu
         int shownNo = rest.ToInt() + 1;
         if (head == "stand")
             return Tr1("STR_OZG_LOG_STAND", shownNo.ToString());
+        // a board and a can have no cards to discard or to leave a seat with
+        bool cardless = BoardStyle() != "";
         if (head == "drop")
+        {
+            if (cardless)
+                return Tr1("STR_OZG_LOG_DROP_SEAT", shownNo.ToString());
             return Tr1("STR_OZG_LOG_DROP", shownNo.ToString());
+        }
         if (head == "left")
+        {
+            if (cardless)
+                return Tr1("STR_OZG_LOG_LEFT_SEAT", shownNo.ToString());
             return Tr1("STR_OZG_LOG_LEFT", shownNo.ToString());
+        }
         if (head == "host")
             return Tr1("STR_OZG_LOG_HOST", LogWho(rest));
         if (head == "opt")

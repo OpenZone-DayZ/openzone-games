@@ -20,8 +20,6 @@ modded class OZG_GameMenu
     protected ref array<int> m_DWDice;
     // the action panel's buttons and their moves; the swap: the die carried picked
     protected ref array<string> m_DWActMoves;
-    protected ref array<string> m_DWPocketKeys;
-    protected string m_DWSwapKey = "";
 
     // ------------------------------------------------------------ the later file's part
 
@@ -36,6 +34,20 @@ modded class OZG_GameMenu
     protected bool DGClick(string n)
     {
         return false;
+    }
+
+    // The swap panel at `top` (units of the column), the later file's; its bottom, or
+    // `top` when it is not shown.
+    protected float DWSwapPanel(float top)
+    {
+        return top;
+    }
+
+    // The look die `k` of a seat's last throw had (the later file reads the view's own
+    // list: a die swapped in keeps its colour on the felt).
+    protected string DWThrownLook(int seatNo, int k)
+    {
+        return DWLook();
     }
 
     // The header's chip, when the game says something else there (high roll: the dice each).
@@ -72,7 +84,6 @@ modded class OZG_GameMenu
         m_DWPicked = new array<int>();
         m_DWDice = new array<int>();
         m_DWActMoves = new array<string>();
-        m_DWPocketKeys = new array<string>();
     }
 
     // ------------------------------------------------------------ words
@@ -144,6 +155,44 @@ modded class OZG_GameMenu
         return m_GPub && m_V.St == OZG_Const.ST_PLAYING && m_GPub.Ended != 1;
     }
 
+    // A dice game over (the canvas's "Гру закінчено" on every dice board): its last view
+    // says so, until another is dealt or chosen.
+    override protected bool BWOver()
+    {
+        if (!DiceWindow())
+            return super.BWOver();
+        if (!m_GPub || !m_V)
+            return false;
+        bool ended = m_GPub.Ended == 1 && m_V.St != OZG_Const.ST_PLAYING && m_GPub.GameId == m_V.GameId;
+        return ended;
+    }
+
+    // Its words: how the game ended, as the game says it; a new game for the host, a look
+    // at the table for everybody (the canvas has the one button: its board is one player's).
+    override protected void BWPaintOver()
+    {
+        if (!DiceWindow())
+        {
+            super.BWPaintOver();
+            return;
+        }
+        BWSetText("OZG_BOverTitle", Tr("STR_OZG_DWIN_OVER_TITLE"));
+        BWSetText("OZG_BOverBtnNewText", Tr("STR_OZG_DWIN_NEW"));
+        BWSetText("OZG_BOverBtnLookText", Tr("STR_OZG_DWIN_LOOK"));
+        string text = "";
+        if (m_GPub && m_GPub.Result != "")
+            text = Words(m_GPub.Result) + ".";
+        // the canvas's dice boards dim what is under the header (40, 74, 1520 x 798) and
+        // lay the box in its middle: 23 lower than a board's
+        Widget dim = BW("OZG_BOverDim");
+        if (dim)
+        {
+            dim.SetPos(40 * m_K, 74 * m_K);
+            dim.SetSize(1520 * m_K, 798 * m_K);
+        }
+        BWOverLay(text, 23);
+    }
+
     // The header: the game and its rules, the game's button and whose dice, from the right.
     protected void DWPaintHead()
     {
@@ -164,6 +213,14 @@ modded class OZG_GameMenu
             sub = Tr(key);
             if (sub == key || sub == "")
                 sub = "";
+            if (sub != "" && m_V.GameId == OZG_DPokerConst.GAME_ID)
+            {
+                string stake = "10";
+                int stakeAt = m_V.OptIds.Find(OZG_DiceConst.OPT_STAKE);
+                if (stakeAt >= 0 && stakeAt < m_V.OptVals.Count())
+                    stake = m_V.OptVals[stakeAt];
+                sub = sub + Tr1("STR_OZG_DWIN_SUB_STAKE", stake);
+            }
         }
         BWSetText("OZG_DSub", sub);
         float right = 1508;
@@ -359,16 +416,10 @@ modded class OZG_GameMenu
             size = 14;
         for (int i = 0; i < n; i++)
         {
-            ImageWidget pic = ImageWidget.Cast(MakeLayout(LAYOUT_BWPIC, row, "OZG_BWPic"));
-            if (!pic)
-                return;
-            pic.LoadImageFile(0, "set:ozg_dice image:" + look + "_" + dice[i].ToString());
-            pic.SetImage(0);
             float top = (30 - size) * 0.5;
-            pic.SetPos(i * step * m_K, top * m_K);
-            pic.SetSize(size * m_K, size * m_K);
-            pic.Show(true);
-            BWTumbleAdd(pic, i * step, top, size, size);
+            string seatDie = "set:ozg_dice image:" + look + "_" + dice[i].ToString();
+            if (!BWTurnIn(row, seatDie, i * step, top, size))
+                return;
         }
         TextWidget note = BWText(p + "Note");
         if (note)
@@ -438,7 +489,10 @@ modded class OZG_GameMenu
             if (m_DWPicked[p] >= m_DWDice.Count())
                 m_DWPicked.Remove(p);
         }
-        string look = DWLook();
+        // whose throw lies there: the seat awaited, else this player's
+        int thrower = m_V.Mine;
+        if (m_GPub && m_GPub.Awaited.Count() > 0)
+            thrower = m_GPub.Awaited[0];
         int n = m_DWDice.Count();
         float size = 74;
         if (n == 1)
@@ -471,15 +525,20 @@ modded class OZG_GameMenu
                 y = y - 14;
             m_DWDieX.Insert(x + size / 2);
             m_DWDieY.Insert(y + size / 2);
-            ImageWidget dieShadow = BWPic(BW_FIELD, "set:ozg_dice image:die_s", x, y + 6, size, size, 30, ARGB(255, 255, 255, 255));
-            BWTumbleAdd(dieShadow, x, y + 6, size, size, turn);
-            ImageWidget diePic = BWPic(BW_FIELD, "set:ozg_dice image:" + look + "_" + m_DWDice[i].ToString(), x, y, size, size, 31, ARGB(255, 255, 255, 255));
-            BWTumbleAdd(diePic, x, y, size, size, turn);
+            // every die in its own colour: a red one swapped in shows red to everybody
+            int thrownFace = m_DWDice[i];
+            string thrownLook = DWThrownLook(thrower, i);
+            string thrownDie = "set:ozg_dice image:" + thrownLook + "_" + thrownFace.ToString();
+            // a picked die as the canvas has it: lifted, its shadow further down, an outline
+            // of its own shape four units wide in gold (a round ring stood here until
+            // 2026-11-26: a circle about a square die)
+            float drop = 6;
             if (picked)
-            {
-                ImageWidget ring = BWPic(BW_FIELD, BW_TEX + "ozg_ring4_ca.paa", x - 6, y - 6, size + 12, size + 12, 32, ARGB(255, 231, 194, 122));
-                BWTumbleAdd(ring, x - 6, y - 6, size + 12, size + 12, turn);
-            }
+                drop = 14;
+            BWTurnPic(BW_FIELD, "set:ozg_dice image:die_s", x, y + drop, size, 29, ARGB(255, 255, 255, 255), turn);
+            if (picked)
+                BWTurnPic(BW_FIELD, "set:ozg_dice image:white_0", x - 4, y - 4, size + 8, 30, ARGB(255, 231, 194, 122), turn);
+            BWTurnPic(BW_FIELD, thrownDie, x, y, size, 31, ARGB(255, 255, 255, 255), turn);
         }
         // the game's words: whose turn, what to do
         string status = "";
@@ -616,15 +675,9 @@ modded class OZG_GameMenu
         string look = DWLook();
         for (int i = 0; i < dice.Count() && i < 6; i++)
         {
-            ImageWidget pic = ImageWidget.Cast(MakeLayout(LAYOUT_BWPIC, row, "OZG_BWPic"));
-            if (!pic)
+            string zoneDie = "set:ozg_dice image:" + look + "_" + dice[i].ToString();
+            if (!BWTurnIn(row, zoneDie, i * 36, 0, 30))
                 return;
-            pic.LoadImageFile(0, "set:ozg_dice image:" + look + "_" + dice[i].ToString());
-            pic.SetImage(0);
-            pic.SetPos(i * 36 * m_K, 0);
-            pic.SetSize(30 * m_K, 30 * m_K);
-            pic.Show(true);
-            BWTumbleAdd(pic, i * 36, 0, 30, 30);
         }
     }
 
@@ -718,6 +771,58 @@ modded class OZG_GameMenu
         // the table's own when no game is played: begin, the host's choices
         if (!DWPlaying())
             DWTableButtons(main);
+        // thousand's dice to put aside are picked on the felt, as its canvas has it, and
+        // one button puts them aside: live when what is picked scores. (Its moves came as
+        // a row of small buttons, a move each, their words cut to nothing.)
+        bool asides = false;
+        bool asideOk = false;
+        string asideMove = "set:";
+        int g;
+        for (g = 0; g < grid.Count(); g++)
+        {
+            OZG_GButton option = grid[g];
+            if (option.Move.IndexOf("set:") == 0)
+                asides = true;
+        }
+        if (asides)
+        {
+            array<int> pickedAt = new array<int>();
+            pickedAt.Copy(m_DWPicked);
+            pickedAt.Sort();
+            array<int> pickedFaces = new array<int>();
+            for (g = 0; g < pickedAt.Count(); g++)
+            {
+                int at = pickedAt[g];
+                if (g > 0)
+                    asideMove = asideMove + ",";
+                int place = at + 1;
+                asideMove = asideMove + place.ToString();
+                if (at >= 0 && at < m_DWDice.Count())
+                    pickedFaces.Insert(m_DWDice[at]);
+            }
+            pickedFaces.Sort();
+            string pickedKey = DWFacesKey(pickedFaces);
+            for (g = 0; g < grid.Count() && pickedAt.Count() > 0; g++)
+            {
+                string optionMove = grid[g].Move;
+                if (optionMove.IndexOf("set:") != 0)
+                    continue;
+                array<int> optionFaces = new array<int>();
+                DWSetFaces(optionMove, optionFaces);
+                optionFaces.Sort();
+                if (DWFacesKey(optionFaces) == pickedKey)
+                    asideOk = true;
+            }
+            grid.Clear();
+            string asideGoes = "#none";
+            if (asideOk)
+                asideGoes = asideMove;
+            OZG_GButton aside = OZG_GButton.Make(asideGoes, "STR_OZG_DWIN_TH_ASIDE", -1, 0);
+            if (asideOk)
+                aside.Hot = 1;
+            main.InsertAt(aside, 0);
+            BWSetText("OZG_DActInfo", Tr("STR_OZG_DWIN_TH_PICK"));
+        }
         float y = 44;
         int used = 0;
         int i;
@@ -789,6 +894,32 @@ modded class OZG_GameMenu
 
     protected float m_DWActBottom = 300;
 
+    // The faces a "set:" move of thousand names, by its places (from 1) among the dice thrown.
+    protected void DWSetFaces(string move, array<int> into)
+    {
+        into.Clear();
+        string list = move.Substring(4, move.Length() - 4);
+        array<string> places = new array<string>();
+        list.Split(",", places);
+        for (int i = 0; i < places.Count(); i++)
+        {
+            int at = places[i].ToInt() - 1;
+            if (at >= 0 && at < m_DWDice.Count())
+                into.Insert(m_DWDice[at]);
+        }
+    }
+
+    protected string DWFacesKey(array<int> faces)
+    {
+        string key = "";
+        for (int i = 0; i < faces.Count(); i++)
+        {
+            int face = faces[i];
+            key = key + face.ToString();
+        }
+        return key;
+    }
+
     protected void DWActButton(int i, OZG_GButton data, float x, float y, float w, float h)
     {
         string name = "OZG_DAct" + i.ToString();
@@ -829,26 +960,24 @@ modded class OZG_GameMenu
             string pose = OZG_PoseDriver.LabelNow(m_V);
             if (pose != "")
                 into.Insert(OZG_GButton.Make("#pose", OZG_Words.W1("STR_OZG_WIN_POSE", pose), -1, 0));
-            into.Insert(OZG_GButton.Make("#stand", "STR_OZG_BWIN_STAND", -1, 0));
+            into.Insert(OZG_GButton.Make("#stand", "STR_OZG_DWIN_STAND", -1, 0));
         }
         if (host)
             into.Insert(OZG_GButton.Make("#fold", "STR_OZG_BWIN_FOLD", -1, 0));
     }
 
-    // Swapping a die before this player's throw: the dice he carries, then which of his
-    // dice goes out.
+    // Swapping a die before this player's throw: the panel the four faces have (the later
+    // file's DGPaintSwap: every die he carries as a picture in its colour, the dice he
+    // throws, one of each picked by him), under the actions; the log under it. Until
+    // 2026-11-26 thousand had a panel of its own with room for four pocket dice, each
+    // drawn as a six: a fifth die carried could not be picked at all.
     protected void DWPaintSwap()
     {
-        Widget panel = BW("OZG_DSwap");
-        bool myThrow = DWPlaying() && m_GPub.Awaited.Find(m_V.Mine) >= 0 && OZG_Cfg.Get().Cheating == 1;
-        if (panel)
-        {
-            panel.Show(myThrow);
-            panel.SetPos(12 * m_K, (m_DWActBottom + 10) * m_K);
-        }
-        float logTop = m_DWActBottom + 10;
-        if (myThrow)
-            logTop = logTop + 185;
+        float top = m_DWActBottom + 10;
+        float bottom = DWSwapPanel(top);
+        float logTop = top;
+        if (bottom > top)
+            logTop = bottom + 10;
         Widget logW = BW("OZG_DLog");
         if (logW)
         {
@@ -856,63 +985,12 @@ modded class OZG_GameMenu
             logW.SetSize(360 * m_K, (762 - logTop) * m_K);
         }
         BWFit(BW("OZG_DLogBg"), 360, 762 - logTop, 6);
-        if (!myThrow)
-            return;
-        BWSetText("OZG_DSwapInfo", Tr2("STR_OZG_DWIN_SWAP_INFO", OZG_Cfg.Get().DiceSwaps.ToString(), OZG_Cfg.Get().DiceSwaps.ToString()));
-        BWSetText("OZG_DSwapCan", Tr("STR_OZG_DWIN_DICE"));
-        array<EntityAI> dice = new array<EntityAI>();
-        BNCarriedDice(dice);
-        m_DWPocketKeys.Clear();
-        for (int i = 0; i < 4; i++)
-        {
-            string name = "OZG_DPocket" + i.ToString();
-            bool shown = i < dice.Count();
-            BWShow(name, shown);
-            if (!shown)
-                continue;
-            string key = OZG_Keys.Of(dice[i]);
-            m_DWPocketKeys.Insert(key);
-            string look = GetGame().ConfigGetTextOut("CfgVehicles " + dice[i].GetType() + " ozgDieLook");
-            if (look == "")
-                look = "white";
-            ImageWidget pic = ImageWidget.Cast(BW(name + "Pic"));
-            if (pic)
-            {
-                pic.LoadImageFile(0, "set:ozg_dice image:" + look + "_6");
-                pic.SetImage(0);
-                int alpha = 255;
-                if (m_DWSwapKey != "" && m_DWSwapKey != key)
-                    alpha = 110;
-                pic.SetColor(ARGB(alpha, 255, 255, 255));
-            }
-        }
-        int mineDice = m_DWDice.Count();
-        if (mineDice <= 0)
-            mineDice = 5;
-        for (int t = 0; t < 5; t++)
-        {
-            string tn = "OZG_DTarget" + t.ToString();
-            bool on = t < mineDice && m_DWSwapKey != "";
-            BWShow(tn, on);
-            int n = t + 1;
-            BWSetText(tn + "Text", n.ToString());
-        }
-        string hint = Tr("STR_OZG_DWIN_SWAP_HINT");
-        if (dice.Count() == 0)
-            hint = Tr("STR_OZG_DWIN_SWAP_NONE");
-        array<string> lines = new array<string>();
-        BWWrap(BWText("OZG_DSwapHint0"), hint, 336, 2, lines);
-        string h0 = "";
-        string h1 = "";
-        if (lines.Count() > 0)
-            h0 = lines[0];
-        if (lines.Count() > 1)
-            h1 = lines[1];
-        BWSetText("OZG_DSwapHint0", h0);
-        BWSetText("OZG_DSwapHint1", h1);
     }
 
     // The log, the newest lines that fit, 21 a line.
+    // The log (the canvas: lines of 17, 4 between its entries): the newest entries that
+    // fit, the oldest of them at the top; an entry longer than the column wraps, three
+    // lines at most.
     protected void DWPaintLog()
     {
         BWSetText("OZG_DLogTitle", OZG_Text.Upper(Tr("STR_OZG_BWIN_LOG")));
@@ -924,23 +1002,50 @@ modded class OZG_GameMenu
             logW.GetSize(lw, h);
             h = h / m_K;
         }
-        int room = (h - 32) / 21;
-        if (room > BW_LOG)
-            room = BW_LOG;
-        int have = m_V.Log.Count();
-        int from = have - room;
-        if (from < 0)
-            from = 0;
-        int at = 0;
-        for (int k = from; k < have && at < room; k++)
+        float room = h - 28 - 8;
+        int lastRow = BW_LOG - 1;
+        TextWidget probe = BWText("OZG_DLog" + lastRow.ToString());
+        // from the newest back, while they fit
+        array<ref array<string>> picked = new array<ref array<string>>();
+        float used = 0;
+        int count = 0;
+        for (int k = m_V.Log.Count() - 1; k >= 0; k--)
         {
-            TextWidget line = BWText("OZG_DLog" + at.ToString());
-            if (line)
+            string entry = LogWord(m_V.Log[k]);
+            array<string> entryLines = new array<string>();
+            if (probe && entry != "")
             {
-                line.SetText(LogWord(m_V.Log[k]));
-                line.Show(true);
+                probe.SetText(entry);
+                if (BWTextW(probe) > 336)
+                    BWWrap(probe, entry, 336, 3, entryLines);
             }
-            at++;
+            if (entryLines.Count() == 0)
+                entryLines.Insert(entry);
+            float cost = entryLines.Count() * 17 + 4;
+            if (used + cost > room + 4 || count + entryLines.Count() > BW_LOG)
+                break;
+            used = used + cost;
+            count = count + entryLines.Count();
+            picked.Insert(entryLines);
+        }
+        int at = 0;
+        float y = 28;
+        for (int e = picked.Count() - 1; e >= 0; e--)
+        {
+            array<string> shownLines = picked[e];
+            for (int j = 0; j < shownLines.Count(); j++)
+            {
+                TextWidget line = BWText("OZG_DLog" + at.ToString());
+                if (line)
+                {
+                    line.SetText(shownLines[j]);
+                    line.SetPos(12 * m_K, y * m_K);
+                    line.Show(true);
+                }
+                at++;
+                y = y + 17;
+            }
+            y = y + 4;
         }
         while (at < BW_LOG)
         {
@@ -1002,32 +1107,6 @@ modded class OZG_GameMenu
             }
             return true;
         }
-        if (n.IndexOf("OZG_DPocket") == 0)
-        {
-            int p = n.Substring(11, n.Length() - 11).ToInt();
-            if (p >= 0 && p < m_DWPocketKeys.Count())
-                m_DWSwapKey = m_DWPocketKeys[p];
-            BoardWinPaint();
-            return true;
-        }
-        if (n.IndexOf("OZG_DTarget") == 0)
-        {
-            int t = n.Substring(11, n.Length() - 11).ToInt();
-            if (m_DWSwapKey != "")
-            {
-                OZG_WAsk ask = new OZG_WAsk();
-                ask.PlaceId = m_PlaceId;
-                ask.CardKey = m_DWSwapKey;
-                ask.SeatNo = t;
-                string json;
-                string err;
-                JsonFileLoader<OZG_WAsk>.MakeData(ask, json, err, false);
-                OZ_Rpc.ServiceRequest(OZG_Const.SERVICE, OZG_Const.OP_DSWAP, json);
-                m_DWSwapKey = "";
-                BoardWinPaint();
-            }
-            return true;
-        }
         if (n == "OZG_DBtnGame")
         {
             if (BWMenuAllowed())
@@ -1060,7 +1139,7 @@ modded class OZG_GameMenu
             Send(OZG_Const.OP_STAND, "", -1, OZG_Const.HOW_LEAVE, "", "", 0);
         else if (move == "#fold")
             m_BWFoldAsk = true;
-        else
+        else if (move != "#none")
             GenClick(move);
         BoardWinPaint();
     }

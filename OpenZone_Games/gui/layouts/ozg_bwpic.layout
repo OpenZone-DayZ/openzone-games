@@ -12,4 +12,5 @@ ImageWidgetClass OZG_BWPic {
  mode blend
  "src alpha" 1
  "stretch mode" stretch_w_h
+ "clamp mode" clamp
 }

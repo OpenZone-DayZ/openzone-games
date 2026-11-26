@@ -34,6 +34,7 @@ FrameWidgetClass OZG_DG_high {
      priority 0
      {
       FrameWidgetClass OZG_DHCard0BoxEdge {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 0 0
@@ -45,6 +46,7 @@ FrameWidgetClass OZG_DG_high {
        priority 0
        {
         ImageWidgetClass OZG_DHCard0BoxEdgeTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 0 0
@@ -58,8 +60,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard0BoxEdgeTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 473 0
@@ -73,8 +77,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard0BoxEdgeBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 0 186
@@ -88,8 +94,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard0BoxEdgeBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 473 186
@@ -103,11 +111,13 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DHCard0BoxEdgeM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 9.75
-         size 483 176.5
+         position 0 9
+         size 483 178
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -117,9 +127,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard0BoxEdgeT {
+         inheritalpha 1
          ignorepointer 1
-         position 9.75 0
-         size 463.5 10
+         position 9 0
+         size 465 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -129,9 +140,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard0BoxEdgeB {
+         inheritalpha 1
          ignorepointer 1
-         position 9.75 186
-         size 463.5 10
+         position 9 185
+         size 465 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -143,6 +155,7 @@ FrameWidgetClass OZG_DG_high {
        }
       }
       FrameWidgetClass OZG_DHCard0BoxBg {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 1 1
@@ -154,6 +167,7 @@ FrameWidgetClass OZG_DG_high {
        priority 1
        {
         ImageWidgetClass OZG_DHCard0BoxBgTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 0
@@ -167,8 +181,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard0BoxBgTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 472 0
@@ -182,8 +198,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard0BoxBgBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 185
@@ -197,8 +215,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard0BoxBgBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 472 185
@@ -212,11 +232,13 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DHCard0BoxBgM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 8.75
-         size 481 176.5
+         position 0 8
+         size 481 178
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -226,9 +248,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard0BoxBgT {
+         inheritalpha 1
          ignorepointer 1
-         position 8.75 0
-         size 463.5 9
+         position 8 0
+         size 465 10
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -238,9 +261,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard0BoxBgB {
+         inheritalpha 1
          ignorepointer 1
-         position 8.75 185
-         size 463.5 9
+         position 8 184
+         size 465 10
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -254,6 +278,7 @@ FrameWidgetClass OZG_DG_high {
      }
     }
     TextWidgetClass OZG_DHCard0Name {
+     inheritalpha 1
      ignorepointer 1
      position 16 14
      size 280 20
@@ -263,14 +288,15 @@ FrameWidgetClass OZG_DG_high {
      vexactsize 1
      color 0.937 0.894 0.800 1
      text ""
-     font "gui/fonts/MetronBook-Bold22"
+     font "gui/fonts/MetronBook-Bold28"
      "exact text" 1
-     "exact text size" 20
+     "exact text size" 19
      "text halign" left
      "text valign" center
      priority 3
     }
     TextWidgetClass OZG_DHCard0Whose {
+     inheritalpha 1
      ignorepointer 1
      position 200 16.5
      size 120 15
@@ -288,6 +314,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard0Chips {
+     inheritalpha 1
      ignorepointer 1
      position 300 15.5
      size 167 17
@@ -305,6 +332,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard0Empty {
+     inheritalpha 1
      ignorepointer 1
      position 16 77.5
      size 280 17
@@ -322,6 +350,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard0Sum {
+     inheritalpha 1
      ignorepointer 1
      position 300 59.5
      size 167 53
@@ -339,6 +368,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard0State {
+     inheritalpha 1
      ignorepointer 1
      position 16 138
      size 451 16
@@ -381,6 +411,7 @@ FrameWidgetClass OZG_DG_high {
      priority 0
      {
       FrameWidgetClass OZG_DHCard1BoxEdge {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 0 0
@@ -392,6 +423,7 @@ FrameWidgetClass OZG_DG_high {
        priority 0
        {
         ImageWidgetClass OZG_DHCard1BoxEdgeTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 0 0
@@ -405,8 +437,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard1BoxEdgeTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 473 0
@@ -420,8 +454,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard1BoxEdgeBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 0 186
@@ -435,8 +471,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard1BoxEdgeBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 473 186
@@ -450,11 +488,13 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DHCard1BoxEdgeM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 9.75
-         size 483 176.5
+         position 0 9
+         size 483 178
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -464,9 +504,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard1BoxEdgeT {
+         inheritalpha 1
          ignorepointer 1
-         position 9.75 0
-         size 463.5 10
+         position 9 0
+         size 465 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -476,9 +517,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard1BoxEdgeB {
+         inheritalpha 1
          ignorepointer 1
-         position 9.75 186
-         size 463.5 10
+         position 9 185
+         size 465 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -490,6 +532,7 @@ FrameWidgetClass OZG_DG_high {
        }
       }
       FrameWidgetClass OZG_DHCard1BoxBg {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 1 1
@@ -501,6 +544,7 @@ FrameWidgetClass OZG_DG_high {
        priority 1
        {
         ImageWidgetClass OZG_DHCard1BoxBgTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 0
@@ -514,8 +558,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard1BoxBgTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 472 0
@@ -529,8 +575,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard1BoxBgBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 185
@@ -544,8 +592,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard1BoxBgBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 472 185
@@ -559,11 +609,13 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DHCard1BoxBgM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 8.75
-         size 481 176.5
+         position 0 8
+         size 481 178
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -573,9 +625,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard1BoxBgT {
+         inheritalpha 1
          ignorepointer 1
-         position 8.75 0
-         size 463.5 9
+         position 8 0
+         size 465 10
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -585,9 +638,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard1BoxBgB {
+         inheritalpha 1
          ignorepointer 1
-         position 8.75 185
-         size 463.5 9
+         position 8 184
+         size 465 10
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -601,6 +655,7 @@ FrameWidgetClass OZG_DG_high {
      }
     }
     TextWidgetClass OZG_DHCard1Name {
+     inheritalpha 1
      ignorepointer 1
      position 16 14
      size 280 20
@@ -610,14 +665,15 @@ FrameWidgetClass OZG_DG_high {
      vexactsize 1
      color 0.937 0.894 0.800 1
      text ""
-     font "gui/fonts/MetronBook-Bold22"
+     font "gui/fonts/MetronBook-Bold28"
      "exact text" 1
-     "exact text size" 20
+     "exact text size" 19
      "text halign" left
      "text valign" center
      priority 3
     }
     TextWidgetClass OZG_DHCard1Whose {
+     inheritalpha 1
      ignorepointer 1
      position 200 16.5
      size 120 15
@@ -635,6 +691,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard1Chips {
+     inheritalpha 1
      ignorepointer 1
      position 300 15.5
      size 167 17
@@ -652,6 +709,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard1Empty {
+     inheritalpha 1
      ignorepointer 1
      position 16 77.5
      size 280 17
@@ -669,6 +727,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard1Sum {
+     inheritalpha 1
      ignorepointer 1
      position 300 59.5
      size 167 53
@@ -686,6 +745,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard1State {
+     inheritalpha 1
      ignorepointer 1
      position 16 138
      size 451 16
@@ -728,6 +788,7 @@ FrameWidgetClass OZG_DG_high {
      priority 0
      {
       FrameWidgetClass OZG_DHCard2BoxEdge {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 0 0
@@ -739,6 +800,7 @@ FrameWidgetClass OZG_DG_high {
        priority 0
        {
         ImageWidgetClass OZG_DHCard2BoxEdgeTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 0 0
@@ -752,8 +814,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard2BoxEdgeTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 473 0
@@ -767,8 +831,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard2BoxEdgeBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 0 186
@@ -782,8 +848,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard2BoxEdgeBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 473 186
@@ -797,11 +865,13 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DHCard2BoxEdgeM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 9.75
-         size 483 176.5
+         position 0 9
+         size 483 178
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -811,9 +881,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard2BoxEdgeT {
+         inheritalpha 1
          ignorepointer 1
-         position 9.75 0
-         size 463.5 10
+         position 9 0
+         size 465 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -823,9 +894,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard2BoxEdgeB {
+         inheritalpha 1
          ignorepointer 1
-         position 9.75 186
-         size 463.5 10
+         position 9 185
+         size 465 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -837,6 +909,7 @@ FrameWidgetClass OZG_DG_high {
        }
       }
       FrameWidgetClass OZG_DHCard2BoxBg {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 1 1
@@ -848,6 +921,7 @@ FrameWidgetClass OZG_DG_high {
        priority 1
        {
         ImageWidgetClass OZG_DHCard2BoxBgTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 0
@@ -861,8 +935,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard2BoxBgTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 472 0
@@ -876,8 +952,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard2BoxBgBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 185
@@ -891,8 +969,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard2BoxBgBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 472 185
@@ -906,11 +986,13 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DHCard2BoxBgM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 8.75
-         size 481 176.5
+         position 0 8
+         size 481 178
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -920,9 +1002,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard2BoxBgT {
+         inheritalpha 1
          ignorepointer 1
-         position 8.75 0
-         size 463.5 9
+         position 8 0
+         size 465 10
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -932,9 +1015,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard2BoxBgB {
+         inheritalpha 1
          ignorepointer 1
-         position 8.75 185
-         size 463.5 9
+         position 8 184
+         size 465 10
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -948,6 +1032,7 @@ FrameWidgetClass OZG_DG_high {
      }
     }
     TextWidgetClass OZG_DHCard2Name {
+     inheritalpha 1
      ignorepointer 1
      position 16 14
      size 280 20
@@ -957,14 +1042,15 @@ FrameWidgetClass OZG_DG_high {
      vexactsize 1
      color 0.937 0.894 0.800 1
      text ""
-     font "gui/fonts/MetronBook-Bold22"
+     font "gui/fonts/MetronBook-Bold28"
      "exact text" 1
-     "exact text size" 20
+     "exact text size" 19
      "text halign" left
      "text valign" center
      priority 3
     }
     TextWidgetClass OZG_DHCard2Whose {
+     inheritalpha 1
      ignorepointer 1
      position 200 16.5
      size 120 15
@@ -982,6 +1068,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard2Chips {
+     inheritalpha 1
      ignorepointer 1
      position 300 15.5
      size 167 17
@@ -999,6 +1086,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard2Empty {
+     inheritalpha 1
      ignorepointer 1
      position 16 77.5
      size 280 17
@@ -1016,6 +1104,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard2Sum {
+     inheritalpha 1
      ignorepointer 1
      position 300 59.5
      size 167 53
@@ -1033,6 +1122,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard2State {
+     inheritalpha 1
      ignorepointer 1
      position 16 138
      size 451 16
@@ -1075,6 +1165,7 @@ FrameWidgetClass OZG_DG_high {
      priority 0
      {
       FrameWidgetClass OZG_DHCard3BoxEdge {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 0 0
@@ -1086,6 +1177,7 @@ FrameWidgetClass OZG_DG_high {
        priority 0
        {
         ImageWidgetClass OZG_DHCard3BoxEdgeTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 0 0
@@ -1099,8 +1191,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard3BoxEdgeTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 473 0
@@ -1114,8 +1208,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard3BoxEdgeBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 0 186
@@ -1129,8 +1225,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard3BoxEdgeBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 473 186
@@ -1144,11 +1242,13 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DHCard3BoxEdgeM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 9.75
-         size 483 176.5
+         position 0 9
+         size 483 178
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1158,9 +1258,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard3BoxEdgeT {
+         inheritalpha 1
          ignorepointer 1
-         position 9.75 0
-         size 463.5 10
+         position 9 0
+         size 465 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1170,9 +1271,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard3BoxEdgeB {
+         inheritalpha 1
          ignorepointer 1
-         position 9.75 186
-         size 463.5 10
+         position 9 185
+         size 465 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1184,6 +1286,7 @@ FrameWidgetClass OZG_DG_high {
        }
       }
       FrameWidgetClass OZG_DHCard3BoxBg {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 1 1
@@ -1195,6 +1298,7 @@ FrameWidgetClass OZG_DG_high {
        priority 1
        {
         ImageWidgetClass OZG_DHCard3BoxBgTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 0
@@ -1208,8 +1312,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard3BoxBgTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 472 0
@@ -1223,8 +1329,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard3BoxBgBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 185
@@ -1238,8 +1346,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard3BoxBgBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 472 185
@@ -1253,11 +1363,13 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DHCard3BoxBgM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 8.75
-         size 481 176.5
+         position 0 8
+         size 481 178
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1267,9 +1379,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard3BoxBgT {
+         inheritalpha 1
          ignorepointer 1
-         position 8.75 0
-         size 463.5 9
+         position 8 0
+         size 465 10
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1279,9 +1392,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard3BoxBgB {
+         inheritalpha 1
          ignorepointer 1
-         position 8.75 185
-         size 463.5 9
+         position 8 184
+         size 465 10
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1295,6 +1409,7 @@ FrameWidgetClass OZG_DG_high {
      }
     }
     TextWidgetClass OZG_DHCard3Name {
+     inheritalpha 1
      ignorepointer 1
      position 16 14
      size 280 20
@@ -1304,14 +1419,15 @@ FrameWidgetClass OZG_DG_high {
      vexactsize 1
      color 0.937 0.894 0.800 1
      text ""
-     font "gui/fonts/MetronBook-Bold22"
+     font "gui/fonts/MetronBook-Bold28"
      "exact text" 1
-     "exact text size" 20
+     "exact text size" 19
      "text halign" left
      "text valign" center
      priority 3
     }
     TextWidgetClass OZG_DHCard3Whose {
+     inheritalpha 1
      ignorepointer 1
      position 200 16.5
      size 120 15
@@ -1329,6 +1445,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard3Chips {
+     inheritalpha 1
      ignorepointer 1
      position 300 15.5
      size 167 17
@@ -1346,6 +1463,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard3Empty {
+     inheritalpha 1
      ignorepointer 1
      position 16 77.5
      size 280 17
@@ -1363,6 +1481,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard3Sum {
+     inheritalpha 1
      ignorepointer 1
      position 300 59.5
      size 167 53
@@ -1380,6 +1499,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard3State {
+     inheritalpha 1
      ignorepointer 1
      position 16 138
      size 451 16
@@ -1422,6 +1542,7 @@ FrameWidgetClass OZG_DG_high {
      priority 0
      {
       FrameWidgetClass OZG_DHCard4BoxEdge {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 0 0
@@ -1433,6 +1554,7 @@ FrameWidgetClass OZG_DG_high {
        priority 0
        {
         ImageWidgetClass OZG_DHCard4BoxEdgeTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 0 0
@@ -1446,8 +1568,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard4BoxEdgeTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 473 0
@@ -1461,8 +1585,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard4BoxEdgeBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 0 186
@@ -1476,8 +1602,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard4BoxEdgeBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 473 186
@@ -1491,11 +1619,13 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DHCard4BoxEdgeM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 9.75
-         size 483 176.5
+         position 0 9
+         size 483 178
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1505,9 +1635,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard4BoxEdgeT {
+         inheritalpha 1
          ignorepointer 1
-         position 9.75 0
-         size 463.5 10
+         position 9 0
+         size 465 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1517,9 +1648,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard4BoxEdgeB {
+         inheritalpha 1
          ignorepointer 1
-         position 9.75 186
-         size 463.5 10
+         position 9 185
+         size 465 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1531,6 +1663,7 @@ FrameWidgetClass OZG_DG_high {
        }
       }
       FrameWidgetClass OZG_DHCard4BoxBg {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 1 1
@@ -1542,6 +1675,7 @@ FrameWidgetClass OZG_DG_high {
        priority 1
        {
         ImageWidgetClass OZG_DHCard4BoxBgTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 0
@@ -1555,8 +1689,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard4BoxBgTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 472 0
@@ -1570,8 +1706,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard4BoxBgBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 185
@@ -1585,8 +1723,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard4BoxBgBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 472 185
@@ -1600,11 +1740,13 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DHCard4BoxBgM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 8.75
-         size 481 176.5
+         position 0 8
+         size 481 178
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1614,9 +1756,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard4BoxBgT {
+         inheritalpha 1
          ignorepointer 1
-         position 8.75 0
-         size 463.5 9
+         position 8 0
+         size 465 10
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1626,9 +1769,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard4BoxBgB {
+         inheritalpha 1
          ignorepointer 1
-         position 8.75 185
-         size 463.5 9
+         position 8 184
+         size 465 10
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1642,6 +1786,7 @@ FrameWidgetClass OZG_DG_high {
      }
     }
     TextWidgetClass OZG_DHCard4Name {
+     inheritalpha 1
      ignorepointer 1
      position 16 14
      size 280 20
@@ -1651,14 +1796,15 @@ FrameWidgetClass OZG_DG_high {
      vexactsize 1
      color 0.937 0.894 0.800 1
      text ""
-     font "gui/fonts/MetronBook-Bold22"
+     font "gui/fonts/MetronBook-Bold28"
      "exact text" 1
-     "exact text size" 20
+     "exact text size" 19
      "text halign" left
      "text valign" center
      priority 3
     }
     TextWidgetClass OZG_DHCard4Whose {
+     inheritalpha 1
      ignorepointer 1
      position 200 16.5
      size 120 15
@@ -1676,6 +1822,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard4Chips {
+     inheritalpha 1
      ignorepointer 1
      position 300 15.5
      size 167 17
@@ -1693,6 +1840,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard4Empty {
+     inheritalpha 1
      ignorepointer 1
      position 16 77.5
      size 280 17
@@ -1710,6 +1858,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard4Sum {
+     inheritalpha 1
      ignorepointer 1
      position 300 59.5
      size 167 53
@@ -1727,6 +1876,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard4State {
+     inheritalpha 1
      ignorepointer 1
      position 16 138
      size 451 16
@@ -1769,6 +1919,7 @@ FrameWidgetClass OZG_DG_high {
      priority 0
      {
       FrameWidgetClass OZG_DHCard5BoxEdge {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 0 0
@@ -1780,6 +1931,7 @@ FrameWidgetClass OZG_DG_high {
        priority 0
        {
         ImageWidgetClass OZG_DHCard5BoxEdgeTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 0 0
@@ -1793,8 +1945,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard5BoxEdgeTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 473 0
@@ -1808,8 +1962,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard5BoxEdgeBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 0 186
@@ -1823,8 +1979,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard5BoxEdgeBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 473 186
@@ -1838,11 +1996,13 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DHCard5BoxEdgeM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 9.75
-         size 483 176.5
+         position 0 9
+         size 483 178
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1852,9 +2012,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard5BoxEdgeT {
+         inheritalpha 1
          ignorepointer 1
-         position 9.75 0
-         size 463.5 10
+         position 9 0
+         size 465 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1864,9 +2025,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard5BoxEdgeB {
+         inheritalpha 1
          ignorepointer 1
-         position 9.75 186
-         size 463.5 10
+         position 9 185
+         size 465 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1878,6 +2040,7 @@ FrameWidgetClass OZG_DG_high {
        }
       }
       FrameWidgetClass OZG_DHCard5BoxBg {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 1 1
@@ -1889,6 +2052,7 @@ FrameWidgetClass OZG_DG_high {
        priority 1
        {
         ImageWidgetClass OZG_DHCard5BoxBgTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 0
@@ -1902,8 +2066,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard5BoxBgTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 472 0
@@ -1917,8 +2083,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard5BoxBgBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 185
@@ -1932,8 +2100,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard5BoxBgBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 472 185
@@ -1947,11 +2117,13 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DHCard5BoxBgM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 8.75
-         size 481 176.5
+         position 0 8
+         size 481 178
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1961,9 +2133,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard5BoxBgT {
+         inheritalpha 1
          ignorepointer 1
-         position 8.75 0
-         size 463.5 9
+         position 8 0
+         size 465 10
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1973,9 +2146,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard5BoxBgB {
+         inheritalpha 1
          ignorepointer 1
-         position 8.75 185
-         size 463.5 9
+         position 8 184
+         size 465 10
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1989,6 +2163,7 @@ FrameWidgetClass OZG_DG_high {
      }
     }
     TextWidgetClass OZG_DHCard5Name {
+     inheritalpha 1
      ignorepointer 1
      position 16 14
      size 280 20
@@ -1998,14 +2173,15 @@ FrameWidgetClass OZG_DG_high {
      vexactsize 1
      color 0.937 0.894 0.800 1
      text ""
-     font "gui/fonts/MetronBook-Bold22"
+     font "gui/fonts/MetronBook-Bold28"
      "exact text" 1
-     "exact text size" 20
+     "exact text size" 19
      "text halign" left
      "text valign" center
      priority 3
     }
     TextWidgetClass OZG_DHCard5Whose {
+     inheritalpha 1
      ignorepointer 1
      position 200 16.5
      size 120 15
@@ -2023,6 +2199,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard5Chips {
+     inheritalpha 1
      ignorepointer 1
      position 300 15.5
      size 167 17
@@ -2040,6 +2217,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard5Empty {
+     inheritalpha 1
      ignorepointer 1
      position 16 77.5
      size 280 17
@@ -2057,6 +2235,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard5Sum {
+     inheritalpha 1
      ignorepointer 1
      position 300 59.5
      size 167 53
@@ -2074,6 +2253,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard5State {
+     inheritalpha 1
      ignorepointer 1
      position 16 138
      size 451 16
@@ -2116,6 +2296,7 @@ FrameWidgetClass OZG_DG_high {
      priority 0
      {
       FrameWidgetClass OZG_DHCard6BoxEdge {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 0 0
@@ -2127,6 +2308,7 @@ FrameWidgetClass OZG_DG_high {
        priority 0
        {
         ImageWidgetClass OZG_DHCard6BoxEdgeTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 0 0
@@ -2140,8 +2322,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard6BoxEdgeTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 473 0
@@ -2155,8 +2339,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard6BoxEdgeBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 0 186
@@ -2170,8 +2356,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard6BoxEdgeBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 473 186
@@ -2185,11 +2373,13 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DHCard6BoxEdgeM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 9.75
-         size 483 176.5
+         position 0 9
+         size 483 178
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2199,9 +2389,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard6BoxEdgeT {
+         inheritalpha 1
          ignorepointer 1
-         position 9.75 0
-         size 463.5 10
+         position 9 0
+         size 465 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2211,9 +2402,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard6BoxEdgeB {
+         inheritalpha 1
          ignorepointer 1
-         position 9.75 186
-         size 463.5 10
+         position 9 185
+         size 465 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2225,6 +2417,7 @@ FrameWidgetClass OZG_DG_high {
        }
       }
       FrameWidgetClass OZG_DHCard6BoxBg {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 1 1
@@ -2236,6 +2429,7 @@ FrameWidgetClass OZG_DG_high {
        priority 1
        {
         ImageWidgetClass OZG_DHCard6BoxBgTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 0
@@ -2249,8 +2443,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard6BoxBgTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 472 0
@@ -2264,8 +2460,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard6BoxBgBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 185
@@ -2279,8 +2477,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard6BoxBgBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 472 185
@@ -2294,11 +2494,13 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DHCard6BoxBgM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 8.75
-         size 481 176.5
+         position 0 8
+         size 481 178
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2308,9 +2510,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard6BoxBgT {
+         inheritalpha 1
          ignorepointer 1
-         position 8.75 0
-         size 463.5 9
+         position 8 0
+         size 465 10
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2320,9 +2523,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard6BoxBgB {
+         inheritalpha 1
          ignorepointer 1
-         position 8.75 185
-         size 463.5 9
+         position 8 184
+         size 465 10
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2336,6 +2540,7 @@ FrameWidgetClass OZG_DG_high {
      }
     }
     TextWidgetClass OZG_DHCard6Name {
+     inheritalpha 1
      ignorepointer 1
      position 16 14
      size 280 20
@@ -2345,14 +2550,15 @@ FrameWidgetClass OZG_DG_high {
      vexactsize 1
      color 0.937 0.894 0.800 1
      text ""
-     font "gui/fonts/MetronBook-Bold22"
+     font "gui/fonts/MetronBook-Bold28"
      "exact text" 1
-     "exact text size" 20
+     "exact text size" 19
      "text halign" left
      "text valign" center
      priority 3
     }
     TextWidgetClass OZG_DHCard6Whose {
+     inheritalpha 1
      ignorepointer 1
      position 200 16.5
      size 120 15
@@ -2370,6 +2576,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard6Chips {
+     inheritalpha 1
      ignorepointer 1
      position 300 15.5
      size 167 17
@@ -2387,6 +2594,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard6Empty {
+     inheritalpha 1
      ignorepointer 1
      position 16 77.5
      size 280 17
@@ -2404,6 +2612,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard6Sum {
+     inheritalpha 1
      ignorepointer 1
      position 300 59.5
      size 167 53
@@ -2421,6 +2630,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard6State {
+     inheritalpha 1
      ignorepointer 1
      position 16 138
      size 451 16
@@ -2463,6 +2673,7 @@ FrameWidgetClass OZG_DG_high {
      priority 0
      {
       FrameWidgetClass OZG_DHCard7BoxEdge {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 0 0
@@ -2474,6 +2685,7 @@ FrameWidgetClass OZG_DG_high {
        priority 0
        {
         ImageWidgetClass OZG_DHCard7BoxEdgeTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 0 0
@@ -2487,8 +2699,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard7BoxEdgeTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 473 0
@@ -2502,8 +2716,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard7BoxEdgeBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 0 186
@@ -2517,8 +2733,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard7BoxEdgeBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.420 0.322 0.200 1
          position 473 186
@@ -2532,11 +2750,13 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DHCard7BoxEdgeM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 9.75
-         size 483 176.5
+         position 0 9
+         size 483 178
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2546,9 +2766,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard7BoxEdgeT {
+         inheritalpha 1
          ignorepointer 1
-         position 9.75 0
-         size 463.5 10
+         position 9 0
+         size 465 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2558,9 +2779,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard7BoxEdgeB {
+         inheritalpha 1
          ignorepointer 1
-         position 9.75 186
-         size 463.5 10
+         position 9 185
+         size 465 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2572,6 +2794,7 @@ FrameWidgetClass OZG_DG_high {
        }
       }
       FrameWidgetClass OZG_DHCard7BoxBg {
+       inheritalpha 1
        ignorepointer 1
        clipchildren 0
        position 1 1
@@ -2583,6 +2806,7 @@ FrameWidgetClass OZG_DG_high {
        priority 1
        {
         ImageWidgetClass OZG_DHCard7BoxBgTL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 0
@@ -2596,8 +2820,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard7BoxBgTR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 472 0
@@ -2611,8 +2837,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard7BoxBgBL {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 0 185
@@ -2626,8 +2854,10 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHCard7BoxBgBR {
+         inheritalpha 1
          ignorepointer 1
          color 0.067 0.043 0.024 1
          position 472 185
@@ -2641,11 +2871,13 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DHCard7BoxBgM {
+         inheritalpha 1
          ignorepointer 1
-         position 0 8.75
-         size 481 176.5
+         position 0 8
+         size 481 178
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2655,9 +2887,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard7BoxBgT {
+         inheritalpha 1
          ignorepointer 1
-         position 8.75 0
-         size 463.5 9
+         position 8 0
+         size 465 10
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2667,9 +2900,10 @@ FrameWidgetClass OZG_DG_high {
          priority 0
         }
         PanelWidgetClass OZG_DHCard7BoxBgB {
+         inheritalpha 1
          ignorepointer 1
-         position 8.75 185
-         size 463.5 9
+         position 8 184
+         size 465 10
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2683,6 +2917,7 @@ FrameWidgetClass OZG_DG_high {
      }
     }
     TextWidgetClass OZG_DHCard7Name {
+     inheritalpha 1
      ignorepointer 1
      position 16 14
      size 280 20
@@ -2692,14 +2927,15 @@ FrameWidgetClass OZG_DG_high {
      vexactsize 1
      color 0.937 0.894 0.800 1
      text ""
-     font "gui/fonts/MetronBook-Bold22"
+     font "gui/fonts/MetronBook-Bold28"
      "exact text" 1
-     "exact text size" 20
+     "exact text size" 19
      "text halign" left
      "text valign" center
      priority 3
     }
     TextWidgetClass OZG_DHCard7Whose {
+     inheritalpha 1
      ignorepointer 1
      position 200 16.5
      size 120 15
@@ -2717,6 +2953,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard7Chips {
+     inheritalpha 1
      ignorepointer 1
      position 300 15.5
      size 167 17
@@ -2734,6 +2971,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard7Empty {
+     inheritalpha 1
      ignorepointer 1
      position 16 77.5
      size 280 17
@@ -2751,6 +2989,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard7Sum {
+     inheritalpha 1
      ignorepointer 1
      position 300 59.5
      size 167 53
@@ -2768,6 +3007,7 @@ FrameWidgetClass OZG_DG_high {
      priority 3
     }
     TextWidgetClass OZG_DHCard7State {
+     inheritalpha 1
      ignorepointer 1
      position 16 138
      size 451 16
@@ -2834,6 +3074,7 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHBankBoxEdgeTR {
          ignorepointer 1
@@ -2849,6 +3090,7 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHBankBoxEdgeBL {
          ignorepointer 1
@@ -2864,6 +3106,7 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHBankBoxEdgeBR {
          ignorepointer 1
@@ -2879,11 +3122,12 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DHBankBoxEdgeM {
          ignorepointer 1
-         position 0 34.75
-         size 264 0.5
+         position 0 34
+         size 264 2
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2894,8 +3138,8 @@ FrameWidgetClass OZG_DG_high {
         }
         PanelWidgetClass OZG_DHBankBoxEdgeT {
          ignorepointer 1
-         position 34.75 0
-         size 194.5 35
+         position 34 0
+         size 196 36
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2906,8 +3150,8 @@ FrameWidgetClass OZG_DG_high {
         }
         PanelWidgetClass OZG_DHBankBoxEdgeB {
          ignorepointer 1
-         position 34.75 35
-         size 194.5 35
+         position 34 34
+         size 196 36
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2943,6 +3187,7 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHBankBoxBgTR {
          ignorepointer 1
@@ -2958,6 +3203,7 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHBankBoxBgBL {
          ignorepointer 1
@@ -2973,6 +3219,7 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHBankBoxBgBR {
          ignorepointer 1
@@ -2988,11 +3235,12 @@ FrameWidgetClass OZG_DG_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DHBankBoxBgM {
          ignorepointer 1
-         position 0 33.75
-         size 262 0.5
+         position 0 33
+         size 262 2
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3003,8 +3251,8 @@ FrameWidgetClass OZG_DG_high {
         }
         PanelWidgetClass OZG_DHBankBoxBgT {
          ignorepointer 1
-         position 33.75 0
-         size 194.5 34
+         position 33 0
+         size 196 35
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3015,8 +3263,8 @@ FrameWidgetClass OZG_DG_high {
         }
         PanelWidgetClass OZG_DHBankBoxBgB {
          ignorepointer 1
-         position 33.75 34
-         size 194.5 34
+         position 33 33
+         size 196 35
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3043,11 +3291,12 @@ FrameWidgetClass OZG_DG_high {
      mode blend
      "src alpha" 1
      "stretch mode" stretch_w_h
+     "clamp mode" clamp
     }
     TextWidgetClass OZG_DHBankLabel {
      ignorepointer 1
      position 117.5 27
-     size 60 16
+     size 160 16
      hexactpos 1
      vexactpos 1
      hexactsize 1

@@ -787,10 +787,9 @@ modded class OZG_GameMenu
             if (spent)
                 alpha = 89;
             float x = 920 + i * 78;
-            ImageWidget dieShadow = BWPic(BW_FIELD, "set:ozg_dice image:die_s", x - BN_X, 418 + 6 - BN_Y, 62, 62, 70, ARGB(alpha, 255, 255, 255));
-            BWTumbleAdd(dieShadow, x - BN_X, 418 + 6 - BN_Y, 62, 62);
-            ImageWidget diePic = BWPic(BW_FIELD, "set:ozg_dice image:" + look + "_" + v.ToString(), x - BN_X, 418 - BN_Y, 62, 62, 71, ARGB(alpha, 255, 255, 255));
-            BWTumbleAdd(diePic, x - BN_X, 418 - BN_Y, 62, 62);
+            string nardyDie = "set:ozg_dice image:" + look + "_" + v.ToString();
+            BWTurnPic(BW_FIELD, "set:ozg_dice image:die_s", x - BN_X, 418 + 6 - BN_Y, 62, 70, ARGB(alpha, 255, 255, 255), 0);
+            BWTurnPic(BW_FIELD, nardyDie, x - BN_X, 418 - BN_Y, 62, 71, ARGB(alpha, 255, 255, 255), 0);
         }
     }
 

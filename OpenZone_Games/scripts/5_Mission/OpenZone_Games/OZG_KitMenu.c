@@ -439,29 +439,44 @@ class OZG_KitMenu : UIScriptedMenu
         Paint7(W(name), colour);
     }
 
-    // A shape's seven parts laid out again for another width or height, in units.
+    // A shape's seven parts laid out again for another width or height, in units: in
+    // whole pixels of the shape, the bands a pixel over the corners and each other (the
+    // game window's BWFit says why).
     protected void Fit7(Widget shape, float w, float h, float r)
     {
         if (!shape)
             return;
         string n = shape.GetName();
-        shape.SetSize(w * m_K, h * m_K);
-        Part(shape, n + "TL", 0, 0, r, r);
-        Part(shape, n + "TR", w - r, 0, r, r);
-        Part(shape, n + "BL", 0, h - r, r, r);
-        Part(shape, n + "BR", w - r, h - r, r, r);
-        Part(shape, n + "M", 0, r, w, h - 2 * r);
-        Part(shape, n + "T", r, 0, w - 2 * r, r);
-        Part(shape, n + "B", r, h - r, w - 2 * r, r);
+        float pw = Math.Round(w * m_K);
+        float ph = Math.Round(h * m_K);
+        float pr = Math.Round(r * m_K);
+        if (pr * 2 > pw)
+            pr = Math.Floor(pw / 2);
+        if (pr * 2 > ph)
+            pr = Math.Floor(ph / 2);
+        if (pr < 0)
+            pr = 0;
+        float o = 1;
+        if (o > pr)
+            o = pr;
+        shape.SetSize(pw, ph);
+        Part(shape, n + "TL", 0, 0, pr, pr);
+        Part(shape, n + "TR", pw - pr, 0, pr, pr);
+        Part(shape, n + "BL", 0, ph - pr, pr, pr);
+        Part(shape, n + "BR", pw - pr, ph - pr, pr, pr);
+        Part(shape, n + "M", 0, pr - o, pw, ph - 2 * pr + 2 * o);
+        Part(shape, n + "T", pr - o, 0, pw - 2 * pr + 2 * o, pr + o);
+        Part(shape, n + "B", pr - o, ph - pr - o, pw - 2 * pr + 2 * o, pr + o);
     }
 
+    // A part's place in its shape, in pixels.
     protected void Part(Widget shape, string name, float x, float y, float w, float h)
     {
         Widget p = shape.FindAnyWidget(name);
         if (!p)
             return;
-        p.SetPos(x * m_K, y * m_K);
-        p.SetSize(w * m_K, h * m_K);
+        p.SetPos(x, y);
+        p.SetSize(w, h);
     }
 
     protected void Picture(Widget holder, string name, string picture, int colour)

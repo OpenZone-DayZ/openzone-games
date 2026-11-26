@@ -28,7 +28,6 @@ modded class OZG_GameMenu
     protected int m_DGSwapAt = -1;
     protected string m_DGSwapPickKey = "";
     protected int m_DGSwapTarget = -1;
-    protected static const float DG_SWAP_H = 250;
     // the moves of a face's two buttons (throw / stop, bid / do not believe)
     protected string m_DGMoveA = "";
     protected string m_DGMoveB = "";
@@ -42,6 +41,24 @@ modded class OZG_GameMenu
     protected string m_DGBidSeen = "";
     protected int m_DGInPlay = 1;
     protected int m_DGLocked = 0;
+    // perudo's showdown: the dice lie open DG_REVEAL seconds (the canvas: 2.6), then the
+    // cans are down again; the showdown it runs for (its zone's line), the time left
+    protected static const float DG_REVEAL = 2.6;
+    protected string m_DGOpenSeen = "";
+    protected float m_DGOpenLeft = 0;
+    // dice poker's round that was decided: shown DG_REVEAL_POKER seconds as it lay (the
+    // canvas waits for "Наступний раунд"; at a table nobody holds the others up), kept
+    // here because the server's own copy goes with the next round's first throw
+    protected static const float DG_REVEAL_POKER = 4.0;
+    protected string m_DGPokerOpen = "";
+    // the swap panel's pocket dice: a button a die he carries, made as they are needed
+    protected ref array<Widget> m_DGPocketW;
+    // how see-through the dice laid now are (a seat that folded: the canvas dims its card)
+    protected int m_DGDieAlpha = 255;
+    // no game dealt yet: the face is drawn from the seats (DGLobbyView)
+    protected bool m_DGLobby;
+    // the box sized next is drawn through (a dimmed card): fitted snug, in whole pixels
+    protected bool m_DGSnug;
 
     // ------------------------------------------------------------ the faces
 
@@ -98,21 +115,39 @@ modded class OZG_GameMenu
         m_DGCol = null;
         m_DGBadges = new array<Widget>();
         m_DGBadgesUsed = 0;
+        m_DGPocketW = new array<Widget>();
     }
 
     override protected bool DGPaint()
     {
         DGWindowCheck();
         m_DGActive = false;
+        m_DGLobby = false;
+        m_DGDieAlpha = 255;
         string face = "";
-        if (m_V && m_GPub && m_GPub.GameId == m_V.GameId)
-            face = DGFaceOf(m_GPub.GameId);
+        if (m_V)
+            face = DGFaceOf(m_V.GameId);
+        // no game dealt yet, or another's last view: the face is drawn from the seats, as
+        // the canvas's boards stand before their first stake
+        bool lobby = false;
+        if (face != "" && m_V.St != OZG_Const.ST_PLAYING)
+        {
+            if (!m_GPub || m_GPub.GameId != m_V.GameId)
+                lobby = true;
+        }
+        OZG_GPublic real = m_GPub;
+        if (lobby)
+            m_GPub = DGLobbyView(face);
+        if (!m_GPub || m_GPub.GameId != m_V.GameId)
+            face = "";
         if (face == "" || !DGEnsure(face))
         {
+            m_GPub = real;
             DGHideFaces();
             return false;
         }
         m_DGActive = true;
+        m_DGLobby = lobby;
         DGHideGeneric();
         m_DGTray.Show(true);
         m_DGCol.Show(true);
@@ -131,7 +166,77 @@ modded class OZG_GameMenu
         else
             DGPaintPerudo();
         DGBadgesEnd();
+        m_GPub = real;
         return true;
+    }
+
+    // The seats as a game's view would have them before anything is thrown: every seat
+    // taken, its chips, nothing in the pot. The faces draw it as they draw a game.
+    protected OZG_GPublic DGLobbyView(string face)
+    {
+        OZG_GPublic v = new OZG_GPublic();
+        v.GameId = m_V.GameId;
+        string chipsOf = "";
+        string putsOf = "";
+        int stake = DGOption(OZG_DiceConst.OPT_STAKE, "10").ToInt();
+        int seated = 0;
+        for (int i = 0; i < m_V.Seats.Count(); i++)
+        {
+            OZG_WSeat s = m_V.Seats[i];
+            if (!s || s.St != OZG_Const.SEAT_TAKEN)
+                continue;
+            int seatNo = s.No;
+            int chips = s.Chips;
+            if (chips < 0)
+                chips = 0;
+            int put = stake;
+            if (put > chips)
+                put = chips;
+            string chipsText = chips.ToString();
+            string putText = put.ToString();
+            OZG_GSeat g = new OZG_GSeat();
+            g.SeatNo = seatNo;
+            // the numbers a face reads off a seat's line: chips, rounds won and what it
+            // put (dice poker); the score (pig); the dice left (perudo)
+            if (face == "poker")
+                g.Line = "x|" + chipsText + "|0|0";
+            else if (face == "perudo")
+                g.Line = "x|" + OZG_PerudoConst.DICE.ToString();
+            else
+                g.Line = "x|0";
+            v.SeatList.Insert(g);
+            if (seated > 0)
+            {
+                chipsOf = chipsOf + ",";
+                putsOf = putsOf + ",";
+            }
+            chipsOf = chipsOf + chipsText;
+            putsOf = putsOf + putText;
+            seated++;
+        }
+        if (face == "high")
+        {
+            OZG_GZone state = new OZG_GZone();
+            state.Id = "highroll";
+            state.Line = DGOption(OZG_HighRollConst.OPT_DICE, "2") + "|" + stake.ToString() + "|" + chipsOf + "|" + putsOf;
+            v.Zones.Insert(state);
+        }
+        if (face == "perudo")
+        {
+            int inPlay = seated * OZG_PerudoConst.DICE;
+            OZG_GZone table = new OZG_GZone();
+            table.Id = "perudo";
+            table.Line = "0|0|-1|0|" + inPlay.ToString();
+            v.Zones.Insert(table);
+        }
+        if (face == "poker")
+        {
+            OZG_GZone round = new OZG_GZone();
+            round.Id = "dpoker";
+            round.Line = "-1|1|0|-1|" + stake.ToString();
+            v.Zones.Insert(round);
+        }
+        return v;
     }
 
     // A game the window draws itself: the faces hidden, the window's own parts back.
@@ -168,7 +273,6 @@ modded class OZG_GameMenu
         BWShow("OZG_DCentre1", false);
         BWShow("OZG_DRule", false);
         BWShow("OZG_DScore", false);
-        BWShow("OZG_DSwap", false);
         BWShow("OZG_DAct", false);
         BWShow("OZG_DActHint0", false);
         BWShow("OZG_DActHint1", false);
@@ -284,22 +388,21 @@ modded class OZG_GameMenu
         return fallback;
     }
 
-    // A seat's name, and "(ви)" after this player's.
-    protected string DGName(int seatNo)
-    {
-        string name = SeatName(seatNo);
-        if (seatNo == m_V.Mine)
-            name = name + " " + Tr("STR_OZG_BWIN_YOU");
-        return name;
-    }
-
     // A box of a face sized again: its ring `ringW` wide (1, or the canvas's 3) in `ring`.
     protected void DGBox(string name, float w, float h, float r, int ring, float ringW)
     {
+        if (m_DGSnug)
+        {
+            DGBoxSnug(name, w, h, r, ring, ringW);
+            return;
+        }
         Widget boxW = BW(name);
         if (boxW)
             boxW.SetSize(w * m_K, h * m_K);
         Widget edge = BW(name + "Edge");
+        // where a snug fit may have moved it
+        if (edge)
+            edge.SetPos(0, 0);
         BWFit(edge, w, h, r);
         BWPaint(edge, ring);
         Widget bg = BW(name + "Bg");
@@ -310,6 +413,109 @@ modded class OZG_GameMenu
             inner = 0;
         bg.SetPos(ringW * m_K, ringW * m_K);
         BWFit(bg, w - 2 * ringW, h - 2 * ringW, inner);
+    }
+
+    // The same box drawn through: its ring and its ground fitted with no overlap, every
+    // edge a whole pixel (BWFitPx says why), and the box itself moved to a quarter of a
+    // pixel on the screen. A panel fills whole pixels from the floor of its place, a
+    // picture is drawn at the place itself: past half a pixel the two part by one pixel
+    // (the stand at 3840 x 1600, 2026-11-26: a card at 1392.59, 355.56 -- its bands began
+    // at pixel 1392, 355, its corner pictures at 1393, 356, and the felt showed along two
+    // sides of three corners). At a quarter they agree, with room for the sums' rounding.
+    // The box lies at its card's corner; the card's place on the screen is its parent's as
+    // it lies and the place just given to the card (asked of the card itself, the screen
+    // may still know the old one).
+    protected void DGBoxSnug(string name, float w, float h, float r, int ring, float ringW)
+    {
+        float pw = Math.Round(w * m_K);
+        float ph = Math.Round(h * m_K);
+        float pr = Math.Round(r * m_K);
+        float pring = Math.Round(ringW * m_K);
+        if (pring < 1)
+            pring = 1;
+        float dx = 0;
+        float dy = 0;
+        Widget boxW = BW(name);
+        if (boxW)
+        {
+            boxW.SetSize(pw, ph);
+            Widget card = boxW.GetParent();
+            Widget root;
+            if (card)
+                root = card.GetParent();
+            if (root)
+            {
+                float rx;
+                float ry;
+                float cardX;
+                float cardY;
+                root.GetScreenPos(rx, ry);
+                card.GetPos(cardX, cardY);
+                float sx = rx + cardX;
+                float sy = ry + cardY;
+                dx = Math.Round(sx - 0.25) + 0.25 - sx;
+                dy = Math.Round(sy - 0.25) + 0.25 - sy;
+            }
+        }
+        Widget edge = BW(name + "Edge");
+        if (edge)
+            edge.SetPos(dx, dy);
+        BWFitPx(edge, pw, ph, pr);
+        BWPaint(edge, ring);
+        Widget bg = BW(name + "Bg");
+        if (!bg)
+            return;
+        float inner = pr - pring;
+        if (inner < 0)
+            inner = 0;
+        bg.SetPos(pring + dx, pring + dy);
+        BWFitPx(bg, pw - 2 * pring, ph - 2 * pring, inner);
+    }
+
+    // A name put into its text and cut with an ellipsis when it is wider than `room`
+    // units: a player's name is as long as he made it, and what stands after it on a card
+    // does not move (the stand, 2026-11-26: "Survivor (ви)" ran into "кості господаря" on
+    // a card of six). `tail` (DGYou) is kept whole: the name before it gives way.
+    protected void DGNameIn(string widget, string name, string tail, float room)
+    {
+        TextWidget t = BWText(widget);
+        if (!t)
+            return;
+        t.SetText(name + tail);
+        if (room <= 0 || BWTextW(t) <= room)
+            return;
+        int n = name.LengthUtf8();
+        while (n > 1)
+        {
+            n--;
+            string cut = name.SubstringUtf8(0, n);
+            cut = cut.Trim();
+            t.SetText(cut + "…" + tail);
+            if (BWTextW(t) <= room)
+                return;
+        }
+    }
+
+    // " (ви)" after the name on this player's own seat, nothing on another's.
+    protected string DGYou(int seatNo)
+    {
+        if (seatNo == m_V.Mine)
+            return " " + Tr("STR_OZG_BWIN_YOU");
+        return "";
+    }
+
+    // A card dimmed as the canvas dims it (`opacity` there on the whole card): its box
+    // takes `boxAlpha`, what lies on it follows the card's own `inkAlpha` (the layouts'
+    // inheritalpha). The two differ because the engine blends in linear light and words
+    // came out darker than a picture at the same alpha (the stand, 2026-11-26: at 0.55 a
+    // name read 127 where the canvas has 159, a die 181 where it has 162).
+    protected void DGDim(Widget card, string name, float boxAlpha, float inkAlpha)
+    {
+        if (card)
+            card.SetAlpha(inkAlpha);
+        Widget boxW = BW(name + "Box");
+        if (boxW)
+            boxW.SetAlpha(boxAlpha);
     }
 
     // A button of a face: its words, its fill, its ring and its ink.
@@ -346,6 +552,16 @@ modded class OZG_GameMenu
         return BWTextW(t);
     }
 
+    // Units that land on a whole pixel: a part centred by the width of its words would
+    // otherwise sit on half a pixel, and a picture there takes its opposite edge into its
+    // first column (seen on pig's pill, 2026-11-26).
+    protected float DGSnap(float units)
+    {
+        if (m_K <= 0)
+            return units;
+        return Math.Round(units * m_K) / m_K;
+    }
+
     // A pip of the rounds won: a gold disc, or its ring.
     protected void DGPip(string name, bool won, float x, float y)
     {
@@ -374,10 +590,9 @@ modded class OZG_GameMenu
         bool white = look == "white" || look == "stalker";
         if (red && face == 1 && white)
             pic = look + "_1r";
-        ImageWidget sh = BWPic(BW_FIELD, "set:ozg_dice image:die_s", x, y + drop, size, size, prio, ARGB(255, 255, 255, 255));
-        BWTumbleAdd(sh, x, y + drop, size, size, turn);
-        ImageWidget die = BWPic(BW_FIELD, "set:ozg_dice image:" + pic, x, y, size, size, prio + 1, ARGB(255, 255, 255, 255));
-        BWTumbleAdd(die, x, y, size, size, turn);
+        int tint = ARGB(m_DGDieAlpha, 255, 255, 255);
+        BWTurnPic(BW_FIELD, "set:ozg_dice image:die_s", x, y + drop, size, prio, tint, turn);
+        BWTurnPic(BW_FIELD, "set:ozg_dice image:" + pic, x, y, size, prio + 1, tint, turn);
     }
 
     // A ring round a die (picked, counted, a one thrown): the die's shape `gap` wider each
@@ -385,8 +600,7 @@ modded class OZG_GameMenu
     protected void DGRing(float x, float y, float size, float gap, float turn, int colour, int prio)
     {
         float s = size + 2 * gap;
-        ImageWidget ring = BWPic(BW_FIELD, "set:ozg_dice image:white_0", x - gap, y - gap, s, s, prio, colour);
-        BWTumbleAdd(ring, x - gap, y - gap, s, s, turn);
+        BWTurnPic(BW_FIELD, "set:ozg_dice image:white_0", x - gap, y - gap, s, prio, colour, turn);
     }
 
     // The face a die of this player's is loaded on, over its corner (the canvas: a grey
@@ -440,6 +654,30 @@ modded class OZG_GameMenu
         return "";
     }
 
+    // The look die `k` of a seat had when the seat threw it last (the view's
+    // ThrownDiceLooks); the look of the die it throws now when that is not known.
+    protected string DGThrownLookOf(int seatNo, int k)
+    {
+        if (m_V && seatNo >= 0 && k >= 0)
+        {
+            string head = seatNo.ToString() + "=";
+            int headLen = head.Length();
+            for (int i = 0; i < m_V.ThrownDiceLooks.Count(); i++)
+            {
+                string line = m_V.ThrownDiceLooks[i];
+                if (line.IndexOf(head) != 0)
+                    continue;
+                array<string> looks = new array<string>();
+                string rest = line.Substring(headLen, line.Length() - headLen);
+                rest.Split(",", looks);
+                if (k < looks.Count() && looks[k] != "")
+                    return looks[k];
+                break;
+            }
+        }
+        return DGLookOf(seatNo, k);
+    }
+
     // The load this player knows on die `i` of his throw (0: none).
     protected int DGMyLoad(int i)
     {
@@ -459,7 +697,7 @@ modded class OZG_GameMenu
         float lw = DGText(name + "Label", OZG_Text.Upper(Tr("STR_OZG_DICE_POT")));
         float vw = DGText(name + "Value", pot.ToString());
         float total = 30 + 12 + lw + 12 + vw;
-        float x0 = 132 - total / 2;
+        float x0 = DGSnap(132 - total / 2);
         BWMove(BW(name + "Icon"), x0, 20);
         BWMove(BW(name + "Label"), x0 + 42, 27);
         BWMove(BW(name + "Value"), x0 + 42 + lw + 12, 15);
@@ -493,16 +731,23 @@ modded class OZG_GameMenu
     }
 
     // The swap panel of the four at `top` (units of the column): the swaps left; the dice
-    // he carries and the dice he is about to throw, a row each, one of each picked by him
-    // and by nobody else (the owner's word: the game does not decide for the person); what
-    // the picked die is; the button, live once both are picked and a swap may be done.
-    // Its bottom, or `top` when it is not shown.
+    // he carries and the dice he is about to throw, one of each picked by him and by nobody
+    // else (the owner's word: the game does not decide for the person); what the picked die
+    // is; the button, live once both are picked and a swap may be done. He may carry any
+    // number of dice: seven a row in the engine's scroll, two rows in sight, the wheel and
+    // the gold bar for the rest; what lies under them is placed by their height. Its
+    // bottom, or `top` when it is not shown.
     protected float DGPaintSwap(float top, string face)
     {
         Widget panel = BW("OZG_DSwapS");
         m_DGSwapKey = "";
         m_DGSwapAt = -1;
-        bool shown = DWPlaying() && m_V.DiceSwapsMost > 0;
+        // only for a player with dice to throw: one out of perudo has none to swap
+        int mineSeat = m_V.Mine;
+        array<string> mineLooks = new array<string>();
+        DGSeatLooks(mineSeat, mineLooks);
+        bool throws = m_V.MyDiceLoads.Count() > 0 || mineLooks.Count() > 0;
+        bool shown = DWPlaying() && m_V.DiceSwapsMost > 0 && throws;
         if (panel)
             panel.Show(shown);
         if (!panel || !shown)
@@ -524,13 +769,33 @@ modded class OZG_GameMenu
         }
         if (pick < 0)
             m_DGSwapPickKey = "";
-        for (i = 0; i < 7; i++)
+        // a button a die carried, made as they are needed, named by its place
+        Widget inside = BW("OZG_DSPocketsIn");
+        if (!m_DGPocketW)
+            m_DGPocketW = new array<Widget>();
+        while (inside && m_DGPocketW.Count() < pockets)
         {
-            string pn = "OZG_DSPocket" + i.ToString();
+            Widget made = MakeLayout(DG_LAYOUTS + "ozg_dspocket.layout", inside, "OZG_DSPocket");
+            if (!made)
+                break;
+            int madeNo = m_DGPocketW.Count();
+            made.SetName("OZG_DSPocket" + madeNo.ToString());
+            m_DGPocketW.Insert(made);
+        }
+        for (i = 0; i < m_DGPocketW.Count(); i++)
+        {
+            Widget pocket = m_DGPocketW[i];
+            if (!pocket)
+                continue;
             bool there = i < pockets;
-            BWShow(pn, there);
+            pocket.Show(there);
             if (!there)
                 continue;
+            int col = i % 7;
+            int row = i / 7;
+            float px = 4 + col * 46;
+            float py = 8 + row * 46;
+            pocket.SetPos(px * m_K, py * m_K);
             string look = "white";
             if (i < m_V.PocketLooks.Count() && m_V.PocketLooks[i] != "")
                 look = m_V.PocketLooks[i];
@@ -541,24 +806,62 @@ modded class OZG_GameMenu
             int up = DGFaceOfKey(pocketKey);
             if (loaded > 0)
                 up = loaded;
-            ImageWidget pic = ImageWidget.Cast(BW(pn + "Pic"));
+            ImageWidget pic = ImageWidget.Cast(pocket.FindAnyWidget("OZG_DSPocketPic"));
             if (pic)
             {
                 pic.LoadImageFile(0, "set:ozg_dice image:" + look + "_" + up.ToString());
                 pic.SetImage(0);
             }
-            BWShow(pn + "Ring", i == pick);
-            BWShow(pn + "Badge", loaded > 0);
-            if (loaded > 0)
-                BWSetText(pn + "BadgeText", loaded.ToString());
+            Widget pocketRing = pocket.FindAnyWidget("OZG_DSPocketRing");
+            if (pocketRing)
+                pocketRing.Show(i == pick);
+            Widget pocketBadge = pocket.FindAnyWidget("OZG_DSPocketBadge");
+            if (pocketBadge)
+                pocketBadge.Show(loaded > 0);
+            TextWidget pocketFace = TextWidget.Cast(pocket.FindAnyWidget("OZG_DSPocketBadgeText"));
+            if (pocketFace && loaded > 0)
+                pocketFace.SetText(loaded.ToString());
         }
+        // the rows: two in sight, the scroll for more (its positions are pixels)
+        int rows = (pockets + 6) / 7;
+        if (rows < 1)
+            rows = 1;
+        int rowsSeen = rows;
+        if (rowsSeen > 2)
+            rowsSeen = 2;
+        // the rows are 46 apart and the scroll runs whole rows: at its end the row above
+        // ends exactly at its edge
+        float scrollH = 3 + rowsSeen * 46;
+        float insideH = 3 + rows * 46;
+        ScrollWidget scroll = ScrollWidget.Cast(BW("OZG_DSPockets"));
+        if (scroll)
+            scroll.SetSize(344 * m_K, scrollH * m_K);
+        if (inside)
+        {
+            inside.SetSize(334 * m_K, insideH * m_K);
+            inside.Update();
+        }
+        if (scroll)
+        {
+            scroll.Update();
+            float most = (insideH - scrollH) * m_K;
+            if (most < 0)
+                most = 0;
+            if (scroll.GetVScrollPos() > most)
+                scroll.VScrollToPos(most);
+        }
+        float y = 46 + scrollH + 5;
+        BWMove(BW("OZG_DSwapSFor"), 12, y);
+        y = y + 18;
         // the dice he is about to throw: each in its look, its place on it
         int mineNo = m_V.Mine;
         array<string> looks = new array<string>();
         DGSeatLooks(mineNo, looks);
-        int targets = looks.Count();
+        int targets = m_V.MyDiceLoads.Count();
         if (targets == 0)
-            targets = m_V.MyDiceLoads.Count();
+            targets = looks.Count();
+        if (targets > 5)
+            targets = 5;
         if (m_DGSwapTarget >= targets)
             m_DGSwapTarget = -1;
         for (i = 0; i < 5; i++)
@@ -568,6 +871,7 @@ modded class OZG_GameMenu
             BWShow(tn, thrown);
             if (!thrown)
                 continue;
+            BWMove(BW(tn), 12 + i * 46, y);
             string tlook = DWLook();
             if (i < looks.Count() && looks[i] != "")
                 tlook = looks[i];
@@ -590,6 +894,7 @@ modded class OZG_GameMenu
             if (tload > 0)
                 BWSetText(tn + "BadgeText", tload.ToString());
         }
+        y = y + 38 + 8;
         int load = 0;
         int step = 0;
         if (pick >= 0 && pick < m_V.PocketLoads.Count() && pick < m_V.PocketSteps.Count())
@@ -641,7 +946,23 @@ modded class OZG_GameMenu
             text = Tr("STR_OZG_DWIN_SWAP_NONE");
         else
             text = Tr("STR_OZG_DWIN_SWAP_CHOOSE") + " " + when;
-        DGLines("OZG_DSwapSText0", "OZG_DSwapSText1", text, 336);
+        // the words: two lines as the canvas has them, a third when they need it
+        array<string> lines = new array<string>();
+        BWWrap(BWText("OZG_DSwapSText0"), text, 336, 3, lines);
+        int lineRoom = lines.Count();
+        if (lineRoom < 2)
+            lineRoom = 2;
+        for (i = 0; i < 3; i++)
+        {
+            string ln = "OZG_DSwapSText" + i.ToString();
+            string lineWords = "";
+            if (i < lines.Count())
+                lineWords = lines[i];
+            BWSetText(ln, lineWords);
+            BWMove(BW(ln), 12, y + i * 17);
+            BWShow(ln, i < lineRoom);
+        }
+        y = y + lineRoom * 17 + 6;
         // the button: live once both are picked and a swap may be done now
         bool both = pick >= 0 && m_DGSwapTarget >= 0;
         bool can = m_V.DiceSwapNow == 1 && both;
@@ -669,7 +990,11 @@ modded class OZG_GameMenu
         if (can)
             fill = DGC(58, 44, 28);
         DGButton("OZG_DSwapSBtn", label, fill, DGC(107, 82, 51), DGC(239, 228, 204));
-        return top + DG_SWAP_H;
+        BWMove(BW("OZG_DSwapSBtn"), 12, y);
+        y = y + 36 + 10;
+        panel.SetSize(360 * m_K, y * m_K);
+        DGBox("OZG_DSwapSBox", 360, y, 6, DGC(107, 82, 51), 1);
+        return top + y;
     }
 
     // The looks of the dice a seat throws (the view's SeatDiceLooks), in their order.
@@ -767,6 +1092,34 @@ modded class OZG_GameMenu
         m_DGMine = mine;
         if (!playing)
             m_DWPicked.Clear();
+        // the round before as it lay when it was decided (the canvas's step "розкриття"):
+        // a new one is shown DG_REVEAL_POKER seconds, then the round that is on
+        string openLine = DGZoneLine("dpoker_open");
+        if (!playing)
+        {
+            m_DGOpenSeen = "";
+            m_DGOpenLeft = 0;
+            m_DGPokerOpen = "";
+        }
+        else if (openLine != "" && openLine != m_DGOpenSeen)
+        {
+            m_DGOpenSeen = openLine;
+            m_DGPokerOpen = openLine;
+            m_DGOpenLeft = DG_REVEAL_POKER;
+        }
+        bool reveal = playing && m_DGOpenLeft > 0 && m_DGPokerOpen != "";
+        array<string> open = new array<string>();
+        if (reveal)
+            m_DGPokerOpen.Split("|", open);
+        int openRound = DGIntAt(open, 0);
+        array<string> openFolded = new array<string>();
+        if (reveal)
+        {
+            m_DGPhase = -1;
+            m_DWPicked.Clear();
+            if (open.Count() > 2)
+                open[2].Split(",", openFolded);
+        }
         array<ref OZG_GSeat> others = new array<ref OZG_GSeat>();
         DGOthers(others);
         int n = others.Count();
@@ -794,17 +1147,29 @@ modded class OZG_GameMenu
             DGPokerSpot(i, n, cx, cy, cw);
             card.SetPos(cx * m_K, cy * m_K);
             card.SetSize(cw * m_K, 124 * m_K);
+            array<int> dice = new array<int>();
+            DWDiceOf(gRole, dice);
             bool folded = gOut == 1;
+            if (reveal)
+            {
+                // as the round lay: its dice, and whether it had folded
+                DGOpenDice(open, 3, gSeat, dice);
+                string gSeatText = gSeat.ToString();
+                folded = openFolded.Find(gSeatText) >= 0;
+            }
             int ring = DGC(107, 82, 51);
-            float alpha = 1;
             if (folded)
             {
                 ring = DGC(61, 45, 29);
-                alpha = 0.55;
+                DGDim(card, c, 0.59, 0.66);
             }
-            card.SetAlpha(alpha);
+            else
+            {
+                DGDim(card, c, 1, 1);
+            }
+            m_DGSnug = folded;
             DGBox(c + "Box", cw, 124, 8, ring, 1);
-            BWSetText(c + "Name", SeatName(gSeat));
+            m_DGSnug = false;
             int chips = DGArgInt(gLine, 0);
             int wins = DGArgInt(gLine, 1);
             int put = DGArgInt(gLine, 2);
@@ -815,10 +1180,11 @@ modded class OZG_GameMenu
                 chipsW.SetPos((cw - 12 - 198) * m_K, 13.5 * m_K);
             }
             float chipsLeft = cw - 12 - chipsW0;
+            // the name up to the rounds' marks
+            string pokerName = SeatName(gSeat);
+            DGNameIn(c + "Name", pokerName, "", chipsLeft - 40 - 8 - 12);
             DGPip(c + "Win0", wins >= 1, chipsLeft - 40, 15);
             DGPip(c + "Win1", wins >= 2, chipsLeft - 23, 15);
-            array<int> dice = new array<int>();
-            DWDiceOf(gRole, dice);
             float ds = 42;
             float dstep = 50;
             if (cw < 300)
@@ -826,8 +1192,18 @@ modded class OZG_GameMenu
                 ds = 36;
                 dstep = 42;
             }
+            if (folded)
+                m_DGDieAlpha = 109;
+            // a die's face and its look into locals before the call takes them: an element
+            // read in an argument list is lost to a call made after it in the same list
+            // (dice poker's view of 2026-11-26: a seat came out as its last die)
             for (k = 0; k < dice.Count() && k < 5; k++)
-                DGDie(dice[k], DGLookOf(gSeat, k), cx + 12 + k * dstep, cy + 42, ds, 0, 3, 31, false);
+            {
+                int oppFace = dice[k];
+                string oppLook = DGThrownLookOf(gSeat, k);
+                DGDie(oppFace, oppLook, cx + 12 + k * dstep, cy + 42, ds, 0, 3, 31, false);
+            }
+            m_DGDieAlpha = 255;
             string hand = Tr("STR_OZG_DWIN_NOT_THROWN");
             if (dice.Count() > 0)
                 hand = DGHandName(dice);
@@ -861,6 +1237,8 @@ modded class OZG_GameMenu
         array<int> myDice = new array<int>();
         if (me)
             DWDiceOf(meRole, myDice);
+        if (me && reveal)
+            DGOpenDice(open, 3, mineNo, myDice);
         for (k = m_DWPicked.Count() - 1; k >= 0; k--)
         {
             if (m_DWPicked[k] >= myDice.Count())
@@ -882,9 +1260,14 @@ modded class OZG_GameMenu
             {
                 dy = dy - 18;
                 drop = 16;
-                DGRing(dx, dy, 84, 4, rots[k], DGC(231, 194, 122), 30);
+                float ringDeg = rots[k];
+                int ringGold = DGC(231, 194, 122);
+                DGRing(dx, dy, 84, 4, ringDeg, ringGold, 30);
             }
-            DGDie(myDice[k], DGLookOf(mineNo, k), dx, dy, 84, rots[k], drop, 31, false);
+            int myFace = myDice[k];
+            float myTurnDeg = rots[k];
+            string myLook = DGThrownLookOf(mineNo, k);
+            DGDie(myFace, myLook, dx, dy, 84, myTurnDeg, drop, 31, false);
             m_DWDieX.Insert(dx + 42);
             m_DWDieY.Insert(dy + 42);
             int load = DGMyLoad(k);
@@ -899,6 +1282,10 @@ modded class OZG_GameMenu
             else if (turn >= 0)
                 hint = Tr1("STR_OZG_DWIN_DP_THROWS", SeatName(turn));
         }
+        if (m_DGLobby)
+            hint = Tr("STR_OZG_DWIN_DP_FIRST_STAKES");
+        if (reveal)
+            hint = "";
         BWSetText("OZG_DPHint", hint);
         bool seated = me != null;
         BWShow("OZG_DPYou", seated);
@@ -917,7 +1304,7 @@ modded class OZG_GameMenu
             int myWins = DGArgInt(meLine, 1);
             float mcw = DGText("OZG_DPMyChips", Tr1("STR_OZG_DICE_POT_LINE", myChips.ToString()));
             float total = bw + 14 + 33 + 14 + mcw;
-            float x0 = 550 - total / 2;
+            float x0 = DGSnap(550 - total / 2);
             BWMove(BW("OZG_DPYou"), x0, 564);
             int youRing = DGC(107, 82, 51);
             if (myDice.Count() > 0)
@@ -936,8 +1323,14 @@ modded class OZG_GameMenu
         int shownPhase = phase + 1;
         if (m_GPub.Ended == 1)
             shownPhase = 4;
+        int shownRound = round;
+        if (reveal)
+        {
+            shownPhase = 4;
+            shownRound = openRound;
+        }
         string phaseWord = Tr("STR_OZG_DWIN_DP_PHASE_" + shownPhase.ToString());
-        BWSetText("OZG_DPRoundTitle", OZG_Text.Upper(Tr2("STR_OZG_DWIN_DP_ROUND", round.ToString(), phaseWord)));
+        BWSetText("OZG_DPRoundTitle", OZG_Text.Upper(Tr2("STR_OZG_DWIN_DP_ROUND", shownRound.ToString(), phaseWord)));
         for (i = 0; i < 5; i++)
         {
             int seg = DGC(58, 44, 28);
@@ -946,6 +1339,8 @@ modded class OZG_GameMenu
             BWPaintNamed("OZG_DPSeg" + i.ToString(), seg);
         }
         string rhint = "";
+        if (m_DGLobby)
+            rhint = Tr("STR_OZG_DWIN_DP_HINT_STAKES");
         if (playing)
         {
             if (phase == 0)
@@ -972,6 +1367,8 @@ modded class OZG_GameMenu
                     rhint = Tr("STR_OZG_DWIN_DP_HINT_PICK");
             }
         }
+        if (reveal)
+            rhint = Tr("STR_OZG_DWIN_DP_HINT_SHOWN");
         DGLines("OZG_DPRHint0", "OZG_DPRHint1", rhint, 336);
         float bottom = 116;
         if (playing)
@@ -986,7 +1383,12 @@ modded class OZG_GameMenu
             int haveChips = 0;
             if (me)
                 haveChips = DGArgInt(meLine, 0);
-            if (!mine)
+            if (reveal)
+            {
+                DGActBtn(used, Tr("STR_OZG_DWIN_DP_NEXT"), "", 2, 12);
+                used++;
+            }
+            else if (!mine)
             {
                 DGActBtn(used, Tr1("STR_OZG_DWIN_TURN_OF", SeatName(turn)), "", 2, 12);
                 used++;
@@ -1115,19 +1517,24 @@ modded class OZG_GameMenu
             row.SetPos(78 * m_K, (64 + 66 * i) * m_K);
             bool current = gSeat == turn;
             bool me = gSeat == m_V.Mine;
-            string name = DGName(gSeat);
-            BWSetText(r + "Name", name);
-            BWSetText(r + "NameB", name);
+            string name = SeatName(gSeat);
+            string nameTail = DGYou(gSeat);
+            DGNameIn(r + "Name", name, nameTail, 140);
+            DGNameIn(r + "NameB", name, nameTail, 140);
             BWShow(r + "Name", !current);
             BWShow(r + "NameB", current);
             int ring = DGC(74, 55, 38);
             if (current)
                 ring = DGC(201, 164, 92);
+            // into a local first: a compound condition is never written straight into a field
+            bool snugRow = gOut == 1;
+            m_DGSnug = snugRow;
             DGBox(r + "Box", 944, 54, 8, ring, 1);
-            float rowAlpha = 1;
+            m_DGSnug = false;
             if (gOut == 1)
-                rowAlpha = 0.5;
-            row.SetAlpha(rowAlpha);
+                DGDim(row, r, 0.53, 0.62);
+            else
+                DGDim(row, r, 1, 1);
             int score = DGArgInt(gLine, 0);
             if (score < 0)
                 score = 0;
@@ -1159,11 +1566,30 @@ modded class OZG_GameMenu
             BWMove(BW(r + "BarTurnShape"), -fw, 0);
             BWSetText(r + "Score", score.ToString());
         }
-        // the die under the rows (lower when they are many), the pill, the words
+        // the die under the rows (lower when they are many), the pill, the words. The
+        // canvas has four seats; with six the rows leave the felt 237 units, and the
+        // canvas's die with its gaps wants 297: the gap above the die gives way first,
+        // then the die itself (the stand, 2026-11-26: the words lay on the tray's rim)
         float rowsBottom = 52 + n * 66;
+        float gap = 64;
+        float pigDie = 128;
+        float room = 685 - rowsBottom;
+        float need = gap + pigDie + 105;
+        if (need > room)
+        {
+            gap = 20;
+            need = gap + pigDie + 105;
+        }
+        if (need > room)
+        {
+            pigDie = pigDie - (need - room);
+            if (pigDie < 80)
+                pigDie = 80;
+        }
+        float dieX = 550 - pigDie / 2;
         float dieY = 314;
-        if (rowsBottom + 64 > dieY)
-            dieY = rowsBottom + 64;
+        if (rowsBottom + gap > dieY)
+            dieY = rowsBottom + gap;
         float turnDeg = 0;
         if (throws > 0)
         {
@@ -1171,16 +1597,18 @@ modded class OZG_GameMenu
             turnDeg = spin - 15;
         }
         bool one = die == 1;
+        int oneRed = DGC(142, 42, 30);
         if (one)
-            DGRing(486, dieY, 128, 4, turnDeg, DGC(142, 42, 30), 30);
-        DGDie(die, DGLookOf(turn, 0), 486, dieY, 128, turnDeg, 12, 31, one);
+            DGRing(dieX, dieY, pigDie, 4, turnDeg, oneRed, 30);
+        string pigLook = DGLookOf(turn, 0);
+        DGDie(die, pigLook, dieX, dieY, pigDie, turnDeg, 12, 31, one);
         int load = DGMyLoad(0);
         if (mine && load > 0)
-            DGBadge(load, 486 + 116, dieY - 12);
+            DGBadge(load, dieX + pigDie - 12, dieY - 12);
         float lw = DGText("OZG_DPgPillLabel", OZG_Text.Upper(Tr("STR_OZG_DWIN_PIG_TURN")));
         float vw = DGText("OZG_DPgPillValue", turnPts.ToString());
         float pw = 20 + lw + 10 + vw + 20;
-        BWMove(BW("OZG_DPgPill"), 550 - pw / 2, dieY + 146);
+        BWMove(BW("OZG_DPgPill"), DGSnap(550 - pw / 2), dieY + pigDie + 18);
         Widget pill = BW("OZG_DPgPill");
         if (pill)
             pill.SetSize(pw * m_K, 50 * m_K);
@@ -1194,7 +1622,7 @@ modded class OZG_GameMenu
         else if (playing && turn >= 0)
             say = Tr1("STR_OZG_DWIN_PIG_THROWS", SeatName(turn));
         BWSetText("OZG_DPgSay", say);
-        BWMove(BW("OZG_DPgSay"), 250, dieY + 214);
+        BWMove(BW("OZG_DPgSay"), 250, dieY + pigDie + 86);
 
         // the right column: the turn, the swap, the log
         float bottom = 170;
@@ -1317,12 +1745,20 @@ modded class OZG_GameMenu
             {
                 ring = DGC(61, 45, 29);
             }
+            bool snugCard = gone && playing;
+            m_DGSnug = snugCard;
             DGBox(c + "Box", cw, 196, 10, ring, ringW);
+            m_DGSnug = false;
             float cardAlpha = 1;
             if (gone && playing)
+            {
                 cardAlpha = 0.5;
-            card.SetAlpha(cardAlpha);
-            BWSetText(c + "Name", DGName(gSeat));
+                DGDim(card, c, 0.53, 0.62);
+            }
+            else
+            {
+                DGDim(card, c, 1, 1);
+            }
             string chips = "0";
             if (i < chipsOf.Count())
                 chips = chipsOf[i];
@@ -1337,6 +1773,10 @@ modded class OZG_GameMenu
             {
                 whoseW.SetPos((cw - 16 - chw - 10 - 120) * m_K, 16.5 * m_K);
             }
+            // the name up to whose dice he throws (the canvas's gap of 10)
+            string highName = SeatName(gSeat);
+            string highTail = DGYou(gSeat);
+            DGNameIn(c + "Name", highName, highTail, cw - 16 - chw - 10 - ww - 10 - 16);
             array<int> dice = new array<int>();
             DWDiceOf(gRole, dice);
             bool thrown = dice.Count() > 0;
@@ -1347,12 +1787,17 @@ modded class OZG_GameMenu
             if (dice.Count() > 0 && dice.Count() * 70 + (dice.Count() - 1) * 14 > room)
                 ds = (room - (dice.Count() - 1) * 14) / dice.Count();
             int sum = 0;
+            if (cardAlpha < 1)
+                m_DGDieAlpha = 96;
             for (k = 0; k < dice.Count() && k < 3; k++)
             {
                 float dx = cx + 16 + k * (ds + 14);
                 float dy = cy + 46 + (80 - ds) / 2;
-                DGDie(dice[k], DGLookOf(gSeat, k), dx, dy, ds, rots[k], 6, 31, false);
-                sum = sum + dice[k];
+                int hrFace = dice[k];
+                float hrDeg = rots[k];
+                string hrLook = DGThrownLookOf(gSeat, k);
+                DGDie(hrFace, hrLook, dx, dy, ds, hrDeg, 6, 31, false);
+                sum = sum + hrFace;
                 if (gSeat == m_V.Mine && k == 0)
                 {
                     int load = DGMyLoad(0);
@@ -1360,6 +1805,7 @@ modded class OZG_GameMenu
                         DGBadge(load, dx + ds + 10 - 24, dy - 10);
                 }
             }
+            m_DGDieAlpha = 255;
             string sumText = "";
             if (thrown)
                 sumText = sum.ToString();
@@ -1380,8 +1826,9 @@ modded class OZG_GameMenu
             {
                 state = Tr("STR_OZG_DWIN_HR_OUT");
             }
-            else if (!thrown && i < putsOf.Count() && putsOf[i].ToInt() > 0)
+            else if (m_DGLobby && i < putsOf.Count() && putsOf[i].ToInt() > 0)
             {
+                // the canvas says a seat's stake while the stakes are made, not after
                 state = Tr1("STR_OZG_DWIN_HR_STAKE", putsOf[i]);
             }
             BWSetText(c + "State", state);
@@ -1470,6 +1917,20 @@ modded class OZG_GameMenu
             OZG_DiceText.Parse(args[0], into);
     }
 
+    // A zone's line as the game wrote it ("" when it has none).
+    protected string DGZoneLine(string id)
+    {
+        if (!m_GPub)
+            return "";
+        for (int z = 0; z < m_GPub.Zones.Count(); z++)
+        {
+            OZG_GZone zone = m_GPub.Zones[z];
+            if (zone && zone.Id == id)
+                return zone.Line;
+        }
+        return "";
+    }
+
     protected void DGPaintPerudo()
     {
         array<string> st = new array<string>();
@@ -1484,18 +1945,49 @@ modded class OZG_GameMenu
         if (inPlay < 1)
             inPlay = 1;
         m_DGInPlay = inPlay;
-        // the last showdown, while no new bid stands: its bid, wild ones, the loser, the dice
+        bool playing = DWPlaying();
+        bool ended = m_GPub.Ended == 1;
+        // the last showdown (its bid, wild ones, the loser, whose bid it was, every seat's
+        // dice): the dice lie open DG_REVEAL seconds after it, as the canvas shows them, and
+        // for good once the game is over; then the cans are down and the new round is on
+        string openLine = DGZoneLine("perudo_open");
         array<string> open = new array<string>();
-        bool opened = DGZone("perudo_open", open) && bidN == 0;
+        if (openLine != "")
+            openLine.Split("|", open);
+        bool opened = openLine != "";
+        if (opened && !ended && bidN > 0)
+            opened = false;
+        if (!opened)
+        {
+            m_DGOpenSeen = "";
+            m_DGOpenLeft = 0;
+        }
+        else if (openLine != m_DGOpenSeen)
+        {
+            m_DGOpenSeen = openLine;
+            m_DGOpenLeft = DG_REVEAL;
+        }
+        bool reveal = false;
+        if (opened)
+        {
+            if (ended || m_DGOpenLeft > 0)
+                reveal = true;
+        }
         int openN = DGIntAt(open, 0);
         int openF = DGIntAt(open, 1);
         bool openPal = DGIntAt(open, 2) == 1;
-        int loser = -1;
-        if (open.Count() > 3)
-            loser = open[3].ToInt();
-        bool playing = DWPlaying();
+        int openBidder = -1;
+        if (open.Count() > 4)
+            openBidder = open[4].ToInt();
         int turn = DGTurn();
         bool mine = DGMyTurn();
+        // while the dice lie open nobody bids
+        bool myTurn = mine;
+        if (reveal)
+            myTurn = false;
+        int shownBidder = bidder;
+        if (reveal)
+            shownBidder = openBidder;
         array<ref OZG_GSeat> others = new array<ref OZG_GSeat>();
         DGOthers(others);
         int n = others.Count();
@@ -1522,9 +2014,10 @@ modded class OZG_GameMenu
             DGPerudoSpot(i, n, cx, cw);
             card.SetPos(cx * m_K, 54 * m_K);
             card.SetSize(cw * m_K, 132 * m_K);
-            bool gone = gOut == 1;
-            bool thinks = gSeat == turn && playing;
-            bool hisBid = gSeat == bidder;
+            // out of the game: his card dims once the dice are covered again
+            bool gone = gOut == 1 && !reveal;
+            bool thinks = gSeat == turn && playing && !reveal;
+            bool hisBid = gSeat == shownBidder;
             int ring = DGC(74, 55, 38);
             float ringW = 1;
             if (thinks)
@@ -1536,31 +2029,29 @@ modded class OZG_GameMenu
             {
                 ring = DGC(138, 106, 62);
             }
+            m_DGSnug = gone;
             DGBox(c + "Box", cw, 132, 10, ring, ringW);
-            float cardAlpha = 1;
+            m_DGSnug = false;
             if (gone)
-                cardAlpha = 0.45;
-            card.SetAlpha(cardAlpha);
-            BWSetText(c + "Name", SeatName(gSeat));
+                DGDim(card, c, 0.48, 0.58);
+            else
+                DGDim(card, c, 1, 1);
             int have = DGArgInt(gLine, 0);
             if (have < 0)
                 have = 0;
-            DGText(c + "Count", Tr1("STR_OZG_DWIN_PR_DICE", have.ToString()));
+            float countW = DGText(c + "Count", Tr1("STR_OZG_DWIN_PR_DICE", have.ToString()));
             BWMove(BW(c + "Count"), cw - 12 - 148, 14);
-            // the dice shown at the last showdown, or the can
+            // the name up to how many dice he has
+            string perudoName = SeatName(gSeat);
+            DGNameIn(c + "Name", perudoName, "", cw - 12 - countW - 8 - 12);
+            // the dice shown at the showdown, or the can
             array<int> shownDice = new array<int>();
-            if (opened)
-            {
-                string key = gSeat.ToString() + "=";
-                for (k = 4; k < open.Count(); k++)
-                {
-                    if (open[k].IndexOf(key) == 0)
-                        OZG_DiceText.Parse(open[k].Substring(key.Length(), open[k].Length() - key.Length()), shownDice);
-                }
-            }
-            bool showsDice = opened && shownDice.Count() > 0;
-            BWShow(c + "Cup", !showsDice && !gone);
-            BWShow(c + "CupNote", !showsDice && !gone && cw >= 250);
+            if (reveal)
+                DGOpenDice(open, 5, gSeat, shownDice);
+            bool showsDice = reveal && shownDice.Count() > 0;
+            bool cup = !showsDice && gOut != 1;
+            BWShow(c + "Cup", cup);
+            BWShow(c + "CupNote", cup && cw >= 250);
             BWSetText(c + "CupNote", Tr("STR_OZG_DWIN_PR_CUP"));
             if (showsDice)
             {
@@ -1573,20 +2064,19 @@ modded class OZG_GameMenu
                     float dx = cx + 12 + k * (ds + 8);
                     float dy = 54 + 42 + (52 - ds) / 2;
                     bool wild = v == 1 && !openPal && openF != 1;
+                    int shownGold = DGC(231, 194, 122);
                     if (v == openF || wild)
-                        DGRing(dx, dy, ds, 3, 0, DGC(231, 194, 122), 30);
-                    DGDie(v, DGLookOf(gSeat, k), dx, dy, ds, 0, 2, 31, false);
+                        DGRing(dx, dy, ds, 3, 0, shownGold, 30);
+                    string shownLook = DGThrownLookOf(gSeat, k);
+                    DGDie(v, shownLook, dx, dy, ds, 0, 2, 31, false);
                 }
             }
+            // the canvas: "вибув", or whose the bid is, or who thinks now
             string line = "";
             int lineInk = DGC(184, 165, 133);
             if (gone)
             {
                 line = Tr("STR_OZG_DWIN_OUT");
-            }
-            else if (opened && gSeat == loser)
-            {
-                line = Tr("STR_OZG_DWIN_PR_LOSES");
             }
             else if (hisBid)
             {
@@ -1606,9 +2096,12 @@ modded class OZG_GameMenu
             table = table + Tr("STR_OZG_DWIN_PR_NOT_WILD");
         else
             table = table + Tr("STR_OZG_DWIN_PR_WILD");
-        if (opened)
+        if (reveal)
         {
-            BWSetText("OZG_DRBidLabel", OZG_Text.Upper(Tr("STR_OZG_DWIN_PR_OPEN")));
+            string openLabel = Tr("STR_OZG_PERUDO_BID_NOW");
+            if (openBidder >= 0)
+                openLabel = Tr1("STR_OZG_DWIN_PR_BID_BY", SeatName(openBidder));
+            BWSetText("OZG_DRBidLabel", OZG_Text.Upper(openLabel));
             BWSetText("OZG_DRBidText", FaceCount(openN, openF));
             BWSetText("OZG_DRBidSub", Tr("STR_OZG_DWIN_PR_OPEN_SUB"));
         }
@@ -1624,7 +2117,8 @@ modded class OZG_GameMenu
             BWSetText("OZG_DRBidText", Tr("STR_OZG_DWIN_PR_NO_BID"));
             BWSetText("OZG_DRBidSub", table);
         }
-        // this player's own box and dice
+        // this player's own box and dice: while the dice lie open, the ones he showed, what
+        // counts ringed; then the ones under his can now
         int mineNo = m_V.Mine;
         OZG_GSeat me = DGSeat(mineNo);
         bool seated = me != null;
@@ -1637,25 +2131,35 @@ modded class OZG_GameMenu
             int myCount = DGArgInt(meLine, 0);
             if (myCount < 0)
                 myCount = 0;
-            BWSetText("OZG_DRMeName", DGName(mineNo));
+            string perudoMine = SeatName(mineNo);
+            string perudoTail = DGYou(mineNo);
+            DGNameIn("OZG_DRMeName", perudoMine, perudoTail, 150);
             BWSetText("OZG_DRMeCount", Tr1("STR_OZG_DWIN_PR_MINE", myCount.ToString()));
             int meRing = DGC(74, 55, 38);
             float meRingW = 1;
-            if (mine)
+            if (myTurn && playing)
             {
                 meRing = DGC(201, 164, 92);
                 meRingW = 3;
             }
             DGBox("OZG_DRMeBox", 684, 102, 10, meRing, meRingW);
             array<int> myDice = new array<int>();
-            if (m_GOwn)
+            if (reveal)
+                DGOpenDice(open, 5, mineNo, myDice);
+            else if (m_GOwn && !ended)
                 DGDiceArg(m_GOwn.Status, myDice);
             for (k = 0; k < myDice.Count() && k < 5; k++)
             {
                 float mx = 386 + k * 88;
-                DGDie(myDice[k], DGLookOf(mineNo, k), mx, 488, 74, 0, 6, 31, false);
+                int mv = myDice[k];
+                bool mwild = mv == 1 && !openPal && openF != 1;
+                int mineGold = DGC(231, 194, 122);
+                if (reveal && (mv == openF || mwild))
+                    DGRing(mx, 488, 74, 4, 0, mineGold, 30);
+                string mineLook = DGThrownLookOf(mineNo, k);
+                DGDie(mv, mineLook, mx, 488, 74, 0, 6, 31, false);
                 int load = DGMyLoad(k);
-                if (load > 0)
+                if (load > 0 && !reveal)
                     DGBadge(load, mx + 74 + 9 - 24, 488 - 9);
             }
         }
@@ -1684,7 +2188,9 @@ modded class OZG_GameMenu
         if (playing)
         {
             string title = Tr1("STR_OZG_DWIN_PR_BIDS", SeatName(turn));
-            if (mine)
+            if (reveal)
+                title = Tr("STR_OZG_DWIN_PR_OPEN");
+            else if (myTurn)
                 title = Tr("STR_OZG_DWIN_PR_YOUR_BID");
             BWSetText("OZG_DRAskTitle", title);
             BWSetText("OZG_DRValue", m_DGCount.ToString());
@@ -1704,22 +2210,26 @@ modded class OZG_GameMenu
                     pic.SetColor(tint);
                 }
                 BWShow(f + "Ring", on);
+                // the canvas's 0.35 of a light die over the dark panel, in linear light
                 float faceAlpha = 1;
                 if (m_DGLocked > 0 && face != m_DGLocked)
-                    faceAlpha = 0.35;
+                    faceAlpha = 0.15;
                 Widget fw = BW(f);
                 if (fw)
                     fw.SetAlpha(faceAlpha);
             }
             string move = OZG_PerudoConst.M_BID + m_DGCount.ToString() + ":" + m_DGPick.ToString();
-            bool valid = mine && m_GOwn && m_GOwn.CanPlay.Find(move) >= 0;
+            bool valid = myTurn && m_GOwn && m_GOwn.CanPlay.Find(move) >= 0;
             string note = Tr("STR_OZG_DWIN_PR_WAIT");
+            // out of the game with others still playing: the canvas's words for it
+            if (seated && DGArgInt(meLine, 0) <= 0 && !reveal)
+                note = Tr("STR_OZG_DWIN_PR_YOU_OUT");
             int noteInk = DGC(184, 165, 133);
             if (valid)
             {
                 note = Tr1("STR_OZG_DWIN_PR_OK", FaceCount(m_DGCount, m_DGPick));
             }
-            else if (mine)
+            else if (myTurn)
             {
                 note = Tr("STR_OZG_DWIN_PR_LOW");
                 if (bidF == 1 && m_DGPick != 1)
@@ -1738,7 +2248,7 @@ modded class OZG_GameMenu
                 DGButton("OZG_DRBidBtn", Tr("STR_OZG_DWIN_PR_BID"), DGC(51, 37, 26), DGC(51, 37, 26), DGC(160, 143, 115));
             }
             int doubt = DGC(58, 38, 32);
-            if (mine && bidN > 0)
+            if (myTurn && bidN > 0)
             {
                 m_DGMoveB = OZG_PerudoConst.M_DUDO;
                 doubt = DGC(124, 50, 38);
@@ -1751,6 +2261,47 @@ modded class OZG_GameMenu
         }
         float swapBottom = DGPaintSwap(bottom + 10, "perudo");
         DGLog(swapBottom + 10, 762);
+    }
+
+    // The dice a seat showed at the last showdown ("<seat>=1 3 5" among the zone's parts
+    // from `first` on).
+    protected void DGOpenDice(array<string> open, int first, int seatNo, array<int> into)
+    {
+        into.Clear();
+        string key = seatNo.ToString() + "=";
+        int keyLen = key.Length();
+        for (int k = first; k < open.Count(); k++)
+        {
+            string part = open[k];
+            if (part.IndexOf(key) != 0)
+                continue;
+            string laid = part.Substring(keyLen, part.Length() - keyLen);
+            OZG_DiceText.Parse(laid, into);
+            return;
+        }
+    }
+
+    // The showdown's time runs out: the cans go down.
+    override protected void DGTick(float dt)
+    {
+        if (m_DGOpenLeft <= 0)
+            return;
+        m_DGOpenLeft = m_DGOpenLeft - dt;
+        if (m_DGOpenLeft > 0)
+            return;
+        m_DGOpenLeft = 0;
+        if (m_DGActive)
+            BoardWinPaint();
+    }
+
+    override protected float DWSwapPanel(float top)
+    {
+        return DGPaintSwap(top, "thousand");
+    }
+
+    override protected string DWThrownLook(int seatNo, int k)
+    {
+        return DGThrownLookOf(seatNo, k);
     }
 
     // ------------------------------------------------------------ clicks
@@ -1770,8 +2321,23 @@ modded class OZG_GameMenu
             }
             return true;
         }
+        // the swap panel is thousand's too, which has no face
+        if (DGSwapClick(n))
+            return true;
         if (!m_DGActive)
             return false;
+        if (n == "OZG_DPgThrow" || n == "OZG_DHThrow" || n == "OZG_DRBidBtn")
+        {
+            if (m_DGMoveA != "")
+                Play(m_DGMoveA);
+            return true;
+        }
+        return DGFaceClick(n);
+    }
+
+    // The swap panel's own clicks: a die of the pocket, a die of the throw, the button.
+    protected bool DGSwapClick(string n)
+    {
         if (n == "OZG_DSwapSBtn")
         {
             if (m_DGSwapKey != "" && m_DGSwapAt >= 0)
@@ -1786,12 +2352,18 @@ modded class OZG_GameMenu
                 string err;
                 JsonFileLoader<OZG_WAsk>.MakeData(ask, json, err, false);
                 OZ_Rpc.ServiceRequest(OZG_Const.SERVICE, OZG_Const.OP_DSWAP, json);
+                // the picks are let go at once: a swap refused sends no new view
+                BoardWinPaint();
             }
             return true;
         }
-        if (n.IndexOf("OZG_DSPocket") == 0 && n.Length() == 13)
+        if (n.IndexOf("OZG_DSPocket") == 0 && n.Length() > 12)
         {
-            int p = n.Substring(12, 1).ToInt();
+            // "OZG_DSPocket<place>": the row's scroll and its inside are named alike
+            string placeText = n.Substring(12, n.Length() - 12);
+            int p = placeText.ToInt();
+            if (placeText != p.ToString())
+                return false;
             if (m_V && p >= 0 && p < m_V.PocketDice.Count())
             {
                 string key = m_V.PocketDice[p];
@@ -1813,12 +2385,12 @@ modded class OZG_GameMenu
             BoardWinPaint();
             return true;
         }
-        if (n == "OZG_DPgThrow" || n == "OZG_DHThrow" || n == "OZG_DRBidBtn")
-        {
-            if (m_DGMoveA != "")
-                Play(m_DGMoveA);
-            return true;
-        }
+        return false;
+    }
+
+    // A face's own buttons.
+    protected bool DGFaceClick(string n)
+    {
         if (n == "OZG_DPgHold" || n == "OZG_DRDudoBtn")
         {
             if (m_DGMoveB != "")

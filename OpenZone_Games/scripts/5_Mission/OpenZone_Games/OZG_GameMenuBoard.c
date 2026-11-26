@@ -18,6 +18,11 @@ modded class OZG_GameMenu
 {
     protected static const string LAYOUT_BWPIC = "OpenZone_Games/gui/layouts/ozg_bwpic.layout";
     protected static const string LAYOUT_BWTINT = "OpenZone_Games/gui/layouts/ozg_bwtint.layout";
+    // A picture that turns (a die, its shadow, its ring): a frame holding it. A turned
+    // ImageWidget is cut to its own unturned box, a turned frame's children turn whole
+    // (dayz-modding gui-layouts.md, turned widgets); the layout's picture is 0.6 of the
+    // frame, 0.2 in from its corner.
+    protected static const string LAYOUT_BWTURN = "OpenZone_Games/gui/layouts/ozg_bwturn.layout";
     // The field as White reads it and as Black does (models/src/make_textures.py).
     protected static const string BOARD_WHITE = "OpenZone_Games/gui/boards/ozg_board_win_white_co.paa";
     protected static const string BOARD_BLACK = "OpenZone_Games/gui/boards/ozg_board_win_black_co.paa";
@@ -47,6 +52,10 @@ modded class OZG_GameMenu
     protected ref array<ref array<Widget>> m_BWTints;
     protected ref array<int> m_BWTintsUsed;
     protected ref array<Widget> m_BWPoolParent;
+    // the pictures that turn: per pool their frames and the picture each holds
+    protected ref array<ref array<Widget>> m_BWTurns;
+    protected ref array<ref array<string>> m_BWTurnSrc;
+    protected ref array<int> m_BWTurnsUsed;
 
     // The pieces as drawn: each widget, the square it stands on, where it rests (units
     // in the field), the alpha it ends at.
@@ -110,7 +119,6 @@ modded class OZG_GameMenu
     protected ref array<float> m_BWTumbleX;
     protected ref array<float> m_BWTumbleY;
     protected ref array<float> m_BWTumbleWd;
-    protected ref array<float> m_BWTumbleHt;
     // each die's own turn at rest, degrees (the canvas throws them a little askew)
     protected ref array<float> m_BWTumbleRot;
     protected float m_BWTumbleT = -1;
@@ -169,6 +177,9 @@ modded class OZG_GameMenu
         m_BWTints = new array<ref array<Widget>>();
         m_BWTintsUsed = new array<int>();
         m_BWPoolParent = new array<Widget>();
+        m_BWTurns = new array<ref array<Widget>>();
+        m_BWTurnSrc = new array<ref array<string>>();
+        m_BWTurnsUsed = new array<int>();
         for (int i = 0; i < 3; i++)
         {
             m_BWPics.Insert(new array<Widget>());
@@ -177,6 +188,9 @@ modded class OZG_GameMenu
             m_BWTints.Insert(new array<Widget>());
             m_BWTintsUsed.Insert(0);
             m_BWPoolParent.Insert(null);
+            m_BWTurns.Insert(new array<Widget>());
+            m_BWTurnSrc.Insert(new array<string>());
+            m_BWTurnsUsed.Insert(0);
         }
         m_BWPieceW = new array<Widget>();
         m_BWPieceSq = new array<int>();
@@ -199,7 +213,6 @@ modded class OZG_GameMenu
         m_BWTumbleX = new array<float>();
         m_BWTumbleY = new array<float>();
         m_BWTumbleWd = new array<float>();
-        m_BWTumbleHt = new array<float>();
         m_BWTumbleRot = new array<float>();
     }
 
@@ -214,6 +227,9 @@ modded class OZG_GameMenu
             m_BWPicsUsed[i] = 0;
             m_BWTints[i].Clear();
             m_BWTintsUsed[i] = 0;
+            m_BWTurns[i].Clear();
+            m_BWTurnSrc[i].Clear();
+            m_BWTurnsUsed[i] = 0;
         }
         m_BWPoolParent[BW_FIELD] = BW("OZG_BField");
         if (!m_BWPoolParent[BW_FIELD])
@@ -302,29 +318,80 @@ modded class OZG_GameMenu
         BWPaint(BW(name), colour);
     }
 
-    // A shape's seven parts laid out again for another size, in units.
+    // A shape's seven parts laid out again for another size, in units. The parts are laid
+    // in whole PIXELS of the shape, so all of them carry the shape's own fraction of a
+    // pixel on the screen, and the bands lie one pixel over the corners and over each
+    // other. A panel fills whole pixels from the floor of its place and a picture is drawn
+    // at the place itself: where that fraction is past a half, a corner's first row and
+    // first column of pixels are empty (DGBoxSnug has the measurement), and the band
+    // beside it has to cover them. A quarter of a unit over, the fit until 2026-11-26,
+    // covered them at some places and not at others.
     protected void BWFit(Widget shape, float w, float h, float r)
     {
         if (!shape)
             return;
         string n = shape.GetName();
-        shape.SetSize(w * m_K, h * m_K);
-        BWPart(shape, n + "TL", 0, 0, r, r);
-        BWPart(shape, n + "TR", w - r, 0, r, r);
-        BWPart(shape, n + "BL", 0, h - r, r, r);
-        BWPart(shape, n + "BR", w - r, h - r, r, r);
-        BWPart(shape, n + "M", 0, r, w, h - 2 * r);
-        BWPart(shape, n + "T", r, 0, w - 2 * r, r);
-        BWPart(shape, n + "B", r, h - r, w - 2 * r, r);
+        float pw = Math.Round(w * m_K);
+        float ph = Math.Round(h * m_K);
+        float pr = Math.Round(r * m_K);
+        if (pr * 2 > pw)
+            pr = Math.Floor(pw / 2);
+        if (pr * 2 > ph)
+            pr = Math.Floor(ph / 2);
+        if (pr < 0)
+            pr = 0;
+        shape.SetSize(pw, ph);
+        BWPartPx(shape, n + "TL", 0, 0, pr, pr);
+        BWPartPx(shape, n + "TR", pw - pr, 0, pr, pr);
+        BWPartPx(shape, n + "BL", 0, ph - pr, pr, pr);
+        BWPartPx(shape, n + "BR", pw - pr, ph - pr, pr, pr);
+        float o = 1;
+        if (o > pr)
+            o = pr;
+        // a pill (its caps meet): the middle band a unit into each cap, or their seam shows
+        float m = o;
+        if (ph - 2 * pr < 2 * m_K)
+        {
+            m = Math.Round(m_K);
+            if (m < 1)
+                m = 1;
+            float half = Math.Floor(pr / 2);
+            if (m > half)
+                m = half;
+            if (m < o)
+                m = o;
+        }
+        BWPartPx(shape, n + "M", 0, pr - m, pw, ph - 2 * pr + 2 * m);
+        BWPartPx(shape, n + "T", pr - o, 0, pw - 2 * pr + 2 * o, pr + o);
+        BWPartPx(shape, n + "B", pr - o, ph - pr - o, pw - 2 * pr + 2 * o, pr + o);
     }
 
-    protected void BWPart(Widget shape, string name, float x, float y, float w, float h)
+    // The same seven parts with no overlap at all, in whole PIXELS: for a shape drawn
+    // through (a dimmed card). Parts that overlap show the overlap twice as dense there --
+    // dark lines along a dimmed card's top and bottom (the stand, 2026-11-26) -- and parts
+    // whose edges are whole pixels of one parent meet without a gap at any scale.
+    protected void BWFitPx(Widget shape, float w, float h, float r)
+    {
+        if (!shape)
+            return;
+        string n = shape.GetName();
+        shape.SetSize(w, h);
+        BWPartPx(shape, n + "TL", 0, 0, r, r);
+        BWPartPx(shape, n + "TR", w - r, 0, r, r);
+        BWPartPx(shape, n + "BL", 0, h - r, r, r);
+        BWPartPx(shape, n + "BR", w - r, h - r, r, r);
+        BWPartPx(shape, n + "M", 0, r, w, h - 2 * r);
+        BWPartPx(shape, n + "T", r, 0, w - 2 * r, r);
+        BWPartPx(shape, n + "B", r, h - r, w - 2 * r, r);
+    }
+
+    protected void BWPartPx(Widget shape, string name, float x, float y, float w, float h)
     {
         Widget p = shape.FindAnyWidget(name);
         if (!p)
             return;
-        p.SetPos(x * m_K, y * m_K);
-        p.SetSize(w * m_K, h * m_K);
+        p.SetPos(x, y);
+        p.SetSize(w, h);
     }
 
     // A widget moved, in units of its parent.
@@ -398,6 +465,7 @@ modded class OZG_GameMenu
         {
             m_BWPicsUsed[i] = 0;
             m_BWTintsUsed[i] = 0;
+            m_BWTurnsUsed[i] = 0;
         }
         m_BWPieceW.Clear();
         m_BWPieceSq.Clear();
@@ -415,6 +483,11 @@ modded class OZG_GameMenu
             {
                 if (m_BWPics[i][k])
                     m_BWPics[i][k].Show(false);
+            }
+            for (k = m_BWTurnsUsed[i]; k < m_BWTurns[i].Count(); k++)
+            {
+                if (m_BWTurns[i][k])
+                    m_BWTurns[i][k].Show(false);
             }
             for (k = m_BWTintsUsed[i]; k < m_BWTints[i].Count(); k++)
             {
@@ -454,10 +527,86 @@ modded class OZG_GameMenu
         }
         pic.SetColor(colour);
         pic.SetSort(prio);
-        // a picture of the pool may have been a die turned in its tumble
-        pic.SetRotation(0, 0, 0);
         PutAt(pic, x, y, w, h);
         return pic;
+    }
+
+    // A turning picture's frame put so that its picture lies at x, y, `size` units square,
+    // turned `turn` degrees about its middle.
+    protected void BWTurnPut(Widget holder, float x, float y, float size, float turn)
+    {
+        if (!holder)
+            return;
+        float side = size / 0.6;
+        float off = side * 0.2;
+        holder.SetPos((x - off) * m_K, (y - off) * m_K);
+        holder.SetSize(side * m_K, side * m_K);
+        holder.SetRotation(0, 0, turn);
+    }
+
+    // The picture a turning frame holds, and its tint.
+    protected void BWTurnShow(Widget holder, string picture, int colour)
+    {
+        if (!holder)
+            return;
+        ImageWidget pic = ImageWidget.Cast(holder.FindAnyWidget("OZG_BWTurnPic"));
+        if (!pic)
+            return;
+        if (picture != "")
+        {
+            pic.LoadImageFile(0, picture);
+            pic.SetImage(0);
+        }
+        pic.SetColor(colour);
+    }
+
+    // A square picture of a pool that turns whole (a die, its shadow, its ring): placed
+    // in units of its parent, `turn` degrees at rest; it tumbles with a throw.
+    protected Widget BWTurnPic(int pool, string picture, float x, float y, float size, int prio, int colour, float turn)
+    {
+        Widget parent = m_BWPoolParent[pool];
+        if (!parent)
+            return null;
+        int at = m_BWTurnsUsed[pool];
+        Widget holder;
+        if (at < m_BWTurns[pool].Count())
+        {
+            holder = m_BWTurns[pool][at];
+        }
+        else
+        {
+            holder = MakeLayout(LAYOUT_BWTURN, parent, "OZG_BWTurn");
+            if (!holder)
+                return null;
+            m_BWTurns[pool].Insert(holder);
+            m_BWTurnSrc[pool].Insert("");
+        }
+        m_BWTurnsUsed[pool] = at + 1;
+        string load = "";
+        if (m_BWTurnSrc[pool][at] != picture)
+        {
+            load = picture;
+            m_BWTurnSrc[pool][at] = picture;
+        }
+        BWTurnShow(holder, load, colour);
+        holder.SetSort(prio);
+        holder.Show(true);
+        BWTurnPut(holder, x, y, size, turn);
+        BWTumbleAdd(holder, x, y, size, turn);
+        return holder;
+    }
+
+    // The same in a row of its own (a seat's dice): made into `parent`, not pooled.
+    protected Widget BWTurnIn(Widget parent, string picture, float x, float y, float size)
+    {
+        Widget holder = MakeLayout(LAYOUT_BWTURN, parent, "OZG_BWTurn");
+        if (!holder)
+            return null;
+        BWTurnShow(holder, picture, ARGB(255, 255, 255, 255));
+        holder.Show(true);
+        BWTurnPut(holder, x, y, size, 0);
+        BWTumbleAdd(holder, x, y, size, 0);
+        return holder;
     }
 
     // A plain panel of a pool, in units of its parent.
@@ -530,6 +679,11 @@ modded class OZG_GameMenu
     protected bool DiceWindow()
     {
         return false;
+    }
+
+    // The dice games' own clock (OZG_GameMenuDiceGames.c: perudo's showdown runs its time).
+    protected void DGTick(float dt)
+    {
     }
 
     protected void DWPaint()
@@ -2198,21 +2352,20 @@ modded class OZG_GameMenu
         m_BWTumbleX.Clear();
         m_BWTumbleY.Clear();
         m_BWTumbleWd.Clear();
-        m_BWTumbleHt.Clear();
         m_BWTumbleRot.Clear();
     }
 
-    // A die (or its shadow) just laid at x, y, w x h units of its parent: it tumbles
-    // with the next throw heard, and with one under way.
-    protected void BWTumbleAdd(Widget w, float x, float y, float width, float height, float rest = 0)
+    // A die's frame (or its shadow's, its ring's: BWTurnPic) whose picture was just laid
+    // at x, y, `size` units of its parent, turned `rest` degrees: it tumbles with the next
+    // throw heard, and with one under way.
+    protected void BWTumbleAdd(Widget w, float x, float y, float size, float rest)
     {
         if (!w || !m_BWTumbleW)
             return;
         m_BWTumbleW.Insert(w);
         m_BWTumbleX.Insert(x);
         m_BWTumbleY.Insert(y);
-        m_BWTumbleWd.Insert(width);
-        m_BWTumbleHt.Insert(height);
+        m_BWTumbleWd.Insert(size);
         m_BWTumbleRot.Insert(rest);
     }
 
@@ -2249,13 +2402,10 @@ modded class OZG_GameMenu
             Widget w = m_BWTumbleW[i];
             if (!w)
                 continue;
-            float width = m_BWTumbleWd[i] * sc;
-            float height = m_BWTumbleHt[i] * sc;
-            float x = m_BWTumbleX[i] + (m_BWTumbleWd[i] - width) * 0.5;
-            float y = m_BWTumbleY[i] + (m_BWTumbleHt[i] - height) * 0.5 + ty;
-            w.SetPos(x * m_K, y * m_K);
-            w.SetSize(width * m_K, height * m_K);
-            w.SetRotation(0, 0, rot + m_BWTumbleRot[i]);
+            float size = m_BWTumbleWd[i] * sc;
+            float x = m_BWTumbleX[i] + (m_BWTumbleWd[i] - size) * 0.5;
+            float y = m_BWTumbleY[i] + (m_BWTumbleWd[i] - size) * 0.5 + ty;
+            BWTurnPut(w, x, y, size, rot + m_BWTumbleRot[i]);
         }
     }
 
@@ -2408,7 +2558,11 @@ modded class OZG_GameMenu
         if (m_BWFoldAsk)
         {
             array<string> fold = new array<string>();
-            BWWrap(BWText("OZG_BFoldText0"), Tr("STR_OZG_BWIN_FOLD_TEXT"), 412, 2, fold);
+            // a can of dice is no board with pieces
+            string foldWords = Tr("STR_OZG_BWIN_FOLD_TEXT");
+            if (DiceWindow())
+                foldWords = Tr("STR_OZG_DWIN_FOLD_TEXT");
+            BWWrap(BWText("OZG_BFoldText0"), foldWords, 412, 2, fold);
             string q0 = "";
             string q1 = "";
             if (fold.Count() > 0)
@@ -2435,6 +2589,14 @@ modded class OZG_GameMenu
                 text = text + ". ";
             text = text + result;
         }
+        BWOverLay(text, 0);
+    }
+
+    // The game over's box round its words: one line as the canvas has it; two: 21 taller;
+    // `down` units lower (the dice boards' lies in the middle of what is under the header).
+    // "Нова партія" is the host's.
+    protected void BWOverLay(string text, float down)
+    {
         array<string> lines = new array<string>();
         BWWrap(BWText("OZG_BOverText0"), text, 412, 2, lines);
         string o0 = "";
@@ -2452,18 +2614,18 @@ modded class OZG_GameMenu
         Widget box = BW("OZG_BOverBox");
         if (box)
         {
-            box.SetPos(570 * m_K, (367.5 - extra / 2) * m_K);
+            box.SetPos(570 * m_K, (367.5 + down - extra / 2) * m_K);
             box.SetSize(460 * m_K, (165 + extra) * m_K);
             Widget edge = BW("OZG_BOverBoxEdge");
             Widget bg = BW("OZG_BOverBoxBg");
             BWFit(edge, 462, 167 + extra, 9);
             BWFit(bg, 460, 165 + extra, 8);
         }
-        BWMove(BW("OZG_BOverTitle"), 594, 389.5 - extra / 2);
-        BWMove(BW("OZG_BOverText0"), 594, 435.5 - extra / 2);
-        BWMove(BW("OZG_BOverText1"), 594, 456.5 - extra / 2);
-        BWMove(BW("OZG_BOverBtnNew"), 594, 470.5 + extra / 2);
-        BWMove(BW("OZG_BOverBtnLook"), 804, 470.5 + extra / 2);
+        BWMove(BW("OZG_BOverTitle"), 594, 389.5 + down - extra / 2);
+        BWMove(BW("OZG_BOverText0"), 594, 435.5 + down - extra / 2);
+        BWMove(BW("OZG_BOverText1"), 594, 456.5 + down - extra / 2);
+        BWMove(BW("OZG_BOverBtnNew"), 594, 470.5 + down + extra / 2);
+        BWMove(BW("OZG_BOverBtnLook"), 804, 470.5 + down + extra / 2);
         BWShow("OZG_BOverBtnNew", m_V.IsHost == 1);
     }
 
@@ -2492,8 +2654,12 @@ modded class OZG_GameMenu
         if (!t)
             return;
         BWShow("OZG_BSeen", true);
+        // the box under the felt is narrower than the one under a board
+        float room = 708;
+        if (DiceWindow())
+            room = 568;
         array<string> lines = new array<string>();
-        BWWrap(t, text, 708, 1, lines);
+        BWWrap(t, text, room, 1, lines);
         string first = "";
         if (lines.Count() > 0)
             first = lines[0];
@@ -3092,6 +3258,7 @@ modded class OZG_GameMenu
         if (m_BWSlideT.Count() > 0 || m_BWFadeW.Count() > 0)
             BWTickPieces(timeslice);
         BWTickTumble(timeslice);
+        DGTick(timeslice);
         // The sleight's timer, a second at a time; the line under the board, its time.
         m_BWWaitAge = m_BWWaitAge + timeslice;
         m_BWTickAge = m_BWTickAge + timeslice;

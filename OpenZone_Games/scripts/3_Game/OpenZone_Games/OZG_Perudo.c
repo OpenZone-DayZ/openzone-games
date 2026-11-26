@@ -43,6 +43,7 @@ class OZG_Perudo extends OZG_DiceGame
     protected int m_LastBidFace;
     protected bool m_LastPalifico;
     protected int m_LastLoser = -1;
+    protected int m_LastBidder = -1;
     protected ref array<string> m_LastShown;
 
     void OZG_Perudo()
@@ -73,6 +74,15 @@ class OZG_Perudo extends OZG_DiceGame
         return true;
     }
 
+    // A seat throws the dice it has left: the first of its can.
+    override int DiceThrown(int seat)
+    {
+        int i = m_Seats.Find(seat);
+        if (i < 0 || i >= m_Count.Count() || m_Gone.Find(i) >= 0)
+            return 0;
+        return m_Count[i];
+    }
+
     // A die may be swapped into his can at the start of a round, in his turn, before the
     // first bid (the canvas's perudo); it lies from the next round's throw.
     override bool ThrowsNext(int seat)
@@ -98,6 +108,7 @@ class OZG_Perudo extends OZG_DiceGame
         m_Palifico = false;
         m_LastShown.Clear();
         m_LastLoser = -1;
+        m_LastBidder = -1;
         PeRound(m_Turn);
         return true;
     }
@@ -225,6 +236,9 @@ class OZG_Perudo extends OZG_DiceGame
         m_LastBidFace = m_BidFace;
         m_LastPalifico = m_Palifico;
         m_LastLoser = loserSeat;
+        m_LastBidder = -1;
+        if (m_Bidder >= 0 && m_Bidder < m_Seats.Count())
+            m_LastBidder = m_Seats[m_Bidder];
         m_LastShown.Clear();
         for (int s = 0; s < m_Seats.Count(); s++)
         {
@@ -324,7 +338,11 @@ class OZG_Perudo extends OZG_DiceGame
         v.GameId = GameId();
         for (int i = 0; i < m_Seats.Count(); i++)
         {
-            OZG_GSeat g = DgPlate(m_Seats[i], "", OZG_Words.W1("STR_OZG_PERUDO_DICE", m_Count[i].ToString()));
+            // the words made first (dice poker's view says why)
+            int plateSeat = m_Seats[i];
+            string plateCount = m_Count[i].ToString();
+            string plateLine = OZG_Words.W1("STR_OZG_PERUDO_DICE", plateCount);
+            OZG_GSeat g = DgPlate(plateSeat, "", plateLine);
             if (m_Gone.Find(i) >= 0)
                 g.Out = 1;
             v.SeatList.Insert(g);
@@ -352,8 +370,8 @@ class OZG_Perudo extends OZG_DiceGame
             v.Zones.Insert(shown);
         }
         // the window: the bid (count, face, bidder's seat), palifico, the dice on the table;
-        // the last showdown while no new bid stands (its bid, wild ones, the loser, the dice
-        // of every seat)
+        // the last showdown while no new bid stands (its bid, wild ones, the loser, whose
+        // bid it was, the dice of every seat)
         OZG_GZone state = new OZG_GZone();
         state.Id = "perudo";
         int bidder = -1;
@@ -364,7 +382,9 @@ class OZG_Perudo extends OZG_DiceGame
             pal = 1;
         state.Line = m_BidCount.ToString() + "|" + m_BidFace.ToString() + "|" + bidder.ToString() + "|" + pal.ToString() + "|" + InPlay().ToString();
         v.Zones.Insert(state);
-        if (m_Bidder < 0 && m_LastShown.Count() > 0)
+        // (the last showdown of a game stays: the window shows it under its last words)
+        bool openNow = m_Bidder < 0 || m_Over;
+        if (openNow && m_LastShown.Count() > 0)
         {
             OZG_GZone open = new OZG_GZone();
             open.Id = "perudo_open";
@@ -372,6 +392,7 @@ class OZG_Perudo extends OZG_DiceGame
             if (m_LastPalifico)
                 lastPal = 1;
             string line = m_LastBidCount.ToString() + "|" + m_LastBidFace.ToString() + "|" + lastPal.ToString() + "|" + m_LastLoser.ToString();
+            line = line + "|" + m_LastBidder.ToString();
             for (int k = 0; k < m_LastShown.Count(); k++)
                 line = line + "|" + m_Seats[k].ToString() + "=" + m_LastShown[k];
             open.Line = line;

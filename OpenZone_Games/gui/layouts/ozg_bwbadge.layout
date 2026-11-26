@@ -35,6 +35,7 @@ FrameWidgetClass OZG_BWBadge {
      mode blend
      "src alpha" 1
      "stretch mode" stretch_w_h
+     "clamp mode" clamp
     }
     ImageWidgetClass OZG_BWBadgeBgTR {
      ignorepointer 1
@@ -50,6 +51,7 @@ FrameWidgetClass OZG_BWBadge {
      mode blend
      "src alpha" 1
      "stretch mode" stretch_w_h
+     "clamp mode" clamp
     }
     ImageWidgetClass OZG_BWBadgeBgBL {
      ignorepointer 1
@@ -65,6 +67,7 @@ FrameWidgetClass OZG_BWBadge {
      mode blend
      "src alpha" 1
      "stretch mode" stretch_w_h
+     "clamp mode" clamp
     }
     ImageWidgetClass OZG_BWBadgeBgBR {
      ignorepointer 1
@@ -80,6 +83,7 @@ FrameWidgetClass OZG_BWBadge {
      mode blend
      "src alpha" 1
      "stretch mode" stretch_w_h
+     "clamp mode" clamp
     }
     PanelWidgetClass OZG_BWBadgeBgM {
      ignorepointer 1

@@ -24,6 +24,7 @@ FrameWidgetClass OZG_DBadge {
    mode blend
    "src alpha" 1
    "stretch mode" stretch_w_h
+   "clamp mode" clamp
   }
   ImageWidgetClass OZG_DBadgeBg {
    ignorepointer 1
@@ -39,6 +40,7 @@ FrameWidgetClass OZG_DBadge {
    mode blend
    "src alpha" 1
    "stretch mode" stretch_w_h
+   "clamp mode" clamp
   }
   TextWidgetClass OZG_DBadgeText {
    ignorepointer 1

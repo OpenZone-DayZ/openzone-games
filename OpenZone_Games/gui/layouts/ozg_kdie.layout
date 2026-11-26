@@ -23,6 +23,7 @@ FrameWidgetClass OZG_KDie {
    mode blend
    "src alpha" 1
    "stretch mode" stretch_w_h
+   "clamp mode" clamp
   }
   FrameWidgetClass OZG_KDieRing {
    ignorepointer 1
@@ -50,6 +51,7 @@ FrameWidgetClass OZG_KDie {
      mode blend
      "src alpha" 1
      "stretch mode" stretch_w_h
+     "clamp mode" clamp
     }
     ImageWidgetClass OZG_KDieRingTR {
      ignorepointer 1
@@ -65,6 +67,7 @@ FrameWidgetClass OZG_KDie {
      mode blend
      "src alpha" 1
      "stretch mode" stretch_w_h
+     "clamp mode" clamp
     }
     ImageWidgetClass OZG_KDieRingBL {
      ignorepointer 1
@@ -80,6 +83,7 @@ FrameWidgetClass OZG_KDie {
      mode blend
      "src alpha" 1
      "stretch mode" stretch_w_h
+     "clamp mode" clamp
     }
     ImageWidgetClass OZG_KDieRingBR {
      ignorepointer 1
@@ -95,11 +99,12 @@ FrameWidgetClass OZG_KDie {
      mode blend
      "src alpha" 1
      "stretch mode" stretch_w_h
+     "clamp mode" clamp
     }
     PanelWidgetClass OZG_KDieRingM {
      ignorepointer 1
-     position 0 15
-     size 70 40
+     position 0 14
+     size 70 42
      hexactpos 1
      vexactpos 1
      hexactsize 1
@@ -110,8 +115,8 @@ FrameWidgetClass OZG_KDie {
     }
     PanelWidgetClass OZG_KDieRingT {
      ignorepointer 1
-     position 15 0
-     size 40 15
+     position 14 0
+     size 42 16
      hexactpos 1
      vexactpos 1
      hexactsize 1
@@ -122,8 +127,8 @@ FrameWidgetClass OZG_KDie {
     }
     PanelWidgetClass OZG_KDieRingB {
      ignorepointer 1
-     position 15 55
-     size 40 15
+     position 14 54
+     size 42 16
      hexactpos 1
      vexactpos 1
      hexactsize 1
@@ -147,6 +152,7 @@ FrameWidgetClass OZG_KDie {
    mode blend
    "src alpha" 1
    "stretch mode" stretch_w_h
+   "clamp mode" clamp
   }
   FrameWidgetClass OZG_KDieBadge {
    ignorepointer 1
@@ -174,6 +180,7 @@ FrameWidgetClass OZG_KDie {
      mode blend
      "src alpha" 1
      "stretch mode" stretch_w_h
+     "clamp mode" clamp
     }
     ImageWidgetClass OZG_KDieBadgeBg {
      ignorepointer 1
@@ -189,6 +196,7 @@ FrameWidgetClass OZG_KDie {
      mode blend
      "src alpha" 1
      "stretch mode" stretch_w_h
+     "clamp mode" clamp
     }
     TextWidgetClass OZG_KDieBadgeText {
      ignorepointer 1

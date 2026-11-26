@@ -81,6 +81,13 @@ class OZG_Game
         return 0;
     }
 
+    // How many of its dice a seat throws now: all of them, but for a game that takes
+    // dice away (perudo). The first so many of the seat's dice are the ones thrown.
+    int DiceThrown(int seat)
+    {
+        return DiceNeeded();
+    }
+
     // ---- cheating at a board and with dice (boards and dice design §9, §10) --
 
     // A sleight on the board by `seat` (§9.1): `kind` "move" (a piece from

@@ -57,6 +57,7 @@ FrameWidgetClass OZG_DGC_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHActBoxEdgeTR {
          ignorepointer 1
@@ -72,6 +73,7 @@ FrameWidgetClass OZG_DGC_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHActBoxEdgeBL {
          ignorepointer 1
@@ -87,6 +89,7 @@ FrameWidgetClass OZG_DGC_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHActBoxEdgeBR {
          ignorepointer 1
@@ -102,11 +105,12 @@ FrameWidgetClass OZG_DGC_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DHActBoxEdgeM {
          ignorepointer 1
-         position 0 5.75
-         size 360 119.5
+         position 0 5
+         size 360 121
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -117,8 +121,8 @@ FrameWidgetClass OZG_DGC_high {
         }
         PanelWidgetClass OZG_DHActBoxEdgeT {
          ignorepointer 1
-         position 5.75 0
-         size 348.5 6
+         position 5 0
+         size 350 7
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -129,8 +133,8 @@ FrameWidgetClass OZG_DGC_high {
         }
         PanelWidgetClass OZG_DHActBoxEdgeB {
          ignorepointer 1
-         position 5.75 125
-         size 348.5 6
+         position 5 124
+         size 350 7
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -166,6 +170,7 @@ FrameWidgetClass OZG_DGC_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHActBoxBgTR {
          ignorepointer 1
@@ -181,6 +186,7 @@ FrameWidgetClass OZG_DGC_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHActBoxBgBL {
          ignorepointer 1
@@ -196,6 +202,7 @@ FrameWidgetClass OZG_DGC_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_DHActBoxBgBR {
          ignorepointer 1
@@ -211,11 +218,12 @@ FrameWidgetClass OZG_DGC_high {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_DHActBoxBgM {
          ignorepointer 1
-         position 0 4.75
-         size 358 119.5
+         position 0 4
+         size 358 121
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -226,8 +234,8 @@ FrameWidgetClass OZG_DGC_high {
         }
         PanelWidgetClass OZG_DHActBoxBgT {
          ignorepointer 1
-         position 4.75 0
-         size 348.5 5
+         position 4 0
+         size 350 6
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -238,8 +246,8 @@ FrameWidgetClass OZG_DGC_high {
         }
         PanelWidgetClass OZG_DHActBoxBgB {
          ignorepointer 1
-         position 4.75 124
-         size 348.5 5
+         position 4 123
+         size 350 6
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -334,6 +342,7 @@ FrameWidgetClass OZG_DGC_high {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DHThrowBoxBgTR {
            ignorepointer 1
@@ -349,6 +358,7 @@ FrameWidgetClass OZG_DGC_high {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DHThrowBoxBgBL {
            ignorepointer 1
@@ -364,6 +374,7 @@ FrameWidgetClass OZG_DGC_high {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_DHThrowBoxBgBR {
            ignorepointer 1
@@ -379,11 +390,12 @@ FrameWidgetClass OZG_DGC_high {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           PanelWidgetClass OZG_DHThrowBoxBgM {
            ignorepointer 1
-           position 0 3.75
-           size 336 38.5
+           position 0 3
+           size 336 40
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -394,8 +406,8 @@ FrameWidgetClass OZG_DGC_high {
           }
           PanelWidgetClass OZG_DHThrowBoxBgT {
            ignorepointer 1
-           position 3.75 0
-           size 328.5 4
+           position 3 0
+           size 330 5
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -406,8 +418,8 @@ FrameWidgetClass OZG_DGC_high {
           }
           PanelWidgetClass OZG_DHThrowBoxBgB {
            ignorepointer 1
-           position 3.75 42
-           size 328.5 4
+           position 3 41
+           size 330 5
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -430,7 +442,7 @@ FrameWidgetClass OZG_DGC_high {
        vexactsize 1
        color 0.102 0.071 0.039 1
        text ""
-       font "gui/fonts/MetronBook-Bold22"
+       font "gui/fonts/MetronBook-Bold28"
        "exact text" 1
        "exact text size" 19
        "text halign" center

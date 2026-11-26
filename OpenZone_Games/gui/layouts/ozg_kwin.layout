@@ -60,6 +60,7 @@ FrameWidgetClass OZG_KWin {
        mode blend
        "src alpha" 1
        "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
       ImageWidgetClass OZG_KBoxEdgeTR {
        ignorepointer 1
@@ -75,6 +76,7 @@ FrameWidgetClass OZG_KWin {
        mode blend
        "src alpha" 1
        "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
       ImageWidgetClass OZG_KBoxEdgeBL {
        ignorepointer 1
@@ -90,6 +92,7 @@ FrameWidgetClass OZG_KWin {
        mode blend
        "src alpha" 1
        "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
       ImageWidgetClass OZG_KBoxEdgeBR {
        ignorepointer 1
@@ -105,11 +108,12 @@ FrameWidgetClass OZG_KWin {
        mode blend
        "src alpha" 1
        "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
       PanelWidgetClass OZG_KBoxEdgeM {
        ignorepointer 1
-       position 0 8.75
-       size 1522 828.5
+       position 0 8
+       size 1522 830
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -120,8 +124,8 @@ FrameWidgetClass OZG_KWin {
       }
       PanelWidgetClass OZG_KBoxEdgeT {
        ignorepointer 1
-       position 8.75 0
-       size 1504.5 9
+       position 8 0
+       size 1506 10
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -132,8 +136,8 @@ FrameWidgetClass OZG_KWin {
       }
       PanelWidgetClass OZG_KBoxEdgeB {
        ignorepointer 1
-       position 8.75 837
-       size 1504.5 9
+       position 8 836
+       size 1506 10
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -169,6 +173,7 @@ FrameWidgetClass OZG_KWin {
        mode blend
        "src alpha" 1
        "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
       ImageWidgetClass OZG_KBoxBgTR {
        ignorepointer 1
@@ -184,6 +189,7 @@ FrameWidgetClass OZG_KWin {
        mode blend
        "src alpha" 1
        "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
       ImageWidgetClass OZG_KBoxBgBL {
        ignorepointer 1
@@ -199,6 +205,7 @@ FrameWidgetClass OZG_KWin {
        mode blend
        "src alpha" 1
        "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
       ImageWidgetClass OZG_KBoxBgBR {
        ignorepointer 1
@@ -214,11 +221,12 @@ FrameWidgetClass OZG_KWin {
        mode blend
        "src alpha" 1
        "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
       PanelWidgetClass OZG_KBoxBgM {
        ignorepointer 1
-       position 0 7.75
-       size 1520 828.5
+       position 0 7
+       size 1520 830
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -229,8 +237,8 @@ FrameWidgetClass OZG_KWin {
       }
       PanelWidgetClass OZG_KBoxBgT {
        ignorepointer 1
-       position 7.75 0
-       size 1504.5 8
+       position 7 0
+       size 1506 9
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -241,8 +249,8 @@ FrameWidgetClass OZG_KWin {
       }
       PanelWidgetClass OZG_KBoxBgB {
        ignorepointer 1
-       position 7.75 836
-       size 1504.5 8
+       position 7 835
+       size 1506 9
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -280,6 +288,7 @@ FrameWidgetClass OZG_KWin {
      mode blend
      "src alpha" 1
      "stretch mode" stretch_w_h
+     "clamp mode" clamp
     }
     ImageWidgetClass OZG_KHeadTR {
      ignorepointer 1
@@ -295,6 +304,7 @@ FrameWidgetClass OZG_KWin {
      mode blend
      "src alpha" 1
      "stretch mode" stretch_w_h
+     "clamp mode" clamp
     }
     ImageWidgetClass OZG_KHeadBL {
      ignorepointer 1
@@ -310,6 +320,7 @@ FrameWidgetClass OZG_KWin {
      mode blend
      "src alpha" 1
      "stretch mode" stretch_w_h
+     "clamp mode" clamp
     }
     ImageWidgetClass OZG_KHeadBR {
      ignorepointer 1
@@ -325,11 +336,12 @@ FrameWidgetClass OZG_KWin {
      mode blend
      "src alpha" 1
      "stretch mode" stretch_w_h
+     "clamp mode" clamp
     }
     PanelWidgetClass OZG_KHeadM {
      ignorepointer 1
-     position 0 7.75
-     size 1520 30.5
+     position 0 7
+     size 1520 32
      hexactpos 1
      vexactpos 1
      hexactsize 1
@@ -340,8 +352,8 @@ FrameWidgetClass OZG_KWin {
     }
     PanelWidgetClass OZG_KHeadT {
      ignorepointer 1
-     position 7.75 0
-     size 1504.5 8
+     position 7 0
+     size 1506 9
      hexactpos 1
      vexactpos 1
      hexactsize 1
@@ -352,8 +364,8 @@ FrameWidgetClass OZG_KWin {
     }
     PanelWidgetClass OZG_KHeadB {
      ignorepointer 1
-     position 7.75 38
-     size 1504.5 8
+     position 7 37
+     size 1506 9
      hexactpos 1
      vexactpos 1
      hexactsize 1
@@ -470,6 +482,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KBtnCloseBoxBgTR {
          ignorepointer 1
@@ -485,6 +498,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KBtnCloseBoxBgBL {
          ignorepointer 1
@@ -500,6 +514,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KBtnCloseBoxBgBR {
          ignorepointer 1
@@ -515,11 +530,12 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_KBtnCloseBoxBgM {
          ignorepointer 1
-         position 0 3.75
-         size 32 22.5
+         position 0 3
+         size 32 24
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -530,8 +546,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KBtnCloseBoxBgT {
          ignorepointer 1
-         position 3.75 0
-         size 24.5 4
+         position 3 0
+         size 26 5
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -542,8 +558,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KBtnCloseBoxBgB {
          ignorepointer 1
-         position 3.75 26
-         size 24.5 4
+         position 3 25
+         size 26 5
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -570,6 +586,7 @@ FrameWidgetClass OZG_KWin {
      mode blend
      "src alpha" 1
      "stretch mode" stretch_w_h
+     "clamp mode" clamp
     }
    }
   }
@@ -620,6 +637,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KLeftBoxEdgeTR {
          ignorepointer 1
@@ -635,6 +653,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KLeftBoxEdgeBL {
          ignorepointer 1
@@ -650,6 +669,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KLeftBoxEdgeBR {
          ignorepointer 1
@@ -665,11 +685,12 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_KLeftBoxEdgeM {
          ignorepointer 1
-         position 0 5.75
-         size 340 762.5
+         position 0 5
+         size 340 764
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -680,8 +701,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KLeftBoxEdgeT {
          ignorepointer 1
-         position 5.75 0
-         size 328.5 6
+         position 5 0
+         size 330 7
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -692,8 +713,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KLeftBoxEdgeB {
          ignorepointer 1
-         position 5.75 768
-         size 328.5 6
+         position 5 767
+         size 330 7
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -729,6 +750,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KLeftBoxBgTR {
          ignorepointer 1
@@ -744,6 +766,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KLeftBoxBgBL {
          ignorepointer 1
@@ -759,6 +782,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KLeftBoxBgBR {
          ignorepointer 1
@@ -774,11 +798,12 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_KLeftBoxBgM {
          ignorepointer 1
-         position 0 4.75
-         size 338 762.5
+         position 0 4
+         size 338 764
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -789,8 +814,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KLeftBoxBgT {
          ignorepointer 1
-         position 4.75 0
-         size 328.5 5
+         position 4 0
+         size 330 6
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -801,8 +826,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KLeftBoxBgB {
          ignorepointer 1
-         position 4.75 767
-         size 328.5 5
+         position 4 766
+         size 330 6
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -840,6 +865,7 @@ FrameWidgetClass OZG_KWin {
        mode blend
        "src alpha" 1
        "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
       ImageWidgetClass OZG_KPicBgTR {
        ignorepointer 1
@@ -855,6 +881,7 @@ FrameWidgetClass OZG_KWin {
        mode blend
        "src alpha" 1
        "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
       ImageWidgetClass OZG_KPicBgBL {
        ignorepointer 1
@@ -870,6 +897,7 @@ FrameWidgetClass OZG_KWin {
        mode blend
        "src alpha" 1
        "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
       ImageWidgetClass OZG_KPicBgBR {
        ignorepointer 1
@@ -885,11 +913,12 @@ FrameWidgetClass OZG_KWin {
        mode blend
        "src alpha" 1
        "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
       PanelWidgetClass OZG_KPicBgM {
        ignorepointer 1
-       position 0 5.75
-       size 312 222.5
+       position 0 5
+       size 312 224
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -900,8 +929,8 @@ FrameWidgetClass OZG_KWin {
       }
       PanelWidgetClass OZG_KPicBgT {
        ignorepointer 1
-       position 5.75 0
-       size 300.5 6
+       position 5 0
+       size 302 7
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -912,8 +941,8 @@ FrameWidgetClass OZG_KWin {
       }
       PanelWidgetClass OZG_KPicBgB {
        ignorepointer 1
-       position 5.75 228
-       size 300.5 6
+       position 5 227
+       size 302 7
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -938,6 +967,7 @@ FrameWidgetClass OZG_KWin {
      mode blend
      "src alpha" 1
      "stretch mode" stretch_w_h
+     "clamp mode" clamp
     }
     TextWidgetClass OZG_KUsesLabel {
      ignorepointer 1
@@ -970,6 +1000,7 @@ FrameWidgetClass OZG_KWin {
      mode blend
      "src alpha" 1
      "stretch mode" stretch_w_h
+     "clamp mode" clamp
     }
     ImageWidgetClass OZG_KUse1 {
      ignorepointer 1
@@ -985,6 +1016,7 @@ FrameWidgetClass OZG_KWin {
      mode blend
      "src alpha" 1
      "stretch mode" stretch_w_h
+     "clamp mode" clamp
     }
     ImageWidgetClass OZG_KUse2 {
      ignorepointer 1
@@ -1000,6 +1032,7 @@ FrameWidgetClass OZG_KWin {
      mode blend
      "src alpha" 1
      "stretch mode" stretch_w_h
+     "clamp mode" clamp
     }
     TextWidgetClass OZG_KNoteA0 {
      ignorepointer 1
@@ -1215,6 +1248,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KMidBoxEdgeTR {
          ignorepointer 1
@@ -1230,6 +1264,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KMidBoxEdgeBL {
          ignorepointer 1
@@ -1245,6 +1280,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KMidBoxEdgeBR {
          ignorepointer 1
@@ -1260,11 +1296,12 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_KMidBoxEdgeM {
          ignorepointer 1
-         position 0 5.75
-         size 748 762.5
+         position 0 5
+         size 748 764
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1275,8 +1312,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KMidBoxEdgeT {
          ignorepointer 1
-         position 5.75 0
-         size 736.5 6
+         position 5 0
+         size 738 7
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1287,8 +1324,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KMidBoxEdgeB {
          ignorepointer 1
-         position 5.75 768
-         size 736.5 6
+         position 5 767
+         size 738 7
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1324,6 +1361,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KMidBoxBgTR {
          ignorepointer 1
@@ -1339,6 +1377,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KMidBoxBgBL {
          ignorepointer 1
@@ -1354,6 +1393,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KMidBoxBgBR {
          ignorepointer 1
@@ -1369,11 +1409,12 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_KMidBoxBgM {
          ignorepointer 1
-         position 0 4.75
-         size 746 762.5
+         position 0 4
+         size 746 764
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1384,8 +1425,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KMidBoxBgT {
          ignorepointer 1
-         position 4.75 0
-         size 736.5 5
+         position 4 0
+         size 738 6
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1396,8 +1437,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KMidBoxBgB {
          ignorepointer 1
-         position 4.75 767
-         size 736.5 5
+         position 4 766
+         size 738 6
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1623,6 +1664,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KRightBoxEdgeTR {
          ignorepointer 1
@@ -1638,6 +1680,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KRightBoxEdgeBL {
          ignorepointer 1
@@ -1653,6 +1696,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KRightBoxEdgeBR {
          ignorepointer 1
@@ -1668,11 +1712,12 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_KRightBoxEdgeM {
          ignorepointer 1
-         position 0 5.75
-         size 384 762.5
+         position 0 5
+         size 384 764
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1683,8 +1728,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KRightBoxEdgeT {
          ignorepointer 1
-         position 5.75 0
-         size 372.5 6
+         position 5 0
+         size 374 7
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1695,8 +1740,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KRightBoxEdgeB {
          ignorepointer 1
-         position 5.75 768
-         size 372.5 6
+         position 5 767
+         size 374 7
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1732,6 +1777,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KRightBoxBgTR {
          ignorepointer 1
@@ -1747,6 +1793,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KRightBoxBgBL {
          ignorepointer 1
@@ -1762,6 +1809,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KRightBoxBgBR {
          ignorepointer 1
@@ -1777,11 +1825,12 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_KRightBoxBgM {
          ignorepointer 1
-         position 0 4.75
-         size 382 762.5
+         position 0 4
+         size 382 764
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1792,8 +1841,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KRightBoxBgT {
          ignorepointer 1
-         position 4.75 0
-         size 372.5 5
+         position 4 0
+         size 374 6
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1804,8 +1853,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KRightBoxBgB {
          ignorepointer 1
-         position 4.75 767
-         size 372.5 5
+         position 4 766
+         size 374 6
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1953,6 +2002,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace0RingTR {
          ignorepointer 1
@@ -1968,6 +2018,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace0RingBL {
          ignorepointer 1
@@ -1983,6 +2034,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace0RingBR {
          ignorepointer 1
@@ -1998,11 +2050,12 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_KFace0RingM {
          ignorepointer 1
-         position 0 9.75
-         size 60.5 36.5
+         position 0 9
+         size 60.5 38
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2013,8 +2066,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KFace0RingT {
          ignorepointer 1
-         position 9.75 0
-         size 41 10
+         position 9 0
+         size 42.5 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2025,8 +2078,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KFace0RingB {
          ignorepointer 1
-         position 9.75 46
-         size 41 10
+         position 9 45
+         size 42.5 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2062,6 +2115,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace0BgTR {
          ignorepointer 1
@@ -2077,6 +2131,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace0BgBL {
          ignorepointer 1
@@ -2092,6 +2147,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace0BgBR {
          ignorepointer 1
@@ -2107,11 +2163,12 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_KFace0BgM {
          ignorepointer 1
-         position 0 7.75
-         size 54.5 34.5
+         position 0 7
+         size 54.5 36
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2122,8 +2179,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KFace0BgT {
          ignorepointer 1
-         position 7.75 0
-         size 39 8
+         position 7 0
+         size 40.5 9
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2134,8 +2191,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KFace0BgB {
          ignorepointer 1
-         position 7.75 42
-         size 39 8
+         position 7 41
+         size 40.5 9
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2159,6 +2216,7 @@ FrameWidgetClass OZG_KWin {
        mode blend
        "src alpha" 1
        "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
      }
     }
@@ -2201,6 +2259,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace1RingTR {
          ignorepointer 1
@@ -2216,6 +2275,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace1RingBL {
          ignorepointer 1
@@ -2231,6 +2291,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace1RingBR {
          ignorepointer 1
@@ -2246,11 +2307,12 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_KFace1RingM {
          ignorepointer 1
-         position 0 9.75
-         size 60.5 36.5
+         position 0 9
+         size 60.5 38
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2261,8 +2323,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KFace1RingT {
          ignorepointer 1
-         position 9.75 0
-         size 41 10
+         position 9 0
+         size 42.5 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2273,8 +2335,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KFace1RingB {
          ignorepointer 1
-         position 9.75 46
-         size 41 10
+         position 9 45
+         size 42.5 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2310,6 +2372,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace1BgTR {
          ignorepointer 1
@@ -2325,6 +2388,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace1BgBL {
          ignorepointer 1
@@ -2340,6 +2404,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace1BgBR {
          ignorepointer 1
@@ -2355,11 +2420,12 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_KFace1BgM {
          ignorepointer 1
-         position 0 7.75
-         size 54.5 34.5
+         position 0 7
+         size 54.5 36
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2370,8 +2436,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KFace1BgT {
          ignorepointer 1
-         position 7.75 0
-         size 39 8
+         position 7 0
+         size 40.5 9
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2382,8 +2448,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KFace1BgB {
          ignorepointer 1
-         position 7.75 42
-         size 39 8
+         position 7 41
+         size 40.5 9
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2407,6 +2473,7 @@ FrameWidgetClass OZG_KWin {
        mode blend
        "src alpha" 1
        "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
      }
     }
@@ -2449,6 +2516,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace2RingTR {
          ignorepointer 1
@@ -2464,6 +2532,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace2RingBL {
          ignorepointer 1
@@ -2479,6 +2548,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace2RingBR {
          ignorepointer 1
@@ -2494,11 +2564,12 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_KFace2RingM {
          ignorepointer 1
-         position 0 9.75
-         size 60.5 36.5
+         position 0 9
+         size 60.5 38
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2509,8 +2580,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KFace2RingT {
          ignorepointer 1
-         position 9.75 0
-         size 41 10
+         position 9 0
+         size 42.5 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2521,8 +2592,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KFace2RingB {
          ignorepointer 1
-         position 9.75 46
-         size 41 10
+         position 9 45
+         size 42.5 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2558,6 +2629,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace2BgTR {
          ignorepointer 1
@@ -2573,6 +2645,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace2BgBL {
          ignorepointer 1
@@ -2588,6 +2661,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace2BgBR {
          ignorepointer 1
@@ -2603,11 +2677,12 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_KFace2BgM {
          ignorepointer 1
-         position 0 7.75
-         size 54.5 34.5
+         position 0 7
+         size 54.5 36
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2618,8 +2693,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KFace2BgT {
          ignorepointer 1
-         position 7.75 0
-         size 39 8
+         position 7 0
+         size 40.5 9
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2630,8 +2705,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KFace2BgB {
          ignorepointer 1
-         position 7.75 42
-         size 39 8
+         position 7 41
+         size 40.5 9
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2655,6 +2730,7 @@ FrameWidgetClass OZG_KWin {
        mode blend
        "src alpha" 1
        "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
      }
     }
@@ -2697,6 +2773,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace3RingTR {
          ignorepointer 1
@@ -2712,6 +2789,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace3RingBL {
          ignorepointer 1
@@ -2727,6 +2805,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace3RingBR {
          ignorepointer 1
@@ -2742,11 +2821,12 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_KFace3RingM {
          ignorepointer 1
-         position 0 9.75
-         size 60.5 36.5
+         position 0 9
+         size 60.5 38
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2757,8 +2837,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KFace3RingT {
          ignorepointer 1
-         position 9.75 0
-         size 41 10
+         position 9 0
+         size 42.5 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2769,8 +2849,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KFace3RingB {
          ignorepointer 1
-         position 9.75 46
-         size 41 10
+         position 9 45
+         size 42.5 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2806,6 +2886,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace3BgTR {
          ignorepointer 1
@@ -2821,6 +2902,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace3BgBL {
          ignorepointer 1
@@ -2836,6 +2918,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace3BgBR {
          ignorepointer 1
@@ -2851,11 +2934,12 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_KFace3BgM {
          ignorepointer 1
-         position 0 7.75
-         size 54.5 34.5
+         position 0 7
+         size 54.5 36
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2866,8 +2950,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KFace3BgT {
          ignorepointer 1
-         position 7.75 0
-         size 39 8
+         position 7 0
+         size 40.5 9
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2878,8 +2962,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KFace3BgB {
          ignorepointer 1
-         position 7.75 42
-         size 39 8
+         position 7 41
+         size 40.5 9
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -2903,6 +2987,7 @@ FrameWidgetClass OZG_KWin {
        mode blend
        "src alpha" 1
        "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
      }
     }
@@ -2945,6 +3030,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace4RingTR {
          ignorepointer 1
@@ -2960,6 +3046,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace4RingBL {
          ignorepointer 1
@@ -2975,6 +3062,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace4RingBR {
          ignorepointer 1
@@ -2990,11 +3078,12 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_KFace4RingM {
          ignorepointer 1
-         position 0 9.75
-         size 60.5 36.5
+         position 0 9
+         size 60.5 38
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3005,8 +3094,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KFace4RingT {
          ignorepointer 1
-         position 9.75 0
-         size 41 10
+         position 9 0
+         size 42.5 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3017,8 +3106,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KFace4RingB {
          ignorepointer 1
-         position 9.75 46
-         size 41 10
+         position 9 45
+         size 42.5 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3054,6 +3143,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace4BgTR {
          ignorepointer 1
@@ -3069,6 +3159,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace4BgBL {
          ignorepointer 1
@@ -3084,6 +3175,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace4BgBR {
          ignorepointer 1
@@ -3099,11 +3191,12 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_KFace4BgM {
          ignorepointer 1
-         position 0 7.75
-         size 54.5 34.5
+         position 0 7
+         size 54.5 36
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3114,8 +3207,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KFace4BgT {
          ignorepointer 1
-         position 7.75 0
-         size 39 8
+         position 7 0
+         size 40.5 9
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3126,8 +3219,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KFace4BgB {
          ignorepointer 1
-         position 7.75 42
-         size 39 8
+         position 7 41
+         size 40.5 9
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3151,6 +3244,7 @@ FrameWidgetClass OZG_KWin {
        mode blend
        "src alpha" 1
        "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
      }
     }
@@ -3193,6 +3287,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace5RingTR {
          ignorepointer 1
@@ -3208,6 +3303,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace5RingBL {
          ignorepointer 1
@@ -3223,6 +3319,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace5RingBR {
          ignorepointer 1
@@ -3238,11 +3335,12 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_KFace5RingM {
          ignorepointer 1
-         position 0 9.75
-         size 60.5 36.5
+         position 0 9
+         size 60.5 38
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3253,8 +3351,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KFace5RingT {
          ignorepointer 1
-         position 9.75 0
-         size 41 10
+         position 9 0
+         size 42.5 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3265,8 +3363,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KFace5RingB {
          ignorepointer 1
-         position 9.75 46
-         size 41 10
+         position 9 45
+         size 42.5 11
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3302,6 +3400,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace5BgTR {
          ignorepointer 1
@@ -3317,6 +3416,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace5BgBL {
          ignorepointer 1
@@ -3332,6 +3432,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KFace5BgBR {
          ignorepointer 1
@@ -3347,11 +3448,12 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_KFace5BgM {
          ignorepointer 1
-         position 0 7.75
-         size 54.5 34.5
+         position 0 7
+         size 54.5 36
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3362,8 +3464,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KFace5BgT {
          ignorepointer 1
-         position 7.75 0
-         size 39 8
+         position 7 0
+         size 40.5 9
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3374,8 +3476,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KFace5BgB {
          ignorepointer 1
-         position 7.75 42
-         size 39 8
+         position 7 41
+         size 40.5 9
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -3399,6 +3501,7 @@ FrameWidgetClass OZG_KWin {
        mode blend
        "src alpha" 1
        "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
      }
     }
@@ -3467,6 +3570,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KWeight0BoxEdgeTR {
            ignorepointer 1
@@ -3482,6 +3586,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KWeight0BoxEdgeBL {
            ignorepointer 1
@@ -3497,6 +3602,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KWeight0BoxEdgeBR {
            ignorepointer 1
@@ -3512,11 +3618,12 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           PanelWidgetClass OZG_KWeight0BoxEdgeM {
            ignorepointer 1
-           position 0 5.75
-           size 356 34.5
+           position 0 5
+           size 356 36
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3527,8 +3634,8 @@ FrameWidgetClass OZG_KWin {
           }
           PanelWidgetClass OZG_KWeight0BoxEdgeT {
            ignorepointer 1
-           position 5.75 0
-           size 344.5 6
+           position 5 0
+           size 346 7
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3539,8 +3646,8 @@ FrameWidgetClass OZG_KWin {
           }
           PanelWidgetClass OZG_KWeight0BoxEdgeB {
            ignorepointer 1
-           position 5.75 40
-           size 344.5 6
+           position 5 39
+           size 346 7
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3576,6 +3683,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KWeight0BoxBgTR {
            ignorepointer 1
@@ -3591,6 +3699,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KWeight0BoxBgBL {
            ignorepointer 1
@@ -3606,6 +3715,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KWeight0BoxBgBR {
            ignorepointer 1
@@ -3621,11 +3731,12 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           PanelWidgetClass OZG_KWeight0BoxBgM {
            ignorepointer 1
-           position 0 4.75
-           size 354 34.5
+           position 0 4
+           size 354 36
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3636,8 +3747,8 @@ FrameWidgetClass OZG_KWin {
           }
           PanelWidgetClass OZG_KWeight0BoxBgT {
            ignorepointer 1
-           position 4.75 0
-           size 344.5 5
+           position 4 0
+           size 346 6
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3648,8 +3759,8 @@ FrameWidgetClass OZG_KWin {
           }
           PanelWidgetClass OZG_KWeight0BoxBgB {
            ignorepointer 1
-           position 4.75 39
-           size 344.5 5
+           position 4 38
+           size 346 6
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3672,7 +3783,7 @@ FrameWidgetClass OZG_KWin {
        vexactsize 1
        color 0.937 0.894 0.800 1
        text ""
-       font "gui/fonts/MetronBook-Bold22"
+       font "gui/fonts/MetronBook-Bold28"
        "exact text" 1
        "exact text size" 17
        "text halign" left
@@ -3746,6 +3857,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KWeight1BoxEdgeTR {
            ignorepointer 1
@@ -3761,6 +3873,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KWeight1BoxEdgeBL {
            ignorepointer 1
@@ -3776,6 +3889,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KWeight1BoxEdgeBR {
            ignorepointer 1
@@ -3791,11 +3905,12 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           PanelWidgetClass OZG_KWeight1BoxEdgeM {
            ignorepointer 1
-           position 0 5.75
-           size 356 34.5
+           position 0 5
+           size 356 36
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3806,8 +3921,8 @@ FrameWidgetClass OZG_KWin {
           }
           PanelWidgetClass OZG_KWeight1BoxEdgeT {
            ignorepointer 1
-           position 5.75 0
-           size 344.5 6
+           position 5 0
+           size 346 7
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3818,8 +3933,8 @@ FrameWidgetClass OZG_KWin {
           }
           PanelWidgetClass OZG_KWeight1BoxEdgeB {
            ignorepointer 1
-           position 5.75 40
-           size 344.5 6
+           position 5 39
+           size 346 7
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3855,6 +3970,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KWeight1BoxBgTR {
            ignorepointer 1
@@ -3870,6 +3986,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KWeight1BoxBgBL {
            ignorepointer 1
@@ -3885,6 +4002,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KWeight1BoxBgBR {
            ignorepointer 1
@@ -3900,11 +4018,12 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           PanelWidgetClass OZG_KWeight1BoxBgM {
            ignorepointer 1
-           position 0 4.75
-           size 354 34.5
+           position 0 4
+           size 354 36
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3915,8 +4034,8 @@ FrameWidgetClass OZG_KWin {
           }
           PanelWidgetClass OZG_KWeight1BoxBgT {
            ignorepointer 1
-           position 4.75 0
-           size 344.5 5
+           position 4 0
+           size 346 6
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3927,8 +4046,8 @@ FrameWidgetClass OZG_KWin {
           }
           PanelWidgetClass OZG_KWeight1BoxBgB {
            ignorepointer 1
-           position 4.75 39
-           size 344.5 5
+           position 4 38
+           size 346 6
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3951,7 +4070,7 @@ FrameWidgetClass OZG_KWin {
        vexactsize 1
        color 0.937 0.894 0.800 1
        text ""
-       font "gui/fonts/MetronBook-Bold22"
+       font "gui/fonts/MetronBook-Bold28"
        "exact text" 1
        "exact text size" 17
        "text halign" left
@@ -4025,6 +4144,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KWeight2BoxEdgeTR {
            ignorepointer 1
@@ -4040,6 +4160,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KWeight2BoxEdgeBL {
            ignorepointer 1
@@ -4055,6 +4176,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KWeight2BoxEdgeBR {
            ignorepointer 1
@@ -4070,11 +4192,12 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           PanelWidgetClass OZG_KWeight2BoxEdgeM {
            ignorepointer 1
-           position 0 5.75
-           size 356 34.5
+           position 0 5
+           size 356 36
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -4085,8 +4208,8 @@ FrameWidgetClass OZG_KWin {
           }
           PanelWidgetClass OZG_KWeight2BoxEdgeT {
            ignorepointer 1
-           position 5.75 0
-           size 344.5 6
+           position 5 0
+           size 346 7
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -4097,8 +4220,8 @@ FrameWidgetClass OZG_KWin {
           }
           PanelWidgetClass OZG_KWeight2BoxEdgeB {
            ignorepointer 1
-           position 5.75 40
-           size 344.5 6
+           position 5 39
+           size 346 7
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -4134,6 +4257,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KWeight2BoxBgTR {
            ignorepointer 1
@@ -4149,6 +4273,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KWeight2BoxBgBL {
            ignorepointer 1
@@ -4164,6 +4289,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KWeight2BoxBgBR {
            ignorepointer 1
@@ -4179,11 +4305,12 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           PanelWidgetClass OZG_KWeight2BoxBgM {
            ignorepointer 1
-           position 0 4.75
-           size 354 34.5
+           position 0 4
+           size 354 36
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -4194,8 +4321,8 @@ FrameWidgetClass OZG_KWin {
           }
           PanelWidgetClass OZG_KWeight2BoxBgT {
            ignorepointer 1
-           position 4.75 0
-           size 344.5 5
+           position 4 0
+           size 346 6
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -4206,8 +4333,8 @@ FrameWidgetClass OZG_KWin {
           }
           PanelWidgetClass OZG_KWeight2BoxBgB {
            ignorepointer 1
-           position 4.75 39
-           size 344.5 5
+           position 4 38
+           size 346 6
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -4230,7 +4357,7 @@ FrameWidgetClass OZG_KWin {
        vexactsize 1
        color 0.937 0.894 0.800 1
        text ""
-       font "gui/fonts/MetronBook-Bold22"
+       font "gui/fonts/MetronBook-Bold28"
        "exact text" 1
        "exact text size" 17
        "text halign" left
@@ -4304,6 +4431,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KDoBoxBgTR {
            ignorepointer 1
@@ -4319,6 +4447,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KDoBoxBgBL {
            ignorepointer 1
@@ -4334,6 +4463,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KDoBoxBgBR {
            ignorepointer 1
@@ -4349,11 +4479,12 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           PanelWidgetClass OZG_KDoBoxBgM {
            ignorepointer 1
-           position 0 3.75
-           size 356 38.5
+           position 0 3
+           size 356 40
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -4364,8 +4495,8 @@ FrameWidgetClass OZG_KWin {
           }
           PanelWidgetClass OZG_KDoBoxBgT {
            ignorepointer 1
-           position 3.75 0
-           size 348.5 4
+           position 3 0
+           size 350 5
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -4376,8 +4507,8 @@ FrameWidgetClass OZG_KWin {
           }
           PanelWidgetClass OZG_KDoBoxBgB {
            ignorepointer 1
-           position 3.75 42
-           size 348.5 4
+           position 3 41
+           size 350 5
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -4400,7 +4531,7 @@ FrameWidgetClass OZG_KWin {
        vexactsize 1
        color 0.102 0.071 0.039 1
        text ""
-       font "gui/fonts/MetronBook-Bold22"
+       font "gui/fonts/MetronBook-Bold28"
        "exact text" 1
        "exact text size" 19
        "text halign" center
@@ -4435,6 +4566,7 @@ FrameWidgetClass OZG_KWin {
        mode blend
        "src alpha" 1
        "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
       ImageWidgetClass OZG_KPickFace {
        ignorepointer 1
@@ -4449,6 +4581,7 @@ FrameWidgetClass OZG_KWin {
        mode blend
        "src alpha" 1
        "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
       ImageWidgetClass OZG_KPickBackSh {
        ignorepointer 1
@@ -4464,6 +4597,7 @@ FrameWidgetClass OZG_KWin {
        mode blend
        "src alpha" 1
        "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
       ImageWidgetClass OZG_KPickBack {
        ignorepointer 1
@@ -4478,6 +4612,7 @@ FrameWidgetClass OZG_KWin {
        mode blend
        "src alpha" 1
        "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
       ImageWidgetClass OZG_KPickSign {
        ignorepointer 1
@@ -4492,6 +4627,7 @@ FrameWidgetClass OZG_KWin {
        mode blend
        "src alpha" 1
        "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
       ImageWidgetClass OZG_KPickGlow {
        ignorepointer 1
@@ -4507,6 +4643,7 @@ FrameWidgetClass OZG_KWin {
        mode blend
        "src alpha" 1
        "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
       FrameWidgetClass OZG_KPickTag {
        ignorepointer 1
@@ -4544,6 +4681,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KPickTagBgTR {
            ignorepointer 1
@@ -4559,6 +4697,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KPickTagBgBL {
            ignorepointer 1
@@ -4574,6 +4713,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KPickTagBgBR {
            ignorepointer 1
@@ -4589,6 +4729,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           PanelWidgetClass OZG_KPickTagBgM {
            ignorepointer 1
@@ -4703,6 +4844,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KWorkBarTR {
          ignorepointer 1
@@ -4718,6 +4860,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KWorkBarBL {
          ignorepointer 1
@@ -4733,6 +4876,7 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         ImageWidgetClass OZG_KWorkBarBR {
          ignorepointer 1
@@ -4748,11 +4892,12 @@ FrameWidgetClass OZG_KWin {
          mode blend
          "src alpha" 1
          "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
         PanelWidgetClass OZG_KWorkBarM {
          ignorepointer 1
-         position 0 5
-         size 356 0
+         position 0 4
+         size 356 2
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -4763,8 +4908,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KWorkBarT {
          ignorepointer 1
-         position 5 0
-         size 346 5
+         position 4 0
+         size 348 6
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -4775,8 +4920,8 @@ FrameWidgetClass OZG_KWin {
         }
         PanelWidgetClass OZG_KWorkBarB {
          ignorepointer 1
-         position 5 5
-         size 346 5
+         position 4 4
+         size 348 6
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -4823,6 +4968,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KWorkFillBarTR {
            ignorepointer 1
@@ -4838,6 +4984,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KWorkFillBarBL {
            ignorepointer 1
@@ -4853,6 +5000,7 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           ImageWidgetClass OZG_KWorkFillBarBR {
            ignorepointer 1
@@ -4868,11 +5016,12 @@ FrameWidgetClass OZG_KWin {
            mode blend
            "src alpha" 1
            "stretch mode" stretch_w_h
+           "clamp mode" clamp
           }
           PanelWidgetClass OZG_KWorkFillBarM {
            ignorepointer 1
-           position 0 5
-           size 356 0
+           position 0 4
+           size 356 2
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -4883,8 +5032,8 @@ FrameWidgetClass OZG_KWin {
           }
           PanelWidgetClass OZG_KWorkFillBarT {
            ignorepointer 1
-           position 5 0
-           size 346 5
+           position 4 0
+           size 348 6
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -4895,8 +5044,8 @@ FrameWidgetClass OZG_KWin {
           }
           PanelWidgetClass OZG_KWorkFillBarB {
            ignorepointer 1
-           position 5 5
-           size 346 5
+           position 4 4
+           size 348 6
            hexactpos 1
            vexactpos 1
            hexactsize 1

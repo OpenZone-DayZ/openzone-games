@@ -558,7 +558,10 @@ class OZG_Session
                 if (!m_SeatDice.Find(sdSeat, sdDice) || !sdDice)
                     continue;
                 string sdLooks = sdSeat.ToString() + "=";
-                for (int sk = 0; sk < sdDice.Count(); sk++)
+                int sdThrown = sdDice.Count();
+                if (m_Game)
+                    sdThrown = m_Game.DiceThrown(sdSeat);
+                for (int sk = 0; sk < sdDice.Count() && sk < sdThrown; sk++)
                 {
                     if (sk > 0)
                         sdLooks = sdLooks + ",";
@@ -570,7 +573,65 @@ class OZG_Session
                 v.SeatDiceLooks.Insert(sdLooks);
             }
         }
+        if (m_ThrownLooks)
+        {
+            for (int tl = 0; tl < m_R.Dealt.Count(); tl++)
+            {
+                int tlSeat = m_R.Dealt[tl];
+                array<string> tlLooks;
+                if (!m_ThrownLooks.Find(tlSeat, tlLooks) || !tlLooks)
+                    continue;
+                string tlLine = tlSeat.ToString() + "=";
+                for (int tk = 0; tk < tlLooks.Count(); tk++)
+                {
+                    if (tk > 0)
+                        tlLine = tlLine + ",";
+                    tlLine = tlLine + tlLooks[tk];
+                }
+                v.ThrownDiceLooks.Insert(tlLine);
+            }
+        }
         return v;
+    }
+
+    // The look each die had when its seat threw it last: what the window draws a seat's
+    // thrown dice in (a die swapped into the set after shows in the throws made with it).
+    protected ref map<int, ref array<string>> m_ThrownLooks;
+
+    // Dice were thrown: `seats` and the place of each among the dice its seat throws.
+    protected void ThrownLooksNote(array<int> seats, array<int> places)
+    {
+        if (!m_SeatDice)
+            return;
+        if (!m_ThrownLooks)
+            m_ThrownLooks = new map<int, ref array<string>>();
+        for (int i = 0; i < seats.Count() && i < places.Count(); i++)
+        {
+            int seat = seats[i];
+            int at = places[i];
+            array<EntityAI> dice;
+            if (!m_SeatDice.Find(seat, dice) || !dice || at < 0 || at >= dice.Count())
+                continue;
+            array<string> looks;
+            if (!m_ThrownLooks.Find(seat, looks) || !looks)
+            {
+                looks = new array<string>();
+                m_ThrownLooks.Set(seat, looks);
+            }
+            while (looks.Count() <= at)
+                looks.Insert("");
+            string look = "white";
+            EntityAI die = dice[at];
+            if (die)
+                look = OZG_BoardRead.DieLookOf(die.GetType());
+            looks[at] = look;
+        }
+    }
+
+    protected void ThrownLooksForget()
+    {
+        if (m_ThrownLooks)
+            m_ThrownLooks.Clear();
     }
 
     // The three texts of a view for one client.

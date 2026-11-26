@@ -281,6 +281,10 @@ class OZG_WView
     // The look of every die each seat throws ("<seat>=white,white,red"): a die swapped in
     // shows in its own look to everybody.
     ref array<string> SeatDiceLooks;
+    // The look each die had when its seat threw it last, the same way ("<seat>=white,,red":
+    // "" a die not thrown yet): the dice a seat threw stay on the felt as they were thrown,
+    // whatever is swapped into the set after.
+    ref array<string> ThrownDiceLooks;
 
     void OZG_WView()
     {
@@ -288,6 +292,7 @@ class OZG_WView
         PocketDice = new array<string>();
         PocketLooks = new array<string>();
         SeatDiceLooks = new array<string>();
+        ThrownDiceLooks = new array<string>();
         PocketLoads = new array<int>();
         PocketSteps = new array<int>();
         MyDiceLoads = new array<int>();

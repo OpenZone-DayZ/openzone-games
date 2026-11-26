@@ -396,7 +396,7 @@ bots play; open the window with `OZG_ActionWatch` (within two metres):
     oz_games {"op":"ask","id":"<place>","who":"me","ask":"deal"}
     oz_games {"op":"bots","id":"<place>","n":"0","on":"1"}
 
-The swap panel of these four has two rows: "З кишені", the dice you carry as pictures, each
+The swap panel of the five dice games has two rows: "З кишені", the dice you carry as pictures, each
 in its colour, the face it is loaded on up and in a grey disc when you know it; "Замість
 кістки", the dice you are about to throw, each in its colour with its place on it. Nothing
 is picked for you: click one in each row (a click again lets it go); the button comes alive
@@ -405,6 +405,32 @@ in your turn, perudo into your can before the round's first bid). Every die on t
 shows its own colour: a red
 die swapped in among white ones shows red to everybody. Give yourself dice to carry with
 `give what=OZG_Die_Red` (or `OZG_Die`, the white one, `OZG_Die_Black`, `OZG_Die_Stalker`) and load one with `loaddie`.
+The row of the pocket holds any number of dice: seven a row, two rows in sight, the wheel
+for more. The die that goes out needs a free place in your pockets: with none the swap is
+refused and the note under the felt says so (give yourself dice until `give` answers 0 to
+see it; `world_move` of a card to the ground frees a place).
+
+**Thousand**: throw, then click the dice on the felt that score (a one, a five, three of a
+kind, a straight): they rise with a gold outline, and "Відкласти обрані" comes alive when
+what is picked scores.
+
+**The rarer states of the four faces**, each a few bridge calls from a deal:
+
+    oz_games {"op":"bots","id":"<place>","n":"5","on":"0"}                 six seats with you: high roll's cards three a row, pig's smaller die
+    oz_games {"op":"auto","id":"<place>","n":"6"}                           so many moves by whoever is to move (you too); high roll of six: `st=1` after six throws is a tie, the others' cards dim
+    oz_games {"op":"ask","id":"<place>","who":"me","ask":"kick","seat":"4","how":"discard"}   a seat out of the game: pig's row dims, the log says the seat is out
+    oz_games {"op":"ask","id":"<place>","who":"me","ask":"act","move":"raise:10"}             dice poker, in your turn to bet; then
+    oz_games {"op":"ask","id":"<place>","who":"bot3","ask":"act","move":"fold"}               the next seat folds: its card dims (the bots' ids are in `seats`)
+    oz_games {"op":"give","who":"bot1","what":"OZG_DiceCan_Classic"}       perudo: every bot needs a can of its own before the deal
+
+Perudo of four played by `auto` in lots of twenty reaches a player with one die (palifico:
+the other faces dim) and a player out in sixty to seventy moves.
+
+**The owner's window and the other language**: `client_start(window=[3840, 1600])` is 1.48
+pixels a unit, where the rounded boxes and the bold atlas show what 1920 x 1080 hides;
+`client_start(language="English")` writes the language into the client's `DayZ.cfg`, and
+`client_start(language="Russian")` puts the Ukrainian texts back (the engine's "Russian"
+slot carries them).
 
 The games' own views can be read without a client on the bench: `begin game=perudo
 seats=0,2,6`, `play moves=0 bid:3:4; 2 dudo`, `view seat=6` (both halves into
