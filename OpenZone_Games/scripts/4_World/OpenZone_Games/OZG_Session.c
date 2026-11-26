@@ -547,6 +547,29 @@ class OZG_Session
         // The board's or the can's look, and each piece's own (boards and dice §3.2).
         v.SetLook = OZG_BoardRead.LookOf(m_R.DeckClass);
         v.PieceLooks = OZG_BoardRead.LooksOf(m_Place);
+        if (m_OwnDiceSeats)
+            v.OwnDiceSeats.Copy(m_OwnDiceSeats);
+        if (m_SeatDice)
+        {
+            for (int sd = 0; sd < m_R.Dealt.Count(); sd++)
+            {
+                int sdSeat = m_R.Dealt[sd];
+                array<EntityAI> sdDice;
+                if (!m_SeatDice.Find(sdSeat, sdDice) || !sdDice)
+                    continue;
+                string sdLooks = sdSeat.ToString() + "=";
+                for (int sk = 0; sk < sdDice.Count(); sk++)
+                {
+                    if (sk > 0)
+                        sdLooks = sdLooks + ",";
+                    string sdLook = "white";
+                    if (sdDice[sk])
+                        sdLook = OZG_BoardRead.DieLookOf(sdDice[sk].GetType());
+                    sdLooks = sdLooks + sdLook;
+                }
+                v.SeatDiceLooks.Insert(sdLooks);
+            }
+        }
         return v;
     }
 
@@ -637,12 +660,27 @@ class OZG_Session
 
     void Changed()
     {
+        PassSaid();
         SyncStacks();
         m_R.Rev = m_R.Rev + 1;
         Save();
         Pulse();
         PassHeard();
         Push();
+    }
+
+    // What the game said since the last move (an absent seat passed over, a round won
+    // after it) goes into the log, a line each.
+    protected void PassSaid()
+    {
+        if (!m_Game)
+            return;
+        array<string> said = new array<string>();
+        string moveSaid = m_Game.TakeSaid(said);
+        if (moveSaid != "")
+            AddLog("say " + moveSaid);
+        for (int i = 0; i < said.Count(); i++)
+            AddLog("say " + said[i]);
     }
 
     // What the last change made heard goes onto the place, where every client
@@ -1650,6 +1688,9 @@ class OZG_Session
         if (!m_SeatDice)
             m_SeatDice = new map<int, ref array<EntityAI>>();
         m_SeatDice.Clear();
+        if (!m_OwnDiceSeats)
+            m_OwnDiceSeats = new array<int>();
+        m_OwnDiceSeats.Clear();
         if (need <= 0)
             return "";
         string whose = game.DiceMode(options);
@@ -1677,9 +1718,15 @@ class OZG_Session
             OZG_DiceRead.Loads(dice, faces, weights);
             game.TakeDice(seats[i], faces, weights);
             m_SeatDice.Set(seats[i], dice);
+            if (own)
+                m_OwnDiceSeats.Insert(seats[i]);
         }
         return "";
     }
+
+    // The seats that throw their own dice this game (the rest the host's): their plates
+    // say so.
+    protected ref array<int> m_OwnDiceSeats;
 
     // The dice each seat of the game throws, as the deal handed them
     // (DiceFor): what a swap and the noticing of a loaded die look up.
@@ -2208,7 +2255,15 @@ class OZG_Session
         if (!m_Game.Act(mine, move, refusal))
             return refusal;
 
-        AddLog(mine.ToString() + " " + move);
+        // the move's line: the game's own words for it, when it words it
+        array<string> said = new array<string>();
+        string moveSaid = m_Game.TakeSaid(said);
+        if (moveSaid != "")
+            AddLog("say " + moveSaid);
+        else
+            AddLog(mine.ToString() + " " + move);
+        for (int k = 0; k < said.Count(); k++)
+            AddLog("say " + said[k]);
         Settle();
         Changed();
         return "";

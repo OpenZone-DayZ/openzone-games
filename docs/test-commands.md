@@ -374,12 +374,38 @@ as a FEN writes it (`Q` a white queen, `q` a black one), draughts `w W b B`, nar
     oz_games {"op":"ask","id":"<place>","who":"puppet3","ask":"bsleight","move":"back:q:d8"}
 
 **The kit's window** (design §10): `!ozg kit`, the kit in the hands, "Відкрити набір". The
-middle lists the cards and dice you carry where they are (pockets, a deck, a can; the wheel
-scrolls a full deck); pick a card to mark it, a die to load it on a face and a weight (the
+middle lists the cards and dice you carry where they are (pockets, a deck, a can); a full
+deck is taller than the panel: the wheel scrolls it and so does the gold bar at its right
+(the thumb drags); pick a card to mark it, a die to load it on a face and a weight (the
 kit works 2.3 s, then a use is spent); another's mark or load opens to you when you pick
 the thing. On the stand, with the bridge: `give what=OZG_MarkTool`, `give deck=OZG_Deck_Classic`,
 `give what=OZG_DiceCan_Classic`, the kit moved to the hands (`world_move`) and the action
 `OZG_ActionOpenKit` (`world_action`).
+
+**Playing a dice game yourself with bots** (dice poker, pig, high roll, perudo each have a
+face of their own, the canvas's boards): lay the can, sit by the bridge, choose the game,
+give yourself chips (the games for chips: dice poker, high roll), seat bots, deal, let the
+bots play; open the window with `OZG_ActionWatch` (within two metres):
+
+    oz_games {"op":"lay","at":"<x y z>","deck":"OZG_DiceCan_Classic","yaw":"180"}
+    oz_games {"op":"sit","id":"<place>","who":"me","seat":"2"}
+    oz_games {"op":"ask","id":"<place>","who":"me","ask":"game","val":"dicepoker"}     pig | highroll | perudo
+    oz_games {"op":"ask","id":"<place>","who":"me","ask":"chips","seat":"2","val":"300"}
+    oz_games {"op":"bots","id":"<place>","n":"2","on":"0"}
+    oz_games {"op":"ask","id":"<place>","who":"me","ask":"deal"}
+    oz_games {"op":"bots","id":"<place>","n":"0","on":"1"}
+
+The swap panel of these four shows the dice you carry as pictures, each in its colour, the
+face it is loaded on up and in a grey disc when you know it; click one to pick it, the
+button swaps it in (dice poker for die 3, high roll for die 1, pig for the die, perudo into
+your can before the round's first bid). Every die on the felt shows its own colour: a red
+die swapped in among white ones shows red to everybody. Give yourself dice to carry with
+`give what=OZG_Die_Red` (or `OZG_Die`, the white one, `OZG_Die_Black`, `OZG_Die_Stalker`) and load one with `loaddie`.
+
+The games' own views can be read without a client on the bench: `begin game=perudo
+seats=0,2,6`, `play moves=0 bid:3:4; 2 dudo`, `view seat=6` (both halves into
+`profiles\OpenZone\games_view.txt`; the zones `dpoker`, `pig`, `highroll`, `perudo`,
+`perudo_open` are what the faces draw).
 
 **Looking at a board as a watcher**, one person and bots: `lay at="x y z" deck=OZG_Board_Classic`
 (or `OZG_Board_Stalker`, `OZG_DiceCan_Classic`), `bots id= n=2 on=0`, the host bot's `ask ...

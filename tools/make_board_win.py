@@ -571,7 +571,9 @@ def window_dice():
     col.append(frame("OZG_DScore", exact(12, 12, 360, 130), 5, sc))
     act = [box("OZG_DActBox", 0, 0, 360, 150, 6, "#2a1d12", GOLD, prio=0),
            text("OZG_DActTitle", 12, 12, 200, 22, 17, "p", INK, 2, "left", ""),
-           text("OZG_DActInfo", 150, 15.5, 198, 15, 12, "s", MUTED, 2, "right")]
+           text("OZG_DActInfo", 150, 15.5, 198, 15, 12, "s", MUTED, 2, "right"),
+           text("OZG_DActHint0", 12, 45, 336, 17, 14, "s", LOG_INK, 2, "left", "", [("visible", 0)]),
+           text("OZG_DActHint1", 12, 63, 336, 17, 14, "s", LOG_INK, 2, "left", "", [("visible", 0)])]
     for i in range(16):
         act.append(btn("OZG_DAct%d" % i, 12, 44, 336, 42, 4, SL_BTN, BTN_EDGE, "", 15, "b", INK, prio=6, visible=0))
     act.append(frame("OZG_DAmount", exact(12, 44, 336, 42), 6, [
@@ -604,6 +606,7 @@ def window_dice():
     col.append(frame("OZG_DLog", exact(12, 497, 360, 265), 5, lg, clip=1))
     for i, (x, y) in enumerate(((12, 497), (186, 497), (12, 533), (186, 533))):
         col.append(btn("OZG_DHost%d" % i, x, y, 168, 30, 4, BTN, BTN_EDGE, "", 12, "s", INK, prio=20, visible=0))
+    col.append(swap_simple())
     k.append(frame("OZG_DCol", exact(1164, 86, 384, 774), 6, col))
     k.append(frame("OZG_DSeen", exact(352, 822, 600, 41), 60, [
         box("OZG_DSeenBox", 0, 0, 600, 41, 6, "#1c120a", "#ff8a3d", outside=True, prio=0),
@@ -613,6 +616,293 @@ def window_dice():
              ("halign", "center_ref"), ("valign", "center_ref"),
              ("hexactpos", 1), ("vexactpos", 1), ("hexactsize", 1), ("vexactsize", 1), ("priority", 3)]
     return block("FrameWidgetClass", "OZG_DWin", attrs, k)
+
+
+# ---------------------------------------------------------------- the dice games' own faces
+
+CARD = "#110b06"      # a plate on the felt (the canvas: rgba(18, 11, 6, .82..88) over it)
+CHIPS = "#e7c27a"
+
+
+def bank_pill(name, x, y):
+    """The pot as the canvas draws it: a pill 264 x 70, its chip, "БАНК", the number."""
+    return frame(name, exact(x, y, 264, 70), 10, [
+        box(name + "Box", 0, 0, 264, 70, 35, CARD, GOLD, prio=0),
+        image(name + "Icon", exact(75.5, 20, 30, 30), 2, "ozg_chip_ca"),
+        text(name + "Label", 117.5, 27, 60, 16, 13, "s", GOLD, 3),
+        text(name + "Value", 169, 15, 120, 40, 30, "p", INK, 3)], [("visible", 0)])
+
+
+def dice_games_tray():
+    """What each game lays on the felt (units of the tray, which is at 52, 86): the
+    canvas's boards measured. The dice themselves the script lays on the field. Each
+    game's face is a layout of its own, made into the tray when its game is played."""
+    g = {}
+    # dice poker: the others' cards, the pot, the words while this player has no dice,
+    # "У ВАС" with his hand, his rounds won and his chips
+    dp = []
+    for i in range(6):
+        c = "OZG_DPOpp%d" % i
+        dp.append(frame(c, exact(58, 54, 360, 124), 10, [
+            box(c + "Box", 0, 0, 360, 124, 8, CARD, BTN_EDGE, prio=0),
+            text(c + "Name", 12, 12, 220, 20, 16, "b", INK, 3),
+            image(c + "Win0", exact(236.5, 15, 14, 14), 3, "ozg_ring6_ca", rgb(GOLD)),
+            image(c + "Win1", exact(253.5, 15, 14, 14), 3, "ozg_ring6_ca", rgb(GOLD)),
+            text(c + "Chips", 150, 13.5, 198, 17, 14, "s", CHIPS, 3, "right"),
+            text(c + "Hand", 12, 96, 220, 16, 13, "b", LOG_INK, 3),
+            text(c + "State", 150, 96, 198, 16, 13, "s", MUTED, 3, "right")], [("visible", 0)]))
+    dp.append(bank_pill("OZG_DPBank", 418, 286))
+    dp.append(text("OZG_DPHint", 200, 464, 700, 20, 16, "s", "#b6ae9b", 6, "center"))
+    dp.append(frame("OZG_DPYou", exact(431, 564, 106, 48), 10, [
+        box("OZG_DPYouBox", 0, 0, 106, 48, 8, CARD, BTN_EDGE, prio=0),
+        text("OZG_DPYouLabel", 18, 16.5, 60, 15, 12, "s", GOLD, 3),
+        text("OZG_DPYouHand", 68.5, 9, 260, 30, 22, "p", INK, 3)]))
+    dp.append(image("OZG_DPMyWin0", exact(550, 580, 14, 14), 10, "ozg_ring6_ca", rgb(GOLD)))
+    dp.append(image("OZG_DPMyWin1", exact(569, 580, 14, 14), 10, "ozg_ring6_ca", rgb(GOLD)))
+    dp.append(text("OZG_DPMyChips", 598, 579.5, 160, 17, 14, "s", CHIPS, 10))
+    g["poker"] = dp
+
+    # pig: a row a seat (name, the bar of the goal with the turn's points after it, the
+    # score), the die, "ЗА ХІД" and the turn's points, the words under them
+    pg = []
+    for i in range(6):
+        r = "OZG_DPgRow%d" % i
+        pg.append(frame(r, exact(78, 64 + 66 * i, 944, 54), 10, [
+            box(r + "Box", 0, 0, 944, 54, 8, CARD, "#4a3726", prio=0),
+            text(r + "Name", 16, 17, 140, 20, 16, "s", INK, 3),
+            text(r + "NameB", 16, 17, 140, 20, 16, "b", INK, 3, "left", "", [("visible", 0)]),
+            frame(r + "Bar", exact(170, 20, 674, 14), 3, [
+                shape(r + "BarTrack", 0, 0, 674, 14, 7, rgb("#3a2c1c"), 0, overlap=0),
+                frame(r + "BarFill", exact(0, 0, 0, 14), 1, [
+                    shape(r + "BarFillShape", 0, 0, 674, 14, 7, rgb(GOLD), 0, overlap=0)], clip=1),
+                frame(r + "BarTurn", exact(0, 0, 0, 14), 2, [
+                    shape(r + "BarTurnShape", 0, 0, 674, 14, 7, "0.906 0.761 0.478 0.45", 0, overlap=0)], clip=1)],
+                  clip=1),
+            text(r + "Score", 858, 12, 70, 30, 22, "p", INK, 3, "right")], [("visible", 0)]))
+    pg.append(frame("OZG_DPgPill", exact(493.5, 460, 113, 50), 10, [
+        box("OZG_DPgPillBox", 0, 0, 113, 50, 25, CARD, GOLD, prio=0),
+        text("OZG_DPgPillLabel", 20, 17.5, 60, 15, 12, "s", GOLD, 3),
+        text("OZG_DPgPillValue", 76.5, 7.5, 80, 35, 26, "p", INK, 3)]))
+    pg.append(text("OZG_DPgSay", 250, 528, 600, 19, 15, "s", LOG_INK, 6, "center"))
+    g["pig"] = pg
+
+    # high roll: a card a seat (name, whose dice, chips; the dice and their total, or "ще
+    # не кидав"; its state), the pot under them
+    hr = []
+    for i in range(8):
+        c = "OZG_DHCard%d" % i
+        hr.append(frame(c, exact(58, 64, 483, 196), 10, [
+            box(c + "Box", 0, 0, 483, 196, 10, CARD, BTN_EDGE, prio=0),
+            text(c + "Name", 16, 14, 280, 20, 17, "b", INK, 3),
+            text(c + "Whose", 200, 16.5, 120, 15, 12, "s", MUTED, 3, "right"),
+            text(c + "Chips", 300, 15.5, 167, 17, 14, "s", CHIPS, 3, "right"),
+            text(c + "Empty", 16, 77.5, 280, 17, 14, "s", "#968d7d", 3),
+            text(c + "Sum", 300, 59.5, 167, 53, 40, "p", INK, 3, "right"),
+            text(c + "State", 16, 138, 451, 16, 13, "s", MUTED, 3)], [("visible", 0)]))
+    hr.append(bank_pill("OZG_DHBank", 418, 514))
+    g["high"] = hr
+
+    # perudo: the others' cards (name, dice left, the can or the dice shown, a line), the
+    # bid, this player's own box with his dice
+    pr = []
+    for i in range(6):
+        c = "OZG_DRCard%d" % i
+        pr.append(frame(c, exact(48, 54, 310, 132), 10, [
+            box(c + "Box", 0, 0, 310, 132, 10, CARD, "#4a3726", prio=0),
+            text(c + "Name", 12, 12, 200, 20, 16, "b", INK, 3),
+            text(c + "Count", 150, 14, 148, 16, 13, "s", MUTED, 3, "right"),
+            image(c + "Cup", exact(0, 30, 96, 96), 2, "ozg_cup_ca"),
+            text(c + "CupNote", 90, 60, 200, 16, 13, "s", "#aca391", 3),
+            text(c + "Line", 12, 104, 286, 16, 13, "s", MUTED, 3)], [("visible", 0)]))
+    pr.append(frame("OZG_DRBid", exact(300, 304, 500, 111), 10, [
+        box("OZG_DRBidBox", 0, 0, 500, 111, 10, CARD, GOLD, prio=0),
+        text("OZG_DRBidLabel", 0, 14, 500, 15, 12, "s", GOLD, 3, "center"),
+        text("OZG_DRBidText", 0, 35, 500, 40, 30, "p", INK, 3, "center"),
+        text("OZG_DRBidSub", 0, 81, 500, 16, 13, "s", MUTED, 3, "center")]))
+    pr.append(frame("OZG_DRMe", exact(208, 474, 684, 102), 10, [
+        box("OZG_DRMeBox", 0, 0, 684, 102, 10, CARD, "#4a3726", prio=0),
+        text("OZG_DRMeName", 14, 31.5, 150, 20, 16, "b", INK, 3),
+        text("OZG_DRMeCount", 14, 55.5, 150, 15, 12, "s", MUTED, 3)]))
+    g["perudo"] = pr
+    return g
+
+
+def dice_games_column():
+    """The right column's own panels (units of the column, which is at 1164, 86): dice
+    poker's round and its hands; perudo's bid. Made into the column with their game."""
+    c = {"poker": [], "perudo": [], "pig": [], "high": []}
+    # pig's turn: whose, throw, stop and keep the turn's points
+    c["pig"].append(frame("OZG_DPgAct", exact(12, 12, 360, 158), 6, [
+        box("OZG_DPgActBox", 0, 0, 360, 158, 6, "#2a1d12", GOLD, prio=0),
+        text("OZG_DPgActTitle", 12, 12, 336, 22, 17, "p", INK, 2),
+        btn("OZG_DPgThrow", 12, 44, 336, 46, 4, GOLD, None, "#STR_OZG_DICE_BTN_THROW", 16, "b", "#1a120a", prio=6),
+        btn("OZG_DPgHold", 12, 100, 336, 46, 4, BTN, "#3d2d1d", "", 16, "b", FAINT, prio=6)]))
+    # high roll's: the pot or your throw, a line, the throw
+    c["high"].append(frame("OZG_DHAct", exact(12, 12, 360, 131), 6, [
+        box("OZG_DHActBox", 0, 0, 360, 131, 6, "#2a1d12", GOLD, prio=0),
+        text("OZG_DHActTitle", 12, 12, 336, 22, 17, "p", INK, 2),
+        text("OZG_DHActHint", 12, 45, 336, 17, 14, "s", LOG_INK, 2),
+        btn("OZG_DHThrow", 12, 73, 336, 46, 4, GOLD, None, "", 16, "b", "#1a120a", prio=6)]))
+    rd = [shape("OZG_DPRoundBg", 0, 0, 360, 94, 6, rgb("#221911"), 0),
+          text("OZG_DPRoundTitle", 12, 12, 336, 14, 11, "s", GOLD, 2)]
+    for i in range(5):
+        rd.append(shape("OZG_DPSeg%d" % i, 12 + 68 * i, 44, 64, 6, 3, rgb("#3a2c1c"), 2, overlap=0))
+    rd += [text("OZG_DPRHint0", 12, 57, 336, 18, 14, "s", LOG_INK, 2),
+           text("OZG_DPRHint1", 12, 75, 336, 18, 14, "s", LOG_INK, 2)]
+    c["poker"].append(frame("OZG_DPRound", exact(12, 12, 360, 94), 6, rd))
+    c["poker"].append(frame("OZG_DPHands", exact(12, 693, 360, 69), 6, [
+        shape("OZG_DPHandsBg", 0, 0, 360, 69, 6, rgb("#221911"), 0),
+        text("OZG_DPHandsTitle", 12, 10, 336, 14, 11, "s", GOLD, 2),
+        text("OZG_DPHandsText0", 12, 27, 336, 16, 12, "s", MUTED, 2),
+        text("OZG_DPHandsText1", 12, 43, 336, 16, 12, "s", MUTED, 2)]))
+    return c
+
+
+SWAP_H = 171
+
+
+def swap_simple():
+    """The swap panel of dice poker, pig, high roll and perudo (the canvas: its title and
+    the swaps left, two lines, one button), with the dice in the pockets as pictures between
+    them (the owner's word of 2026-11-26: the dice may differ, as cards do): each in its
+    look, the face it is loaded on up and in a disc over its corner when he knows it, the
+    one picked in a gold ring."""
+    k = [box("OZG_DSwapSBox", 0, 0, 360, SWAP_H, 6, "#2a1d12", BTN_EDGE, prio=0),
+         text("OZG_DSwapSTitle", 12, 10, 220, 21, 16, "p", INK, 2, "left", "#STR_OZG_DWIN_SWAP_TITLE"),
+         text("OZG_DSwapSInfo", 150, 13, 198, 15, 12, "s", MUTED, 2, "right")]
+    for i in range(7):
+        n = "OZG_DSPocket%d" % i
+        k.append(button(n, 12 + i * 46, 39, 38, 38, 6, [
+            shape(n + "Ring", -3, -3, 44, 44, 9, rgb("#e7c27a"), 0, overlap=0, extra=[("visible", 0)]),
+            image(n + "Pic", exact(0, 0, 38, 38), 1, None),
+            frame(n + "Badge", exact(25, -7, 18, 18), 3, [
+                image(n + "BadgeRing", exact(-1.5, -1.5, 21, 21), 0, "ozg_disc_ca", rgb("#1a120a")),
+                image(n + "BadgeBg", exact(0, 0, 18, 18), 1, "ozg_disc_ca", rgb("#5b6470")),
+                text(n + "BadgeText", 0, 0, 18, 18, 10, "b", "#eef2f6", 2, "center", "")],
+                  [("visible", 0)])], visible=0, clip=0))
+    k += [text("OZG_DSwapSText0", 12, 85, 336, 17, 13, "s", MUTED, 2),
+          text("OZG_DSwapSText1", 12, 102, 336, 17, 13, "s", MUTED, 2),
+          btn("OZG_DSwapSBtn", 12, 125, 336, 36, 4, "#241a12", BTN_EDGE, "", 13, "s", INK, prio=6)]
+    return frame("OZG_DSwapS", exact(12, 180, 360, SWAP_H), 6, k, [("visible", 0)])
+
+
+def perudo_ask():
+    ask = [box("OZG_DRAskBox", 0, 0, 360, 260, 6, "#2a1d12", GOLD, prio=0),
+           text("OZG_DRAskTitle", 12, 12, 336, 22, 17, "p", INK, 2),
+           text("OZG_DRAskSub", 12, 44, 336, 15, 12, "s", MUTED, 2, "left", "#STR_OZG_DWIN_PR_HOW"),
+           btn("OZG_DRMinus", 12, 69, 40, 40, 4, BTN, BTN_EDGE, "−", 20, "s", INK, prio=6),
+           shape("OZG_DRValueBg", 60, 69, 240, 40, 4, rgb("#1a120a"), 2),
+           text("OZG_DRValue", 60, 73, 240, 32, 24, "p", INK, 3, "center"),
+           btn("OZG_DRPlus", 308, 69, 40, 40, 4, BTN, BTN_EDGE, "+", 20, "s", INK, prio=6)]
+    for i in range(6):
+        f = "OZG_DRFace%d" % i
+        ask.append(button(f, 12 + 57 * i, 119, 51, 48, 6, [
+            shape(f + "Ring", -3, -3, 57, 54, 11, rgb(GOLD), 0, extra=[("visible", 0)]),
+            image(f + "Pic", exact(0, 0, 51, 48), 1, None)], clip=0))
+    ask += [text("OZG_DRNote", 12, 177, 336, 17, 13, "s", MUTED, 2),
+            btn("OZG_DRBidBtn", 12, 204, 164, 44, 4, SL_BTN, None, "#STR_OZG_DWIN_PR_BID", 15, "b", FAINT, prio=6),
+            btn("OZG_DRDudoBtn", 184, 204, 164, 44, 4, RED_BTN, None, "#STR_OZG_DWIN_PR_DUDO", 15, "b", RED_INK, prio=6)]
+    return frame("OZG_DRAsk", exact(12, 12, 360, 260), 6, ask)
+
+
+def face_layout(root, w, h, kids):
+    """A game's face: a frame the size of its parent (the tray or the column) holding its
+    parts, made into that parent by the script."""
+    return block("FrameWidgetClass", root,
+                 [("ignorepointer", 1), ("clipchildren", 0)] + exact(0, 0, w, h) + [("priority", 10)], kids)
+
+
+def dice_game_faces():
+    tray = dice_games_tray()
+    col = dice_games_column()
+    col["perudo"].append(perudo_ask())
+    out = []
+    for gid in ("poker", "pig", "high", "perudo"):
+        out.append(("ozg_dg_%s.layout" % gid, face_layout("OZG_DG_%s" % gid, 1100, 774, tray[gid])))
+    for gid in ("poker", "perudo", "pig", "high"):
+        out.append(("ozg_dg_%scol.layout" % gid, face_layout("OZG_DGC_%s" % gid, 384, 774, col[gid])))
+    return out
+
+
+def dice_badge():
+    """A die of this player's that he loaded, when he knows it is in play (the canvas: a
+    grey disc of 24 in a dark ring of 2 over the die's corner, the face it is loaded on)."""
+    k = [image("OZG_DBadgeRing", exact(-2, -2, 28, 28), 0, "ozg_disc_ca", rgb("#1a120a")),
+         image("OZG_DBadgeBg", exact(0, 0, 24, 24), 1, "ozg_disc_ca", rgb("#5b6470")),
+         text("OZG_DBadgeText", 0, 0, 24, 24, 12, "b", "#eef2f6", 2, "center", "")]
+    return block("FrameWidgetClass", "OZG_DBadge",
+                 [("ignorepointer", 1), ("clipchildren", 0)] + exact(0, 0, 24, 24) + [("priority", 45)], k)
+
+
+def chip_icon(size=128, ss=4):
+    """The pot's chip (the canvas's svg of 30: a red disc of 12 in a gold ring of 2, a
+    dashed gold ring of 6 inside)."""
+    n = size * ss
+    k = n / 30.0
+    img = Image.new("RGBA", (n, n), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    c = n / 2.0
+    gold = (231, 194, 122, 255)
+    d.ellipse((c - 13 * k, c - 13 * k, c + 13 * k, c + 13 * k), fill=gold)
+    d.ellipse((c - 11 * k, c - 11 * k, c + 11 * k, c + 11 * k), fill=(124, 50, 38, 255))
+    # the dashed ring: dashes of 3 and gaps of 3 along a circle of 6
+    import math
+    turns = 2 * math.pi * 6
+    dashes = int(turns // 6)
+    for i in range(dashes):
+        a0 = i * 6 / 6.0 * 360 / (turns / 6.0)
+        a1 = a0 + 3 / 6.0 * 360 / (turns / 6.0)
+        d.arc((c - 7 * k, c - 7 * k, c + 7 * k, c + 7 * k), a0, a1, fill=gold, width=int(2 * k))
+    return img.resize((size, size), LANCZOS)
+
+
+def cup_picture(size=256, ss=4):
+    """Perudo's can upturned (the canvas: 70 x 52, corners of 10 above and 18 below, a
+    green from #4a5a42 to #34412f, a darker band of 6 at its foot, a shadow 0 5px 8px at
+    half): the picture is 96 units square, the can at 13, 12."""
+    n = size * ss
+    k = n / 96.0
+    x0, y0, w, h = 13 * k, 12 * k, 70 * k, 52 * k
+    body = Image.new("L", (n, n), 0)
+    d = ImageDraw.Draw(body)
+    rt, rb = 10 * k, 18 * k
+    d.rounded_rectangle((x0, y0, x0 + w, y0 + h), radius=rb, fill=255)
+    d.rectangle((x0 + rt, y0, x0 + w - rt, y0 + rb), fill=255)
+    d.rectangle((x0, y0 + rt, x0 + w, y0 + rb), fill=255)
+    d.pieslice((x0, y0, x0 + 2 * rt, y0 + 2 * rt), 180, 270, fill=255)
+    d.pieslice((x0 + w - 2 * rt, y0, x0 + w, y0 + 2 * rt), 270, 360, fill=255)
+    # the corners above are 10, not 18: cut what the round rectangle left square
+    cut = Image.new("L", (n, n), 0)
+    cd = ImageDraw.Draw(cut)
+    cd.rectangle((x0, y0, x0 + rt, y0 + rt), fill=255)
+    cd.rectangle((x0 + w - rt, y0, x0 + w, y0 + rt), fill=255)
+    cd.pieslice((x0, y0, x0 + 2 * rt, y0 + 2 * rt), 180, 270, fill=0)
+    cd.pieslice((x0 + w - 2 * rt, y0, x0 + w, y0 + 2 * rt), 270, 360, fill=0)
+    body = Image.composite(Image.new("L", (n, n), 0), body, cut)
+    shadow = Image.new("RGBA", (n, n), (0, 0, 0, 0))
+    sh = Image.new("L", (n, n), 0)
+    sh.paste(body, (0, int(5 * k)))
+    sh = sh.filter(ImageFilter.GaussianBlur(4 * k))
+    shadow.putalpha(sh.point(lambda v: int(v * 0.5)))
+    green = Image.new("RGBA", (n, n), (0, 0, 0, 0))
+    gd = ImageDraw.Draw(green)
+    for y in range(int(y0), int(y0 + h) + 1):
+        t = (y - y0) / h
+        col = (int(74 + (52 - 74) * t), int(90 + (65 - 90) * t), int(66 + (47 - 66) * t), 255)
+        gd.line((0, y, n, y), fill=col)
+    band = Image.new("RGBA", (n, n), (0, 0, 0, 0))
+    bd = ImageDraw.Draw(band)
+    bd.rectangle((0, y0 + h - 6 * k, n, y0 + h + 1), fill=(0, 0, 0, 64))
+    green = Image.alpha_composite(green, band)
+    green.putalpha(body)
+    out = Image.alpha_composite(shadow, green)
+    return out.resize((size, size), LANCZOS)
+
+
+def dice_textures(paa):
+    save(chip_icon(), "ozg_chip_ca", paa)
+    save(cup_picture(), "ozg_cup_ca", paa)
+
 
 
 def window_kit():
@@ -894,8 +1184,11 @@ def main():
     paa = IMAGE_TO_PAA
     if "--no-paa" in sys.argv or not os.path.isfile(paa):
         paa = None
-    if "--layouts" not in sys.argv:
+    if "--dice-textures" in sys.argv:
+        dice_textures(paa)
+    elif "--layouts" not in sys.argv:
         textures(paa)
+        dice_textures(paa)
     write("ozg_bwin.layout", window())
     write("ozg_bwin_corners.layout", window(corners=True))
     write("ozg_bwin_nardy.layout", window_nardy())
@@ -906,6 +1199,9 @@ def main():
     write("ozg_bwpic.layout", piece_pic())
     write("ozg_bwtint.layout", square_tint())
     write("ozg_bwbadge.layout", badge())
+    write("ozg_dbadge.layout", dice_badge())
+    for name, body in dice_game_faces():
+        write(name, body)
 
 
 if __name__ == "__main__":

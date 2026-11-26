@@ -91,6 +91,7 @@ modded class OZG_Session
     {
         CheatInit();
         super.SleightHead(v, uid, seat, dealt);
+        DiceSwapHead(v, uid, seat, dealt);
         v.BoardSleights = 0;
         v.BoardWait = 0;
         OZG_Settings cfg = OZG_Cfg.Get();
@@ -208,6 +209,81 @@ modded class OZG_Session
         SleightLine(uid, mine, "board-" + kind, a + " " + b, "seen by " + seen);
         Changed();
         return "";
+    }
+
+    // The dice games' swap panel: the swaps this player has left and whether he may swap
+    // now (DiceSwapAsk's own rules), the dice he carries and does not throw with the load
+    // he knows on each, and the load he knows on each die of his own throw.
+    protected void DiceSwapHead(OZG_WView v, string uid, int seat, bool dealt)
+    {
+        OZG_Settings cfg = OZG_Cfg.Get();
+        if (cfg.Cheating != 1 || seat < 0 || uid == "" || !dealt || !m_Game)
+            return;
+        if (m_R.St != OZG_Const.ST_PLAYING || m_Game.DiceNeeded() <= 0)
+            return;
+        int done = 0;
+        m_Swaps.Find(uid, done);
+        int left = cfg.DiceSwaps - done;
+        if (left < 0)
+            left = 0;
+        v.DiceSwapsMost = cfg.DiceSwaps;
+        v.DiceSwapsLeft = left;
+        bool canThrow = m_Game.ThrowsNext(seat);
+        bool waits = m_SwapWaits.Find(uid) >= 0;
+        if (left > 0 && canThrow && !waits)
+            v.DiceSwapNow = 1;
+        // the dice in play: none of them is a pocket's
+        array<EntityAI> inPlay = new array<EntityAI>();
+        if (m_SeatDice)
+        {
+            for (int s = 0; s < m_R.Dealt.Count(); s++)
+            {
+                int dealtSeat = m_R.Dealt[s];
+                array<EntityAI> seatDice;
+                if (!m_SeatDice.Find(dealtSeat, seatDice) || !seatDice)
+                    continue;
+                for (int d = 0; d < seatDice.Count(); d++)
+                    inPlay.Insert(seatDice[d]);
+            }
+        }
+        PlayerBase player = OZG_Sessions.PlayerOf(uid);
+        if (player)
+        {
+            array<EntityAI> items = OZG_KitService.Carried(player);
+            for (int i = 0; i < items.Count(); i++)
+            {
+                OZG_Die_Base die = OZG_Die_Base.Cast(items[i]);
+                if (!die || inPlay.Find(die) >= 0)
+                    continue;
+                int face = 0;
+                int step = 0;
+                if (die.OZG_Loaded() && die.OZG_Knows(uid))
+                {
+                    face = die.OZG_LoadFace();
+                    step = cfg.LoadStep(die.OZG_LoadWeight());
+                }
+                v.PocketDice.Insert(OZG_Keys.Of(die));
+                v.PocketLooks.Insert(OZG_BoardRead.DieLookOf(die.GetType()));
+                v.PocketLoads.Insert(face);
+                v.PocketSteps.Insert(step);
+            }
+        }
+        array<EntityAI> mineDice;
+        if (!m_SeatDice || !m_SeatDice.Find(seat, mineDice) || !mineDice)
+            return;
+        for (int k = 0; k < mineDice.Count(); k++)
+        {
+            OZG_Die_Base own = OZG_Die_Base.Cast(mineDice[k]);
+            int ownFace = 0;
+            int ownStep = 0;
+            if (own && own.OZG_Loaded() && own.OZG_Knows(uid))
+            {
+                ownFace = own.OZG_LoadFace();
+                ownStep = cfg.LoadStep(own.OZG_LoadWeight());
+            }
+            v.MyDiceLoads.Insert(ownFace);
+            v.MyDiceSteps.Insert(ownStep);
+        }
     }
 
     // ---- a die swapped (§9.2) --------------------------------------------------

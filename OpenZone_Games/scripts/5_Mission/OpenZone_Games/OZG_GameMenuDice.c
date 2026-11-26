@@ -23,6 +23,27 @@ modded class OZG_GameMenu
     protected ref array<string> m_DWPocketKeys;
     protected string m_DWSwapKey = "";
 
+    // ------------------------------------------------------------ the later file's part
+
+    // Dice poker, pig, high roll and perudo have faces of their own (the canvas's boards),
+    // painted by OZG_GameMenuDiceGames.c, which loads after this file: true when it painted
+    // the window; false for a game this file draws (that file hides its faces then).
+    protected bool DGPaint()
+    {
+        return false;
+    }
+
+    protected bool DGClick(string n)
+    {
+        return false;
+    }
+
+    // The header's chip, when the game says something else there (high roll: the dice each).
+    protected string DGDiceChip()
+    {
+        return "";
+    }
+
     override protected bool DiceWindow()
     {
         if (!m_V)
@@ -100,6 +121,13 @@ modded class OZG_GameMenu
             tray.LoadImageFile(0, DW_TRAY);
             tray.SetImage(0);
         }
+        if (DGPaint())
+        {
+            DWPaintLog();
+            BWPoolsEnd();
+            BWPaintDialogs();
+            return;
+        }
         DWPaintSeats();
         DWPaintMine();
         DWPaintZones();
@@ -142,9 +170,18 @@ modded class OZG_GameMenu
         TextWidget dice = BWText("OZG_DBtnDiceText");
         Widget diceBtn = BW("OZG_DBtnDice");
         string variant = VariantLabel();
+        string chip = DGDiceChip();
         if (dice && diceBtn)
         {
-            dice.SetText(Tr1("STR_OZG_BWIN_DICE_CHIP", OZG_Text.LowerFirst(variant)));
+            if (chip != "")
+            {
+                variant = chip;
+                dice.SetText(chip);
+            }
+            else
+            {
+                dice.SetText(Tr1("STR_OZG_BWIN_DICE_CHIP", OZG_Text.LowerFirst(variant)));
+            }
             float dw = BWTextW(dice) + 26;
             DWButtonAt(diceBtn, "OZG_DBtnDice", right - dw, 35.5, dw, 30);
             diceBtn.Show(variant != "");
@@ -916,6 +953,8 @@ modded class OZG_GameMenu
 
     override protected bool DWClick(string n)
     {
+        if (DGClick(n))
+            return true;
         if (n == "OZG_DBtnClose")
         {
             Shut();

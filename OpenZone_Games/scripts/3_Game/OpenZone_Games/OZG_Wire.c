@@ -263,10 +263,36 @@ class OZG_WView
     int    BoardSleights;
     int    BoardWait;
     ref array<int> Looking;
+    // The dice games' swap (design §9.2; the canvas's panel "Підміна кістки"): the swaps
+    // this player has left in this game and how many a game allows; 1 when he may swap
+    // now; the dice he carries and does not throw (keys), with the load he knows on each
+    // (its face and how heavy, 0 for none known); the load he knows on each die his seat
+    // throws, in order. The seats that throw their own dice (the rest the host's).
+    int    DiceSwapsLeft;
+    int    DiceSwapsMost;
+    int    DiceSwapNow;
+    ref array<string> PocketDice;
+    ref array<string> PocketLooks;
+    ref array<int> PocketLoads;
+    ref array<int> PocketSteps;
+    ref array<int> MyDiceLoads;
+    ref array<int> MyDiceSteps;
+    ref array<int> OwnDiceSeats;
+    // The look of every die each seat throws ("<seat>=white,white,red"): a die swapped in
+    // shows in its own look to everybody.
+    ref array<string> SeatDiceLooks;
 
     void OZG_WView()
     {
         Looking = new array<int>();
+        PocketDice = new array<string>();
+        PocketLooks = new array<string>();
+        SeatDiceLooks = new array<string>();
+        PocketLoads = new array<int>();
+        PocketSteps = new array<int>();
+        MyDiceLoads = new array<int>();
+        MyDiceSteps = new array<int>();
+        OwnDiceSeats = new array<int>();
         OptIds = new array<string>();
         OptVals = new array<string>();
         Seats = new array<ref OZG_WSeat>();
@@ -509,6 +535,19 @@ class OZG_Text
         for (int i = 0; i < s_Lower.Count(); i++)
             t.Replace(s_Lower[i], s_Upper[i]);
         return t;
+    }
+
+    // The first letter written big ("фул-хаус" -> "Фул-хаус"): a name that heads a line.
+    static string UpperFirst(string s)
+    {
+        int n = s.LengthUtf8();
+        if (n == 0)
+            return s;
+        string head = s.SubstringUtf8(0, 1);
+        string rest = "";
+        if (n > 1)
+            rest = s.SubstringUtf8(1, n - 1);
+        return Upper(head) + rest;
     }
 
     // The first letter written small ("Дама чирв" -> "дама чирв"): a name that stands

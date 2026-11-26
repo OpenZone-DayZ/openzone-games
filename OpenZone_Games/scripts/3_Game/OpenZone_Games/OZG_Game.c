@@ -255,6 +255,42 @@ class OZG_Game
         m_Heard.Clear();
     }
 
+    // ---- what is said ----------------------------------------------------------
+
+    // Words the last change said for the log (a round won, a turn burnt): the session
+    // takes them after every change it accepts, a line each. A move's own words, when the
+    // game words it (a throw and what came up), stand for the move's line.
+    protected ref array<string> m_Said;
+    protected string m_MoveSaid = "";
+
+    protected void Say(string words)
+    {
+        if (!m_Said)
+            m_Said = new array<string>();
+        if (m_Said.Count() >= 8)
+            m_Said.RemoveOrdered(0);
+        m_Said.Insert(words);
+    }
+
+    protected void SayMove(string words)
+    {
+        m_MoveSaid = words;
+    }
+
+    // The move's own words ("" when the session words the move) and what was said since
+    // the last ask, added to `into`; both emptied.
+    string TakeSaid(array<string> into)
+    {
+        string move = m_MoveSaid;
+        m_MoveSaid = "";
+        if (!m_Said)
+            return move;
+        for (int i = 0; i < m_Said.Count(); i++)
+            into.Insert(m_Said[i]);
+        m_Said.Clear();
+        return move;
+    }
+
     // ---- a game being played -------------------------------------------------
 
     // A deal. `seats` are the seats dealt in, in their order around the mat;

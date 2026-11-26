@@ -19,6 +19,8 @@ class OZG_Pig extends OZG_DiceGame
     protected ref array<int> m_Score;
     protected int m_TurnPoints;
     protected int m_LastDie;
+    // the throws so far: the window turns the die a little differently each throw
+    protected int m_Throws;
 
     void OZG_Pig()
     {
@@ -53,6 +55,7 @@ class OZG_Pig extends OZG_DiceGame
             m_Score.Insert(0);
         m_TurnPoints = 0;
         m_LastDie = 0;
+        m_Throws = 0;
         return true;
     }
 
@@ -71,17 +74,25 @@ class OZG_Pig extends OZG_DiceGame
         {
             int v = DgRoll(seat, 0);
             m_LastDie = v;
+            m_Throws++;
             if (v == 1)
             {
                 m_Hist.Insert(seat.ToString() + " 1");
+                if (m_TurnPoints > 0)
+                    SayMove(OZG_Words.W2("STR_OZG_PIG_SAID_BURNT", OZG_Words.SeatArg(seat), m_TurnPoints.ToString()));
+                else
+                    SayMove(OZG_Words.W1("STR_OZG_PIG_SAID_ONE", OZG_Words.SeatArg(seat)));
                 DgPassTurn();
                 return true;
             }
             m_TurnPoints = m_TurnPoints + v;
+            SayMove(OZG_Words.W2("STR_OZG_PIG_SAID_THROW", OZG_Words.SeatArg(seat), v.ToString()));
             return true;
         }
         if (move == OZG_PigConst.M_HOLD && m_TurnPoints > 0)
         {
+            int total = m_Score[m_Turn] + m_TurnPoints;
+            SayMove(OZG_Words.W3("STR_OZG_PIG_SAID_HOLD", OZG_Words.SeatArg(seat), m_TurnPoints.ToString(), total.ToString()));
             m_Score[m_Turn] = m_Score[m_Turn] + m_TurnPoints;
             if (m_Score[m_Turn] >= OZG_PigConst.GOAL)
             {
@@ -124,6 +135,11 @@ class OZG_Pig extends OZG_DiceGame
             die = m_LastDie.ToString();
         zone.Line = OZG_Words.W2("STR_OZG_PIG_LINE", die, m_TurnPoints.ToString());
         v.Zones.Insert(zone);
+        // the window's die and its pill: the last die, the turn's points, the goal, the throws
+        OZG_GZone state = new OZG_GZone();
+        state.Id = "pig";
+        state.Line = m_LastDie.ToString() + "|" + m_TurnPoints.ToString() + "|" + OZG_PigConst.GOAL.ToString() + "|" + m_Throws.ToString();
+        v.Zones.Insert(state);
         if (m_Over)
         {
             v.Ended = 1;
@@ -206,6 +222,8 @@ class OZG_HighRoll extends OZG_DiceGame
     protected ref array<int> m_InIt;
     protected ref array<int> m_Total;
     protected ref array<string> m_Shown;
+    // the seat (by index) that took the pot, -1 before
+    protected int m_Won = -1;
 
     void OZG_HighRoll()
     {
@@ -280,6 +298,7 @@ class OZG_HighRoll extends OZG_DiceGame
         m_Total.Clear();
         m_Shown.Clear();
         m_Pot = 0;
+        m_Won = -1;
         for (int i = 0; i < m_Seats.Count(); i++)
         {
             int had = 0;
@@ -350,6 +369,11 @@ class OZG_HighRoll extends OZG_DiceGame
             sum = sum + dice[i];
         m_Total[m_Turn] = sum;
         m_Shown[m_Turn] = OZG_DiceText.Line(dice);
+        string key = "STR_OZG_HIGHROLL_SAID_THROW_" + dice.Count().ToString();
+        string said = OZG_Words.W1(key, OZG_Words.SeatArg(seat));
+        for (int k = 0; k < dice.Count(); k++)
+            said = said + OZG_Words.SEP + dice[k].ToString();
+        SayMove(said + OZG_Words.SEP + sum.ToString());
         HrAfterThrow();
         return true;
     }
@@ -384,8 +408,12 @@ class OZG_HighRoll extends OZG_DiceGame
             return;
         }
         m_Hist.Insert("tie " + best.ToString());
+        Say(OZG_Words.W1("STR_OZG_HIGHROLL_SAID_TIE", best.ToString()));
         for (i = 0; i < m_InIt.Count(); i++)
+        {
             m_Total[m_InIt[i]] = -1;
+            m_Shown[m_InIt[i]] = "";
+        }
         m_Turn = m_InIt[0];
     }
 
@@ -394,8 +422,13 @@ class OZG_HighRoll extends OZG_DiceGame
         if (m_InIt.Count() == 0)
             return;
         int winner = m_InIt[0];
+        m_Won = winner;
         m_Chips[winner] = m_Chips[winner] + m_Pot;
         string pot = m_Pot.ToString();
+        if (m_Total[winner] >= 0)
+            Say(OZG_Words.W3("STR_OZG_HIGHROLL_SAID_WON", OZG_Words.SeatArg(m_Seats[winner]), m_Total[winner].ToString(), pot));
+        else
+            Say(OZG_Words.W2("STR_OZG_HIGHROLL_SAID_TAKES", OZG_Words.SeatArg(m_Seats[winner]), pot));
         m_Pot = 0;
         for (int i = 0; i < m_Put.Count(); i++)
             m_Put[i] = 0;
@@ -418,11 +451,33 @@ class OZG_HighRoll extends OZG_DiceGame
             string line = OZG_Words.W1("STR_OZG_DICE_CHIPS", m_Chips[i].ToString());
             if (m_Shown[i] != "")
                 line = OZG_Words.W2("STR_OZG_HIGHROLL_THREW", m_Shown[i], m_Chips[i].ToString());
-            OZG_GSeat g = DgPlate(m_Seats[i], "", line);
+            // the window's cards: the dice of this throw, the chips, the stake
+            string role = "";
+            if (m_Shown[i] != "")
+                role = OZG_Words.W1("STR_OZG_DICE_SHOWN", m_Shown[i]);
+            OZG_GSeat g = DgPlate(m_Seats[i], role, line);
             if (m_InIt.Find(i) < 0)
                 g.Out = 1;
+            if (i == m_Won)
+                g.Mark = 1;
             v.SeatList.Insert(g);
         }
+        OZG_GZone state = new OZG_GZone();
+        state.Id = "highroll";
+        string chips = "";
+        string puts = "";
+        for (int c = 0; c < m_Seats.Count(); c++)
+        {
+            if (c > 0)
+            {
+                chips = chips + ",";
+                puts = puts + ",";
+            }
+            chips = chips + m_Chips[c].ToString();
+            puts = puts + m_Put[c].ToString();
+        }
+        state.Line = m_Count.ToString() + "|" + m_Stake.ToString() + "|" + chips + "|" + puts;
+        v.Zones.Insert(state);
         OZG_GZone zone = new OZG_GZone();
         zone.Id = "pot";
         zone.Label = OZG_Words.W0("STR_OZG_DICE_POT");

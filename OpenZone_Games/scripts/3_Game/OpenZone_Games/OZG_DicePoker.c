@@ -133,6 +133,8 @@ class OZG_DicePoker extends OZG_DiceGame
     protected void DpRound(bool stakes)
     {
         m_Round++;
+        if (m_Round > 1)
+            Say(OZG_Words.W1("STR_OZG_DPOKER_SAID_NEW", m_Round.ToString()));
         m_Raise = 0;
         m_Raiser = -1;
         for (int i = 0; i < m_Seats.Count(); i++)
@@ -191,7 +193,8 @@ class OZG_DicePoker extends OZG_DiceGame
             {
                 if (m_In[i] == 1)
                 {
-                    DpRoundWon(i);
+                    Say(OZG_Words.W1("STR_OZG_DPOKER_SAID_FOLDS", OZG_Words.SeatArg(m_Seats[i])));
+                    DpRoundWon(i, false);
                     return;
                 }
             }
@@ -230,6 +233,7 @@ class OZG_DicePoker extends OZG_DiceGame
         if (m_Phase == 0 && move == OZG_DiceGameConst.M_THROW)
         {
             DgRollInto(seat, 5, m_Hand[i]);
+            SayMove(OZG_Words.W2("STR_OZG_DPOKER_SAID_THROW", OZG_Words.SeatArg(seat), DpHandArg(m_Hand[i])));
             DpDone();
             return true;
         }
@@ -282,13 +286,22 @@ class OZG_DicePoker extends OZG_DiceGame
             array<int> positions = new array<int>();
             IntsOf(move.Substring(6, move.Length() - 6), ",", positions);
             array<int> hand = m_Hand[i];
+            int thrown = 0;
             for (int p = 0; p < positions.Count(); p++)
             {
                 int at = positions[p] - 1;
                 if (at < 0 || at >= hand.Count())
                     continue;
                 hand[at] = DgRoll(seat, at);
+                thrown++;
             }
+            string who = OZG_Words.SeatArg(seat);
+            string handArg = DpHandArg(hand);
+            string thrownText = thrown.ToString();
+            if (thrown > 0)
+                SayMove(OZG_Words.W3("STR_OZG_DPOKER_SAID_AGAIN", who, thrownText, handArg));
+            else
+                SayMove(OZG_Words.W2("STR_OZG_DPOKER_SAID_KEEP", who, handArg));
             DpDone();
             return true;
         }
@@ -368,20 +381,30 @@ class OZG_DicePoker extends OZG_DiceGame
         }
         if (top.Count() == 1)
         {
-            DpRoundWon(top[0]);
+            DpRoundWon(top[0], true);
             return;
         }
         // A draw: the round again, the pot as it is.
         m_LastRound = OZG_Words.W0("STR_OZG_DPOKER_DRAW");
         m_Hist.Insert("draw");
+        Say(OZG_Words.W0("STR_OZG_DPOKER_SAID_DRAW"));
         DpRound(false);
     }
 
-    protected void DpRoundWon(int i)
+    // A hand's name as an argument ("k:" its key).
+    protected string DpHandArg(array<int> hand)
+    {
+        int kind = DpRank(hand) / 10000;
+        return OZG_Words.KeyArg("STR_OZG_DPOKER_HAND_" + kind.ToString());
+    }
+
+    protected void DpRoundWon(int i, bool shown)
     {
         m_Wins[i] = m_Wins[i] + 1;
         int kind = DpRank(m_Hand[i]) / 10000;
         m_LastRound = OZG_Words.W2("STR_OZG_DPOKER_ROUND", OZG_Words.SeatArg(m_Seats[i]), OZG_Words.KeyArg("STR_OZG_DPOKER_HAND_" + kind.ToString()));
+        if (shown)
+            Say(OZG_Words.W2("STR_OZG_DPOKER_SAID_ROUND", OZG_Words.SeatArg(m_Seats[i]), OZG_Words.KeyArg("STR_OZG_DPOKER_HAND_" + kind.ToString())));
         if (m_Wins[i] >= OZG_DPokerConst.WINS)
         {
             m_Chips[i] = m_Chips[i] + m_Pot;
@@ -492,7 +515,8 @@ class OZG_DicePoker extends OZG_DiceGame
         v.GameId = GameId();
         for (int i = 0; i < m_Seats.Count(); i++)
         {
-            string line = OZG_Words.W2("STR_OZG_DPOKER_SEAT", m_Chips[i].ToString(), m_Wins[i].ToString());
+            // the chips, the rounds won, what it put in the pot (the window's plates)
+            string line = OZG_Words.W3("STR_OZG_DPOKER_SEAT", m_Chips[i].ToString(), m_Wins[i].ToString(), m_Put[i].ToString());
             OZG_GSeat g = DgPlate(m_Seats[i], OZG_Words.W1("STR_OZG_DICE_SHOWN", OZG_DiceText.Line(m_Hand[i])), line);
             if (m_In[i] == 0)
                 g.Out = 1;
@@ -503,6 +527,14 @@ class OZG_DicePoker extends OZG_DiceGame
         pot.Label = OZG_Words.W0("STR_OZG_DICE_POT");
         pot.Line = OZG_Words.W1("STR_OZG_DICE_POT_LINE", m_Pot.ToString());
         v.Zones.Insert(pot);
+        // the window's round panel: the phase, the round, a raise standing and its seat
+        OZG_GZone state = new OZG_GZone();
+        state.Id = "dpoker";
+        int raiser = -1;
+        if (m_Raiser >= 0 && m_Raiser < m_Seats.Count())
+            raiser = m_Seats[m_Raiser];
+        state.Line = m_Phase.ToString() + "|" + m_Round.ToString() + "|" + m_Raise.ToString() + "|" + raiser.ToString() + "|" + m_Stake.ToString();
+        v.Zones.Insert(state);
         if (m_LastRound != "")
         {
             OZG_GZone last = new OZG_GZone();

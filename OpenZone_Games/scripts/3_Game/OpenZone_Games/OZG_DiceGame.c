@@ -464,6 +464,9 @@ class OZG_DiceGame extends OZG_Game
         bool loaded = DgReplay(data);
         array<int> unheard = new array<int>();
         TakeHeard(unheard);
+        // and said by nobody: its lines are in the log already
+        array<string> unsaid = new array<string>();
+        TakeSaid(unsaid);
         return loaded;
     }
 

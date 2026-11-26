@@ -80,6 +80,45 @@ What the stand changed:
   panel); the face tiles' ring was clipped by the tile, a button clipping its children as a
   frame does (dayz-modding gui-layouts.md took the fact).
 
+## The afternoon: the kit's scroll and the dice games' own faces
+
+The owner, on a shot of the kit's window with a full deck running past its frame: "the
+cards run out of the frame, how do you scroll them? Did you check what you made in the
+game? Why did you stop when I said do it to the end and test?" And on the swap panel:
+"the dice's pictures belong here, as with the cards, because the dice may differ!!"
+
+- **The kit's middle** is the engine's ScrollWidget now (the frame's clip of the morning
+  was never looked at after it was made): it clips the things inside the panel's edge,
+  takes the wheel and draws a gold bar while they are taller than the panel. Checked with
+  the real mouse on the stand: two decks and two cans clipped, three notches of the wheel,
+  a card picked after the scroll (the right one), the thumb dragged to the end.
+- **Dice poker, pig, high roll and perudo** have the canvas's faces: each game's parts are
+  layouts of their own (`ozg_dg_<game>.layout` on the felt, `ozg_dg_<game>col.layout` in the
+  column), made into the dice window when its game is played (the four together would have
+  doubled the window to 2 465 widgets). Dice poker: the others' cards (name, rounds won,
+  chips, dice, hand, stake or fold), the pot's pill, "У ВАС" with the hand, the round's
+  panel with its five steps, the hands from the strongest; pig: a row a seat with the bar
+  of the goal and the turn's points after it, the big die (a one with a red pip and a red
+  ring), the turn's pill; high roll: a card a seat (whose dice, chips, the dice and their
+  total, the stake), the pot; perudo: the others' cards with their cans (the dice shown
+  after a showdown, what counts ringed, until the next bid), the bid, the player's own box,
+  the bid's panel with the count's stepper, the six faces, "Поставити" and "Не вірю!".
+- **The games say their lines for the log** (`OZG_Game.Say`, `SayMove`): a throw and what
+  came up, a turn burnt, a round won, a showdown and who loses a die. A move's own words
+  stand for its line ("Тарас кидає 4." instead of "Тарас кидає кості").
+- **The swap panel of the four** shows the dice carried as pictures (their colour, the face
+  a known load is on, in a grey disc), one picked by a click; the view's head says the
+  swaps left, whether one may be done now and what the player knows of each die. Every die
+  on the felt is drawn in its own colour (`SeatDiceLooks`). Perudo takes a swap at a
+  round's start, before the first bid; the die lies from the next round.
+- **An engine fault found on the way, in perudo since it was made**: its bid line and its
+  showdown wrote the bidder's or the loser's seat for the count -- `W3(key,
+  count.ToString(), face.ToString(), OZG_Words.SeatArg(seat))`, two calls of `ToString` in
+  one argument list, the later inside `SeatArg` (read back on the stand's bench: a bid of
+  three fours by seat 6 as "6 4 s:6"; after the fix "3 4 s:6", and a showdown's count right).
+  The words are made into locals first now (dayz-modding enforce-script.md took the fact);
+  the faces' painters copy a seat's fields into locals before handing them on.
+
 ## Not checked, and open
 
 - Not checked on the stand: the kit's wheel (the MCP has no wheel); the sounds by ear (the

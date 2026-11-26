@@ -94,9 +94,13 @@ def sheet(look, rng):
     return grain(img, rng, 6)
 
 
-def face_picture(look, n):
-    """The window's picture of a face: the die square on, round corners, a soft edge."""
+def face_picture(look, n, pip_colour=None):
+    """The window's picture of a face: the die square on, round corners, a soft edge. Face
+    0 is the die with no pips (the canvas's die before its first throw, and the shape of a
+    ring round a die); `pip_colour` paints the pips another colour (pig's one: red)."""
     body, pip = COLOURS[LOOKS[look][0]]
+    if pip_colour:
+        pip = pip_colour
     rad = LOOKS[look][1]
     size = 96 * SS
     img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
@@ -113,7 +117,8 @@ def face_picture(look, n):
     img = Image.alpha_composite(img, Image.composite(shade, Image.new("RGBA", (size, size), (0, 0, 0, 0)), img.getchannel("A")))
     d = ImageDraw.Draw(img)
     inset = 8 * SS
-    pips(d, n, inset, inset, size - 2 * inset, pip + (255,), rad)
+    if n > 0:
+        pips(d, n, inset, inset, size - 2 * inset, pip + (255,), rad)
     return img.resize((96, 96), Image.Resampling.LANCZOS)
 
 
@@ -126,10 +131,21 @@ def main():
             print("wrote models/die/data/ozg_die_%s_co.png" % look)
     art = os.path.join(REPO, "art", "dice")
     os.makedirs(art, exist_ok=True)
+    extra()
+
+
+def extra():
+    """The faces beside the six: each look's die with no pips (_0), and the white dice's one
+    with a red pip (_1r: pig's one on white dice, the canvas's #8e2a1e)."""
+    art = os.path.join(REPO, "art", "dice")
+    os.makedirs(art, exist_ok=True)
     for look in LOOKS:
         for n in range(1, 7):
             face_picture(look, n).save(os.path.join(art, "%s_%d.png" % (look, n)))
-    print("wrote art/dice: %d pictures" % (len(LOOKS) * 6))
+        face_picture(look, 0).save(os.path.join(art, "%s_0.png" % look))
+        if LOOKS[look][0] == "white":
+            face_picture(look, 1, (142, 42, 30)).save(os.path.join(art, "%s_1r.png" % look))
+    print("wrote art/dice: %d pictures" % (len(LOOKS) * 7 + 2))
 
 
 if __name__ == "__main__":

@@ -3773,7 +3773,40 @@ class OZG_GameMenu : UIScriptedMenu
             return Tr(rest);
         if (kind == "b")
             return BidWord(rest);
+        if (kind == "f")
+            return FaceCountWord(rest);
         return arg;
+    }
+
+    // "3:6" -> "3 шістки": a count of dice showing a face (perudo's bids), the noun as
+    // the count wants it.
+    protected string FaceCountWord(string countFace)
+    {
+        int colon = countFace.IndexOf(":");
+        if (colon <= 0)
+            return countFace;
+        int n = countFace.Substring(0, colon).ToInt();
+        int face = countFace.Substring(colon + 1, countFace.Length() - colon - 1).ToInt();
+        return FaceCount(n, face);
+    }
+
+    protected string FaceCount(int n, int face)
+    {
+        return Tr1("STR_OZG_FACE_" + face.ToString() + "_" + CountForm(n), n.ToString());
+    }
+
+    // The form a Ukrainian noun takes after a number: ONE (1, 21, ..), FEW (2-4, 22-24,
+    // ..), MANY (the rest, 11-14 among them); the English strings say the same in two.
+    protected string CountForm(int n)
+    {
+        int m10 = n % 10;
+        int m100 = n % 100;
+        if (m10 == 1 && m100 != 11)
+            return "ONE";
+        bool teens = m100 >= 12 && m100 <= 14;
+        if (m10 >= 2 && m10 <= 4 && !teens)
+            return "FEW";
+        return "MANY";
     }
 
     // A call of the auction: "1C".."7N", "6S".."10N", "P", "X", "XX", "M".
@@ -4625,6 +4658,9 @@ class OZG_GameMenu : UIScriptedMenu
     // before.
     protected string GenLogWord(string head, string rest)
     {
+        // a game's own words for the log (a throw and what came up, a round won)
+        if (head == "say")
+            return Words(rest);
         if (head == "game")
             return Tr1("STR_OZG_LOG_GAME", GameLabel(rest));
         if (head == "let" || head == "chips")

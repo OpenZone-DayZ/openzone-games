@@ -37,12 +37,20 @@ class OZG_Perudo extends OZG_DiceGame
     protected bool m_Palifico;
     // Words: the last showdown.
     protected string m_Shown;
+    // The last showdown for the window: the bid, whether ones were wild, who lost a die,
+    // every seat's dice as they lay.
+    protected int m_LastBidCount;
+    protected int m_LastBidFace;
+    protected bool m_LastPalifico;
+    protected int m_LastLoser = -1;
+    protected ref array<string> m_LastShown;
 
     void OZG_Perudo()
     {
         m_Count = new array<int>();
         m_Dice = new array<ref array<int>>();
         m_PalDone = new array<int>();
+        m_LastShown = new array<string>();
     }
 
     override string GameId()
@@ -65,9 +73,13 @@ class OZG_Perudo extends OZG_DiceGame
         return true;
     }
 
+    // A die may be swapped into his can at the start of a round, in his turn, before the
+    // first bid (the canvas's perudo); it lies from the next round's throw.
     override bool ThrowsNext(int seat)
     {
-        return false;
+        if (m_Over || seat != DgCurrent())
+            return false;
+        return m_BidCount == 0;
     }
 
     override protected bool DgBegin(out string refusal)
@@ -84,6 +96,8 @@ class OZG_Perudo extends OZG_DiceGame
         }
         m_Shown = "";
         m_Palifico = false;
+        m_LastShown.Clear();
+        m_LastLoser = -1;
         PeRound(m_Turn);
         return true;
     }
@@ -106,6 +120,10 @@ class OZG_Perudo extends OZG_DiceGame
         m_Turn = starter;
         if (m_Gone.Find(m_Turn) >= 0)
             m_Turn = DgNextIndex(m_Turn);
+        if (m_Palifico)
+            Say(OZG_Words.W0("STR_OZG_PERUDO_SAID_PALIFICO"));
+        else
+            Say(OZG_Words.W0("STR_OZG_PERUDO_SAID_ROUND"));
     }
 
     protected int InPlay()
@@ -189,6 +207,7 @@ class OZG_Perudo extends OZG_DiceGame
             m_BidFace = f;
             m_Bidder = m_Turn;
             m_Turn = DgNextIndex(m_Turn);
+            SayMove(OZG_Words.W2("STR_OZG_PERUDO_SAID_BID", OZG_Words.SeatArg(seat), "f:" + c.ToString() + ":" + f.ToString()));
             return true;
         }
         if (move == OZG_PerudoConst.M_DUDO && m_Bidder >= 0)
@@ -197,6 +216,22 @@ class OZG_Perudo extends OZG_DiceGame
             return true;
         }
         return false;
+    }
+
+    // The dice everybody showed, for the window: they lie open until the next bid.
+    protected void PeKeepShown(int loserSeat)
+    {
+        m_LastBidCount = m_BidCount;
+        m_LastBidFace = m_BidFace;
+        m_LastPalifico = m_Palifico;
+        m_LastLoser = loserSeat;
+        m_LastShown.Clear();
+        for (int s = 0; s < m_Seats.Count(); s++)
+        {
+            array<int> laid = m_Dice[s];
+            string line = OZG_DiceText.Line(laid);
+            m_LastShown.Insert(line);
+        }
     }
 
     // "I do not believe" from the seat of index `doubter`.
@@ -223,11 +258,32 @@ class OZG_Perudo extends OZG_DiceGame
         int loser = doubter;
         if (actual < m_BidCount)
             loser = m_Bidder;
-        m_Shown = OZG_Words.W4("STR_OZG_PERUDO_SHOWN", all, actual.ToString(), m_BidFace.ToString(), OZG_Words.SeatArg(m_Seats[loser]));
-        m_Hist.Insert("show " + actual.ToString() + " of " + m_BidCount.ToString() + "x" + m_BidFace.ToString());
+        // the log: who doubted, how many there were, whether the bid held, who loses a die
+        string held = "k:STR_OZG_PERUDO_HELD";
+        if (actual < m_BidCount)
+            held = "k:STR_OZG_PERUDO_FELL";
+        string showKey = "STR_OZG_PERUDO_SAID_SHOW";
+        if (!m_Palifico && m_BidFace != 1)
+            showKey = "STR_OZG_PERUDO_SAID_SHOW_ONES";
+        // every word made into a local before a call takes them: written inline as
+        // W4(key, all, actual.ToString(), m_BidFace.ToString(), OZG_Words.SeatArg(..)) the
+        // count came out as the seat's number SeatArg made inside (the stand's bench,
+        // 2026-11-26; dayz-modding enforce-script.md, two calls of one function)
+        int doubterSeat = m_Seats[doubter];
+        int loserSeat = m_Seats[loser];
+        string actualText = actual.ToString();
+        string faceText = m_BidFace.ToString();
+        string doubterArg = OZG_Words.SeatArg(doubterSeat);
+        string loserArg = OZG_Words.SeatArg(loserSeat);
+        string counted = "f:" + actualText + ":" + faceText;
+        SayMove(OZG_Words.W4(showKey, doubterArg, counted, held, loserArg));
+        m_Shown = OZG_Words.W4("STR_OZG_PERUDO_SHOWN", all, actualText, faceText, loserArg);
+        m_Hist.Insert("show " + actualText + " of " + m_BidCount.ToString() + "x" + faceText);
+        PeKeepShown(loserSeat);
         m_Count[loser] = m_Count[loser] - 1;
         if (m_Count[loser] <= 0)
         {
+            Say(OZG_Words.W1("STR_OZG_PERUDO_SAID_OUT", OZG_Words.SeatArg(m_Seats[loser])));
             m_Gone.Insert(loser);
             if (DgLeft() <= 1)
             {
@@ -277,7 +333,13 @@ class OZG_Perudo extends OZG_DiceGame
         bid.Id = "bid";
         bid.Label = OZG_Words.W0("STR_OZG_PERUDO_BID_NOW");
         if (m_Bidder >= 0)
-            bid.Line = OZG_Words.W3("STR_OZG_PERUDO_BID_LINE", m_BidCount.ToString(), m_BidFace.ToString(), OZG_Words.SeatArg(m_Seats[m_Bidder]));
+        {
+            // the words made first (PeShow says why)
+            string bidCount = m_BidCount.ToString();
+            string bidFace = m_BidFace.ToString();
+            string bidBy = OZG_Words.SeatArg(m_Seats[m_Bidder]);
+            bid.Line = OZG_Words.W3("STR_OZG_PERUDO_BID_LINE", bidCount, bidFace, bidBy);
+        }
         else
             bid.Line = OZG_Words.W0("STR_OZG_PERUDO_NO_BID");
         v.Zones.Insert(bid);
@@ -288,6 +350,32 @@ class OZG_Perudo extends OZG_DiceGame
             shown.Label = OZG_Words.W0("STR_OZG_PERUDO_LAST");
             shown.Line = m_Shown;
             v.Zones.Insert(shown);
+        }
+        // the window: the bid (count, face, bidder's seat), palifico, the dice on the table;
+        // the last showdown while no new bid stands (its bid, wild ones, the loser, the dice
+        // of every seat)
+        OZG_GZone state = new OZG_GZone();
+        state.Id = "perudo";
+        int bidder = -1;
+        if (m_Bidder >= 0)
+            bidder = m_Seats[m_Bidder];
+        int pal = 0;
+        if (m_Palifico)
+            pal = 1;
+        state.Line = m_BidCount.ToString() + "|" + m_BidFace.ToString() + "|" + bidder.ToString() + "|" + pal.ToString() + "|" + InPlay().ToString();
+        v.Zones.Insert(state);
+        if (m_Bidder < 0 && m_LastShown.Count() > 0)
+        {
+            OZG_GZone open = new OZG_GZone();
+            open.Id = "perudo_open";
+            int lastPal = 0;
+            if (m_LastPalifico)
+                lastPal = 1;
+            string line = m_LastBidCount.ToString() + "|" + m_LastBidFace.ToString() + "|" + lastPal.ToString() + "|" + m_LastLoser.ToString();
+            for (int k = 0; k < m_LastShown.Count(); k++)
+                line = line + "|" + m_Seats[k].ToString() + "=" + m_LastShown[k];
+            open.Line = line;
+            v.Zones.Insert(open);
         }
         if (m_Over)
         {
@@ -329,6 +417,19 @@ class OZG_Perudo extends OZG_DiceGame
             int face = parts[2].ToInt();
             OZG_GButton b = OZG_GButton.Make(m, OZG_Words.W2("STR_OZG_PERUDO_BTN_BID", parts[1], parts[2]), face - 1, v.Buttons.Count());
             v.Buttons.Insert(b);
+        }
+        // every bid that raises the last: the window's count and face are checked on them
+        if (!m_Over && seat == DgCurrent())
+        {
+            int most = InPlay();
+            for (int f = 1; f <= 6; f++)
+            {
+                for (int c = 1; c <= most; c++)
+                {
+                    if (PeRaises(c, f))
+                        v.CanPlay.Insert(OZG_PerudoConst.M_BID + c.ToString() + ":" + f.ToString());
+                }
+            }
         }
         return DgPrivateText(v);
     }
