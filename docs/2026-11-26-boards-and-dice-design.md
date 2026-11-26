@@ -58,6 +58,22 @@ Date: 2026-11-25/26. The owner's words, in this order (chat, Russian; here in En
     bishop-scientists -- pistols."
 22. (2026-11-26, of two finishes shown side by side) "Game colours": the figurines wear the
     games' own colours, and the base shows the side.
+23. (2026-11-26, after a try with S.T.A.L.K.E.R. 2's models) "We take the models and
+    textures of the original trilogy, aiming at 2,500-4,000 triangles." Earlier the same
+    day: "do not mix the models and skeletons of the first and the second part"; "I do not
+    want the chess set to lag"; a figure must not reach past its square.
+24. (2026-11-26, on the trilogy set) Sidorovich does not sit on a crate: he holds a chicken
+    leg at his chest, bringing it to his mouth; then "the leg in the fist, and darker", the
+    other hand "calmly along the body"; of a calmer stance tried beside it -- "the calm pose
+    is worse"; "turn Sidorovich (just about the axis, the whole model) to look ahead".
+25. (2026-11-26) The exoskeleton in its helmet, the face not seen; every armed figure aims
+    forward, not with the barrels up ("the weapons are OK"); "put the Gauss gun's scope on
+    the exoskeleton".
+26. (2026-11-26) The guide does not throw the bolt but holds it -- thrown, the figure came
+    out too small; "the bolt is too big, make it smaller after all, and it does not sit
+    straight in the fist"; "better remove the green patch under his feet"; "turn the guide
+    too", "and the chimera" (to look ahead).
+27. (2026-11-26) "Now line up the heights."
 
 What the words leave open is decided below and named in §14.
 
@@ -449,18 +465,38 @@ Decided while building (2026-11-26, `2026-11-26-boards-and-dice-record.md`):
 
   | piece | stalkers (white) | mutants (black) |
   |---|---|---|
-  | king | Sidorovich, on crates of his goods | controller |
+  | king | Sidorovich, eating a chicken leg (word 24) | controller |
   | queen | Strelok | chimera |
   | rook | a stalker in an exoskeleton | pseudogiant |
   | bishop | a scientist in an Ecologist suit | bloodsucker |
-  | knight | a guide, a bolt in hand, leaping an anomaly | snork |
+  | knight | a guide, a bolt in his fist (word 26) | snork |
   | pawn | a rookie ("vidmychka") in a hooded jacket | boar |
 
   The stalkers hold their weapons (word 21): the rookies a BM-16 double-barrel, Strelok an
-  AK-74, the exoskeletons a Gauss rifle, the scientists a pistol. The figurines keep the
-  games' colours, the stalkers on cream bases and the mutants on black ones (word 22).
-  First renders (2026-11-26): each figure posed by its game's own motions, the weapon put
-  in the hand as the game's engine puts it, 1,000-1,600 triangles a figure and 150-350 a
-  weapon.
+  AK-74, the exoskeletons a Gauss rifle with its scope (word 25), the scientists a pistol.
+  The figurines keep the games' colours, the stalkers on cream bases and the mutants on
+  black ones (word 22).
+
+  The set as rendered on 2026-11-26 (word 23: the trilogy's models and textures only; the
+  scenes are the research tools `ogf_make_full.py`, `ogf_scene.py`):
+  - **Poses** from the games' own motions. Sidorovich (Clear Sky's
+    `stalker_trader_1`) has a skeleton of his own -- no `spine2`, a shorter spine, the
+    pelvis 0.83 m high against a stalker's 0.99 -- so a stalker's motion is carried over
+    as turns only, each bone keeping its own length (a motion places bones at the lengths
+    of the skeleton it was made for: put on as it is, his legs reached to his neck); his
+    fingers come from his own motions (a fist round the leg, a hand at rest). The guide's
+    bolt sits in a fist taken from the knife's grip.
+  - **Facing**: an armed figure faces where its muzzle points, Sidorovich, the guide and
+    the chimera where their heads look -- the whole model turned about the upright.
+  - **The square is the limit**: every part of a figure stays within its square (the
+    square, not the circle in it); a figure that would reach past it is made smaller.
+  - **Heights** (word 27): kings 56 mm, bishops 45.5, knights 45, pawns 40. A queen and a
+    rook are as big as their square holds: a rifle and the body behind it hold Strelok at
+    46.4 mm and the exoskeleton at 44.6; a body's length holds the chimera at 29.9 and the
+    pseudogiant at 32.7; the boar is 20.6 high (40 asked, held by its length).
+  - **Triangles**, each figure with its weapon or held thing and its base (316): the
+    kings, queens and rooks about 3,995; bishops 3,566 and 3,316; knights 3,396 and
+    3,316; pawns 3,215 and 2,815. The whole board 107,392 at the finest level; the levels
+    of detail below it are made when the set goes into the game.
 - A chess clock, the doubling cube, general (word 8).
 - Bots stronger than the first legal move a game offers.
