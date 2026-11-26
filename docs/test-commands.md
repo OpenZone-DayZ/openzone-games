@@ -331,11 +331,14 @@ corners, long nardy and short nardy (the field turns over for nardy); on a can t
 dice poker, pig, high roll and perudo. The board games are for two, the dice games for two
 to six. `!ozg bots` seats bots at both; a bot plays a move the game offers.
 
-**The window is a working one until the mockups** (the owner's word of 2026-11-26): a
-board's piece is clicked, then a lit square (a capture of several squares square by
-square, promotion asks the piece); nardy's moves and every dice game's moves are buttons.
-"Variant" steps through a game's FIRST option only: whose dice in the dice games (the
-host's, own, by wish), the size of corners. The other options through the bridge:
+**The windows are the design canvas's** (moved in 2026-11-26,
+`2026-11-26-board-window-record.md`): chess and draughts in the board's window, corners in
+its own, nardy on the board's other side, the five dice games in the felt's window. A
+board's piece is clicked, then a lit square (a capture of several squares square by square,
+promotion asks the piece); nardy's throw and every dice game's moves are buttons. The
+host's row under the moves steps "Variant" through a game's FIRST option only: whose dice
+in the dice games (the host's, own, by wish), the size of corners. The other options
+through the bridge:
 
     oz_games {"op":"ask","id":"<place>","who":"me","ask":"game","val":"thousand"}
     oz_games {"op":"ask","id":"<place>","who":"me","ask":"opt","opt":"dice","val":"own"}      host | own | wish
@@ -357,8 +360,9 @@ or the face it is loaded on and how heavily; the player knows that load from the
 
 **Sleights on a board** (design §9.1): move, swap, put back, take off. Whoever has the
 window open on the place is told at once and sees the squares lit; whoever does not is told
-nothing. One a player every `BoardSleightMinutes` (5). The window has no buttons for them
-yet (mockups first); through the bridge, `move` is `<kind>:<a>:<b>`, the squares as in the
+nothing. One a player every `BoardSleightMinutes` (5). The window's panel "Спритність рук"
+arms one (then its squares are clicked on the board); through the bridge, `move` is
+`<kind>:<a>:<b>`, the squares as in the
 moves (`d8`; nardy points 1-24) and, for `back`, what is put back first: chess its letter
 as a FEN writes it (`Q` a white queen, `q` a black one), draughts `w W b B`, nardy `w` or
 `b`:
@@ -369,8 +373,22 @@ as a FEN writes it (`Q` a white queen, `q` a black one), draughts `w W b B`, nar
     oz_games {"op":"ask","id":"<place>","who":"puppet3","ask":"bsleight","move":"swap:a1:h1"}
     oz_games {"op":"ask","id":"<place>","who":"puppet3","ask":"bsleight","move":"back:q:d8"}
 
-**Loading and swapping dice** (design §9.2, §10). The kit's window comes with the mockups;
-the server's half is there. A loaded die shows its face `LoadWeights` percent of its throws
+**The kit's window** (design §10): `!ozg kit`, the kit in the hands, "Відкрити набір". The
+middle lists the cards and dice you carry where they are (pockets, a deck, a can; the wheel
+scrolls a full deck); pick a card to mark it, a die to load it on a face and a weight (the
+kit works 2.3 s, then a use is spent); another's mark or load opens to you when you pick
+the thing. On the stand, with the bridge: `give what=OZG_MarkTool`, `give deck=OZG_Deck_Classic`,
+`give what=OZG_DiceCan_Classic`, the kit moved to the hands (`world_move`) and the action
+`OZG_ActionOpenKit` (`world_action`).
+
+**Looking at a board as a watcher**, one person and bots: `lay at="x y z" deck=OZG_Board_Classic`
+(or `OZG_Board_Stalker`, `OZG_DiceCan_Classic`), `bots id= n=2 on=0`, the host bot's `ask ...
+ask=game val=corners` and `ask=deal`, `bots id= n=0 on=1`; stand within two metres of the
+place and take `OZG_ActionWatch`. After a restart the bots of the old places are gone but
+their seats are kept: a new place's `bots` skips the old bots' names (call it again until
+it seats as many as wanted).
+
+**Loading and swapping dice** (design §9.2, §10). A loaded die shows its face `LoadWeights` percent of its throws
 (30, 50, 70); a die loaded by somebody else and unknown to the loader opens to him for free.
 A swap, on the player's throw: a die he carries for one of the dice he is about to throw
 (`seat` is its place among them, 0 first); one a throw, `DiceSwaps` (2) a game; it shows at
