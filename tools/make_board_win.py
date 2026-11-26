@@ -648,16 +648,22 @@ def window_kit():
     for i in range(2):
         left.append(text("OZG_KFoot%d" % i, 14, 730 + i * 15, 312, 15, 12, "s", FAINT, 2))
     k.append(frame("OZG_KLeft", exact(52, 86, 340, 774), 5, left))
-    # middle: the things, laid by the script (OZG_KThings), and the button that picks one
-    # the things and their groups' captions scroll together (the wheel), clipped to the
-    # panel: a full deck is taller than it
+    # middle: the things, laid by the script, scroll inside the panel's edge (a full deck is
+    # taller than the panel). The engine's scroll clips them, takes the wheel and draws its
+    # bar -- 10 units over the content's right, the thumb gold and the track half of it --
+    # only while they are taller than it. The script sizes the content (OZG_KThings) to the
+    # things; the button that picks one lies in it and stops short of the bar, so a press on
+    # the bar is the scroll's own
     groups = []
     for i in range(3):
-        groups.append(text("OZG_KGroup%d" % i, 16, 14, 300, 15, 12, "s", GOLD, 6, "left", "", [("visible", 0)]))
-        groups.append(text("OZG_KGroupNote%d" % i, 120, 14, 500, 15, 12, "s", FAINT, 6, "left", "", [("visible", 0)]))
-    mid = [box("OZG_KMidBox", 0, 0, 748, 774, 6, PANEL, EDGE, prio=0),
-           frame("OZG_KThings", exact(0, 0, 748, 774), 5, groups, clip=1),
-           button("OZG_KHit", 0, 0, 748, 774, 10, None)]
+        groups.append(text("OZG_KGroup%d" % i, 15, 13, 300, 15, 12, "s", GOLD, 6, "left", "", [("visible", 0)]))
+        groups.append(text("OZG_KGroupNote%d" % i, 119, 13, 500, 15, 12, "s", FAINT, 6, "left", "", [("visible", 0)]))
+    groups.append(button("OZG_KHit", 0, 0, 734, 772, 10, None))
+    things = ("FrameWidgetClass", "OZG_KThings", exact(0, 0, 746, 772) + [("priority", 5)], groups)
+    scroll = ("ScrollWidgetClass", "OZG_KScroll",
+              exact(1, 1, 746, 772) + [("color", rgb(GOLD, 0.9)), ("priority", 5), ("clipchildren", 1),
+                                      ("Scrollbar V", 1), ("style", "blank")], [things])
+    mid = [box("OZG_KMidBox", 0, 0, 748, 774, 6, PANEL, EDGE, prio=0), scroll]
     mid.append(text("OZG_KEmpty", 16, 14, 700, 18, 14, "s", MUTED, 6, "left", "#STR_OZG_KWIN_EMPTY", [("visible", 0)]))
     k.append(frame("OZG_KMid", exact(404, 86, 748, 774), 5, mid))
     # right: the one picked

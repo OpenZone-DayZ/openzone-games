@@ -21,10 +21,16 @@ class OZG_KitMenu : UIScriptedMenu
     // How long the kit works (the canvas: 2.3 s, its bar full at 2).
     protected static const float WORK_TIME = 2.3;
     protected static const float WORK_FULL = 2.0;
-    // The middle panel's things: from its padding to its padding, 12 apart.
-    protected static const float THINGS_X = 16;
-    protected static const float THINGS_RIGHT = 732;
+    // The middle panel's things, in its scroll (which lies 1 inside the panel's edge): from
+    // the canvas's padding to its padding (16 at the sides, 14 at the top), 12 apart; the
+    // button that picks one stops short of the scroll's bar.
+    protected static const float THINGS_X = 15;
+    protected static const float THINGS_TOP = 13;
+    protected static const float THINGS_RIGHT = 731;
     protected static const float THINGS_GAP = 12;
+    protected static const float SCROLL_W = 746;
+    protected static const float SCROLL_H = 772;
+    protected static const float HIT_W = 734;
     protected static const float CARD_W = 86;
     protected static const float CARD_H = 129;
     protected static const float DIE_SIDE = 64;
@@ -56,8 +62,7 @@ class OZG_KitMenu : UIScriptedMenu
     protected ref array<Widget> m_Dice;
     protected int m_CardsUsed;
     protected int m_DiceUsed;
-    // the middle scrolled (units from its top) and how tall its things are
-    protected float m_Scroll;
+    // how tall the middle's things are (its scroll's content)
     protected float m_ThingsH;
     // the things as laid: key and box in the middle panel's units
     protected ref array<string> m_HitKeys;
@@ -521,15 +526,6 @@ class OZG_KitMenu : UIScriptedMenu
         m_DiceUsed = 0;
         PaintLeft();
         PaintThings();
-        // fewer things than when it was scrolled: no further than they reach
-        float most = ScrollMost();
-        if (m_Scroll > most)
-        {
-            m_Scroll = most;
-            m_CardsUsed = 0;
-            m_DiceUsed = 0;
-            PaintThings();
-        }
         PaintRight();
         int i;
         for (i = m_CardsUsed; i < m_Cards.Count(); i++)
@@ -580,7 +576,7 @@ class OZG_KitMenu : UIScriptedMenu
         titles.Insert("STR_OZG_KWIN_POCKET");
         titles.Insert("STR_OZG_KWIN_DECK");
         titles.Insert("STR_OZG_KWIN_CAN");
-        float y = 14 - m_Scroll;
+        float y = THINGS_TOP;
         int groups = 0;
         for (int g = 0; g < 3; g++)
         {
@@ -658,32 +654,33 @@ class OZG_KitMenu : UIScriptedMenu
             }
             y = y + rowH + 14;
         }
-        m_ThingsH = y + m_Scroll;
+        m_ThingsH = y;
         ShowW("OZG_KEmpty", groups == 0);
+        FitScroll();
     }
 
-    // How far the middle scrolls: its things' height less the panel's.
-    protected float ScrollMost()
+    // The scroll's content the height of the things, and the scroll told so: it notices a
+    // content that grew only on Update (dayz-modding gui-layouts §31). Fewer things than when
+    // it was scrolled: no further than they reach. Its positions are pixels.
+    protected void FitScroll()
     {
-        float most = m_ThingsH - 774;
+        Widget things = W("OZG_KThings");
+        ScrollWidget scroll = ScrollWidget.Cast(W("OZG_KScroll"));
+        if (!things || !scroll)
+            return;
+        float h = m_ThingsH;
+        things.SetSize(SCROLL_W * m_K, h * m_K);
+        Widget hit = W("OZG_KHit");
+        if (hit)
+            hit.SetSize(HIT_W * m_K, h * m_K);
+        things.Update();
+        scroll.Update();
+        float most = (h - SCROLL_H) * m_K;
         if (most < 0)
             most = 0;
-        return most;
-    }
-
-    // The wheel over the middle scrolls it.
-    override bool OnMouseWheel(Widget w, int x, int y, int wheel)
-    {
-        if (!w || w.GetName() != "OZG_KHit" || m_Work >= 0)
-            return false;
-        m_Scroll = m_Scroll - wheel * 60;
-        if (m_Scroll < 0)
-            m_Scroll = 0;
-        float most = ScrollMost();
-        if (m_Scroll > most)
-            m_Scroll = most;
-        Paint();
-        return true;
+        float now = scroll.GetVScrollPos();
+        if (now > most)
+            scroll.VScrollToPos(most);
     }
 
     // What a group holds, in words: "2 карти й 2 кістки"; a deck's look before its count.
@@ -1125,17 +1122,18 @@ class OZG_KitMenu : UIScriptedMenu
 
     protected void PickAtPointer()
     {
-        Widget mid = W("OZG_KMid");
-        if (!mid || !m_Kit)
+        ScrollWidget scroll = ScrollWidget.Cast(W("OZG_KScroll"));
+        if (!scroll || !m_Kit)
             return;
         int mx;
         int my;
         GetMousePos(mx, my);
         float px;
         float py;
-        mid.GetScreenPos(px, py);
+        scroll.GetScreenPos(px, py);
+        float top = scroll.GetVScrollPos();
         float ux = (mx - px) / m_K;
-        float uy = (my - py) / m_K;
+        float uy = (my - py + top) / m_K;
         for (int i = 0; i < m_HitKeys.Count(); i++)
         {
             bool inX = ux >= m_HitX[i] && ux <= m_HitX[i] + m_HitW[i];
