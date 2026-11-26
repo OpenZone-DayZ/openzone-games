@@ -702,8 +702,8 @@ STR_OZG_THOUSAND_OVERTAKE,Обгін,Overtaking
 STR_OZG_THOUSAND_BOLTS,Болти,Bolts
 STR_OZG_THOUSAND_END,1000 очок,1000 points
 STR_OZG_THOUSAND_END_ONES,"п'ять одиниць",five ones
-STR_OZG_THOUSAND_SEAT,"%1 очок, болтів %2","%1 points, bolts %2"
-STR_OZG_THOUSAND_SEAT_BARREL,"%1 на бочці, болтів %2","%1 on the barrel, bolts %2"
+STR_OZG_THOUSAND_SEAT,болтів: %2,bolts: %2
+STR_OZG_THOUSAND_SEAT_BARREL,на бочці · болтів: %2,on the barrel · bolts: %2
 STR_OZG_THOUSAND_THROW,Кидок,The throw
 STR_OZG_THOUSAND_ASIDE,Відкладено,Put aside
 STR_OZG_THOUSAND_ASIDE_LINE,%1: %2 очок за хід,%1: %2 points this turn
@@ -988,3 +988,26 @@ STR_OZG_KWIN_SAID_MARKED_LAST,Покраплено. Набір порожній 
 STR_OZG_KWIN_SAID_LOADED,"Кістку заряджено: %1, %2.","The die is loaded: %1, %2."
 STR_OZG_KWIN_SAID_LOADED_LAST,Заряджено. Набір порожній — він зникне.,Loaded. The kit is empty — it will be gone.
 STR_OZG_KWIN_SAID_KNOWN,Цю карту ви вже читаєте.,You read this card already.
+STR_OZG_BWIN_SET_STALKER_DISCS,"дошка «3 в 1», сталкерські шашки","3-in-1 board, stalker discs"
+STR_OZG_BWIN_RULES_DRAUGHTS,"бити обов’язково, дамка далекобійна","capturing is a must, a king flies"
+STR_OZG_BWIN_RULES_GIVEAWAY,"бити обов’язково, виграє той, хто віддасть усі шашки","capturing is a must, who gives away all his discs wins"
+STR_OZG_BWIN_RULES_CORNERS_9,"9 шашок, кут 3 × 3 · кроки й стрибки по горизонталі та вертикалі","9 discs, a corner of 3 × 3 · steps and jumps along ranks and files"
+STR_OZG_BWIN_RULES_CORNERS_12,"12 шашок, кут 4 × 3 · кроки й стрибки по горизонталі та вертикалі","12 discs, a corner of 4 × 3 · steps and jumps along ranks and files"
+STR_OZG_BWIN_ON_BOARD,на дошці %1,%1 on the board
+STR_OZG_BWIN_CORNER_GOES,іде в %1,goes to the %1
+STR_OZG_BWIN_CORNER_GO_YOU,ідете в %1,you go to the %1
+STR_OZG_BWIN_CORNER_TR,правий верхній кут,upper right corner
+STR_OZG_BWIN_CORNER_BL,лівий нижній кут,lower left corner
+STR_OZG_BWIN_THROW_WHOSE_HOST,кості дошки (господаря),the board's dice (the host's)
+STR_OZG_BWIN_THROW_WHOSE_OWN,свої кості,own dice
+STR_OZG_BWIN_THROW_WHOSE_WISH,кості за бажанням,dice by wish
+STR_OZG_THOUSAND_TURN,За хід,This turn
+STR_OZG_DWIN_NUMBER,%1,%1
+STR_OZG_BWIN_CORNERS_MOVE,Хід,Move
+STR_OZG_BWIN_CORNERS_OF,з %1 до перевірки домівки,of %1 to the home's check
+STR_OZG_BWIN_CORNERS_HOME_YOU,У вашому куті ще %1 з ваших шашок. Якщо на %2-му ході хоч одна там лишиться — поразка.,"Your corner still holds %1 of your discs. If one is still there at your %2th move, you lose."
+STR_OZG_BWIN_CORNERS_HOME_SIDE,У куті %1 ще %2 з їхніх шашок. Якщо на 40-му ході хоч одна там лишиться — поразка.,"%1 corner still holds %2 of their discs. If one is still there at the 40th move, they lose."
+STR_OZG_BWIN_CORNERS_WHITES,білих,White's
+STR_OZG_BWIN_CORNERS_BLACKS,чорних,Black's
+STR_OZG_BWIN_CORNERS_HOME_DONE,Домівку перевірено: далі — хто першим заповнить чужий кут.,The home is checked: now who fills the other's corner first.
+STR_OZG_BWIN_CORNERS_IN,%1 з %2 у куті,%1 of %2 in the corner

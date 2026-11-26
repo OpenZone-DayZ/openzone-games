@@ -377,6 +377,24 @@ FrameWidgetClass OZG_BWin {
      "text valign" center
      priority 3
     }
+    TextWidgetClass OZG_BSub1 {
+     ignorepointer 1
+     position 14 74
+     size 302 16
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     color 0.722 0.647 0.522 1
+     text ""
+     font "gui/fonts/etelkatextpro22"
+     "exact text" 1
+     "exact text size" 15
+     "text halign" left
+     "text valign" center
+     priority 3
+     visible 0
+    }
     ButtonWidgetClass OZG_BBtnGame {
      visible 1
      position 14 80

@@ -199,7 +199,7 @@ modded class OZG_GameMenu
 
     // ------------------------------------------------------------ painting
 
-    protected void BWNardyPaint()
+    override protected void BWNardyPaint()
     {
         BNRead();
         if (!BWPlaying())
@@ -262,7 +262,8 @@ modded class OZG_GameMenu
             }
         }
         // whose dice: the game's first option; the host changes it between games
-        BWSetText("OZG_BBtnDiceText", Tr1("STR_OZG_BWIN_DICE_CHIP", VariantLabel()));
+        // the canvas: "Кості: господаря", the dice's word small
+        BWSetText("OZG_BBtnDiceText", Tr1("STR_OZG_BWIN_DICE_CHIP", OZG_Text.LowerFirst(VariantLabel())));
     }
 
     protected void BNPaintPlate(string p, int seat, bool bottom)
@@ -376,7 +377,11 @@ modded class OZG_GameMenu
     // The throw: whose dice, what to do now, the throw's button, the swap's.
     protected void BNPaintThrow()
     {
-        BWSetText("OZG_BThrowWhose", VariantLabel());
+        // whose dice are thrown: the board's (the host's), each his own, by wish
+        string whose = VariantValue();
+        if (whose != "")
+            whose = Tr("STR_OZG_BWIN_THROW_WHOSE_" + BWUpper(whose));
+        BWSetText("OZG_BThrowWhose", whose);
         string text = "";
         bool myTurn = BWPlaying() && m_BPub.Turn == m_V.Mine;
         bool canThrow = myTurn && BWButton(OZG_NardyConst.M_THROW);
@@ -479,7 +484,7 @@ modded class OZG_GameMenu
     }
 
     // The dice this player carries (pockets, a can in his hands), not the place's.
-    protected void BNCarriedDice(array<EntityAI> into)
+    override protected void BNCarriedDice(array<EntityAI> into)
     {
         into.Clear();
         PlayerBase player = PlayerBase.Cast(GetGame().GetPlayer());
@@ -727,7 +732,6 @@ modded class OZG_GameMenu
         BNPaintDice();
     }
 
-    protected ref array<Widget> m_BNBadges;
     protected int m_BNBadgesUsed;
 
     // How many discs a crowded point holds: a dark pill with the number.
@@ -844,7 +848,7 @@ modded class OZG_GameMenu
     // ------------------------------------------------------------ clicks at nardy
 
     // The board's clicks and nardy's own buttons; false for what the board window takes.
-    protected bool BNClick(string n)
+    override protected bool BNClick(string n)
     {
         if (n == "OZG_BHit")
         {

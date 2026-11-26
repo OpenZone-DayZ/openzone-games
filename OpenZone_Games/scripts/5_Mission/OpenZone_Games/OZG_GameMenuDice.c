@@ -15,6 +15,7 @@ modded class OZG_GameMenu
     protected static const string DW_SHOWN = "STR_OZG_DICE_SHOWN";
     // the dice of this player's throw as drawn: their middles (units of the tray), picked
     protected ref array<float> m_DWDieX;
+    protected ref array<float> m_DWDieY;
     protected ref array<int> m_DWPicked;
     protected ref array<int> m_DWDice;
     // the action panel's buttons and their moves; the swap: the die carried picked
@@ -22,7 +23,7 @@ modded class OZG_GameMenu
     protected ref array<string> m_DWPocketKeys;
     protected string m_DWSwapKey = "";
 
-    protected bool DiceWindow()
+    override protected bool DiceWindow()
     {
         if (!m_V)
             return false;
@@ -46,6 +47,7 @@ modded class OZG_GameMenu
         if (m_DWDieX)
             return;
         m_DWDieX = new array<float>();
+        m_DWDieY = new array<float>();
         m_DWPicked = new array<int>();
         m_DWDice = new array<int>();
         m_DWActMoves = new array<string>();
@@ -87,7 +89,7 @@ modded class OZG_GameMenu
 
     // ------------------------------------------------------------ painting
 
-    protected void DWPaint()
+    override protected void DWPaint()
     {
         DWInit();
         BWPoolsBegin();
@@ -109,7 +111,7 @@ modded class OZG_GameMenu
         BWPaintDialogs();
     }
 
-    protected bool DWPlaying()
+    override protected bool DWPlaying()
     {
         return m_GPub && m_V.St == OZG_Const.ST_PLAYING && m_GPub.Ended != 1;
     }
@@ -142,7 +144,7 @@ modded class OZG_GameMenu
         string variant = VariantLabel();
         if (dice && diceBtn)
         {
-            dice.SetText(Tr1("STR_OZG_BWIN_DICE_CHIP", variant));
+            dice.SetText(Tr1("STR_OZG_BWIN_DICE_CHIP", OZG_Text.LowerFirst(variant)));
             float dw = BWTextW(dice) + 26;
             DWButtonAt(diceBtn, "OZG_DBtnDice", right - dw, 35.5, dw, 30);
             diceBtn.Show(variant != "");
@@ -254,6 +256,12 @@ modded class OZG_GameMenu
                 DWChip(p + "Chip1", Words(seat.Role), false, w - 24);
             else
                 BWShow(p + "Chip1", false);
+            // the dice it threw last, when the role holds none (the canvas: "останній кидок")
+            if (!hasDice && seat.Faces)
+            {
+                for (int f = 0; f < seat.Faces.Count(); f++)
+                    dice.Insert(seat.Faces[f].ToInt());
+            }
             DWSeatDice(p, dice, w);
         }
     }
@@ -301,25 +309,60 @@ modded class OZG_GameMenu
             child = next;
         }
         string look = DWLook();
-        for (int i = 0; i < dice.Count() && i < 8; i++)
+        // 30 a die, 6 apart (the canvas); smaller on a narrow plate, so that they fit
+        int n = dice.Count();
+        if (n > 8)
+            n = 8;
+        float step = 36;
+        float room = w - 24;
+        if (n > 0 && n * step - 6 > room)
+            step = (room + 6) / n;
+        float size = step - 6;
+        if (size < 14)
+            size = 14;
+        for (int i = 0; i < n; i++)
         {
             ImageWidget pic = ImageWidget.Cast(MakeLayout(LAYOUT_BWPIC, row, "OZG_BWPic"));
             if (!pic)
                 return;
             pic.LoadImageFile(0, "set:ozg_dice image:" + look + "_" + dice[i].ToString());
             pic.SetImage(0);
-            pic.SetPos(i * 36 * m_K, 0);
-            pic.SetSize(30 * m_K, 30 * m_K);
+            float top = (30 - size) * 0.5;
+            pic.SetPos(i * step * m_K, top * m_K);
+            pic.SetSize(size * m_K, size * m_K);
             pic.Show(true);
-            BWTumbleAdd(pic, i * 36, 0, 30, 30);
+            BWTumbleAdd(pic, i * step, top, size, size);
         }
         TextWidget note = BWText(p + "Note");
         if (note)
         {
-            note.Show(dice.Count() > 0);
             note.SetText(Tr("STR_OZG_DWIN_LAST"));
-            note.SetPos((12 + dice.Count() * 36 + 4) * m_K, 115.5 * m_K);
+            float noteX = 12 + n * step + 4;
+            // the words only where they fit beside the dice
+            bool fits = noteX + BWTextW(note) <= w - 12;
+            note.Show(n > 0 && fits);
+            note.SetPos(noteX * m_K, 115.5 * m_K);
         }
+    }
+
+    // The canvas's five spots for thrown dice (x, y in its box, the turn in degrees).
+    protected void DWSpots(array<float> xs, array<float> ys, array<float> turns)
+    {
+        xs.Insert(60);
+        ys.Insert(40);
+        turns.Insert(-8);
+        xs.Insert(220);
+        ys.Insert(70);
+        turns.Insert(6);
+        xs.Insert(380);
+        ys.Insert(30);
+        turns.Insert(-3);
+        xs.Insert(540);
+        ys.Insert(80);
+        turns.Insert(9);
+        xs.Insert(700);
+        ys.Insert(45);
+        turns.Insert(-6);
     }
 
     // This player's dice in the tray's middle, 74 a die; picked ones lifted and ringed; the
@@ -328,6 +371,7 @@ modded class OZG_GameMenu
     {
         m_DWDice.Clear();
         m_DWDieX.Clear();
+        m_DWDieY.Clear();
         if (m_GPub)
         {
             for (int z = 0; z < m_GPub.Zones.Count(); z++)
@@ -367,20 +411,38 @@ modded class OZG_GameMenu
         float y0 = 488;
         if (n == 1)
             y0 = 314;
+        // the canvas throws up to five dice onto five spots of a box at 108, 294 of the
+        // felt, each a little turned; more go in a row
+        array<float> spotX = new array<float>();
+        array<float> spotY = new array<float>();
+        array<float> spotR = new array<float>();
+        DWSpots(spotX, spotY, spotR);
+        bool spots = n >= 2 && n <= 5;
         for (int i = 0; i < n; i++)
         {
             float x = x0 + i * step;
             float y = y0;
+            float turn = 0;
+            if (spots)
+            {
+                x = 108 + spotX[i];
+                y = 294 + spotY[i];
+                turn = spotR[i];
+            }
             bool picked = m_DWPicked.Find(i) >= 0;
             if (picked)
-                y = y - 12;
+                y = y - 14;
             m_DWDieX.Insert(x + size / 2);
+            m_DWDieY.Insert(y + size / 2);
             ImageWidget dieShadow = BWPic(BW_FIELD, "set:ozg_dice image:die_s", x, y + 6, size, size, 30, ARGB(255, 255, 255, 255));
-            BWTumbleAdd(dieShadow, x, y + 6, size, size);
+            BWTumbleAdd(dieShadow, x, y + 6, size, size, turn);
             ImageWidget diePic = BWPic(BW_FIELD, "set:ozg_dice image:" + look + "_" + m_DWDice[i].ToString(), x, y, size, size, 31, ARGB(255, 255, 255, 255));
-            BWTumbleAdd(diePic, x, y, size, size);
+            BWTumbleAdd(diePic, x, y, size, size, turn);
             if (picked)
-                BWPic(BW_FIELD, BW_TEX + "ozg_ring4_ca.paa", x - 6, y - 6, size + 12, size + 12, 32, ARGB(255, 231, 194, 122));
+            {
+                ImageWidget ring = BWPic(BW_FIELD, BW_TEX + "ozg_ring4_ca.paa", x - 6, y - 6, size + 12, size + 12, 32, ARGB(255, 231, 194, 122));
+                BWTumbleAdd(ring, x - 6, y - 6, size + 12, size + 12, turn);
+            }
         }
         // the game's words: whose turn, what to do
         string status = "";
@@ -396,6 +458,13 @@ modded class OZG_GameMenu
             c0 = lines[0];
         if (lines.Count() > 1)
             c1 = lines[1];
+        // the canvas says it only while no throw lies on the felt (its dice are where the
+        // words would be)
+        if (spots)
+        {
+            c0 = "";
+            c1 = "";
+        }
         BWSetText("OZG_DCentre0", c0);
         BWSetText("OZG_DCentre1", c1);
         float cy = 364;
@@ -845,7 +914,7 @@ modded class OZG_GameMenu
 
     // ------------------------------------------------------------ clicks
 
-    protected bool DWClick(string n)
+    override protected bool DWClick(string n)
     {
         if (n == "OZG_DBtnClose")
         {
@@ -858,9 +927,12 @@ modded class OZG_GameMenu
             float y;
             PointerAt(x, y);
             float tx = x - 52;
+            float ty = y - 86;
             for (int i = 0; i < m_DWDieX.Count(); i++)
             {
-                if (Math.AbsFloat(tx - m_DWDieX[i]) <= 40)
+                bool onX = Math.AbsFloat(tx - m_DWDieX[i]) <= 40;
+                bool onY = i >= m_DWDieY.Count() || Math.AbsFloat(ty - m_DWDieY[i]) <= 70;
+                if (onX && onY)
                 {
                     int at = m_DWPicked.Find(i);
                     if (at >= 0)

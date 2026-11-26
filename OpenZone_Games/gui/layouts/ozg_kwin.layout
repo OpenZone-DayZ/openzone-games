@@ -1412,7 +1412,7 @@ FrameWidgetClass OZG_KWin {
     }
     FrameWidgetClass OZG_KThings {
      ignorepointer 1
-     clipchildren 0
+     clipchildren 1
      position 0 0
      size 748 774
      hexactpos 1
@@ -1420,6 +1420,116 @@ FrameWidgetClass OZG_KWin {
      hexactsize 1
      vexactsize 1
      priority 5
+     {
+      TextWidgetClass OZG_KGroup0 {
+       ignorepointer 1
+       position 16 14
+       size 300 15
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.788 0.643 0.361 1
+       text ""
+       font "gui/fonts/etelkatextpro22"
+       "exact text" 1
+       "exact text size" 14
+       "text halign" left
+       "text valign" center
+       priority 6
+       visible 0
+      }
+      TextWidgetClass OZG_KGroupNote0 {
+       ignorepointer 1
+       position 120 14
+       size 500 15
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.627 0.561 0.451 1
+       text ""
+       font "gui/fonts/etelkatextpro22"
+       "exact text" 1
+       "exact text size" 14
+       "text halign" left
+       "text valign" center
+       priority 6
+       visible 0
+      }
+      TextWidgetClass OZG_KGroup1 {
+       ignorepointer 1
+       position 16 14
+       size 300 15
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.788 0.643 0.361 1
+       text ""
+       font "gui/fonts/etelkatextpro22"
+       "exact text" 1
+       "exact text size" 14
+       "text halign" left
+       "text valign" center
+       priority 6
+       visible 0
+      }
+      TextWidgetClass OZG_KGroupNote1 {
+       ignorepointer 1
+       position 120 14
+       size 500 15
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.627 0.561 0.451 1
+       text ""
+       font "gui/fonts/etelkatextpro22"
+       "exact text" 1
+       "exact text size" 14
+       "text halign" left
+       "text valign" center
+       priority 6
+       visible 0
+      }
+      TextWidgetClass OZG_KGroup2 {
+       ignorepointer 1
+       position 16 14
+       size 300 15
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.788 0.643 0.361 1
+       text ""
+       font "gui/fonts/etelkatextpro22"
+       "exact text" 1
+       "exact text size" 14
+       "text halign" left
+       "text valign" center
+       priority 6
+       visible 0
+      }
+      TextWidgetClass OZG_KGroupNote2 {
+       ignorepointer 1
+       position 120 14
+       size 500 15
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.627 0.561 0.451 1
+       text ""
+       font "gui/fonts/etelkatextpro22"
+       "exact text" 1
+       "exact text size" 14
+       "text halign" left
+       "text valign" center
+       priority 6
+       visible 0
+      }
+     }
     }
     ButtonWidgetClass OZG_KHit {
      visible 1
@@ -1432,114 +1542,6 @@ FrameWidgetClass OZG_KWin {
      text ""
      priority 10
      style Empty
-    }
-    TextWidgetClass OZG_KGroup0 {
-     ignorepointer 1
-     position 16 14
-     size 300 15
-     hexactpos 1
-     vexactpos 1
-     hexactsize 1
-     vexactsize 1
-     color 0.788 0.643 0.361 1
-     text ""
-     font "gui/fonts/etelkatextpro22"
-     "exact text" 1
-     "exact text size" 14
-     "text halign" left
-     "text valign" center
-     priority 6
-     visible 0
-    }
-    TextWidgetClass OZG_KGroupNote0 {
-     ignorepointer 1
-     position 120 14
-     size 500 15
-     hexactpos 1
-     vexactpos 1
-     hexactsize 1
-     vexactsize 1
-     color 0.627 0.561 0.451 1
-     text ""
-     font "gui/fonts/etelkatextpro22"
-     "exact text" 1
-     "exact text size" 14
-     "text halign" left
-     "text valign" center
-     priority 6
-     visible 0
-    }
-    TextWidgetClass OZG_KGroup1 {
-     ignorepointer 1
-     position 16 14
-     size 300 15
-     hexactpos 1
-     vexactpos 1
-     hexactsize 1
-     vexactsize 1
-     color 0.788 0.643 0.361 1
-     text ""
-     font "gui/fonts/etelkatextpro22"
-     "exact text" 1
-     "exact text size" 14
-     "text halign" left
-     "text valign" center
-     priority 6
-     visible 0
-    }
-    TextWidgetClass OZG_KGroupNote1 {
-     ignorepointer 1
-     position 120 14
-     size 500 15
-     hexactpos 1
-     vexactpos 1
-     hexactsize 1
-     vexactsize 1
-     color 0.627 0.561 0.451 1
-     text ""
-     font "gui/fonts/etelkatextpro22"
-     "exact text" 1
-     "exact text size" 14
-     "text halign" left
-     "text valign" center
-     priority 6
-     visible 0
-    }
-    TextWidgetClass OZG_KGroup2 {
-     ignorepointer 1
-     position 16 14
-     size 300 15
-     hexactpos 1
-     vexactpos 1
-     hexactsize 1
-     vexactsize 1
-     color 0.788 0.643 0.361 1
-     text ""
-     font "gui/fonts/etelkatextpro22"
-     "exact text" 1
-     "exact text size" 14
-     "text halign" left
-     "text valign" center
-     priority 6
-     visible 0
-    }
-    TextWidgetClass OZG_KGroupNote2 {
-     ignorepointer 1
-     position 120 14
-     size 500 15
-     hexactpos 1
-     vexactpos 1
-     hexactsize 1
-     vexactsize 1
-     color 0.627 0.561 0.451 1
-     text ""
-     font "gui/fonts/etelkatextpro22"
-     "exact text" 1
-     "exact text size" 14
-     "text halign" left
-     "text valign" center
-     priority 6
-     visible 0
     }
     TextWidgetClass OZG_KEmpty {
      ignorepointer 1
@@ -1910,6 +1912,7 @@ FrameWidgetClass OZG_KWin {
      text ""
      priority 6
      style Empty
+     clipchildren 0
      {
       FrameWidgetClass OZG_KFace0Ring {
        ignorepointer 1
@@ -2157,6 +2160,7 @@ FrameWidgetClass OZG_KWin {
      text ""
      priority 6
      style Empty
+     clipchildren 0
      {
       FrameWidgetClass OZG_KFace1Ring {
        ignorepointer 1
@@ -2404,6 +2408,7 @@ FrameWidgetClass OZG_KWin {
      text ""
      priority 6
      style Empty
+     clipchildren 0
      {
       FrameWidgetClass OZG_KFace2Ring {
        ignorepointer 1
@@ -2651,6 +2656,7 @@ FrameWidgetClass OZG_KWin {
      text ""
      priority 6
      style Empty
+     clipchildren 0
      {
       FrameWidgetClass OZG_KFace3Ring {
        ignorepointer 1
@@ -2898,6 +2904,7 @@ FrameWidgetClass OZG_KWin {
      text ""
      priority 6
      style Empty
+     clipchildren 0
      {
       FrameWidgetClass OZG_KFace4Ring {
        ignorepointer 1
@@ -3145,6 +3152,7 @@ FrameWidgetClass OZG_KWin {
      text ""
      priority 6
      style Empty
+     clipchildren 0
      {
       FrameWidgetClass OZG_KFace5Ring {
        ignorepointer 1

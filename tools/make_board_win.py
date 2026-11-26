@@ -147,9 +147,13 @@ def text(name, x, y, w, h, px, face, color, prio=5, halign="left", content="", e
     return ("TextWidgetClass", name, attrs + (extra or []), None)
 
 
-def button(name, x, y, w, h, prio, kids, visible=1):
+def button(name, x, y, w, h, prio, kids, visible=1, clip=None):
     # `style Empty`: a style-less button paints a light box (dayz-modding gui-layouts §31).
+    # A button clips its children unless told not to: `clip=0` for one whose ring lies
+    # outside it.
     attrs = [("visible", visible)] + exact(x, y, w, h) + [("text", '""'), ("priority", prio), ("style", "Empty")]
+    if clip is not None:
+        attrs.append(("clipchildren", clip))
     return ("ButtonWidgetClass", name, attrs, kids)
 
 
@@ -203,17 +207,28 @@ LOG_LINES = 22
 TAKEN_MAX = 16
 
 
-def plate(prefix, x, y, ring, avatar_bg, taken_y, row_y, me):
+def plate(prefix, x, y, ring, avatar_bg, taken_y, row_y, me, progress_y=None):
     """A player's plate: the pieces he took, his king in a round frame, his name, his
-    side, a chip saying what he is doing."""
+    side, a chip saying what he is doing. At corners (`progress_y`): 96 high, no pieces
+    taken but a bar of the side's discs in the corner it goes to, the side in two lines
+    (the canvas's board "Кутки")."""
     k = []
-    k.append(box(prefix + "Plate", 0, 0, 330, 106, 8, PANEL, ring, prio=0))
-    # the taken pieces' row; its words when there are none
-    k.append(frame(prefix + "Taken", exact(12, taken_y, 306, 34), 4, [
-        text(prefix + "None", 0, 9.5, 306, 15, 12, "s", FAINT, 2, "left",
-             "#STR_OZG_BWIN_NONE_ME" if me else "#STR_OZG_BWIN_NONE_OPP")]))
-    # a piece taken is picked here for "put back" (the window finds which by the pointer)
-    k.append(button(prefix + "TakenHit", 12, taken_y, 306, 34, 8, None))
+    corners = progress_y is not None
+    h = 96 if corners else 106
+    k.append(box(prefix + "Plate", 0, 0, 330, h, 8, PANEL, ring, prio=0))
+    if corners:
+        bar = GOLD if me else "#8f7d62"
+        k.append(shape(prefix + "ProgBar", 12, progress_y + 4, 229.5, 8, 4, rgb("#3a2a1c"), 4, overlap=0))
+        k.append(frame(prefix + "ProgFill", exact(12, progress_y + 4, 229.5, 8), 5, [
+            shape(prefix + "ProgFillBar", 0, 0, 229.5, 8, 4, rgb(bar), 0, overlap=0)], clip=1))
+        k.append(text(prefix + "ProgText", 240, progress_y, 78, 16, 13, "s", LOG_INK, 5, "right", ""))
+    else:
+        # the taken pieces' row; its words when there are none
+        k.append(frame(prefix + "Taken", exact(12, taken_y, 306, 34), 4, [
+            text(prefix + "None", 0, 9.5, 306, 15, 12, "s", FAINT, 2, "left",
+                 "#STR_OZG_BWIN_NONE_ME" if me else "#STR_OZG_BWIN_NONE_OPP")]))
+        # a piece taken is picked here for "put back" (the window finds which by the pointer)
+        k.append(button(prefix + "TakenHit", 12, taken_y, 306, 34, 8, None))
     # the king's picture in a round frame: the disc, the picture clipped to its square,
     # the corners round the circle covered in the plate's colour
     av = [image(prefix + "AvBg", exact(0, 0, 46, 46), 0, "ozg_disc_ca", rgb(avatar_bg)),
@@ -223,21 +238,34 @@ def plate(prefix, x, y, ring, avatar_bg, taken_y, row_y, me):
         cx = 0 if c[1] == "l" else 23
         cy = 0 if c[0] == "t" else 23
         av.append(image(prefix + "AvMask" + c.upper(), exact(cx, cy, 23, 23), 2, "ozg_rcinv_" + c + "_ca", rgb(PANEL)))
-    k.append(frame(prefix + "Av", exact(12, row_y, 46, 46), 5, av))
-    k.append(text(prefix + "Name", 68, row_y + 4.5, 175, 20, 16, "b", INK, 5))
-    k.append(text(prefix + "Side", 68, row_y + 26.5, 175, 15, 12, "s", MUTED, 5))
-    if me:
-        k.append(text(prefix + "You", 68, row_y + 4.5, 60, 20, 16, "s", MUTED, 5, "left", "#STR_OZG_BWIN_YOU"))
+    if corners:
+        # the canvas: the avatar 3 lower than the name, the side under the name in two
+        # lines, the chip in the middle of the row
+        k.append(frame(prefix + "Av", exact(12, row_y + 3, 46, 46), 5, av))
+        k.append(text(prefix + "Name", 66.5, row_y, 175, 20, 16, "b", INK, 5))
+        k.append(text(prefix + "Side", 66.5, row_y + 22, 165, 15, 12, "s", MUTED, 5))
+        k.append(text(prefix + "Side1", 66.5, row_y + 37, 165, 15, 12, "s", MUTED, 5))
+        if me:
+            k.append(text(prefix + "You", 66.5, row_y, 60, 20, 16, "s", MUTED, 5, "left", "#STR_OZG_BWIN_YOU"))
+        chip_y = row_y + 14
+    else:
+        k.append(frame(prefix + "Av", exact(12, row_y, 46, 46), 5, av))
+        k.append(text(prefix + "Name", 68, row_y + 4.5, 175, 20, 16, "b", INK, 5))
+        k.append(text(prefix + "Side", 68, row_y + 26.5, 175, 15, 12, "s", MUTED, 5))
+        if me:
+            k.append(text(prefix + "You", 68, row_y + 4.5, 60, 20, 16, "s", MUTED, 5, "left", "#STR_OZG_BWIN_YOU"))
+        chip_y = row_y + 11
     # the chip: a pill as wide as its words, its right edge at the plate's padding
     chip = [shape(prefix + "ChipBg", 0, 0, 89, 24, 12, rgb("#282b1c"), 0, overlap=0)]
     if not me:
         chip.append(image(prefix + "ChipDot", exact(10, 8.5, 7, 7), 1, "ozg_disc_ca", rgb(OK)))
     chip.append(text(prefix + "ChipText", 23 if not me else 10, 4.5, 56, 15, 12, "b", OK, 2))
-    k.append(frame(prefix + "Chip", exact(229, row_y + 11, 89, 24), 6, chip))
-    return frame(prefix, exact(x, y, 330, 106), 10, k)
+    k.append(frame(prefix + "Chip", exact(229, chip_y, 89, 24), 6, chip))
+    return frame(prefix, exact(x, y, 330, h), 10, k)
 
 
-def window():
+def window(corners=False):
+    """The board games' window; `corners` its corners' own (the canvas's "Кутки")."""
     k = []
     k.append(panel("OZG_BBack", exact(0, 0, 1600, 900), rgb(BG), 0))
     # the board: its soft shadow (clipped to the window), a dark rim, the picture
@@ -250,14 +278,28 @@ def window():
     k.append(button("OZG_BHit", 360, 10, 880, 880, 8, None))
 
     # ---- left: the game, the other player, the moves
+    # the sub's second line: draughts and corners write their rules under the set (the
+    # script makes the box 146 high then and moves what stands under it, as the canvas)
     t = [box("OZG_BTitleBox", 0, 0, 330, 126, 8, PANEL, EDGE_TITLE, prio=0),
          text("OZG_BTitle", 14, 11, 302, 40, 30, "p", INK, 3),
          text("OZG_BSub", 14, 56, 302, 16, 13, "s", MUTED, 3),
+         text("OZG_BSub1", 14, 74, 302, 16, 13, "s", MUTED, 3, "left", "", [("visible", 0)]),
          btn("OZG_BBtnGame", 14, 80, 147, 34, 4, BTN, BTN_EDGE, "", 13, "s", INK, label_w=131),
          btn("OZG_BBtnFold", 169, 80, 147, 34, 4, BTN, BTN_EDGE, "#STR_OZG_BWIN_FOLD", 13, "s", INK)]
     k.append(frame("OZG_BTitleCol", exact(16, 10, 330, 126), 10, t))
     k.append(image("OZG_BBtnGameChev", exact(133.5, 102, 10, 10), 25, "ozg_icon_chev_ca", rgb(GOLD)))
-    k.append(plate("OZG_BOpp", 16, 146, EDGE, "#3a2a1c", 62, 10, False))
+    if corners:
+        k.append(plate("OZG_BOpp", 16, 146, EDGE, "#3a2a1c", 62, 10, False, progress_y=70))
+        # the move: its number big, how many to the home's check, what it means
+        tp = [box("OZG_BTurnBox", 0, 0, 330, 138, 8, DEEP, EDGE, prio=0),
+              text("OZG_BTurnTitle", 12, 12, 306, 14, 11, "s", GOLD, 3, "left", ""),
+              text("OZG_BTurnNo", 12, 34, 60, 48, 36, "p", INK, 3, "left", ""),
+              text("OZG_BTurnOf", 34, 59, 280, 17, 14, "s", MUTED, 3, "left", "")]
+        for i in range(2):
+            tp.append(text("OZG_BTurnNote%d" % i, 12, 91 + i * 18, 306, 18, 13, "s", MUTED, 3))
+        k.append(frame("OZG_BTurn", exact(16, 272, 330, 138), 10, tp))
+    else:
+        k.append(plate("OZG_BOpp", 16, 146, EDGE, "#3a2a1c", 62, 10, False))
     m = [box("OZG_BMovesBox", 0, 0, 330, 552, 8, DEEP, EDGE, prio=0),
          text("OZG_BMovesTitle", 12, 10, 306, 14, 11, "s", GOLD, 3, "left", "")]
     for i in range(MOVE_ROWS):
@@ -267,7 +309,8 @@ def window():
         m.append(text("OZG_BMoveWB%d" % i, 50, y, 134, 21, 15, "b", "#e7c27a", 3, "left", "", [("visible", 0)]))
         m.append(text("OZG_BMoveB%d" % i, 184, y, 134, 21, 15, "s", INK, 3, "left", "", [("visible", 0)]))
         m.append(text("OZG_BMoveBB%d" % i, 184, y, 134, 21, 15, "b", "#e7c27a", 3, "left", "", [("visible", 0)]))
-    k.append(frame("OZG_BMoves", exact(16, 262, 330, 552), 10, m, clip=1))
+    if not corners:
+        k.append(frame("OZG_BMoves", exact(16, 262, 330, 552), 10, m, clip=1))
     # Where the canvas had its pink demo buttons: the table's own -- begin the game, the
     # pose, the host's role taken, a player who left removed -- shown when they apply.
     for i, (x, y) in enumerate(((16, 824), (184, 824), (16, 860), (184, 860))):
@@ -277,11 +320,13 @@ def window():
     k.append(button("OZG_BBtnClose", 1548, 10, 36, 34, 30, [
         box("OZG_BBtnCloseBox", 0, 0, 36, 34, 4, CLOSE, prio=0),
         image("OZG_BBtnCloseX", exact(12, 11, 12, 12), 2, "ozg_icon_x_ca", rgb(CLOSE_INK))]))
-    lg = [box("OZG_BLogBox", 0, 0, 330, 472, 8, DEEP, EDGE, prio=0),
+    # corners: the right column 10 lower under a log 10 taller, its plate 10 shorter
+    dr = 10 if corners else 0
+    lg = [box("OZG_BLogBox", 0, 0, 330, 472 + dr, 8, DEEP, EDGE, prio=0),
           text("OZG_BLogTitle", 12, 10, 306, 14, 11, "s", GOLD, 3, "left", "")]
     for i in range(LOG_LINES):
         lg.append(text("OZG_BLog%d" % i, 12, 30 + i * 18, 306, 18, 13, "s", LOG_INK, 3, "left", "", [("visible", 0)]))
-    k.append(frame("OZG_BLog", exact(1254, 54, 330, 472), 10, lg, clip=1))
+    k.append(frame("OZG_BLog", exact(1254, 54, 330, 472 + dr), 10, lg, clip=1))
     sl = [box("OZG_BSlBox", 0, 0, 330, 186, 8, SL_BG, BTN_EDGE, prio=0),
           text("OZG_BSlTitle", 12, 12, 240, 22, 17, "p", INK, 3, "left", "#STR_OZG_BWIN_SLEIGHTS"),
           text("OZG_BSlCool", 146, 15.5, 172, 15, 12, "b", OK, 3, "right", "")]
@@ -290,10 +335,13 @@ def window():
         sl.append(btn(name, x, y, 149, 40, 4, SL_BTN, BTN_EDGE, "#STR_OZG_BWIN_SL_" + key, 13, "b", INK, prio=6))
     sl.append(text("OZG_BSlMsg0", 12, 139, 306, 18, 13, "s", MUTED, 3))
     sl.append(text("OZG_BSlMsg1", 12, 157, 306, 18, 13, "s", MUTED, 3))
-    k.append(frame("OZG_BSl", exact(1254, 536, 330, 186), 10, sl))
-    k.append(btn("OZG_BBtnDraw", 1254, 732, 162, 42, 4, BTN, BTN_EDGE, "#STR_OZG_BWIN_DRAW", 14, "s", INK))
-    k.append(btn("OZG_BBtnResign", 1424, 732, 160, 42, 4, RED_BTN, None, "#STR_OZG_BWIN_RESIGN", 14, "b", RED_INK))
-    k.append(plate("OZG_BMe", 1254, 784, GOLD, "#4a3a28", 10, 50, True))
+    k.append(frame("OZG_BSl", exact(1254, 536 + dr, 330, 186), 10, sl))
+    k.append(btn("OZG_BBtnDraw", 1254, 732 + dr, 162, 42, 4, BTN, BTN_EDGE, "#STR_OZG_BWIN_DRAW", 14, "s", INK))
+    k.append(btn("OZG_BBtnResign", 1424, 732 + dr, 160, 42, 4, RED_BTN, None, "#STR_OZG_BWIN_RESIGN", 14, "b", RED_INK))
+    if corners:
+        k.append(plate("OZG_BMe", 1254, 794, GOLD, "#4a3a28", 10, 34, True, progress_y=10))
+    else:
+        k.append(plate("OZG_BMe", 1254, 784, GOLD, "#4a3a28", 10, 50, True))
 
     # ---- what a sleight seen looks like to the other player: a line under the board
     k.append(frame("OZG_BSeen", exact(430, 822, 740, 41), 60, [
@@ -303,7 +351,7 @@ def window():
     attrs = [("ignorepointer", 1), ("clipchildren", 0), ("position", "0 0"), ("size", "1600 900"),
              ("halign", "center_ref"), ("valign", "center_ref"),
              ("hexactpos", 1), ("vexactpos", 1), ("hexactsize", 1), ("vexactsize", 1), ("priority", 3)]
-    return block("FrameWidgetClass", "OZG_BWin", attrs, k)
+    return block("FrameWidgetClass", "OZG_BWinCorners" if corners else "OZG_BWin", attrs, k)
 
 
 def dialogs(menu_y):
@@ -601,12 +649,15 @@ def window_kit():
         left.append(text("OZG_KFoot%d" % i, 14, 730 + i * 15, 312, 15, 12, "s", FAINT, 2))
     k.append(frame("OZG_KLeft", exact(52, 86, 340, 774), 5, left))
     # middle: the things, laid by the script (OZG_KThings), and the button that picks one
-    mid = [box("OZG_KMidBox", 0, 0, 748, 774, 6, PANEL, EDGE, prio=0),
-           frame("OZG_KThings", exact(0, 0, 748, 774), 5),
-           button("OZG_KHit", 0, 0, 748, 774, 10, None)]
+    # the things and their groups' captions scroll together (the wheel), clipped to the
+    # panel: a full deck is taller than it
+    groups = []
     for i in range(3):
-        mid.append(text("OZG_KGroup%d" % i, 16, 14, 300, 15, 12, "s", GOLD, 6, "left", "", [("visible", 0)]))
-        mid.append(text("OZG_KGroupNote%d" % i, 120, 14, 500, 15, 12, "s", FAINT, 6, "left", "", [("visible", 0)]))
+        groups.append(text("OZG_KGroup%d" % i, 16, 14, 300, 15, 12, "s", GOLD, 6, "left", "", [("visible", 0)]))
+        groups.append(text("OZG_KGroupNote%d" % i, 120, 14, 500, 15, 12, "s", FAINT, 6, "left", "", [("visible", 0)]))
+    mid = [box("OZG_KMidBox", 0, 0, 748, 774, 6, PANEL, EDGE, prio=0),
+           frame("OZG_KThings", exact(0, 0, 748, 774), 5, groups, clip=1),
+           button("OZG_KHit", 0, 0, 748, 774, 10, None)]
     mid.append(text("OZG_KEmpty", 16, 14, 700, 18, 14, "s", MUTED, 6, "left", "#STR_OZG_KWIN_EMPTY", [("visible", 0)]))
     k.append(frame("OZG_KMid", exact(404, 86, 748, 774), 5, mid))
     # right: the one picked
@@ -617,7 +668,7 @@ def window_kit():
         r.append(text("OZG_KPickText%d" % i, 14, 56 + i * 20, 356, 20, 14, "s", LOG_INK, 4))
     r.append(text("OZG_KFaceLabel", 14, 89, 356, 15, 12, "s", GOLD, 4, "left", ""))
     for i in range(6):
-        r.append(button("OZG_KFace%d" % i, 14 + i * 60.25, 118, 54.5, 50, 6, [
+        r.append(button("OZG_KFace%d" % i, 14 + i * 60.25, 118, 54.5, 50, 6, clip=0, kids=[
             shape("OZG_KFace%dRing" % i, -3, -3, 60.5, 56, 10, rgb(GOLD), 0, extra=[("visible", 0)]),
             shape("OZG_KFace%dBg" % i, 0, 0, 54.5, 50, 8, rgb("#cfc5ad"), 1),
             image("OZG_KFace%dPic" % i, exact(0, 0, 54.5, 50), 2, None)], visible=0))
@@ -840,6 +891,7 @@ def main():
     if "--layouts" not in sys.argv:
         textures(paa)
     write("ozg_bwin.layout", window())
+    write("ozg_bwin_corners.layout", window(corners=True))
     write("ozg_bwin_nardy.layout", window_nardy())
     write("ozg_dwin.layout", window_dice())
     write("ozg_kwin.layout", window_kit())

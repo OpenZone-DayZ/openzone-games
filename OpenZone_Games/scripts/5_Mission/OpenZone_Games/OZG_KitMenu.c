@@ -56,6 +56,9 @@ class OZG_KitMenu : UIScriptedMenu
     protected ref array<Widget> m_Dice;
     protected int m_CardsUsed;
     protected int m_DiceUsed;
+    // the middle scrolled (units from its top) and how tall its things are
+    protected float m_Scroll;
+    protected float m_ThingsH;
     // the things as laid: key and box in the middle panel's units
     protected ref array<string> m_HitKeys;
     protected ref array<float> m_HitX;
@@ -518,6 +521,15 @@ class OZG_KitMenu : UIScriptedMenu
         m_DiceUsed = 0;
         PaintLeft();
         PaintThings();
+        // fewer things than when it was scrolled: no further than they reach
+        float most = ScrollMost();
+        if (m_Scroll > most)
+        {
+            m_Scroll = most;
+            m_CardsUsed = 0;
+            m_DiceUsed = 0;
+            PaintThings();
+        }
         PaintRight();
         int i;
         for (i = m_CardsUsed; i < m_Cards.Count(); i++)
@@ -568,7 +580,7 @@ class OZG_KitMenu : UIScriptedMenu
         titles.Insert("STR_OZG_KWIN_POCKET");
         titles.Insert("STR_OZG_KWIN_DECK");
         titles.Insert("STR_OZG_KWIN_CAN");
-        float y = 14;
+        float y = 14 - m_Scroll;
         int groups = 0;
         for (int g = 0; g < 3; g++)
         {
@@ -646,7 +658,32 @@ class OZG_KitMenu : UIScriptedMenu
             }
             y = y + rowH + 14;
         }
+        m_ThingsH = y + m_Scroll;
         ShowW("OZG_KEmpty", groups == 0);
+    }
+
+    // How far the middle scrolls: its things' height less the panel's.
+    protected float ScrollMost()
+    {
+        float most = m_ThingsH - 774;
+        if (most < 0)
+            most = 0;
+        return most;
+    }
+
+    // The wheel over the middle scrolls it.
+    override bool OnMouseWheel(Widget w, int x, int y, int wheel)
+    {
+        if (!w || w.GetName() != "OZG_KHit" || m_Work >= 0)
+            return false;
+        m_Scroll = m_Scroll - wheel * 60;
+        if (m_Scroll < 0)
+            m_Scroll = 0;
+        float most = ScrollMost();
+        if (m_Scroll > most)
+            m_Scroll = most;
+        Paint();
+        return true;
     }
 
     // What a group holds, in words: "2 карти й 2 кістки"; a deck's look before its count.

@@ -491,9 +491,14 @@ class OZG_Thousand extends OZG_DiceGame
             v.SeatList.Insert(g);
         }
         v.Zones.Insert(DgZone("throw", OZG_Words.W0("STR_OZG_THOUSAND_THROW"), m_Throw));
-        OZG_GZone aside = DgZone("aside", OZG_Words.W0("STR_OZG_THOUSAND_ASIDE"), m_Aside);
-        aside.Line = OZG_Words.W2("STR_OZG_THOUSAND_ASIDE_LINE", OZG_DiceText.Line(m_Aside), m_TurnPoints.ToString());
-        v.Zones.Insert(aside);
+        // the canvas: the dice put aside drawn as dice, the turn's points in a box of
+        // their own
+        v.Zones.Insert(DgZone("aside", OZG_Words.W0("STR_OZG_THOUSAND_ASIDE"), m_Aside));
+        OZG_GZone turn = new OZG_GZone();
+        turn.Id = "turn";
+        turn.Label = OZG_Words.W0("STR_OZG_THOUSAND_TURN");
+        turn.Line = OZG_Words.W1("STR_OZG_DWIN_NUMBER", m_TurnPoints.ToString());
+        v.Zones.Insert(turn);
         if (m_Over)
         {
             v.Ended = 1;

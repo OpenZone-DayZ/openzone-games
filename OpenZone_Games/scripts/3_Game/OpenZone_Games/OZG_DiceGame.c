@@ -41,9 +41,15 @@ class OZG_DiceGame extends OZG_Game
     protected ref array<int> m_ThrewSeat;
     protected ref array<int> m_ThrewDie;
     protected ref array<int> m_ThrewFace;
+    // The dice each seat threw last (by seat), for its plate (the canvas's "останній
+    // кидок"): begun anew with a seat's first die of a move.
+    protected ref map<int, ref array<int>> m_LastOf;
+    protected ref array<int> m_RolledThisMove;
 
     void OZG_DiceGame()
     {
+        m_LastOf = new map<int, ref array<int>>();
+        m_RolledThisMove = new array<int>();
         m_Seats = new array<int>();
         m_Cups = new OZG_DiceCups();
         m_Moves = new array<string>();
@@ -225,6 +231,15 @@ class OZG_DiceGame extends OZG_Game
             m_ThrewFace.Insert(v);
         }
         m_Rolled.Insert(v);
+        if (m_RolledThisMove.Find(seat) < 0)
+        {
+            m_RolledThisMove.Insert(seat);
+            array<int> fresh = new array<int>();
+            m_LastOf.Set(seat, fresh);
+        }
+        array<int> last;
+        if (m_LastOf.Find(seat, last) && last)
+            last.Insert(v);
         return v;
     }
 
@@ -249,6 +264,7 @@ class OZG_DiceGame extends OZG_Game
         refusal = OZG_Const.NO_MOVE;
         if (m_Over || m_Seats.Find(seat) < 0)
             return false;
+        m_RolledThisMove.Clear();
         if (!DgAct(seat, move, refusal))
             return false;
         m_Moves.Insert(seat.ToString() + " " + move);
@@ -572,14 +588,27 @@ class OZG_DiceGame extends OZG_Game
         return text;
     }
 
-    // A seat's plate: its role words and line words.
+    // A seat's plate: its role words and line words, and the dice it threw last as
+    // faces (not where the dice are hidden: DgShowsLast).
     protected OZG_GSeat DgPlate(int seat, string role, string line)
     {
         OZG_GSeat g = new OZG_GSeat();
         g.SeatNo = seat;
         g.Role = role;
         g.Line = line;
+        array<int> last;
+        if (DgShowsLast() && m_LastOf.Find(seat, last) && last)
+        {
+            for (int i = 0; i < last.Count(); i++)
+                g.Faces.Insert(last[i].ToString());
+        }
         return g;
+    }
+
+    // Does everybody see the dice a seat threw last (perudo's stay under the cups).
+    protected bool DgShowsLast()
+    {
+        return true;
     }
 
     protected OZG_GZone DgZone(string id, string label, array<int> dice)

@@ -22,6 +22,12 @@ class OZG_PerudoConst
 
 class OZG_Perudo extends OZG_DiceGame
 {
+    // A seat's dice stay under its cup: no plate shows them.
+    override protected bool DgShowsLast()
+    {
+        return false;
+    }
+
     protected ref array<int> m_Count;
     protected ref array<ref array<int>> m_Dice;
     protected ref array<int> m_PalDone;

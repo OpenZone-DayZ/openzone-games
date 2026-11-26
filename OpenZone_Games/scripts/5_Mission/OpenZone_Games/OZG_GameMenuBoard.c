@@ -100,6 +100,8 @@ modded class OZG_GameMenu
     protected ref array<string> m_BWHostMoves;
     // The games of the menu, in its rows.
     protected ref array<string> m_BWMenuGames;
+    // Nardy's pills of a crowded point (OZG_GameMenuNardy.c), forgotten with the window.
+    protected ref array<Widget> m_BNBadges;
     // The dice's tumble (the canvas: 0.6 s on every throw, heard on the place as a roll):
     // the dice laid by the last paint and where they rest (units of their parents), the
     // time gone (below 0: none), the roll last seen.
@@ -109,6 +111,8 @@ modded class OZG_GameMenu
     protected ref array<float> m_BWTumbleY;
     protected ref array<float> m_BWTumbleWd;
     protected ref array<float> m_BWTumbleHt;
+    // each die's own turn at rest, degrees (the canvas throws them a little askew)
+    protected ref array<float> m_BWTumbleRot;
     protected float m_BWTumbleT = -1;
     protected int m_BWRollSeen;
 
@@ -123,13 +127,16 @@ modded class OZG_GameMenu
             return "";
         if (m_V.GameId == OZG_NardyConst.LONG_ID || m_V.GameId == OZG_NardyConst.SHORT_ID)
             return "board_nardy";
+        // corners: the canvas's own board, no moves but the discs in the corners
+        if (m_V.GameId == OZG_CornersConst.GAME_ID)
+            return "board_corners";
         return "board";
     }
 
     // The board's window is up (either of the two).
     protected bool BWUp()
     {
-        return m_Style == "board" || m_Style == "board_nardy" || m_Style == "dice";
+        return m_Style == "board" || m_Style == "board_corners" || m_Style == "board_nardy" || m_Style == "dice";
     }
 
     // A board game, or a board laid out whose game is not chosen yet.
@@ -193,6 +200,7 @@ modded class OZG_GameMenu
         m_BWTumbleY = new array<float>();
         m_BWTumbleWd = new array<float>();
         m_BWTumbleHt = new array<float>();
+        m_BWTumbleRot = new array<float>();
     }
 
     // The window was built anew: what was laid went with the old one.
@@ -513,6 +521,46 @@ modded class OZG_GameMenu
         return m_BPub && m_BPub.Final != "";
     }
 
+    // ------------------------------------------------------------ the later files' parts
+    //
+    // OZG_GameMenu's modded chain loads its files in order (Board, Dice, Nardy): what this
+    // file calls of the dice's window (OZG_GameMenuDice.c) and nardy's
+    // (OZG_GameMenuNardy.c) is declared here and overridden there.
+
+    protected bool DiceWindow()
+    {
+        return false;
+    }
+
+    protected void DWPaint()
+    {
+    }
+
+    protected bool DWPlaying()
+    {
+        return false;
+    }
+
+    protected bool DWClick(string n)
+    {
+        return false;
+    }
+
+    protected void BWNardyPaint()
+    {
+    }
+
+    protected bool BNClick(string n)
+    {
+        return false;
+    }
+
+    // The dice this player carries (nardy's window and the dice's swap panel).
+    protected void BNCarriedDice(array<EntityAI> into)
+    {
+        into.Clear();
+    }
+
     protected bool BWPlaying()
     {
         return m_BPub && m_V.St == OZG_Const.ST_PLAYING && !BWOver();
@@ -535,9 +583,17 @@ modded class OZG_GameMenu
         }
         if (m_V.Mine >= 0)
             return m_V.Mine;
+        // a watcher before the game: the first seat taken
+        for (int i = 0; i < m_V.Seats.Count(); i++)
+        {
+            if (BWTaken(m_V.Seats[i].No))
+                return m_V.Seats[i].No;
+        }
         return 0;
     }
 
+    // The other plate: the other side; before the game another seat taken, else the
+    // first free one.
     protected int BWTopSeat()
     {
         int bottom = BWBottomSeat();
@@ -547,12 +603,18 @@ modded class OZG_GameMenu
                 return m_BPub.Black;
             return m_BPub.White;
         }
+        int free = -1;
         for (int i = 0; i < m_V.Seats.Count(); i++)
         {
-            if (m_V.Seats[i].No != bottom)
-                return m_V.Seats[i].No;
+            int no = m_V.Seats[i].No;
+            if (no == bottom)
+                continue;
+            if (BWTaken(no))
+                return no;
+            if (free < 0)
+                free = no;
         }
-        return -1;
+        return free;
     }
 
     protected bool BWTaken(int seat)
@@ -828,7 +890,10 @@ modded class OZG_GameMenu
         BWPaintTitle();
         BWPaintPlate("OZG_BOpp", BWTopSeat(), false);
         BWPaintPlate("OZG_BMe", BWBottomSeat(), true);
-        BWPaintMoves();
+        if (m_Style == "board_corners")
+            BWPaintCorners();
+        else
+            BWPaintMoves();
         BWPaintLog();
         BWPaintActions();
         BWPaintField();
@@ -846,11 +911,27 @@ modded class OZG_GameMenu
         BWSetText("OZG_BTitle", game);
         string sub = Tr("STR_OZG_BWIN_SET_CLASSIC");
         if (m_V.SetLook == "stalker")
+        {
             sub = Tr("STR_OZG_BWIN_SET_STALKER");
-        string variant = VariantLabel();
-        if (variant != "")
-            sub = sub + " · " + variant;
-        BWSetText("OZG_BSub", sub);
+            if (BoardDiscs())
+                sub = Tr("STR_OZG_BWIN_SET_STALKER_DISCS");
+        }
+        string rules = BWRules();
+        if (rules != "")
+            sub = sub + " · " + rules;
+        // the canvas: the set and the rules in one line or two under the title
+        array<string> subLines = new array<string>();
+        BWWrap(BWText("OZG_BSub1"), sub, 302, 2, subLines);
+        string sub0 = sub;
+        string sub1 = "";
+        if (subLines.Count() > 1)
+        {
+            sub0 = subLines[0];
+            sub1 = subLines[1];
+        }
+        BWSetText("OZG_BSub", sub0);
+        BWSetText("OZG_BSub1", sub1);
+        BWTitleLines(subLines.Count());
 
         // "Game: Chess" with the chevron after its words; the menu is the host's,
         // and only between games.
@@ -865,7 +946,7 @@ modded class OZG_GameMenu
             {
                 chev.Show(menu);
                 // the label's middle is the button's less half the chevron and its gap
-                BWMove(chev, 30 + 65.5 + tw / 2 + 6, 102);
+                BWMove(chev, 30 + 65.5 + tw / 2 + 6, 102 + BWTitleDrop());
             }
         }
         // The second: the host folds the game, a seated player stands up.
@@ -881,12 +962,251 @@ modded class OZG_GameMenu
         }
     }
 
+    // ------------------------------------------------------------ corners
+
+    // The canvas's corners: each plate's bar of the side's discs in the corner it goes
+    // to; where the moves were, the move's number, how many to the check of the home
+    // (a disc still at home after its side's 40th move loses), and what it means.
+    protected void BWPaintCorners()
+    {
+        if (!m_BPub || m_BPub.White < 0)
+        {
+            BWShow("OZG_BTurn", false);
+            BWCornerBar("OZG_BOpp", 0, 9);
+            BWCornerBar("OZG_BMe", 0, 9);
+            return;
+        }
+        int wide = 3;
+        int high = 3;
+        if (VariantValue() == OZG_CornersConst.SIZE_12)
+            wide = 4;
+        int total = wide * high;
+        bool meWhite = BWBottomSeat() == m_BPub.White;
+        // White goes to Black's corner by h8, Black to White's by a1
+        BWCornerBar("OZG_BMe", BWInCorner(meWhite, !meWhite, wide, high), total);
+        BWCornerBar("OZG_BOpp", BWInCorner(!meWhite, meWhite, wide, high), total);
+
+        BWShow("OZG_BTurn", true);
+        int leaveBy = OZG_CornersConst.LEAVE_BY;
+        string leave = leaveBy.ToString();
+        BWSetText("OZG_BTurnTitle", OZG_Text.Upper(Tr("STR_OZG_BWIN_CORNERS_MOVE")));
+        // the side to move: its own moves so far, and this one
+        int plies = m_BPub.History.Count();
+        int moveNo = plies / 2 + 1;
+        TextWidget no = BWText("OZG_BTurnNo");
+        float nw = 0;
+        if (no)
+        {
+            no.SetText(moveNo.ToString());
+            nw = BWTextW(no);
+        }
+        BWMove(BW("OZG_BTurnOf"), 12 + nw + 8, 59);
+        BWSetText("OZG_BTurnOf", Tr1("STR_OZG_BWIN_CORNERS_OF", leave));
+        // whose home: the player's own, else the side to move
+        bool homeWhite = meWhite;
+        string note;
+        int home;
+        if (m_V.Mine >= 0)
+        {
+            home = BWInCorner(homeWhite, homeWhite, wide, high);
+            note = Tr2("STR_OZG_BWIN_CORNERS_HOME_YOU", home.ToString(), leave);
+        }
+        else
+        {
+            homeWhite = m_BPub.Turn == m_BPub.White;
+            home = BWInCorner(homeWhite, homeWhite, wide, high);
+            string whose = Tr("STR_OZG_BWIN_CORNERS_WHITES");
+            if (!homeWhite)
+                whose = Tr("STR_OZG_BWIN_CORNERS_BLACKS");
+            note = Tr2("STR_OZG_BWIN_CORNERS_HOME_SIDE", whose, home.ToString());
+        }
+        if (plies / 2 >= leaveBy)
+            note = Tr("STR_OZG_BWIN_CORNERS_HOME_DONE");
+        array<string> lines = new array<string>();
+        BWWrap(BWText("OZG_BTurnNote0"), note, 306, 2, lines);
+        string n0 = "";
+        string n1 = "";
+        if (lines.Count() > 0)
+            n0 = lines[0];
+        if (lines.Count() > 1)
+            n1 = lines[1];
+        BWSetText("OZG_BTurnNote0", n0);
+        BWSetText("OZG_BTurnNote1", n1);
+    }
+
+    // How many discs of a side stand in a corner: White's own by a1 (`low`) or Black's by h8.
+    protected int BWInCorner(bool white, bool low, int wide, int high)
+    {
+        if (!m_BPub)
+            return 0;
+        string squares = m_BPub.Board;
+        string mine = "b";
+        if (white)
+            mine = "w";
+        int n = 0;
+        for (int r = 0; r < high; r++)
+        {
+            for (int f = 0; f < wide; f++)
+            {
+                int col = f;
+                int row = r;
+                if (!low)
+                {
+                    col = 7 - f;
+                    row = 7 - r;
+                }
+                int sq = row * 8 + col;
+                if (sq < squares.Length() && squares.Substring(sq, 1) == mine)
+                    n++;
+            }
+        }
+        return n;
+    }
+
+    // A plate's bar: `n` of `total` discs in the corner, and its words.
+    protected void BWCornerBar(string p, int n, int total)
+    {
+        Widget fill = BW(p + "ProgFill");
+        float part = 0;
+        if (total > 0)
+            part = n * 1.0 / total;
+        if (fill)
+            fill.SetSize(229.5 * part * m_K, 8 * m_K);
+        BWSetText(p + "ProgText", Tr2("STR_OZG_BWIN_CORNERS_IN", n.ToString(), total.ToString()));
+    }
+
+    // A game's rules after the set (the canvas): draughts' and giveaway's captures and
+    // kings, corners' discs, corner and steps; chess and nardy none here.
+    protected string BWRules()
+    {
+        if (!m_V)
+            return "";
+        if (m_V.GameId == OZG_DraughtsConst.GAME_ID)
+            return Tr("STR_OZG_BWIN_RULES_DRAUGHTS");
+        if (m_V.GameId == "giveaway")
+            return Tr("STR_OZG_BWIN_RULES_GIVEAWAY");
+        if (m_V.GameId == OZG_CornersConst.GAME_ID)
+        {
+            if (VariantValue() == OZG_CornersConst.SIZE_12)
+                return Tr("STR_OZG_BWIN_RULES_CORNERS_12");
+            return Tr("STR_OZG_BWIN_RULES_CORNERS_9");
+        }
+        return "";
+    }
+
+    // The first option's value as chosen (its id), "" when the game has none.
+    protected string VariantValue()
+    {
+        OZG_Game sample = OZG_Games.Sample(m_V.GameId);
+        if (!sample)
+            return "";
+        array<ref OZG_Option> opts = new array<ref OZG_Option>();
+        sample.OptionList(opts);
+        if (opts.Count() == 0)
+            return "";
+        OZG_Option o = opts[0];
+        string chosen = o.DefaultId;
+        int at = m_V.OptIds.Find(o.OptionId);
+        if (at >= 0 && at < m_V.OptVals.Count())
+            chosen = m_V.OptVals[at];
+        return chosen;
+    }
+
+    // How much lower what stands under the title is: 20 when its sub takes two lines.
+    protected float BWTitleDrop()
+    {
+        TextWidget second = BWText("OZG_BSub1");
+        if (second && second.IsVisible())
+            return 20;
+        return 0;
+    }
+
+    // The title's box for a sub of one line or two (the canvas: 126 or 146 high), and the
+    // buttons, the other player's plate and the moves under it moved to suit.
+    protected void BWTitleLines(int lines)
+    {
+        float dy = 0;
+        if (lines > 1)
+            dy = 20;
+        BWShow("OZG_BSub1", lines > 1);
+        float subY = 56;
+        if (lines > 1)
+            subY = 57;
+        BWMove(BW("OZG_BSub"), 14, subY);
+        Widget col = BW("OZG_BTitleCol");
+        if (col)
+            col.SetSize(330 * m_K, (126 + dy) * m_K);
+        Widget box = BW("OZG_BTitleBox");
+        if (box)
+            box.SetSize(330 * m_K, (126 + dy) * m_K);
+        BWFit(BW("OZG_BTitleBoxEdge"), 330, 126 + dy, 8);
+        BWFit(BW("OZG_BTitleBoxBg"), 328, 124 + dy, 7);
+        BWMove(BW("OZG_BBtnGame"), 14, 80 + dy);
+        BWMove(BW("OZG_BBtnFold"), 169, 80 + dy);
+        BWMove(BW("OZG_BOpp"), 16, 146 + dy);
+        // the moves: 262 x 552 under a box of 126, 280 x 534 under one of 146
+        float movesY = 262;
+        float movesH = 552;
+        if (lines > 1)
+        {
+            movesY = 280;
+            movesH = 534;
+        }
+        Widget moves = BW("OZG_BMoves");
+        if (moves)
+        {
+            moves.SetPos(16 * m_K, movesY * m_K);
+            moves.SetSize(330 * m_K, movesH * m_K);
+        }
+        Widget movesBox = BW("OZG_BMovesBox");
+        if (movesBox)
+            movesBox.SetSize(330 * m_K, movesH * m_K);
+        BWFit(BW("OZG_BMovesBoxEdge"), 330, movesH, 8);
+        BWFit(BW("OZG_BMovesBoxBg"), 328, movesH - 2, 7);
+        // the game menu opens under the game's button
+        BWMove(BW("OZG_BMenu"), 30, 138 + dy);
+    }
+
     protected bool BWMenuAllowed()
     {
         bool playing = BWPlaying();
         if (m_Style == "dice")
             playing = DWPlaying();
         return m_V.IsHost == 1 && !playing && m_V.GameIds.Count() > 1;
+    }
+
+    // What a plate says after the side (the canvas): at draughts and giveaway how many
+    // of the side's pieces stand on the board; at corners which corner the side goes to
+    // (the lower plate's the upper right one, as the window has the board turned).
+    protected string BWPlateMore(bool white, bool bottom, bool mine)
+    {
+        if (!m_BPub || m_BPub.White < 0 || !m_V)
+            return "";
+        if (m_V.GameId == OZG_DraughtsConst.GAME_ID || m_V.GameId == "giveaway")
+        {
+            string squares = m_BPub.Board;
+            int n = 0;
+            for (int i = 0; i < squares.Length(); i++)
+            {
+                string c = squares.Substring(i, 1);
+                bool own = c == "b" || c == "B";
+                if (white)
+                    own = c == "w" || c == "W";
+                if (own)
+                    n++;
+            }
+            return Tr1("STR_OZG_BWIN_ON_BOARD", n.ToString());
+        }
+        if (m_V.GameId == OZG_CornersConst.GAME_ID)
+        {
+            string corner = Tr("STR_OZG_BWIN_CORNER_BL");
+            if (bottom)
+                corner = Tr("STR_OZG_BWIN_CORNER_TR");
+            if (mine)
+                return Tr1("STR_OZG_BWIN_CORNER_GO_YOU", corner);
+            return Tr1("STR_OZG_BWIN_CORNER_GOES", corner);
+        }
+        return "";
     }
 
     // A player's plate: the pieces his side took, his king, his name and side, the chip.
@@ -901,8 +1221,14 @@ modded class OZG_GameMenu
         if (nameW)
             nameW.SetText(name);
         BWShow(p + "You", mine);
+        bool corners = m_Style == "board_corners";
         if (mine && nameW)
-            BWMove(BW(p + "You"), 68 + BWTextW(nameW) + 4, 54.5);
+        {
+            if (corners)
+                BWMove(BW(p + "You"), 66.5 + BWTextW(nameW) + 4, 34);
+            else
+                BWMove(BW(p + "You"), 68 + BWTextW(nameW) + 4, 54.5);
+        }
 
         // White or black, and the host's.
         bool white = true;
@@ -924,7 +1250,33 @@ modded class OZG_GameMenu
                 side = side + " · ";
             side = side + Tr("STR_OZG_BWIN_HOST");
         }
-        BWSetText(p + "Side", side);
+        string more = BWPlateMore(white, bottom, mine);
+        if (more != "")
+        {
+            if (side != "")
+                side = side + " · ";
+            side = side + more;
+        }
+        // corners' plates have the side in two lines (the canvas)
+        TextWidget side1 = BWText(p + "Side1");
+        if (side1)
+        {
+            array<string> sideLines = new array<string>();
+            BWWrap(side1, side, 165, 2, sideLines);
+            string s0 = side;
+            string s1 = "";
+            if (sideLines.Count() > 1)
+            {
+                s0 = sideLines[0];
+                s1 = sideLines[1];
+            }
+            BWSetText(p + "Side", s0);
+            side1.SetText(s1);
+        }
+        else
+        {
+            BWSetText(p + "Side", side);
+        }
 
         // The avatar: the side's king (a disc at draughts) in the look of the set.
         string king = "K";
@@ -1029,6 +1381,12 @@ modded class OZG_GameMenu
                 cy = 61;
             else
                 cy = 21;
+            if (corners)
+            {
+                cy = 24;
+                if (bottom)
+                    cy = 48;
+            }
             chipBox.SetPos((318 - cw) * m_K, cy * m_K);
             chipBox.SetSize(cw * m_K, 24 * m_K);
             Widget pill = BW(p + "ChipBg");
@@ -1509,6 +1867,26 @@ modded class OZG_GameMenu
         float x;
         float y;
         int i;
+        // corners: the two homes, Black's (where White goes) lit gold, White's dark
+        if (m_Style == "board_corners")
+        {
+            int wide = 3;
+            int high = 3;
+            if (VariantValue() == OZG_CornersConst.SIZE_12)
+                wide = 4;
+            for (int r = 0; r < high; r++)
+            {
+                for (int f = 0; f < wide; f++)
+                {
+                    SquareCorner((7 - r) * 8 + 7 - f, x, y);
+                    BWTint(BW_FIELD, x, y, BW_S, BW_S, 1, ARGB(41, 201, 164, 92));
+                    BWRing(BW_FIELD, x, y, BW_S, BW_S, 2, 1, ARGB(115, 231, 194, 122));
+                    SquareCorner(r * 8 + f, x, y);
+                    BWTint(BW_FIELD, x, y, BW_S, BW_S, 1, ARGB(36, 20, 12, 6));
+                    BWRing(BW_FIELD, x, y, BW_S, BW_S, 2, 1, ARGB(89, 20, 12, 6));
+                }
+            }
+        }
         if (last.Count() >= 2)
         {
             for (i = 0; i < last.Count(); i++)
@@ -1821,11 +2199,12 @@ modded class OZG_GameMenu
         m_BWTumbleY.Clear();
         m_BWTumbleWd.Clear();
         m_BWTumbleHt.Clear();
+        m_BWTumbleRot.Clear();
     }
 
     // A die (or its shadow) just laid at x, y, w x h units of its parent: it tumbles
     // with the next throw heard, and with one under way.
-    protected void BWTumbleAdd(Widget w, float x, float y, float width, float height)
+    protected void BWTumbleAdd(Widget w, float x, float y, float width, float height, float rest = 0)
     {
         if (!w || !m_BWTumbleW)
             return;
@@ -1834,6 +2213,7 @@ modded class OZG_GameMenu
         m_BWTumbleY.Insert(y);
         m_BWTumbleWd.Insert(width);
         m_BWTumbleHt.Insert(height);
+        m_BWTumbleRot.Insert(rest);
     }
 
     // A throw heard on this window's place starts the tumble; the tumble runs its time.
@@ -1875,7 +2255,7 @@ modded class OZG_GameMenu
             float y = m_BWTumbleY[i] + (m_BWTumbleHt[i] - height) * 0.5 + ty;
             w.SetPos(x * m_K, y * m_K);
             w.SetSize(width * m_K, height * m_K);
-            w.SetRotation(0, 0, rot);
+            w.SetRotation(0, 0, rot + m_BWTumbleRot[i]);
         }
     }
 
