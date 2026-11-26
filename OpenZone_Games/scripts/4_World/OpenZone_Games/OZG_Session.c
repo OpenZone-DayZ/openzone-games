@@ -544,6 +544,9 @@ class OZG_Session
         v.Hint = m_R.Hint;
         v.MarkSeconds = cfg.MarkSeconds;
         v.Reach = cfg.SeatReach + 0.4;
+        // The board's or the can's look, and each piece's own (boards and dice §3.2).
+        v.SetLook = OZG_BoardRead.LookOf(m_R.DeckClass);
+        v.PieceLooks = OZG_BoardRead.LooksOf(m_Place);
         return v;
     }
 

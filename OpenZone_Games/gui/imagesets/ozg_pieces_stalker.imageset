@@ -1,0 +1,302 @@
+ImageSetClass {
+ Name "ozg_pieces_stalker"
+ RefSize 1024 2048
+ Textures {
+  ImageSetTextureClass {
+   mpix 1
+   path "OpenZone_Games/gui/imagesets/ozg_pieces_stalker_ca.paa"
+  }
+ }
+ Images {
+  ImageSetDefClass bB_front {
+   Name "bB_front"
+   Pos 2 2
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass bB_front_s {
+   Name "bB_front_s"
+   Pos 106 2
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass bB_rear {
+   Name "bB_rear"
+   Pos 210 2
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass bB_rear_s {
+   Name "bB_rear_s"
+   Pos 314 2
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass bK_front {
+   Name "bK_front"
+   Pos 418 2
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass bK_front_s {
+   Name "bK_front_s"
+   Pos 522 2
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass bK_rear {
+   Name "bK_rear"
+   Pos 626 2
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass bK_rear_s {
+   Name "bK_rear_s"
+   Pos 730 2
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass bN_front {
+   Name "bN_front"
+   Pos 834 2
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass bN_front_s {
+   Name "bN_front_s"
+   Pos 2 183
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass bN_rear {
+   Name "bN_rear"
+   Pos 106 183
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass bN_rear_s {
+   Name "bN_rear_s"
+   Pos 210 183
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass bP_front {
+   Name "bP_front"
+   Pos 314 183
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass bP_front_s {
+   Name "bP_front_s"
+   Pos 418 183
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass bP_rear {
+   Name "bP_rear"
+   Pos 522 183
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass bP_rear_s {
+   Name "bP_rear_s"
+   Pos 626 183
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass bQ_front {
+   Name "bQ_front"
+   Pos 730 183
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass bQ_front_s {
+   Name "bQ_front_s"
+   Pos 834 183
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass bQ_rear {
+   Name "bQ_rear"
+   Pos 2 364
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass bQ_rear_s {
+   Name "bQ_rear_s"
+   Pos 106 364
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass bR_front {
+   Name "bR_front"
+   Pos 210 364
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass bR_front_s {
+   Name "bR_front_s"
+   Pos 314 364
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass bR_rear {
+   Name "bR_rear"
+   Pos 418 364
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass bR_rear_s {
+   Name "bR_rear_s"
+   Pos 522 364
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass wB_front {
+   Name "wB_front"
+   Pos 626 364
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass wB_front_s {
+   Name "wB_front_s"
+   Pos 730 364
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass wB_rear {
+   Name "wB_rear"
+   Pos 834 364
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass wB_rear_s {
+   Name "wB_rear_s"
+   Pos 2 545
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass wK_front {
+   Name "wK_front"
+   Pos 106 545
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass wK_front_s {
+   Name "wK_front_s"
+   Pos 210 545
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass wK_rear {
+   Name "wK_rear"
+   Pos 314 545
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass wK_rear_s {
+   Name "wK_rear_s"
+   Pos 418 545
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass wN_front {
+   Name "wN_front"
+   Pos 522 545
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass wN_front_s {
+   Name "wN_front_s"
+   Pos 626 545
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass wN_rear {
+   Name "wN_rear"
+   Pos 730 545
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass wN_rear_s {
+   Name "wN_rear_s"
+   Pos 834 545
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass wP_front {
+   Name "wP_front"
+   Pos 2 726
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass wP_front_s {
+   Name "wP_front_s"
+   Pos 106 726
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass wP_rear {
+   Name "wP_rear"
+   Pos 210 726
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass wP_rear_s {
+   Name "wP_rear_s"
+   Pos 314 726
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass wQ_front {
+   Name "wQ_front"
+   Pos 418 726
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass wQ_front_s {
+   Name "wQ_front_s"
+   Pos 522 726
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass wQ_rear {
+   Name "wQ_rear"
+   Pos 626 726
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass wQ_rear_s {
+   Name "wQ_rear_s"
+   Pos 730 726
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass wR_front {
+   Name "wR_front"
+   Pos 834 726
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass wR_front_s {
+   Name "wR_front_s"
+   Pos 2 907
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass wR_rear {
+   Name "wR_rear"
+   Pos 106 907
+   Size 102 179
+   Flags 0
+  }
+  ImageSetDefClass wR_rear_s {
+   Name "wR_rear_s"
+   Pos 210 907
+   Size 102 179
+   Flags 0
+  }
+ }
+ Groups {
+ }
+}

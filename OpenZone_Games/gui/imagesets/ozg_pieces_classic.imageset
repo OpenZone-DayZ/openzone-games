@@ -1,6 +1,6 @@
 ImageSetClass {
  Name "ozg_pieces_classic"
- RefSize 512 1024
+ RefSize 1024 1024
  Textures {
   ImageSetTextureClass {
    mpix 1
@@ -14,20 +14,44 @@ ImageSetClass {
    Size 128 128
    Flags 0
   }
+  ImageSetDefClass bB_s {
+   Name "bB_s"
+   Pos 132 2
+   Size 128 128
+   Flags 0
+  }
   ImageSetDefClass bD {
    Name "bD"
-   Pos 132 2
+   Pos 262 2
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass bD_s {
+   Name "bD_s"
+   Pos 392 2
    Size 128 128
    Flags 0
   }
   ImageSetDefClass bK {
    Name "bK"
-   Pos 262 2
+   Pos 522 2
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass bK_s {
+   Name "bK_s"
+   Pos 652 2
    Size 128 128
    Flags 0
   }
   ImageSetDefClass bN {
    Name "bN"
+   Pos 782 2
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass bN_s {
+   Name "bN_s"
    Pos 2 132
    Size 128 128
    Flags 0
@@ -38,20 +62,44 @@ ImageSetClass {
    Size 128 128
    Flags 0
   }
+  ImageSetDefClass bP_s {
+   Name "bP_s"
+   Pos 262 132
+   Size 128 128
+   Flags 0
+  }
   ImageSetDefClass bQ {
    Name "bQ"
-   Pos 262 132
+   Pos 392 132
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass bQ_s {
+   Name "bQ_s"
+   Pos 522 132
    Size 128 128
    Flags 0
   }
   ImageSetDefClass bR {
    Name "bR"
-   Pos 2 262
+   Pos 652 132
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass bR_s {
+   Name "bR_s"
+   Pos 782 132
    Size 128 128
    Flags 0
   }
   ImageSetDefClass wB {
    Name "wB"
+   Pos 2 262
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass wB_s {
+   Name "wB_s"
    Pos 132 262
    Size 128 128
    Flags 0
@@ -62,33 +110,69 @@ ImageSetClass {
    Size 128 128
    Flags 0
   }
+  ImageSetDefClass wD_s {
+   Name "wD_s"
+   Pos 392 262
+   Size 128 128
+   Flags 0
+  }
   ImageSetDefClass wK {
    Name "wK"
-   Pos 2 392
+   Pos 522 262
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass wK_s {
+   Name "wK_s"
+   Pos 652 262
    Size 128 128
    Flags 0
   }
   ImageSetDefClass wN {
    Name "wN"
-   Pos 132 392
+   Pos 782 262
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass wN_s {
+   Name "wN_s"
+   Pos 2 392
    Size 128 128
    Flags 0
   }
   ImageSetDefClass wP {
    Name "wP"
+   Pos 132 392
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass wP_s {
+   Name "wP_s"
    Pos 262 392
    Size 128 128
    Flags 0
   }
   ImageSetDefClass wQ {
    Name "wQ"
-   Pos 2 522
+   Pos 392 392
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass wQ_s {
+   Name "wQ_s"
+   Pos 522 392
    Size 128 128
    Flags 0
   }
   ImageSetDefClass wR {
    Name "wR"
-   Pos 132 522
+   Pos 652 392
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass wR_s {
+   Name "wR_s"
+   Pos 782 392
    Size 128 128
    Flags 0
   }

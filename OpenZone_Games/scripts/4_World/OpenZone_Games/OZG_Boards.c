@@ -230,8 +230,12 @@ class OZG_DiceCan_Base extends OZG_Deck_Base
             return;
         if (GetInventory().AttachmentCount() > 0)
             return;
+        // the dice of the can's look: a stalker can holds stalker dice
+        string die = "OZG_Die";
+        if (OZG_BoardRead.LookOf(GetType()) == "stalker")
+            die = "OZG_Die_Stalker";
         for (int i = 0; i < DICE; i++)
-            GetInventory().CreateAttachment("OZG_Die");
+            GetInventory().CreateAttachment(die);
     }
 }
 
@@ -357,6 +361,8 @@ class OZG_BoardRead
 
     static string ClassOf(string face, string look)
     {
+        if (face == "Di" && look == "Stalker")
+            return "OZG_Die_Stalker";
         if (face == "Di")
             return "OZG_Die";
         if (face.Length() != 2)
@@ -369,6 +375,47 @@ class OZG_BoardRead
             return "OZG_Disc_" + look + "_" + side;
         }
         return "OZG_Chess_" + look + "_" + face;
+    }
+
+    // A set's or a piece's look: its config's `ozgStyle`, "classic" when it has none.
+    static string LookOf(string cls)
+    {
+        if (cls == "")
+            return "classic";
+        string look = GetGame().ConfigGetTextOut("CfgVehicles " + cls + " ozgStyle");
+        if (look == "")
+            return "classic";
+        look.ToLower();
+        return look;
+    }
+
+    // The look of each face the set on a place holds, "<face>=<look>;..": the first
+    // piece of a face in the set's slots says it (a piece of another set put in is
+    // drawn in its own look, §3.2). "" for a place with no set.
+    static string LooksOf(OZG_Place place)
+    {
+        if (!place)
+            return "";
+        OZG_Deck_Base kit = place.OZG_Deck();
+        if (!kit)
+            return "";
+        array<string> seen = new array<string>();
+        string looks = "";
+        int held = kit.GetInventory().AttachmentCount();
+        for (int i = 0; i < held; i++)
+        {
+            OZG_Piece_Base one = OZG_Piece_Base.Cast(kit.GetInventory().GetAttachmentFromIndex(i));
+            if (!one)
+                continue;
+            string face = one.OZG_Face();
+            if (face == "" || seen.Find(face) >= 0)
+                continue;
+            seen.Insert(face);
+            if (looks != "")
+                looks = looks + ";";
+            looks = looks + face + "=" + LookOf(one.GetType());
+        }
+        return looks;
     }
 
     // The faces of every piece the board on a place holds, one entry a piece,

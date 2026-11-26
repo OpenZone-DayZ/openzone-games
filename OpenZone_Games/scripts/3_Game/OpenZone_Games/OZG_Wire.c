@@ -252,9 +252,21 @@ class OZG_WView
     ref array<int> ReqSeats;
     // The games this server offers, for the host to pick from.
     ref array<string> GameIds;
+    // The board's and the can's window (boards and dice design §7, the canvas's boards):
+    // the set's look ("classic", "stalker"); the look of each piece it holds,
+    // "<face>=<look>" a piece, ";" between (a piece of another set is drawn in its own:
+    // §3.2); whether this player may do a sleight on the board now and in how many
+    // seconds the next one may be done (§9.1); the seats whose player has the window
+    // open and is near (the other player's plate says whether he watches).
+    string SetLook;
+    string PieceLooks;
+    int    BoardSleights;
+    int    BoardWait;
+    ref array<int> Looking;
 
     void OZG_WView()
     {
+        Looking = new array<int>();
         OptIds = new array<string>();
         OptVals = new array<string>();
         Seats = new array<ref OZG_WSeat>();

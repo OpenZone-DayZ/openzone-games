@@ -43,12 +43,19 @@ OpenZone_Games/data/cards/stalker. The loners' patch sewn on the cloth of the
 stalkers' table is cut from the files of S.T.A.L.K.E.R. 2: the source picture
 in art/table/src, and the cloth as it is drawn into
 art/table/ozg_table_cloth_co.png and
-OpenZone_Games/gui/textures/ozg_table_cloth_co.paa. They are created and fully
-owned by GSC Game World. They are NOT covered by the licence above, and no
-permission given in this file extends to them.
+OpenZone_Games/gui/textures/ozg_table_cloth_co.paa. The figurines of the
+stalker chess set are posed from the models and textures of the original
+S.T.A.L.K.E.R. trilogy and baked from them: models/src/chess_stalker.obj,
+models/chess_stalker, OpenZone_Games/models/chess_stalker, their pictures in
+art/pieces/stalker and OpenZone_Games/gui/imagesets/ozg_pieces_stalker_ca.paa.
+The faces of the stalker draughts are the trilogy's portraits: models/disc/data/
+ozg_disc_stalker_*_co.png, OpenZone_Games/models/disc/data/ozg_disc_stalker_*,
+art/discs/stalker and OpenZone_Games/gui/imagesets/ozg_discs_stalker_ca.paa.
+They are created and fully owned by GSC Game World. They are NOT covered by the
+licence above, and no permission given in this file extends to them.
 
-OpenZone Games is a fan-made mod. Its stalkers' deck is based on the
-S.T.A.L.K.E.R. universe and uses its assets. The mod is not official and has no
+OpenZone Games is a fan-made mod. Its stalkers' deck and its stalker set of
+chess and draughts are based on the S.T.A.L.K.E.R. universe and use its assets. The mod is not official and has no
 affiliation with GSC Game World. The original games are sold here:
 
     https://store.steampowered.com/franchise/stalker
@@ -62,8 +69,10 @@ licence and waive none of GSC's rights.
 
     Зображення на двадцяти двох картах сталкерської колоди і нашивка вільних
     сталкерів на тканині сталкерського столу походять з ігор S.T.A.L.K.E.R.
-    (усе, крім зображення Фауста, взято з файлів самих ігор); їх створила і
-    повністю ними володіє GSC Game World.
+    (усе, крім зображення Фауста, взято з файлів самих ігор); фігурки
+    сталкерських шахів зроблено з моделей і текстур оригінальної трилогії, а
+    обличчя на сталкерських шашках -- її портрети; їх створила і повністю ними
+    володіє GSC Game World.
     Ліцензія цього моду та дозволи з цього файлу на них НЕ поширюються.
     OpenZone Games -- фанатський мод; він неофіційний і не пов'язаний із
     GSC Game World. Оригінальні ігри продаються за посиланням вище.

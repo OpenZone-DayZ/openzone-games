@@ -792,5 +792,91 @@ STR_OZG_PIECE_BB,Чорний слон,Black bishop
 STR_OZG_PIECE_BN,Чорний кінь,Black knight
 STR_OZG_PIECE_BP,Чорний пішак,Black pawn
 STR_OZG_PIECE_BD,Чорна шашка,Black checker
+STR_OZG_PIECE_S_WK,"Білий король: Сидорович","White king: Sidorovich"
+STR_OZG_PIECE_S_WQ,"Білий ферзь: Стрілок","White queen: Strelok"
+STR_OZG_PIECE_S_WR,"Біла тура: сталкер в екзоскелеті","White rook: a stalker in an exoskeleton"
+STR_OZG_PIECE_S_WB,"Білий слон: науковець","White bishop: a scientist"
+STR_OZG_PIECE_S_WN,"Білий кінь: провідник","White knight: a guide"
+STR_OZG_PIECE_S_WP,"Білий пішак: новачок","White pawn: a rookie"
+STR_OZG_PIECE_S_BK,"Чорний король: контролер","Black king: a controller"
+STR_OZG_PIECE_S_BQ,"Чорний ферзь: химера","Black queen: a chimera"
+STR_OZG_PIECE_S_BR,"Чорна тура: псевдогігант","Black rook: a pseudogiant"
+STR_OZG_PIECE_S_BB,"Чорний слон: кровосос","Black bishop: a bloodsucker"
+STR_OZG_PIECE_S_BN,"Чорний кінь: снорк","Black knight: a snork"
+STR_OZG_PIECE_S_BP,"Чорний пішак: кабан","Black pawn: a boar"
+STR_OZG_PIECE_S_WD,Сталкерська шашка: новачок,Stalker checker: a rookie
+STR_OZG_PIECE_S_BD,Сталкерська шашка: бандит,Stalker checker: a bandit
 STR_OZG_PIECE_DI,Гральна кістка,Die
+STR_OZG_PIECE_DI_BLACK,Чорна гральна кістка,Black die
+STR_OZG_PIECE_DI_RED,Червона гральна кістка,Red die
+STR_OZG_PIECE_DI_STALKER,Сталкерська кістка,Stalker die
+STR_OZG_PIECE_DI_STALKER_BLACK,Чорна сталкерська кістка,Black stalker die
+STR_OZG_PIECE_DI_STALKER_RED,Червона сталкерська кістка,Red stalker die
 # <<< generated: board
+STR_OZG_BWIN_NONE_ME,ви ще нічого не взяли,you have taken nothing yet
+STR_OZG_BWIN_NONE_OPP,нічого не взяв,has taken nothing
+STR_OZG_BWIN_YOU,(ви),(you)
+STR_OZG_BWIN_FOLD,Згорнути гру,Fold the game
+STR_OZG_BWIN_STAND,Встати з-за дошки,Leave the board
+STR_OZG_BWIN_SLEIGHTS,Спритність рук,Sleight of hand
+STR_OZG_BWIN_SL_MOVE,Переставити,Move
+STR_OZG_BWIN_SL_SWAP,Поміняти,Swap
+STR_OZG_BWIN_SL_BACK,Повернути зняту,Put one back
+STR_OZG_BWIN_SL_OFF,Зняти з дошки,Take one off
+STR_OZG_BWIN_DRAW,Нічия?,Draw?
+STR_OZG_BWIN_RESIGN,Здатися,Resign
+STR_OZG_BWIN_PROMO_TITLE,Пішак дійшов до краю,The pawn has reached the end
+STR_OZG_BWIN_PROMO_TEXT,"На кого його перетворити? Нова фігура лишається того ж набору, що й пішак.",What does it become? The new piece is of the pawn's own set.
+STR_OZG_BWIN_PIECE_Q,Ферзь,Queen
+STR_OZG_BWIN_PIECE_R,Тура,Rook
+STR_OZG_BWIN_PIECE_B,Слон,Bishop
+STR_OZG_BWIN_PIECE_N,Кінь,Knight
+STR_OZG_BWIN_OVER_TITLE,Партію закінчено,The game is over
+STR_OZG_BWIN_NEW,Нова партія,New game
+STR_OZG_BWIN_LOOK,Подивитися на дошку,Look at the board
+STR_OZG_BWIN_FOLD_TITLE,Згорнути гру?,Fold the game?
+STR_OZG_BWIN_FOLD_TEXT,"Партія скінчиться, дошка складеться, і фігури, які в ній є, повернуться вам у руки разом з нею.","The game ends, the board folds, and the pieces in it come back to your hands with it."
+STR_OZG_BWIN_FOLD_YES,Згорнути,Fold
+STR_OZG_BWIN_CANCEL,Скасувати,Cancel
+STR_OZG_BWIN_MOVES,Ходи,Moves
+STR_OZG_BWIN_LOG,Журнал,Log
+STR_OZG_BWIN_MENU_HEAD,Ігри цієї дошки,Games of this board
+STR_OZG_BWIN_MENU_FOOT,Нарди перевертають дошку іншим боком.,Nardy turn the board over.
+STR_OZG_BWIN_SET_CLASSIC,"дошка «3 в 1», класична","3-in-1 board, classic"
+STR_OZG_BWIN_SET_STALKER,"дошка «3 в 1», сталкерські фігури","3-in-1 board, stalker pieces"
+STR_OZG_BWIN_GAME,Гра: %1,Game: %1
+STR_OZG_BWIN_FREE_SEAT,вільне місце,a free seat
+STR_OZG_BWIN_SIDE_WHITE,білі,white
+STR_OZG_BWIN_SIDE_BLACK,чорні,black
+STR_OZG_BWIN_HOST,господар,host
+STR_OZG_BWIN_WAITING,чекає,waiting
+STR_OZG_BWIN_OVER,партія скінчена,game over
+STR_OZG_BWIN_YOUR_MOVE,ваш хід,your move
+STR_OZG_BWIN_THEIR_MOVE,хід суперника,their move
+STR_OZG_BWIN_AWAY,відійшов,away
+STR_OZG_BWIN_THINKING,думає…,thinking…
+STR_OZG_BWIN_WATCHING,дивиться,watching
+STR_OZG_BWIN_LETTERS,"Кр,Ф,Т,С,К","K,Q,R,B,N"
+STR_OZG_BWIN_COOL_OK,можна,ready
+STR_OZG_BWIN_COOL_WAIT,наступна через %1,next in %1
+STR_OZG_BWIN_SL_RULE,"Одна хитрість на %1 хвилин. Хто дивиться на дошку, побачить її одразу.",One sleight every %1 minutes. Whoever watches the board sees it at once.
+STR_OZG_BWIN_SL_WAIT,Ще не можна: наступна хитрість через %1.,Not yet: the next sleight in %1.
+STR_OZG_BWIN_SL_HINT_MOVE,Переставити: оберіть фігуру на дошці.,Move: pick a piece on the board.
+STR_OZG_BWIN_SL_HINT_SWAP,Поміняти місцями: оберіть першу фігуру.,Swap: pick the first piece.
+STR_OZG_BWIN_SL_HINT_BACK,Повернути: оберіть зняту фігуру біля табличок.,"Put back: pick a piece taken, by the plates."
+STR_OZG_BWIN_SL_HINT_OFF,Зняти: оберіть фігуру (не короля).,Take off: pick a piece (not a king).
+STR_OZG_BWIN_SL_HINT_MOVE2,"Тепер порожню клітинку, куди її поставити.",Now the empty square to put it on.
+STR_OZG_BWIN_SL_HINT_SWAP2,Тепер другу фігуру.,Now the second piece.
+STR_OZG_BWIN_SL_HINT_BACK2,"Тепер клітинку: порожню, або фігуру, яку вона замінить.","Now a square: an empty one, or a piece it replaces."
+STR_OZG_BWIN_SL_DONE_SEEN,"Готово, але %1 дивився — він це бачив.","Done, but %1 was watching: he saw it."
+STR_OZG_BWIN_SL_DONE_AWAY,Готово. %1 відійшов і нічого не бачив.,Done. %1 was away and saw nothing.
+STR_OZG_BWIN_SL_DONE,Готово.,Done.
+STR_OZG_BWIN_BEGIN,Почати партію,Begin the game
+STR_OZG_BWIN_KICK,Прибрати гравця,Remove the player
+STR_OZG_BWIN_RESULT_DRAW,Нічия.,A draw.
+STR_OZG_BWIN_RESULT_YOU,Ви перемогли.,You won.
+STR_OZG_BWIN_RESULT_WON,Переміг %1 (%2).,%1 won (%2).
+STR_OZG_BOARD_STALKER_NAME,Дошка «3 в 1»: сталкерський набір,3-in-1 board: the stalker set
+STR_OZG_BOARD_STALKER_DESC,"Складна дерев'яна дошка зі сталкерським набором: сталкери проти мутантів у шахах, новачки проти бандитів у шашках, дві сталкерські кістки. Фігурки за моделями оригінальної трилогії S.T.A.L.K.E.R. (GSC Game World; неофіційно). Розкладіть її на столі, як колоду.","A folding wooden board with the stalker set: stalkers against mutants in chess, rookies against bandits in draughts, two stalker dice. The figurines are after the models of the original S.T.A.L.K.E.R. trilogy (GSC Game World; unofficial). Lay it out on a table as a deck."
+STR_OZG_CAN_STALKER_NAME,Банка зі сталкерськими кістками,Can of stalker dice
+STR_OZG_CAN_STALKER_DESC,Бляшана банка з кришкою і п'ятьма сталкерськими кістками: замість точок знаки радіації. Розкладіть її на столі для гри в кості.,A tin can with a lid and five stalker dice: radiation signs for pips. Lay it out on a table for a game of dice.

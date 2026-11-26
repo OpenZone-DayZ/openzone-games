@@ -67,7 +67,9 @@ class CfgMods
                     "OpenZone_Games/gui/imagesets/ozg_cards_classic.imageset",
                     "OpenZone_Games/gui/imagesets/ozg_cards_stalker.imageset",
                     "OpenZone_Games/gui/imagesets/ozg_marks.imageset",
-                    "OpenZone_Games/gui/imagesets/ozg_pieces_classic.imageset"
+                    "OpenZone_Games/gui/imagesets/ozg_pieces_classic.imageset",
+                    "OpenZone_Games/gui/imagesets/ozg_pieces_stalker.imageset",
+                    "OpenZone_Games/gui/imagesets/ozg_discs_stalker.imageset"
                 };
             };
         };
@@ -509,6 +511,16 @@ class CfgVehicles
     {
         scope = 2;
     };
+    // The stalker set (boards and dice design §15): the same board, holding the
+    // trilogy's figurines, the stalker draughts and stalker dice. Its own look is
+    // the classic board's until a stalker board is drawn.
+    class OZG_Board_Stalker: OZG_Board_Base
+    {
+        scope = 2;
+        displayName = "$STR_OZG_BOARD_STALKER_NAME";
+        descriptionShort = "$STR_OZG_BOARD_STALKER_DESC";
+        ozgStyle = "stalker";
+    };
 
     // The pieces: one model a kind, the colour put on through the hidden
     // selection; every class names the board's slots it goes into.
@@ -563,7 +575,26 @@ class CfgVehicles
     class OZG_Chess_Classic_bN: OZG_Chess_N { scope = 2; displayName = "$STR_OZG_PIECE_BN"; ozgFace = "bN"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess\data\ozg_chess_black_co.paa"}; inventorySlot[] = {"OZG_Bd_bN1", "OZG_Bd_bN2"}; };
     class OZG_Chess_Classic_bP: OZG_Chess_P { scope = 2; displayName = "$STR_OZG_PIECE_BP"; ozgFace = "bP"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess\data\ozg_chess_black_co.paa"}; inventorySlot[] = {"OZG_Bd_bP1", "OZG_Bd_bP2", "OZG_Bd_bP3", "OZG_Bd_bP4", "OZG_Bd_bP5", "OZG_Bd_bP6", "OZG_Bd_bP7", "OZG_Bd_bP8"}; };
     class OZG_Disc_Classic_B: OZG_Disc_Base { scope = 2; displayName = "$STR_OZG_PIECE_BD"; ozgFace = "bD"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\disc\data\ozg_disc_black_co.paa"}; inventorySlot[] = {"OZG_Bd_bD01", "OZG_Bd_bD02", "OZG_Bd_bD03", "OZG_Bd_bD04", "OZG_Bd_bD05", "OZG_Bd_bD06", "OZG_Bd_bD07", "OZG_Bd_bD08", "OZG_Bd_bD09", "OZG_Bd_bD10", "OZG_Bd_bD11", "OZG_Bd_bD12", "OZG_Bd_bD13", "OZG_Bd_bD14", "OZG_Bd_bD15"}; };
-    class OZG_Die: OZG_Die_Base { scope = 2; displayName = "$STR_OZG_PIECE_DI"; ozgFace = "Di"; inventorySlot[] = {"OZG_Bd_Die1", "OZG_Bd_Die2", "OZG_Cn_Die1", "OZG_Cn_Die2", "OZG_Cn_Die3", "OZG_Cn_Die4", "OZG_Cn_Die5"}; };
+    class OZG_Chess_Stalker_wK: OZG_Chess_K { scope = 2; displayName = "$STR_OZG_PIECE_S_WK"; ozgFace = "wK"; ozgStyle = "stalker"; model = "\OpenZone_Games\models\chess_stalker\ozg_chess_stalker_wk.p3d"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess_stalker\data\ozg_chess_stalker_wk_co.paa"}; hiddenSelectionsMaterials[] = {"OpenZone_Games\models\chess_stalker\data\ozg_chess_stalker.rvmat"}; inventorySlot[] = {"OZG_Bd_wK"}; };
+    class OZG_Chess_Stalker_wQ: OZG_Chess_Q { scope = 2; displayName = "$STR_OZG_PIECE_S_WQ"; ozgFace = "wQ"; ozgStyle = "stalker"; model = "\OpenZone_Games\models\chess_stalker\ozg_chess_stalker_wq.p3d"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess_stalker\data\ozg_chess_stalker_wq_co.paa"}; hiddenSelectionsMaterials[] = {"OpenZone_Games\models\chess_stalker\data\ozg_chess_stalker.rvmat"}; inventorySlot[] = {"OZG_Bd_wQ"}; };
+    class OZG_Chess_Stalker_wR: OZG_Chess_R { scope = 2; displayName = "$STR_OZG_PIECE_S_WR"; ozgFace = "wR"; ozgStyle = "stalker"; model = "\OpenZone_Games\models\chess_stalker\ozg_chess_stalker_wr.p3d"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess_stalker\data\ozg_chess_stalker_wr_co.paa"}; hiddenSelectionsMaterials[] = {"OpenZone_Games\models\chess_stalker\data\ozg_chess_stalker.rvmat"}; inventorySlot[] = {"OZG_Bd_wR1", "OZG_Bd_wR2"}; };
+    class OZG_Chess_Stalker_wB: OZG_Chess_B { scope = 2; displayName = "$STR_OZG_PIECE_S_WB"; ozgFace = "wB"; ozgStyle = "stalker"; model = "\OpenZone_Games\models\chess_stalker\ozg_chess_stalker_wb.p3d"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess_stalker\data\ozg_chess_stalker_wb_co.paa"}; hiddenSelectionsMaterials[] = {"OpenZone_Games\models\chess_stalker\data\ozg_chess_stalker.rvmat"}; inventorySlot[] = {"OZG_Bd_wB1", "OZG_Bd_wB2"}; };
+    class OZG_Chess_Stalker_wN: OZG_Chess_N { scope = 2; displayName = "$STR_OZG_PIECE_S_WN"; ozgFace = "wN"; ozgStyle = "stalker"; model = "\OpenZone_Games\models\chess_stalker\ozg_chess_stalker_wn.p3d"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess_stalker\data\ozg_chess_stalker_wn_co.paa"}; hiddenSelectionsMaterials[] = {"OpenZone_Games\models\chess_stalker\data\ozg_chess_stalker.rvmat"}; inventorySlot[] = {"OZG_Bd_wN1", "OZG_Bd_wN2"}; };
+    class OZG_Chess_Stalker_wP: OZG_Chess_P { scope = 2; displayName = "$STR_OZG_PIECE_S_WP"; ozgFace = "wP"; ozgStyle = "stalker"; model = "\OpenZone_Games\models\chess_stalker\ozg_chess_stalker_wp.p3d"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess_stalker\data\ozg_chess_stalker_wp_co.paa"}; hiddenSelectionsMaterials[] = {"OpenZone_Games\models\chess_stalker\data\ozg_chess_stalker.rvmat"}; inventorySlot[] = {"OZG_Bd_wP1", "OZG_Bd_wP2", "OZG_Bd_wP3", "OZG_Bd_wP4", "OZG_Bd_wP5", "OZG_Bd_wP6", "OZG_Bd_wP7", "OZG_Bd_wP8"}; };
+    class OZG_Disc_Stalker_W: OZG_Disc_Base { scope = 2; displayName = "$STR_OZG_PIECE_S_WD"; ozgFace = "wD"; ozgStyle = "stalker"; model = "\OpenZone_Games\models\disc\ozg_disc_faces.p3d"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\disc\data\ozg_disc_stalker_white_co.paa"}; inventorySlot[] = {"OZG_Bd_wD01", "OZG_Bd_wD02", "OZG_Bd_wD03", "OZG_Bd_wD04", "OZG_Bd_wD05", "OZG_Bd_wD06", "OZG_Bd_wD07", "OZG_Bd_wD08", "OZG_Bd_wD09", "OZG_Bd_wD10", "OZG_Bd_wD11", "OZG_Bd_wD12", "OZG_Bd_wD13", "OZG_Bd_wD14", "OZG_Bd_wD15"}; };
+    class OZG_Chess_Stalker_bK: OZG_Chess_K { scope = 2; displayName = "$STR_OZG_PIECE_S_BK"; ozgFace = "bK"; ozgStyle = "stalker"; model = "\OpenZone_Games\models\chess_stalker\ozg_chess_stalker_bk.p3d"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess_stalker\data\ozg_chess_stalker_bk_co.paa"}; hiddenSelectionsMaterials[] = {"OpenZone_Games\models\chess_stalker\data\ozg_chess_stalker.rvmat"}; inventorySlot[] = {"OZG_Bd_bK"}; };
+    class OZG_Chess_Stalker_bQ: OZG_Chess_Q { scope = 2; displayName = "$STR_OZG_PIECE_S_BQ"; ozgFace = "bQ"; ozgStyle = "stalker"; model = "\OpenZone_Games\models\chess_stalker\ozg_chess_stalker_bq.p3d"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess_stalker\data\ozg_chess_stalker_bq_co.paa"}; hiddenSelectionsMaterials[] = {"OpenZone_Games\models\chess_stalker\data\ozg_chess_stalker.rvmat"}; inventorySlot[] = {"OZG_Bd_bQ"}; };
+    class OZG_Chess_Stalker_bR: OZG_Chess_R { scope = 2; displayName = "$STR_OZG_PIECE_S_BR"; ozgFace = "bR"; ozgStyle = "stalker"; model = "\OpenZone_Games\models\chess_stalker\ozg_chess_stalker_br.p3d"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess_stalker\data\ozg_chess_stalker_br_co.paa"}; hiddenSelectionsMaterials[] = {"OpenZone_Games\models\chess_stalker\data\ozg_chess_stalker.rvmat"}; inventorySlot[] = {"OZG_Bd_bR1", "OZG_Bd_bR2"}; };
+    class OZG_Chess_Stalker_bB: OZG_Chess_B { scope = 2; displayName = "$STR_OZG_PIECE_S_BB"; ozgFace = "bB"; ozgStyle = "stalker"; model = "\OpenZone_Games\models\chess_stalker\ozg_chess_stalker_bb.p3d"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess_stalker\data\ozg_chess_stalker_bb_co.paa"}; hiddenSelectionsMaterials[] = {"OpenZone_Games\models\chess_stalker\data\ozg_chess_stalker.rvmat"}; inventorySlot[] = {"OZG_Bd_bB1", "OZG_Bd_bB2"}; };
+    class OZG_Chess_Stalker_bN: OZG_Chess_N { scope = 2; displayName = "$STR_OZG_PIECE_S_BN"; ozgFace = "bN"; ozgStyle = "stalker"; model = "\OpenZone_Games\models\chess_stalker\ozg_chess_stalker_bn.p3d"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess_stalker\data\ozg_chess_stalker_bn_co.paa"}; hiddenSelectionsMaterials[] = {"OpenZone_Games\models\chess_stalker\data\ozg_chess_stalker.rvmat"}; inventorySlot[] = {"OZG_Bd_bN1", "OZG_Bd_bN2"}; };
+    class OZG_Chess_Stalker_bP: OZG_Chess_P { scope = 2; displayName = "$STR_OZG_PIECE_S_BP"; ozgFace = "bP"; ozgStyle = "stalker"; model = "\OpenZone_Games\models\chess_stalker\ozg_chess_stalker_bp.p3d"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess_stalker\data\ozg_chess_stalker_bp_co.paa"}; hiddenSelectionsMaterials[] = {"OpenZone_Games\models\chess_stalker\data\ozg_chess_stalker.rvmat"}; inventorySlot[] = {"OZG_Bd_bP1", "OZG_Bd_bP2", "OZG_Bd_bP3", "OZG_Bd_bP4", "OZG_Bd_bP5", "OZG_Bd_bP6", "OZG_Bd_bP7", "OZG_Bd_bP8"}; };
+    class OZG_Disc_Stalker_B: OZG_Disc_Base { scope = 2; displayName = "$STR_OZG_PIECE_S_BD"; ozgFace = "bD"; ozgStyle = "stalker"; model = "\OpenZone_Games\models\disc\ozg_disc_faces.p3d"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\disc\data\ozg_disc_stalker_black_co.paa"}; inventorySlot[] = {"OZG_Bd_bD01", "OZG_Bd_bD02", "OZG_Bd_bD03", "OZG_Bd_bD04", "OZG_Bd_bD05", "OZG_Bd_bD06", "OZG_Bd_bD07", "OZG_Bd_bD08", "OZG_Bd_bD09", "OZG_Bd_bD10", "OZG_Bd_bD11", "OZG_Bd_bD12", "OZG_Bd_bD13", "OZG_Bd_bD14", "OZG_Bd_bD15"}; };
+    class OZG_Die: OZG_Die_Base { scope = 2; displayName = "$STR_OZG_PIECE_DI"; ozgFace = "Di"; ozgStyle = "classic"; ozgDieLook = "white"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\die\data\ozg_die_co.paa"}; hiddenSelectionsMaterials[] = {"OpenZone_Games\models\die\data\ozg_die.rvmat"}; inventorySlot[] = {"OZG_Bd_Die1", "OZG_Bd_Die2", "OZG_Cn_Die1", "OZG_Cn_Die2", "OZG_Cn_Die3", "OZG_Cn_Die4", "OZG_Cn_Die5"}; };
+    class OZG_Die_Black: OZG_Die_Base { scope = 2; displayName = "$STR_OZG_PIECE_DI_BLACK"; ozgFace = "Di"; ozgStyle = "classic"; ozgDieLook = "black"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\die\data\ozg_die_black_co.paa"}; hiddenSelectionsMaterials[] = {"OpenZone_Games\models\die\data\ozg_die.rvmat"}; inventorySlot[] = {"OZG_Bd_Die1", "OZG_Bd_Die2", "OZG_Cn_Die1", "OZG_Cn_Die2", "OZG_Cn_Die3", "OZG_Cn_Die4", "OZG_Cn_Die5"}; };
+    class OZG_Die_Red: OZG_Die_Base { scope = 2; displayName = "$STR_OZG_PIECE_DI_RED"; ozgFace = "Di"; ozgStyle = "classic"; ozgDieLook = "red"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\die\data\ozg_die_red_co.paa"}; hiddenSelectionsMaterials[] = {"OpenZone_Games\models\die\data\ozg_die.rvmat"}; inventorySlot[] = {"OZG_Bd_Die1", "OZG_Bd_Die2", "OZG_Cn_Die1", "OZG_Cn_Die2", "OZG_Cn_Die3", "OZG_Cn_Die4", "OZG_Cn_Die5"}; };
+    class OZG_Die_Stalker: OZG_Die_Base { scope = 2; displayName = "$STR_OZG_PIECE_DI_STALKER"; ozgFace = "Di"; ozgStyle = "stalker"; ozgDieLook = "stalker"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\die\data\ozg_die_stalker_co.paa"}; hiddenSelectionsMaterials[] = {"OpenZone_Games\models\die\data\ozg_die_flat.rvmat"}; inventorySlot[] = {"OZG_Bd_Die1", "OZG_Bd_Die2", "OZG_Cn_Die1", "OZG_Cn_Die2", "OZG_Cn_Die3", "OZG_Cn_Die4", "OZG_Cn_Die5"}; };
+    class OZG_Die_Stalker_Black: OZG_Die_Base { scope = 2; displayName = "$STR_OZG_PIECE_DI_STALKER_BLACK"; ozgFace = "Di"; ozgStyle = "stalker"; ozgDieLook = "stalker_black"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\die\data\ozg_die_stalker_black_co.paa"}; hiddenSelectionsMaterials[] = {"OpenZone_Games\models\die\data\ozg_die_flat.rvmat"}; inventorySlot[] = {"OZG_Bd_Die1", "OZG_Bd_Die2", "OZG_Cn_Die1", "OZG_Cn_Die2", "OZG_Cn_Die3", "OZG_Cn_Die4", "OZG_Cn_Die5"}; };
+    class OZG_Die_Stalker_Red: OZG_Die_Base { scope = 2; displayName = "$STR_OZG_PIECE_DI_STALKER_RED"; ozgFace = "Di"; ozgStyle = "stalker"; ozgDieLook = "stalker_red"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\die\data\ozg_die_stalker_red_co.paa"}; hiddenSelectionsMaterials[] = {"OpenZone_Games\models\die\data\ozg_die_flat.rvmat"}; inventorySlot[] = {"OZG_Bd_Die1", "OZG_Bd_Die2", "OZG_Cn_Die1", "OZG_Cn_Die2", "OZG_Cn_Die3", "OZG_Cn_Die4", "OZG_Cn_Die5"}; };
 // <<< generated: board pieces
 
     // ------------------------------------------------------------ the can of dice
@@ -593,6 +624,14 @@ class CfgVehicles
     class OZG_DiceCan_Classic: OZG_DiceCan_Base
     {
         scope = 2;
+    };
+    // The same can holding five stalker dice (radiation signs for pips).
+    class OZG_DiceCan_Stalker: OZG_DiceCan_Base
+    {
+        scope = 2;
+        displayName = "$STR_OZG_CAN_STALKER_NAME";
+        descriptionShort = "$STR_OZG_CAN_STALKER_DESC";
+        ozgStyle = "stalker";
     };
 
     // ------------------------------------------------------------ the place

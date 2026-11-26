@@ -1,0 +1,74 @@
+ImageSetClass {
+ Name "ozg_discs_stalker"
+ RefSize 512 1024
+ Textures {
+  ImageSetTextureClass {
+   mpix 1
+   path "OpenZone_Games/gui/imagesets/ozg_discs_stalker_ca.paa"
+  }
+ }
+ Images {
+  ImageSetDefClass black_king {
+   Name "black_king"
+   Pos 2 2
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass black_king_s {
+   Name "black_king_s"
+   Pos 132 2
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass black_piece {
+   Name "black_piece"
+   Pos 262 2
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass black_piece_s {
+   Name "black_piece_s"
+   Pos 2 132
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass white_king_cop {
+   Name "white_king_cop"
+   Pos 132 132
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass white_king_cop_s {
+   Name "white_king_cop_s"
+   Pos 262 132
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass white_king_cs {
+   Name "white_king_cs"
+   Pos 2 262
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass white_king_cs_s {
+   Name "white_king_cs_s"
+   Pos 132 262
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass white_piece {
+   Name "white_piece"
+   Pos 262 262
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass white_piece_s {
+   Name "white_piece_s"
+   Pos 2 392
+   Size 128 128
+   Flags 0
+  }
+ }
+ Groups {
+ }
+}

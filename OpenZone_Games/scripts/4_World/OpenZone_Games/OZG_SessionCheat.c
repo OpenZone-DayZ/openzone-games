@@ -32,6 +32,7 @@ modded class OZG_Session
     {
         CheatInit();
         string uid = OZG_Who.Uid(player);
+        int lookers = m_Looking.Count();
         if (op == OZG_Const.OP_OPEN || op == OZG_Const.OP_WATCH)
         {
             if (uid != "" && m_Looking.Find(uid) < 0)
@@ -40,6 +41,18 @@ modded class OZG_Session
         else if (op == OZG_Const.OP_UNWATCH)
         {
             m_Looking.RemoveItem(uid);
+        }
+        // At a board the other player's plate says whether he watches: a window
+        // opened or shut is a new view for everyone, nothing else changing.
+        if (lookers != m_Looking.Count() && SeatOf(uid) >= 0)
+        {
+            OZG_Game kind = OZG_Games.Sample(m_R.GameId);
+            if (kind && kind.SetKind() == OZG_Const.SET_BOARD)
+            {
+                m_R.Rev = m_R.Rev + 1;
+                Pulse();
+                Push();
+            }
         }
         // A move or a swap after a restart: the dice each seat throws read
         // again first, so that a loaded die counts.
@@ -50,6 +63,48 @@ modded class OZG_Session
         if (op == OZG_Const.OP_DSWAP)
             return DiceSwapAsk(player, uid, ask);
         return super.Ask(player, op, ask);
+    }
+
+    // The window of a board (the canvas's board): the seats whose player has the
+    // window open and is near, for the other's plate ("watching" or "away").
+    override protected OZG_WView ViewHead()
+    {
+        CheatInit();
+        OZG_WView v = super.ViewHead();
+        float reach = OZG_Cfg.Get().WatchRadius;
+        for (int i = 0; i < m_Looking.Count(); i++)
+        {
+            int seat = SeatOf(m_Looking[i]);
+            if (seat < 0)
+                continue;
+            PlayerBase p = OZG_Sessions.PlayerOf(m_Looking[i]);
+            if (!p || !m_Place || vector.Distance(p.GetPosition(), m_Place.GetPosition()) > reach)
+                continue;
+            v.Looking.Insert(seat);
+        }
+        return v;
+    }
+
+    // Whether this player may do a sleight on the board, and in how many seconds the
+    // next one may be done (§9.1): the panel "Sleight of hand" and its timer.
+    override protected void SleightHead(OZG_WView v, string uid, int seat, bool dealt)
+    {
+        CheatInit();
+        super.SleightHead(v, uid, seat, dealt);
+        v.BoardSleights = 0;
+        v.BoardWait = 0;
+        OZG_Settings cfg = OZG_Cfg.Get();
+        if (cfg.Cheating != 1 || seat < 0 || uid == "" || !dealt || !m_Game)
+            return;
+        if (m_R.St != OZG_Const.ST_PLAYING || m_Game.SetKind() != OZG_Const.SET_BOARD)
+            return;
+        v.BoardSleights = 1;
+        int last;
+        if (!m_BoardAt.Find(uid, last))
+            return;
+        int left = cfg.BoardSleightMinutes * 60000 - (GetGame().GetTime() - last);
+        if (left > 0)
+            v.BoardWait = (left + 999) / 1000;
     }
 
     // A new game: every player's swaps counted anew.

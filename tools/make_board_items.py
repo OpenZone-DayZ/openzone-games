@@ -15,7 +15,35 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MOD = os.path.join(ROOT, "OpenZone_Games")
 TYPES = os.path.join(ROOT, "docs", "examples", "types-openzone-games.xml")
 
-LOOKS = ["Classic"]
+LOOKS = ["Classic", "Stalker"]
+# The stalker chess (design §15): each figurine a model and a picture of its own, the
+# stalkers white and the mutants black; its name says who it is.
+STALKER_TEXTURE = "OpenZone_Games\\models\\chess_stalker\\data\\ozg_chess_stalker_%s_co.paa"
+STALKER_MODEL = "\\OpenZone_Games\\models\\chess_stalker\\ozg_chess_stalker_%s.p3d"
+STALKER_MATERIAL = "OpenZone_Games\\models\\chess_stalker\\data\\ozg_chess_stalker.rvmat"
+FIGURES = {
+    "wK": ("Сидорович", "Sidorovich"), "wQ": ("Стрілок", "Strelok"),
+    "wR": ("сталкер в екзоскелеті", "a stalker in an exoskeleton"), "wB": ("науковець", "a scientist"),
+    "wN": ("провідник", "a guide"), "wP": ("новачок", "a rookie"),
+    "bK": ("контролер", "a controller"), "bQ": ("химера", "a chimera"), "bR": ("псевдогігант", "a pseudogiant"),
+    "bB": ("кровосос", "a bloodsucker"), "bN": ("снорк", "a snork"), "bP": ("кабан", "a boar"),
+}
+# The stalker draughts (words 30 to 32): a face on each side of the disc.
+STALKER_DISC_MODEL = "\\OpenZone_Games\\models\\disc\\ozg_disc_faces.p3d"
+STALKER_DISC_TEXTURE = "OpenZone_Games\\models\\disc\\data\\ozg_disc_stalker_%s_co.paa"
+# The dice (word 33): three colours, and the stalker variant with radiation signs. The
+# class, the look the window draws it in (art/dice/<look>_<n>.png), its picture and
+# material, its names.
+DICE_LOOKS = [
+    ("OZG_Die", "white", "ozg_die_co", "ozg_die", "Гральна кістка", "Die"),
+    ("OZG_Die_Black", "black", "ozg_die_black_co", "ozg_die", "Чорна гральна кістка", "Black die"),
+    ("OZG_Die_Red", "red", "ozg_die_red_co", "ozg_die", "Червона гральна кістка", "Red die"),
+    ("OZG_Die_Stalker", "stalker", "ozg_die_stalker_co", "ozg_die_flat", "Сталкерська кістка", "Stalker die"),
+    ("OZG_Die_Stalker_Black", "stalker_black", "ozg_die_stalker_black_co", "ozg_die_flat",
+     "Чорна сталкерська кістка", "Black stalker die"),
+    ("OZG_Die_Stalker_Red", "stalker_red", "ozg_die_stalker_red_co", "ozg_die_flat",
+     "Червона сталкерська кістка", "Red stalker die"),
+]
 # Chess: the kind's letter, how many a side has, the model's base class, the names.
 CHESS = [
     ("K", 1, "OZG_Chess_K", "король", "king"),
@@ -108,17 +136,39 @@ def config():
         for side, _, _, _, colour in SIDES:
             for letter, _, base, _, _ in CHESS:
                 face = side + letter
+                if look == "Stalker":
+                    f = face.lower()
+                    pieces.append('    class OZG_Chess_%s_%s: %s { scope = 2; displayName = "$STR_OZG_PIECE_S_%s"; '
+                                  'ozgFace = "%s"; ozgStyle = "stalker"; model = "%s"; hiddenSelectionsTextures[] = {"%s"}; '
+                                  'hiddenSelectionsMaterials[] = {"%s"}; inventorySlot[] = {%s}; };'
+                                  % (look, face, base, face.upper(), face, STALKER_MODEL % f, STALKER_TEXTURE % f,
+                                     STALKER_MATERIAL, quoted(slots_of(face))))
+                    continue
                 pieces.append('    class OZG_Chess_%s_%s: %s { scope = 2; displayName = "$STR_OZG_PIECE_%s"; '
                               'ozgFace = "%s"; hiddenSelectionsTextures[] = {"%s"}; inventorySlot[] = {%s}; };'
                               % (look, face, base, face.upper(), face, CHESS_TEXTURE % colour,
                                  quoted(slots_of(face))))
             face = side + "D"
+            if look == "Stalker":
+                pieces.append('    class OZG_Disc_%s_%s: OZG_Disc_Base { scope = 2; displayName = "$STR_OZG_PIECE_S_%s"; '
+                              'ozgFace = "%s"; ozgStyle = "stalker"; model = "%s"; hiddenSelectionsTextures[] = {"%s"}; '
+                              'inventorySlot[] = {%s}; };'
+                              % (look, side.upper(), face.upper(), face, STALKER_DISC_MODEL,
+                                 STALKER_DISC_TEXTURE % colour, quoted(slots_of(face))))
+                continue
             pieces.append('    class OZG_Disc_%s_%s: OZG_Disc_Base { scope = 2; displayName = "$STR_OZG_PIECE_%s"; '
                           'ozgFace = "%s"; hiddenSelectionsTextures[] = {"%s"}; inventorySlot[] = {%s}; };'
                           % (look, side.upper(), face.upper(), face, DISC_TEXTURE % colour,
                              quoted(slots_of(face))))
-    pieces.append('    class OZG_Die: OZG_Die_Base { scope = 2; displayName = "$STR_OZG_PIECE_DI"; '
-                  'ozgFace = "Di"; inventorySlot[] = {%s}; };' % quoted(slots_of("Di") + CAN_SLOTS))
+    for cls, die_look, tex, mat, _, _ in DICE_LOOKS:
+        style = "stalker" if die_look.startswith("stalker") else "classic"
+        key = "DI" if cls == "OZG_Die" else "DI_" + die_look.upper()
+        pieces.append('    class %s: OZG_Die_Base { scope = 2; displayName = "$STR_OZG_PIECE_%s"; '
+                      'ozgFace = "Di"; ozgStyle = "%s"; ozgDieLook = "%s"; '
+                      'hiddenSelectionsTextures[] = {"OpenZone_Games\\models\\die\\data\\%s.paa"}; '
+                      'hiddenSelectionsMaterials[] = {"OpenZone_Games\\models\\die\\data\\%s.rvmat"}; '
+                      'inventorySlot[] = {%s}; };'
+                      % (cls, key, style, die_look, tex, mat, quoted(slots_of("Di") + CAN_SLOTS)))
 
     attachments = ["        attachments[] ="] + ["        {"] + rows([s for s, _ in slot_names()], "            ") + ["        };"]
 
@@ -139,7 +189,17 @@ def strings():
                 adjective = ua_f
             lines.append("STR_OZG_PIECE_%s%s,%s %s,%s %s" % (side.upper(), letter, adjective, ua, colour.capitalize(), en))
         lines.append("STR_OZG_PIECE_%sD,%s шашка,%s checker" % (side.upper(), ua_f, colour.capitalize()))
-    lines.append("STR_OZG_PIECE_DI,Гральна кістка,Die")
+    for side, _, ua_m, ua_f, colour in SIDES:
+        for letter, _, _, ua, en in CHESS:
+            adjective = ua_f if letter in ("R",) else ua_m
+            who_ua, who_en = FIGURES[side + letter]
+            lines.append('STR_OZG_PIECE_S_%s%s,"%s %s: %s","%s %s: %s"' % (
+                side.upper(), letter, adjective, ua, who_ua, colour.capitalize(), en, who_en))
+    lines.append("STR_OZG_PIECE_S_WD,Сталкерська шашка: новачок,Stalker checker: a rookie")
+    lines.append("STR_OZG_PIECE_S_BD,Сталкерська шашка: бандит,Stalker checker: a bandit")
+    for cls, die_look, _, _, ua, en in DICE_LOOKS:
+        key = "DI" if cls == "OZG_Die" else "DI_" + die_look.upper()
+        lines.append("STR_OZG_PIECE_%s,%s,%s" % (key, ua, en))
     path = os.path.join(MOD, "strings.csv")
     text, bom, crlf = read(path)
     text = between(text, "# >>> generated: board", "# <<< generated: board", lines)
@@ -181,8 +241,9 @@ def types():
                 count += 1
             lines += entry("OZG_Disc_%s_%s" % (look, side.upper()), 0, [])
             count += 1
-    lines += entry("OZG_Die", 0, [])
-    count += 1
+    for cls, _, _, _, _, _ in DICE_LOOKS:
+        lines += entry(cls, 0, [])
+        count += 1
     text, bom, crlf = read(TYPES)
     text = between(text, "<!-- >>> generated: board -->", "    <!-- <<< generated: board -->", lines)
     write(TYPES, text, bom, crlf)
