@@ -67,3 +67,13 @@ licence and waive none of GSC's rights.
     Ліцензія цього моду та дозволи з цього файлу на них НЕ поширюються.
     OpenZone Games -- фанатський мод; він неофіційний і не пов'язаний із
     GSC Game World. Оригінальні ігри продаються за посиланням вище.
+
+Material of Poly Haven
+======================
+
+The classic chess pieces (models/src/chess_classic.obj, models/chess and
+OpenZone_Games/models/chess, and their pictures in art/pieces/classic and
+OpenZone_Games/gui/imagesets/ozg_pieces_classic_ca.paa) are reduced from the
+"Chess Set" by Riley Queen, published by Poly Haven under CC0 (public domain):
+
+    https://polyhaven.com/a/chess_set

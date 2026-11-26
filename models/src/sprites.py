@@ -4,9 +4,10 @@
     blender -b -t 4 --python models/src/sprites.py
 
 Opens models/src/chess_<k>.blend and disc.blend (built by chess.py and disc.py), puts the
-light or the dark wood on, and renders each piece from in front and a little above, with
-the same scale for all, on a clear ground: art/pieces/classic/<face>.png, 128 px square
-(wK .. bP, wD, bD). tools/make_board_art.py packs them into the window's imageset.
+white or the black picture on, and renders each piece from in front and a little above (the
+knight from its left side), with the same scale for all, on a clear ground:
+art/pieces/classic/<face>.png, 128 px square (wK .. bP, wD, bD). tools/make_board_art.py
+packs them into the window's imageset.
 """
 import math
 import os
@@ -59,10 +60,11 @@ def render(blend, image_path, out_name, centre_z, scale, pitch, from_side=False)
     p = math.radians(pitch)
     d = 0.5
     # Blender's axes: the game's Y is Blender's Z, the game's Z Blender's Y. The knight
-    # is seen from its right (+X), so its head shows its profile, the muzzle to the left.
+    # looks towards the game's +Z and is seen from its left (-X): its head shows its
+    # profile with the muzzle to the left, as chess diagrams draw it.
     if from_side:
-        cam.location = (d * math.cos(p), 0.0, centre_z + d * math.sin(p))
-        cam.rotation_euler = (math.radians(90.0) - p, 0.0, math.radians(90.0))
+        cam.location = (-d * math.cos(p), 0.0, centre_z + d * math.sin(p))
+        cam.rotation_euler = (math.radians(90.0) - p, 0.0, math.radians(-90.0))
     else:
         cam.location = (0.0, d * math.cos(p), centre_z + d * math.sin(p))
         cam.rotation_euler = (math.radians(90.0) - p, 0.0, math.radians(180.0))
@@ -89,7 +91,7 @@ def main():
         for side, colour in (("w", "white"), ("b", "black")):
             render(os.path.join(src, "chess_%s.blend" % kind),
                    os.path.join(kit.MODELS, "chess", "data", "ozg_chess_%s_co.png" % colour),
-                   side + kind.upper(), SCALE * 0.5 - 0.003, SCALE, PITCH, from_side=kind == "n")
+                   side + kind.upper(), SCALE * 0.5 - 0.005, SCALE, PITCH, from_side=kind == "n")
     for side, colour in (("w", "white"), ("b", "black")):
         render(os.path.join(src, "disc.blend"),
                os.path.join(kit.MODELS, "disc", "data", "ozg_disc_%s_co.png" % colour),

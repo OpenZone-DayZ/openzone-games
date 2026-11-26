@@ -961,15 +961,14 @@ def draw_sharpkit():
 
 # ------------------------------------------------------- the "3 in 1" board and its pieces
 # Boards and dice design §3: the board (one picture for the folded item and the
-# laid-out place), the chess pieces in light and dark wood, the checkers, the die.
+# laid-out place), the checkers, the die; of the chess pieces only the shine: their
+# pictures and normal map are the Poly Haven set's (chess_polyhaven.py).
 BOARD_SIZE = 512
 BOARD_MM = 320.0                 # the unfolded board: 320 x 320 mm
 FIELD_MM = 280.0                 # the 8 x 8 field, 35 mm a square, a border of 20 mm round it
 MAPLE = ((206, 172, 120), (232, 204, 156))
 WALNUT = ((92, 56, 30), (134, 88, 52))
 FRAME = ((58, 34, 20), (94, 60, 36))
-BOXWOOD = ((212, 180, 128), (238, 214, 170))
-EBONY = ((26, 20, 17), (66, 50, 40))
 IVORY = ((214, 204, 180), (238, 232, 214))
 JET = ((20, 19, 18), (52, 48, 44))
 
@@ -1094,12 +1093,6 @@ def nardy_picture(rng, n=BOARD_SIZE):
     return picture
 
 
-def piece_wood(rng, tones):
-    picture, streaks = wood(rng, (256, 256), tones, 2.5, 20)
-    relief = ImageChops.subtract(Image.new("L", (256, 256), KIT_LEVEL), scale(streaks, 10 / 255.0))
-    return picture, relief
-
-
 def disc_picture(rng, tones):
     """A checker: the top face in the middle with its turned rings, the rest the
     colour of its edge."""
@@ -1161,12 +1154,7 @@ def draw_board():
 
 
 def draw_chess():
-    rng = random.Random(1127)
-    relief = None
-    for name, tones in (("white", BOXWOOD), ("black", EBONY)):
-        picture, relief = piece_wood(rng, tones)
-        save(picture, "chess", "data", "ozg_chess_%s_co.png" % name)
-    save(normal_map(relief, (256, 256), 0.8, KIT_LEVELS_PER_MM, 6.0), "chess", "data", "ozg_chess_nohq.png")
+    # The pictures and the normal map come from the Poly Haven set (chess_polyhaven.py).
     save(flat(64, (255, 120, 150)), "chess", "data", "ozg_chess_smdi.png")
 
 

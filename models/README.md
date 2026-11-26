@@ -4,9 +4,10 @@ Small models drawn from nothing by the scripts in this folder. For the cards: th
 game, the deck, a single card, the fan of cards in a hand, the mark of a seat and the card
 sharp's kit. For the boards and dice (`docs/2026-11-26-boards-and-dice-design.md`): the
 "3 in 1" board folded and laid out, six chess pieces, the disc, the die, the can of dice
-and the can laid out. Nothing in them is copied from another game or mod; meshes and
-textures alike are made by the scripts (the pictures some cards of the stalkers' deck carry
-are GSC Game World's, see the mod's NOTICE).
+and the can laid out. Meshes and textures alike are made by the scripts, with two
+exceptions, both named in the mod's NOTICE: the classic chess pieces are reduced from Poly
+Haven's "Chess Set" (CC0), and the pictures some cards of the stalkers' deck carry are GSC
+Game World's.
 
 | | |
 |---|---|
@@ -32,6 +33,7 @@ fan turned round, as its holder sees it.
 | `models/src/ozg_kit.py` | what the scripts share: faces, LODs, materials, the preview (the name is older than the card sharp's kit and has nothing to do with it) |
 | `models/src/make_textures.py` | draws the PNG sources of the textures (Pillow) |
 | `models/src/sharpkit_atlas.py` | where each part of the card sharp's kit lies on its one texture: `make_textures.py` draws by it, `sharpkit.py` maps by it |
+| `models/src/chess_polyhaven.py`, `models/src/chess_classic.obj` | the classic chess pieces reduced from the Poly Haven set, and what that writes: `chess.py` builds from it |
 | `models/<model>/<name>.p3d` | the MLOD exported from the `.blend`: the source the shipped model is built from |
 | `models/<model>/data/*.png`, `models/cards/data/*.png` | the texture sources |
 | `models/prepare_model_root.py` | lays out the binarize root under `build/model-root` |
@@ -55,12 +57,12 @@ off the exported MLODs by `measure.py`.
 | `sharpkit/ozg_sharpkit.p3d` | 0.092 x 0.034 x 0.092 | 1212 | `camo` | Geometry and Fire Geometry: one box 0.092 x 0.018 x 0.092, 0.2 kg; View Geometry: the same, 0.034 high; Memory: the inventory's camera |
 | `board/ozg_board.p3d` | 0.320 x 0.050 x 0.160 | 12 | `camo` | Geometry, View Geometry, Fire Geometry: the same box, 1.5 kg, wood; Memory: the inventory's camera |
 | `board/ozg_board_open.p3d` | 0.320 x 0.025 x 0.320 | 12 | `camo` | Geometry, View Geometry, Fire Geometry: the same box, 1.5 kg, wood |
-| `chess/ozg_chess_k.p3d` | 0.027 x 0.068 x 0.027 | 742 | `camo` | Geometry, View Geometry, Fire Geometry: the box round it, 0.035 kg, wood; Memory: the inventory's camera |
-| `chess/ozg_chess_q.p3d` | 0.027 x 0.060 x 0.027 | 926 | `camo` | the same, 0.030 kg |
-| `chess/ozg_chess_r.p3d` | 0.025 x 0.039 x 0.025 | 606 | `camo` | the same, 0.025 kg |
-| `chess/ozg_chess_b.p3d` | 0.025 x 0.052 x 0.025 | 838 | `camo` | the same, 0.022 kg |
-| `chess/ozg_chess_n.p3d` | 0.025 x 0.051 x 0.0295 | 414 | `camo` | the same, 0.025 deep (the head looks out of it), 0.022 kg |
-| `chess/ozg_chess_p.p3d` | 0.021 x 0.034 x 0.021 | 678 | `camo` | the same, 0.015 kg |
+| `chess/ozg_chess_k.p3d` | 0.026 x 0.059 x 0.026 | 520 | `camo` | Geometry, View Geometry, Fire Geometry: the box round it, 0.035 kg, wood; Memory: the inventory's camera |
+| `chess/ozg_chess_q.p3d` | 0.025 x 0.056 x 0.026 | 459 | `camo` | the same, 0.030 kg |
+| `chess/ozg_chess_r.p3d` | 0.023 x 0.038 x 0.023 | 419 | `camo` | the same, 0.025 kg |
+| `chess/ozg_chess_b.p3d` | 0.020 x 0.053 x 0.020 | 399 | `camo` | the same, 0.022 kg |
+| `chess/ozg_chess_n.p3d` | 0.024 x 0.047 x 0.028 | 640 | `camo` | the same, the head in the box too, 0.022 kg |
+| `chess/ozg_chess_p.p3d` | 0.018 x 0.033 x 0.018 | 260 | `camo` | the same, 0.015 kg |
 | `disc/ozg_disc.p3d` | 0.030 x 0.007 x 0.030 | 210 | `camo` | Geometry, View Geometry, Fire Geometry: the box round it, 0.010 kg, plastic; Memory: the inventory's camera |
 | `die/ozg_die.p3d` | 0.016 x 0.016 x 0.016 | 44 | `camo` | the same, 0.005 kg, plastic |
 | `can/ozg_can.p3d` | 0.077 x 0.090 x 0.077 | 328 | `camo` | Geometry, View Geometry, Fire Geometry: the box round it, 0.25 kg, metal plate; Memory: the inventory's camera |
@@ -267,11 +269,17 @@ ranks as White reads them and as Black does (`art/boards/ozg_board_win_white_co.
 
 ### chess, disc, die: the pieces
 
-- **Chess** (`chess.py`): six turned pieces, the king 68 mm high and the pawn 34, each
-  STANDING as on the board, the middle of its base at the origin; the knight looks towards
-  +Z. One model a kind: the colour is `camo`, boxwood (`data/ozg_chess_white_co.paa`) or
-  ebony (`..._black_co.paa`), 256 px; every face takes the whole wood picture, round a
-  turned body along u and up it along v.
+- **Chess** (`chess.py`): the classic set is Poly Haven's "Chess Set" by Riley Queen
+  (CC0, https://polyhaven.com/a/chess_set). `chess_polyhaven.py` takes one white piece of
+  each kind, reduces it with Blender's Decimate (Collapse) to 260-640 triangles, scales it
+  by 0.62 (the king 59 mm high with a base 26 mm across, the pawn 33, on squares of 35)
+  and writes the six into `src/chess_classic.obj`, with the set's pictures beside the
+  models. Each piece STANDS as on the board, the middle of its base at the origin; the
+  knight looks towards +Z, the king's cross spreads along X. The faces are smooth but
+  where two meet at more than 50 degrees. One model a kind: the colour is `camo`, the
+  set's white (`data/ozg_chess_white_co.paa`) or black (`..._black_co.paa`) picture,
+  512 px, which lie on a piece the same way; `ozg_chess_nohq.paa` is the white pieces'
+  normal map, its green turned over as the game reads it.
 - **Disc** (`disc.py`): 30 mm across and 7 mm high lying flat, the middle of its underside
   at the origin; ivory or jet through `camo` (`data/ozg_disc_white_co.paa`,
   `..._black_co.paa`), the top showing turned rings.
@@ -285,7 +293,8 @@ All three keep `rotationFlags = 0`, a Geometry box round the piece (`autocenter 
 the inventory's camera in Memory.
 
 The table window draws the pieces from these models: `models/src/sprites.py` renders each
-onto a clear ground, `tools/make_board_art.py` rings it with dark wood and packs the
+onto a clear ground (the knight from its left, the muzzle to the left as chess diagrams
+draw it), `tools/make_board_art.py` rings it with dark wood and packs the
 imageset `OpenZone_Games/gui/imagesets/ozg_pieces_classic.imageset`.
 
 ### can: the can of dice
@@ -415,11 +424,21 @@ asset_convert(source="models/place/data/ozg_place_co.png",
               output="../../../OpenZone_Games/models/place/data/ozg_place_co.paa")
 ```
 
-(with no name it draws them all) and so for each PNG (`output` is read from the source's
+(with no name it draws them all; of the chess pieces only the flat `_smdi`) and so for each PNG (`output` is read from the source's
 own folder): `models/<model>/data/*` (place, mark, sharpkit, board, chess, disc, die, can)
 go to the model's own `data/`, `models/cards/data/*` to
 `OpenZone_Games/data/cards/`. ImageToPAA picks the format by the source's name (`_co` DXT1,
 `_nohq` DXT5 with the swizzle, `_smdi` DXT1). The `.rvmat` files are kept by hand.
+
+The classic chess pieces' source, when the reduction changes: the set's 1k glTF from Poly
+Haven, its `textures/` folder beside it, wherever it was downloaded to:
+
+```
+blender -b -t 4 --python models/src/chess_polyhaven.py -- <chess_set_1k.gltf>
+```
+
+It writes `src/chess_classic.obj` and the three PNGs under `chess/data/`; the reduction is
+Blender's, and another Blender may cut a little differently.
 
 A model, when its script changes (one Blender at a time, four threads):
 
@@ -463,6 +482,9 @@ Read off the files (2026-11-24):
   centre 0, 0, 0; what the game showed of it is under its own heading.
 - the boards and dice (2026-11-26): the sizes, triangles and masses in the table off the
   MLODs, and a bounding centre of 0, 0, 0 for all twelve built models (`measure.py`).
+- the classic chess pieces made again from the Poly Haven set (2026-11-26): the six clean
+  for `asset_check`, the sizes and triangles in the table off the MLODs, their bounding
+  centre 0, 0, 0.
 
 Seen in the game (2026-11-24, diag 1.30, the NHChernobyl stand): the deck and the card in
 the inventory, in the hand and on the ground, as written under each; both decks' cards in
@@ -487,4 +509,5 @@ Not checked, because only the game can say:
 
 Made for this mod by the scripts in this folder; the deck sheets by `tools/make_cards.py`.
 The licence is the series': CC BY-NC-SA 4.0 with the additional permission in
-[NOTICE](../NOTICE).
+[NOTICE](../NOTICE). The classic chess pieces and their pictures are reduced from Poly
+Haven's "Chess Set" by Riley Queen, CC0 (https://polyhaven.com/a/chess_set).

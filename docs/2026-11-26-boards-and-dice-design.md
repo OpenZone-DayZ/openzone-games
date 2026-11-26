@@ -48,6 +48,11 @@ Date: 2026-11-25/26. The owner's words, in this order (chat, Russian; here in En
     the stalker style, the rules the same."
 18. (2026-11-26, of three directions proposed) "Stalkers against mutants, but the list of
     pieces is to be approved."
+19. (2026-11-26, on the list) Black: "pawns -- boars, rook -- pseudogiant, knight --
+    snork, bishop -- bloodsucker, queen -- chimera, king -- controller". "The stalkers --
+    yes, I like it. You may take the models from GSC's games, they allow it."
+20. (2026-11-26) "The classic set: download the CC0 set of Poly Haven, but reduce the
+    triangles." "The pieces must not be high-poly."
 
 What the words leave open is decided below and named in §14.
 
@@ -120,9 +125,10 @@ A folding wooden board of the classic "3 in 1" kind (the owner's word 2).
 
 ### 3.2 Pieces
 
-- **Chess**: 6 kinds x 2 colours, turned light and dark wood in the classic shape; the
-  king 70 mm high, the pawn 35. Classes per look and kind (`OZG_Chess_Classic_wK` ...),
-  a face code each (`wK` ... `bP`).
+- **Chess**: 6 kinds x 2 colours. The classic set is Poly Haven's "Chess Set" by Riley
+  Queen (CC0), white and black, each piece reduced to 260-640 triangles (word 20); the
+  king 59 mm high, the pawn 33, on squares of 35. Classes per look and kind
+  (`OZG_Chess_Classic_wK` ...), a face code each (`wK` ... `bP`).
 - **Discs**: 30 mm across, 8 mm high, ridged edge; white and black (`wD`, `bD`).
 - **The die**: 16 mm, rounded edges, bone white, black pips; one class, `OZG_Die`
   (`Di`), whatever holds it -- a board, a can, a pocket (the owner's word 7).
@@ -423,14 +429,26 @@ Decided while building (2026-11-26, `2026-11-26-boards-and-dice-record.md`):
 - Until the mockups the window's "Variant" changes a game's first option only, and the
   sleights on a board, the swap and the kit's window have no buttons: their server half
   and the stand's ops are there.
+- The classic set (word 20): one piece of each kind of the Poly Haven set, the white
+  ones, reduced by Blender's own decimation, with the set's own pictures at 512 px and
+  its white pieces' normal map; the knight looks towards +Z, and the window draws it from
+  its left, the muzzle to the left as chess diagrams do (`models/README.md`).
 
 ## 15. Not in this design
 
 - **The stalker chess**: the owner's (word 6). It is a look, not a game (word 17): a
   board and pieces in the stalker style, the rules of chess. Chosen (word 18): stalkers
-  against mutants, figurines; which figure stands for which piece waits for the owner's
-  approval of the list.
-- **The classic knight** is to be made again (word 17): with new models of the pieces,
-  their own or the CC0 chess set of Poly Haven, as the owner chooses.
+  against mutants, figurines, the models taken from GSC's own games (word 19, on GSC's
+  terms for DayZ: the mod free, marked unofficial, links to GSC's store, NOTICE says the
+  assets are GSC's). The list, approved (word 19):
+
+  | piece | stalkers (white) | mutants (black) |
+  |---|---|---|
+  | king | Sidorovich, on crates of his goods | controller |
+  | queen | Strelok | chimera |
+  | rook | a stalker in an exoskeleton | pseudogiant |
+  | bishop | a scientist in an Ecologist suit | bloodsucker |
+  | knight | a guide, a bolt in hand, leaping an anomaly | snork |
+  | pawn | a rookie ("vidmychka") in a hooded jacket | boar |
 - A chess clock, the doubling cube, general (word 8).
 - Bots stronger than the first legal move a game offers.
