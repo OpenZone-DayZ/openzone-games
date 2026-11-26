@@ -88,6 +88,17 @@ Date: 2026-11-25/26. The owner's words, in this order (chat, Russian; here in En
     of the original trilogy's portraits (the portraits first, not the textures)."
 31. (2026-11-26) "The ordinary draughts are needed too": the plain discs stay beside the
     stalker ones.
+32. (2026-11-26, the faces chosen) White: the piece green_stalker_4, the king neutral_2;
+    black: the piece stalker_bandit_3, the king stalker_bandit_veteran (first grid_24_14).
+    Two portraits are named neutral_2 (Wolf of Clear Sky, Mace of Call of Pripyat): the
+    mockup offers both.
+33. (2026-11-26) "Dice of three kinds: white, black and red. The stalker variant: small
+    radiation signs instead of the pips (the stalker symbol)."
+34. (2026-11-26, on the stalker chess window) "Let us draw for the chess figurines, on the
+    table between the figurine and the board, their half-transparent classic sign, so that
+    it reads better -- as if they cast that classic shadow of theirs forward."
+35. (2026-11-26) "That is all, all the decisions are made: make the mockups ready with
+    animation and sounds. Do not touch the stand for now."
 
 What the words leave open is decided below and named in §14.
 
