@@ -77,6 +77,17 @@ Date: 2026-11-25/26. The owner's words, in this order (chat, Russian; here in En
 28. (2026-11-26, of the set at ~4,000, a third less and half, shown side by side) "We take
     the triangles halved; check them for unseen ones there too" -- the poses are frozen,
     "remove the triangles that are not needed".
+29. (2026-11-26, on the window mockup of the stalker set) "Make the figures fit in the
+    square"; of four ways to show them, "at the table": your own figures stand with their
+    backs to you, the other side's face you -- "for black it is the other way round". "We
+    also need the classic chess pieces": the classic set stays beside the stalker one. One
+    material a figure: "yes, let's do it".
+30. (2026-11-26) "Now the stalker draughts: rookies against bandits -- the white are
+    stalkers, the black bandits. Just stick on the piece the face of a rookie or a bandit,
+    and when it turns into a king, a gang boss or an experienced stalker. Look at the faces
+    of the original trilogy's portraits (the portraits first, not the textures)."
+31. (2026-11-26) "The ordinary draughts are needed too": the plain discs stay beside the
+    stalker ones.
 
 What the words leave open is decided below and named in §14.
 
