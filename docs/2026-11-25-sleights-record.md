@@ -6,7 +6,7 @@ committed after it, and this record is kept as it goes: what was built, what the
 answered, what went otherwise than the design and why. The design is
 `E:\openzone\docs\specs\2026-11-24-openzone-games-cardsharp-design.md` (§6, §7, §8, §9,
 §10, §11.4); the window's mock-up is the design canvas the owner approved on 2026-11-24
-(`research_notes/Карты и столы группировок сталкера/table-mock/canvas`, boards Main and
+(the table mock-up's canvas in the research notes on the factions' cards and tables, boards Main and
 Stalker).
 
 The stand throughout: NHChernobyl, diag 1.30, with SFP 2952842170 and 2623995836 loaded
