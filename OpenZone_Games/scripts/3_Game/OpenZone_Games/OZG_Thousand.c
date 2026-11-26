@@ -46,6 +46,11 @@ class OZG_Thousand extends OZG_DiceGame
     protected ref array<int> m_Throw;
     protected ref array<int> m_Aside;
     protected int m_Phase;
+    // Which of the seat's five dice (their places among them) are thrown next,
+    // and which fell in the last throw: the dice left on the table are the ones
+    // thrown again, so a loaded die weighs on its own throws only.
+    protected ref array<int> m_Slots;
+    protected ref array<int> m_ThrowSlots;
     protected int m_Entry = 50;
     protected bool m_Pits = true;
     protected bool m_Barrel = true;
@@ -60,6 +65,8 @@ class OZG_Thousand extends OZG_DiceGame
         m_Entered = new array<int>();
         m_Throw = new array<int>();
         m_Aside = new array<int>();
+        m_Slots = new array<int>();
+        m_ThrowSlots = new array<int>();
     }
 
     override string GameId()
@@ -146,6 +153,15 @@ class OZG_Thousand extends OZG_DiceGame
         m_Throw.Clear();
         m_Aside.Clear();
         m_Phase = 0;
+        ThAllSlots();
+        m_ThrowSlots.Clear();
+    }
+
+    protected void ThAllSlots()
+    {
+        m_Slots.Clear();
+        for (int i = 0; i < 5; i++)
+            m_Slots.Insert(i);
     }
 
     override protected void DgPassTurn()
@@ -274,6 +290,17 @@ class OZG_Thousand extends OZG_DiceGame
         return into.Count() > 0;
     }
 
+    // The places in the last throw (from 0) a "set:" move names.
+    protected void ThPositions(string move, array<int> into)
+    {
+        into.Clear();
+        string list = move.Substring(OZG_ThousandConst.M_SET.Length(), move.Length() - OZG_ThousandConst.M_SET.Length());
+        array<int> positions = new array<int>();
+        IntsOf(list, ",", positions);
+        for (int i = 0; i < positions.Count(); i++)
+            into.Insert(positions[i] - 1);
+    }
+
     protected bool OnBarrel(int i)
     {
         return m_Barrel && m_Total[i] >= OZG_ThousandConst.BARREL;
@@ -296,10 +323,10 @@ class OZG_Thousand extends OZG_DiceGame
         int i = m_Turn;
         if (move == OZG_DiceGameConst.M_THROW && (m_Phase == 0 || m_Phase == 2))
         {
-            int n = m_Left;
-            if (n <= 0)
-                n = 5;
-            DgRollInto(seat, n, m_Throw);
+            if (m_Slots.Count() == 0)
+                ThAllSlots();
+            DgRollSlots(seat, m_Slots, m_Throw);
+            m_ThrowSlots.Copy(m_Slots);
             array<string> sets = new array<string>();
             ThSets(sets);
             if (sets.Count() > 0)
@@ -328,10 +355,22 @@ class OZG_Thousand extends OZG_DiceGame
             m_TurnPoints = m_TurnPoints + points;
             for (int k = 0; k < values.Count(); k++)
                 m_Aside.Insert(values[k]);
-            m_Left = m_Throw.Count() - values.Count();
-            if (m_Left == 0)
-                m_Left = 5;
+            // The dice left on the table are thrown next; all five put aside,
+            // all five again.
+            array<int> taken = new array<int>();
+            ThPositions(move, taken);
+            array<int> rest = new array<int>();
+            for (int r = 0; r < m_ThrowSlots.Count(); r++)
+            {
+                if (taken.Find(r) < 0)
+                    rest.Insert(m_ThrowSlots[r]);
+            }
+            m_Slots.Copy(rest);
+            if (m_Slots.Count() == 0)
+                ThAllSlots();
+            m_Left = m_Slots.Count();
             m_Throw.Clear();
+            m_ThrowSlots.Clear();
             m_Phase = 2;
             return true;
         }

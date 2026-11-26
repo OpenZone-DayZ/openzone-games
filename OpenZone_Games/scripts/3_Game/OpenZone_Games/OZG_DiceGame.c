@@ -233,6 +233,15 @@ class OZG_DiceGame extends OZG_Game
             into.Insert(DgRoll(seat, i));
     }
 
+    // The dice of `slots` (their places among the seat's dice) thrown, in that
+    // order: a game that throws again only the dice left on the table.
+    protected void DgRollSlots(int seat, array<int> slots, array<int> into)
+    {
+        into.Clear();
+        for (int i = 0; i < slots.Count(); i++)
+            into.Insert(DgRoll(seat, slots[i]));
+    }
+
     override bool Act(int seat, string move, out string refusal)
     {
         refusal = OZG_Const.NO_MOVE;
