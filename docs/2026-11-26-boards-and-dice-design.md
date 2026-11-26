@@ -53,6 +53,11 @@ Date: 2026-11-25/26. The owner's words, in this order (chat, Russian; here in En
     yes, I like it. You may take the models from GSC's games, they allow it."
 20. (2026-11-26) "The classic set: download the CC0 set of Poly Haven, but reduce the
     triangles." "The pieces must not be high-poly."
+21. (2026-11-26, on the first figurines) "Give the stalkers' pawn-rookies a double-barrelled
+    shotgun in their hands, Strelok an AK-74, the exoskeletons a Gauss rifle." "The
+    bishop-scientists -- pistols."
+22. (2026-11-26, of two finishes shown side by side) "Game colours": the figurines wear the
+    games' own colours, and the base shows the side.
 
 What the words leave open is decided below and named in §14.
 
@@ -450,5 +455,12 @@ Decided while building (2026-11-26, `2026-11-26-boards-and-dice-record.md`):
   | bishop | a scientist in an Ecologist suit | bloodsucker |
   | knight | a guide, a bolt in hand, leaping an anomaly | snork |
   | pawn | a rookie ("vidmychka") in a hooded jacket | boar |
+
+  The stalkers hold their weapons (word 21): the rookies a BM-16 double-barrel, Strelok an
+  AK-74, the exoskeletons a Gauss rifle, the scientists a pistol. The figurines keep the
+  games' colours, the stalkers on cream bases and the mutants on black ones (word 22).
+  First renders (2026-11-26): each figure posed by its game's own motions, the weapon put
+  in the hand as the game's engine puts it, 1,000-1,600 triangles a figure and 150-350 a
+  weapon.
 - A chess clock, the doubling cube, general (word 8).
 - Bots stronger than the first legal move a game offers.
