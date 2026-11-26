@@ -53,5 +53,5 @@ noise        = ["Bridge.Url is not https", "bridge: ", "scripts/Data/Credits.jso
 
 # Read from the ready line.
 [expect.counters]
-games    = 11
+games    = 16
 problems = 0

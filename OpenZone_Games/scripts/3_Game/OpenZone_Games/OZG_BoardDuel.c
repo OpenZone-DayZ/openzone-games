@@ -565,7 +565,7 @@ class OZG_BoardDuel extends OZG_Game
     override bool LoadState(string data)
     {
         array<string> parts = new array<string>();
-        data.Split(";", parts);
+        OZG_Text.SplitLong(data, ";", parts);
         if (parts.Count() < 9 || parts[0] != "d1")
             return false;
         OZG_BoardDuel again = OZG_BoardDuel.Cast(Fresh());
@@ -581,9 +581,9 @@ class OZG_BoardDuel extends OZG_Game
             again.StartFrom(from);
         again.DuelOptions(chosen);
         again.DuelFresh();
+        // The moves can pass 8191 bytes: read in place.
         array<string> moves = new array<string>();
-        string played = Undash(parts[8]);
-        played.Split(" ", moves);
+        OZG_Text.FieldPieces(data, ";", 8, " ", moves);
         for (int i = 0; i < moves.Count(); i++)
         {
             if (moves[i] == "")

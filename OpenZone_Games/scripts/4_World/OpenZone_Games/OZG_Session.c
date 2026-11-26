@@ -1523,7 +1523,7 @@ class OZG_Session
         {
             if (stackText != "")
                 return OZG_Const.SAY_SLEIGHT_NOT_GAME;
-            return DealPieces(game, seats, options, hint);
+            return DealPieces(game, seats, amounts, options, hint);
         }
 
         // The dealer's three (card sharp's design §6.5): checked whole and
@@ -1597,7 +1597,7 @@ class OZG_Session
     }
 
     // A board game begun with the pieces the place's board holds.
-    protected string DealPieces(OZG_Game game, array<int> seats, map<string, string> options, string hint)
+    protected string DealPieces(OZG_Game game, array<int> seats, array<int> amounts, map<string, string> options, string hint)
     {
         array<string> held = new array<string>();
         OZG_BoardRead.FacesOf(m_Place, held);
@@ -1611,6 +1611,11 @@ class OZG_Session
                 faces.Insert(held[i]);
         }
         game.TakePieces(faces);
+        string why = DiceFor(game, seats, options);
+        if (why != "")
+            return why;
+        if (game.UsesStakes())
+            game.TakeStacks(seats, amounts);
         string refusal;
         OZG_Random chance = new OZG_Random();
         if (!game.Begin(seats, options, chance, hint, refusal))
@@ -1629,6 +1634,43 @@ class OZG_Session
         Settle();
         Changed();
         OZG_Log.Dbg("session " + m_R.PlaceId + " game: " + m_Game.Brief());
+        return "";
+    }
+
+    // Whose dice each seat throws (boards and dice design §8): the host's
+    // (those of the set laid out), its own can's, or by wish -- its own when
+    // its player carries a can with enough, else the host's. The game is
+    // handed the loads of each seat's dice. "" or the refusal.
+    protected string DiceFor(OZG_Game game, array<int> seats, map<string, string> options)
+    {
+        int need = game.DiceNeeded();
+        if (need <= 0)
+            return "";
+        string whose = game.DiceMode(options);
+        array<EntityAI> hostDice = new array<EntityAI>();
+        OZG_DiceRead.OfPlace(m_Place, hostDice);
+        for (int i = 0; i < seats.Count(); i++)
+        {
+            array<EntityAI> dice = new array<EntityAI>();
+            bool own = false;
+            if (whose != OZG_DiceConst.WHOSE_HOST)
+            {
+                PlayerBase player = OZG_Sessions.PlayerOf(m_R.Seats[seats[i]].Uid);
+                own = OZG_DiceRead.OwnCan(player, need, dice);
+            }
+            if (whose == OZG_DiceConst.WHOSE_OWN && !own)
+                return OZG_DiceConst.NO_DICE;
+            if (!own)
+            {
+                dice.Clear();
+                for (int k = 0; k < hostDice.Count() && k < need; k++)
+                    dice.Insert(hostDice[k]);
+            }
+            array<int> faces = new array<int>();
+            array<int> weights = new array<int>();
+            OZG_DiceRead.Loads(dice, faces, weights);
+            game.TakeDice(seats[i], faces, weights);
+        }
         return "";
     }
 

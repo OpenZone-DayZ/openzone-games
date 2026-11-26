@@ -98,6 +98,204 @@ class OZG_BoardPlace extends OZG_Place
     }
 }
 
+// A die (boards and dice design §10): one for the board and the can alike. It
+// may be loaded with the card sharp's kit -- a face that comes up more often,
+// and how much -- and keeps who knows of it: its maker, and whoever studied it
+// closely, noticed it or opened it in the kit's window since.
+class OZG_Die_Base extends OZG_Piece_Base
+{
+    protected int m_OZG_LoadFace;
+    protected int m_OZG_LoadWeight;
+    protected string m_OZG_LoadBy;
+    protected ref array<string> m_OZG_Knowers;
+
+    void OZG_Die_Base()
+    {
+        m_OZG_Knowers = new array<string>();
+    }
+
+    int OZG_LoadFace()
+    {
+        return m_OZG_LoadFace;
+    }
+
+    int OZG_LoadWeight()
+    {
+        return m_OZG_LoadWeight;
+    }
+
+    string OZG_LoadBy()
+    {
+        return m_OZG_LoadBy;
+    }
+
+    bool OZG_Loaded()
+    {
+        return m_OZG_LoadFace > 0 && m_OZG_LoadWeight > 0;
+    }
+
+    bool OZG_Knows(string uid)
+    {
+        return m_OZG_Knowers.Find(uid) >= 0;
+    }
+
+    void OZG_AddKnower(string uid)
+    {
+        if (uid != "" && m_OZG_Knowers.Find(uid) < 0)
+            m_OZG_Knowers.Insert(uid);
+    }
+
+    // Server: loaded anew by `uid`: the old load and those who knew it gone.
+    void OZG_Load(int face, int weight, string uid)
+    {
+        m_OZG_LoadFace = face;
+        m_OZG_LoadWeight = weight;
+        m_OZG_LoadBy = uid;
+        m_OZG_Knowers.Clear();
+        OZG_AddKnower(uid);
+    }
+
+    override void OnStoreSave(ParamsWriteContext ctx)
+    {
+        super.OnStoreSave(ctx);
+        ctx.Write(OZG_Const.DIE_SAVE);
+        ctx.Write(m_OZG_LoadFace);
+        ctx.Write(m_OZG_LoadWeight);
+        ctx.Write(m_OZG_LoadBy);
+        int n = m_OZG_Knowers.Count();
+        ctx.Write(n);
+        for (int i = 0; i < n; i++)
+            ctx.Write(m_OZG_Knowers[i]);
+    }
+
+    override bool OnStoreLoad(ParamsReadContext ctx, int version)
+    {
+        if (!super.OnStoreLoad(ctx, version))
+            return false;
+        int v;
+        if (!ctx.Read(v))
+            return false;
+        int face;
+        int weight;
+        string by;
+        int n;
+        if (!ctx.Read(face) || !ctx.Read(weight) || !ctx.Read(by) || !ctx.Read(n))
+            return false;
+        if (n < 0 || n > 1000)
+            return false;
+        m_OZG_Knowers.Clear();
+        for (int i = 0; i < n; i++)
+        {
+            string one;
+            if (!ctx.Read(one))
+                return false;
+            m_OZG_Knowers.Insert(one);
+        }
+        m_OZG_LoadFace = face;
+        m_OZG_LoadWeight = weight;
+        m_OZG_LoadBy = by;
+        return true;
+    }
+}
+
+// The can of dice (boards and dice design §3.3): a set as the board is one,
+// five dice in slots of its own.
+class OZG_DiceCan_Base extends OZG_Deck_Base
+{
+    static const int DICE = 5;
+
+    override bool OZG_Takes(EntityAI thing)
+    {
+        return thing.IsKindOf("OZG_Die_Base");
+    }
+
+    // Server: five dice for a can that is new.
+    override void OZG_FillNow()
+    {
+        if (m_OZG_Filled)
+            return;
+        m_OZG_Filled = true;
+        if (!GetGame().IsServer())
+            return;
+        if (GetInventory().AttachmentCount() > 0)
+            return;
+        for (int i = 0; i < DICE; i++)
+            GetInventory().CreateAttachment("OZG_Die");
+    }
+}
+
+// The dice a seat throws (boards and dice design §8).
+class OZG_DiceRead
+{
+    // The dice of the set a place holds (the board's two, the can's five), in
+    // their slots' order.
+    static void OfPlace(OZG_Place place, array<EntityAI> into)
+    {
+        into.Clear();
+        if (!place)
+            return;
+        OZG_Deck_Base held = place.OZG_Deck();
+        if (!held)
+            return;
+        OfThing(held, into);
+    }
+
+    static void OfThing(EntityAI holder, array<EntityAI> into)
+    {
+        int n = holder.GetInventory().AttachmentCount();
+        for (int i = 0; i < n; i++)
+        {
+            EntityAI a = holder.GetInventory().GetAttachmentFromIndex(i);
+            if (a && a.IsKindOf("OZG_Die_Base"))
+                into.Insert(a);
+        }
+    }
+
+    // A can the player carries holding `need` dice or more: its first `need`.
+    static bool OwnCan(PlayerBase player, int need, array<EntityAI> into)
+    {
+        into.Clear();
+        if (!player)
+            return false;
+        array<EntityAI> items = new array<EntityAI>();
+        player.GetInventory().EnumerateInventory(InventoryTraversalType.PREORDER, items);
+        for (int i = 0; i < items.Count(); i++)
+        {
+            EntityAI can = items[i];
+            if (!can || !can.IsKindOf("OZG_DiceCan_Base"))
+                continue;
+            array<EntityAI> dice = new array<EntityAI>();
+            OfThing(can, dice);
+            if (dice.Count() < need)
+                continue;
+            for (int k = 0; k < need; k++)
+                into.Insert(dice[k]);
+            return true;
+        }
+        return false;
+    }
+
+    // The loads of dice: the face (0 for none) and the weight of each.
+    static void Loads(array<EntityAI> dice, array<int> faces, array<int> weights)
+    {
+        faces.Clear();
+        weights.Clear();
+        for (int i = 0; i < dice.Count(); i++)
+        {
+            OZG_Die_Base die = OZG_Die_Base.Cast(dice[i]);
+            int face = 0;
+            int weight = 0;
+            if (die && die.OZG_Loaded())
+            {
+                face = die.OZG_LoadFace();
+                weight = die.OZG_LoadWeight();
+            }
+            faces.Insert(face);
+            weights.Insert(weight);
+        }
+    }
+}
+
 class OZG_BoardRead
 {
     // The piece class that goes into each slot of a board's insert, in the

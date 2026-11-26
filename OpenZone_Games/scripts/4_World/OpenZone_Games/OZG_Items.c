@@ -30,6 +30,8 @@ class OZG_Decks
             GetGame().ConfigGetChildName("CfgVehicles", i, name);
             // A board is a set as a deck is one (boards and dice design §2).
             bool aSet = GetGame().IsKindOf(name, "OZG_Deck_Base") || GetGame().IsKindOf(name, "OZG_Board_Base");
+            if (GetGame().IsKindOf(name, "OZG_DiceCan_Base"))
+                aSet = true;
             if (!aSet)
                 continue;
             if (GetGame().ConfigGetInt("CfgVehicles " + name + " scope") != 2)

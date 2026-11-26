@@ -1188,9 +1188,79 @@ def draw_die():
     save(flat(64, (255, 130, 160)), "die", "data", "ozg_die_smdi.png")
 
 
+# ------------------------------------------------------------ the can of dice
+# Boards and dice design §3.3: a tin can in green enamel, a cream band of dice
+# faces round it, a five on the lid (models/src/can.py says where each part lies).
+CAN_SIZE = 512
+CREAM = (226, 214, 180)
+GOLD = (176, 142, 64)
+
+
+def pips(draw, cx, cy, r, number, colour, sx=1.0):
+    """The pips of a die face of `number` in a square of half-side r round (cx, cy);
+    `sx` squeezes it across, for a picture the model stretches so."""
+    d = r * 0.55
+    spots = {1: [(0, 0)], 2: [(-1, -1), (1, 1)], 3: [(-1, -1), (0, 0), (1, 1)],
+             4: [(-1, -1), (1, -1), (-1, 1), (1, 1)], 5: [(-1, -1), (1, -1), (0, 0), (-1, 1), (1, 1)],
+             6: [(-1, -1), (1, -1), (-1, 0), (1, 0), (-1, 1), (1, 1)]}[number]
+    pr = max(1.0, r * 0.16)
+    for ox, oy in spots:
+        x, y = cx + ox * d * sx, cy + oy * d
+        draw.ellipse([x - pr * sx, y - pr, x + pr * sx, y + pr], fill=colour)
+
+
+def draw_can():
+    rng = random.Random(1131)
+    n = CAN_SIZE
+    enamel = tint(fbm(rng, (n, n), (40, 12, 4), (1.0, 0.5, 0.25)), (34, 62, 40), (58, 92, 62))
+    picture = enamel.copy()
+    draw = ImageDraw.Draw(picture)
+    # The lid's side: darker, a gold line along its middle.
+    y0, y1 = int(0.20 * n), int(0.28 * n)
+    draw.rectangle([0, y0, n, y1], fill=(28, 50, 32))
+    draw.line([(0, (y0 + y1) // 2), (n, (y0 + y1) // 2)], fill=GOLD, width=1)
+    # The body: a cream band of dice faces between two gold lines.
+    b0, b1 = int(0.50 * n), int(0.78 * n)
+    draw.rectangle([0, b0, n, b1], fill=CREAM)
+    draw.line([(0, b0 - 3), (n, b0 - 3)], fill=GOLD, width=2)
+    draw.line([(0, b1 + 3), (n, b1 + 3)], fill=GOLD, width=2)
+    # Round the can a pixel across is about twice one up (can.py): the faces are
+    # drawn half as wide, to come out square.
+    squeeze = 0.49
+    count = 9
+    side = (b1 - b0) * 0.7
+    for k in range(count):
+        cx = (k + 0.5) * n / count
+        cy = (b0 + b1) / 2.0
+        h = side / 2.0
+        w = h * squeeze
+        draw.rounded_rectangle([cx - w, cy - h, cx + w, cy + h], radius=w * 0.3, outline=(60, 50, 40), width=1,
+                               fill=(244, 238, 222))
+        pips(draw, cx, cy, h, k % 6 + 1, (30, 26, 22), squeeze)
+    # The lid's top: enamel, a gold ring, a five in cream; the bottom: bare tin.
+    for (u, v), lid in (((0.12, 0.09), True), ((0.36, 0.09), False)):
+        cx, cy, r = u * n, v * n, 0.085 * n
+        if lid:
+            draw.ellipse([cx - r, cy - r, cx + r, cy + r], fill=(46, 78, 52))
+            draw.ellipse([cx - r * 0.85, cy - r * 0.85, cx + r * 0.85, cy + r * 0.85], outline=GOLD, width=2)
+            h = r * 0.45
+            draw.rounded_rectangle([cx - h, cy - h, cx + h, cy + h], radius=h * 0.25, fill=CREAM)
+            pips(draw, cx, cy, h, 5, (30, 26, 22))
+        else:
+            draw.ellipse([cx - r, cy - r, cx + r, cy + r], fill=TINPLATE[1])
+            for k in (0.8, 0.55, 0.3):
+                draw.ellipse([cx - r * k, cy - r * k, cx + r * k, cy + r * k], outline=TINPLATE[0], width=1)
+    # Wear: the enamel rubbed to the tin here and there.
+    wear = kit_scratches(rng, (n, n), 24, (2, 8), width=1)
+    picture = Image.composite(Image.new("RGB", (n, n), TINPLATE[0]), picture, scale(wear, 0.35))
+    save(picture, "can", "data", "ozg_can_co.png")
+    save(flat(16, (128, 128, 255)), "can", "data", "ozg_can_nohq.png")
+    save(flat(64, (255, 110, 150)), "can", "data", "ozg_can_smdi.png")
+
+
 DRAWN = {"place": draw_place, "deck": draw_deck, "mark": draw_mark, "card": draw_card,
          "sharpkit": draw_sharpkit, "board": draw_board, "chess": draw_chess, "disc": draw_disc,
-         "die": draw_die}
+         "die": draw_die, "can": draw_can}
 
 
 def main():

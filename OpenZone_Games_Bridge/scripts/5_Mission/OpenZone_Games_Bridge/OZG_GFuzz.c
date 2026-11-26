@@ -33,6 +33,11 @@ class OZG_GFuzz
         // Per hundred: how many moves are picked by chance rather than by
         // the game's bot.
         int wild = OZG_VerbOps.Arg(args, "wild", "40").ToInt();
+        // How often a save is loaded back, in moves: a long game's every load
+        // plays it all again.
+        int every = OZG_VerbOps.Arg(args, "reload", "7").ToInt();
+        if (every < 1)
+            every = 7;
         map<string, string> options = new map<string, string>();
         OZG_VerbOps.Pairs(OZG_VerbOps.Arg(args, "opt", ""), options);
 
@@ -145,7 +150,7 @@ class OZG_GFuzz
                     detail = "gfuzz " + id + ": DEFECT deal " + d.ToString() + " after " + actor.ToString() + " " + move + ": " + defect;
                     return true;
                 }
-                if (steps % 7 == 0)
+                if (steps % every == 0)
                 {
                     defect = Reload(id, game);
                     if (defect != "")

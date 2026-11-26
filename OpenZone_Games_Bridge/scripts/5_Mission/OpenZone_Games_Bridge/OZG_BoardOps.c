@@ -15,6 +15,34 @@ class OZG_BoardOps
         return true;
     }
 
+    // splitlen n=<bytes> parts=<count>: `parts` parts of `n` bytes joined by
+    // ';', split by string.Split and by OZG_Text.SplitLong: how many parts
+    // each gives back and how long the first is.
+    static bool OpSplitLen(map<string, string> args, out string detail)
+    {
+        int n = OZG_VerbOps.Arg(args, "n", "9000").ToInt();
+        int count = OZG_VerbOps.Arg(args, "parts", "2").ToInt();
+        string piece = "";
+        for (int i = 0; i < n; i++)
+            piece = piece + "x";
+        string text = piece;
+        for (int k = 1; k < count; k++)
+            text = text + ";" + piece;
+        array<string> a = new array<string>();
+        text.Split(";", a);
+        array<string> b = new array<string>();
+        OZG_Text.SplitLong(text, ";", b);
+        int aFirst = -1;
+        if (a.Count() > 0)
+            aFirst = a[0].Length();
+        int bFirst = -1;
+        if (b.Count() > 0)
+            bFirst = b[0].Length();
+        detail = "text " + text.Length().ToString() + " bytes; Split: " + a.Count().ToString() + " parts, the first " + aFirst.ToString();
+        detail = detail + "; SplitLong: " + b.Count().ToString() + " parts, the first " + bFirst.ToString();
+        return true;
+    }
+
     // perft fen=<FEN> depth=<n>: how many move paths of that length the
     // position has, against the published numbers (the start position: 20,
     // 400, 8902, 197281).

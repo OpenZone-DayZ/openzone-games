@@ -12,7 +12,7 @@ class CfgPatches
 {
     class OpenZone_Games
     {
-        units[] = {"OZG_Deck_Classic", "OZG_Deck_Stalker", "OZG_Deck_Classic_Sharp", "OZG_Deck_Stalker_Sharp", "OZG_MarkTool", "OZG_Board_Classic", "OZG_Die"};
+        units[] = {"OZG_Deck_Classic", "OZG_Deck_Stalker", "OZG_Deck_Classic_Sharp", "OZG_Deck_Stalker_Sharp", "OZG_MarkTool", "OZG_Board_Classic", "OZG_Die", "OZG_DiceCan_Classic"};
         weapons[] = {};
         requiredVersion = 0.1;
         // Hard dependencies: a blocking window before the game loads rather
@@ -213,6 +213,11 @@ class CfgSlots
     class Slot_OZG_Bd_bD15 { name = "OZG_Bd_bD15"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
     class Slot_OZG_Bd_Die1 { name = "OZG_Bd_Die1"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
     class Slot_OZG_Bd_Die2 { name = "OZG_Bd_Die2"; displayName = "$STR_OZG_PIECE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Cn_Die1 { name = "OZG_Cn_Die1"; displayName = "$STR_OZG_DIE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Cn_Die2 { name = "OZG_Cn_Die2"; displayName = "$STR_OZG_DIE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Cn_Die3 { name = "OZG_Cn_Die3"; displayName = "$STR_OZG_DIE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Cn_Die4 { name = "OZG_Cn_Die4"; displayName = "$STR_OZG_DIE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
+    class Slot_OZG_Cn_Die5 { name = "OZG_Cn_Die5"; displayName = "$STR_OZG_DIE_SLOT"; ghostIcon = "set:dayz_inventory image:missing"; };
 // <<< generated: board slots
 };
 
@@ -558,8 +563,37 @@ class CfgVehicles
     class OZG_Chess_Classic_bN: OZG_Chess_N { scope = 2; displayName = "$STR_OZG_PIECE_BN"; ozgFace = "bN"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess\data\ozg_chess_black_co.paa"}; inventorySlot[] = {"OZG_Bd_bN1", "OZG_Bd_bN2"}; };
     class OZG_Chess_Classic_bP: OZG_Chess_P { scope = 2; displayName = "$STR_OZG_PIECE_BP"; ozgFace = "bP"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess\data\ozg_chess_black_co.paa"}; inventorySlot[] = {"OZG_Bd_bP1", "OZG_Bd_bP2", "OZG_Bd_bP3", "OZG_Bd_bP4", "OZG_Bd_bP5", "OZG_Bd_bP6", "OZG_Bd_bP7", "OZG_Bd_bP8"}; };
     class OZG_Disc_Classic_B: OZG_Disc_Base { scope = 2; displayName = "$STR_OZG_PIECE_BD"; ozgFace = "bD"; hiddenSelectionsTextures[] = {"OpenZone_Games\models\disc\data\ozg_disc_black_co.paa"}; inventorySlot[] = {"OZG_Bd_bD01", "OZG_Bd_bD02", "OZG_Bd_bD03", "OZG_Bd_bD04", "OZG_Bd_bD05", "OZG_Bd_bD06", "OZG_Bd_bD07", "OZG_Bd_bD08", "OZG_Bd_bD09", "OZG_Bd_bD10", "OZG_Bd_bD11", "OZG_Bd_bD12", "OZG_Bd_bD13", "OZG_Bd_bD14", "OZG_Bd_bD15"}; };
-    class OZG_Die: OZG_Die_Base { scope = 2; displayName = "$STR_OZG_PIECE_DI"; ozgFace = "Di"; inventorySlot[] = {"OZG_Bd_Die1", "OZG_Bd_Die2"}; };
+    class OZG_Die: OZG_Die_Base { scope = 2; displayName = "$STR_OZG_PIECE_DI"; ozgFace = "Di"; inventorySlot[] = {"OZG_Bd_Die1", "OZG_Bd_Die2", "OZG_Cn_Die1", "OZG_Cn_Die2", "OZG_Cn_Die3", "OZG_Cn_Die4", "OZG_Cn_Die5"}; };
 // <<< generated: board pieces
+
+    // ------------------------------------------------------------ the can of dice
+    //
+    // The can (boards and dice design §3.3): a set as the board is one, five
+    // dice in slots of their own (any die goes into a board's slot as into
+    // these). Laid out it is an OZG_DicePlace.
+    class OZG_DiceCan_Base: Inventory_Base
+    {
+        scope = 0;
+        displayName = "$STR_OZG_CAN_NAME";
+        descriptionShort = "$STR_OZG_CAN_DESC";
+        model = "\OpenZone_Games\models\can\ozg_can.p3d";
+        itemSize[] = {2, 2};
+        weight = 150;
+        rotationFlags = 0;
+        hiddenSelections[] = {"camo"};
+        hiddenSelectionsTextures[] = {"OpenZone_Games\models\can\data\ozg_can_co.paa"};
+        hiddenSelectionsMaterials[] = {"OpenZone_Games\models\can\data\ozg_can.rvmat"};
+        projectionTypename = "OZG_DicePlacePlacing";
+        ozgStyle = "classic";
+        ozgSetKind = "dice";
+        ozgPlace = "OZG_DicePlace";
+        inventorySlot[] = {"OZG_DeckHold"};
+        attachments[] = {"OZG_Cn_Die1", "OZG_Cn_Die2", "OZG_Cn_Die3", "OZG_Cn_Die4", "OZG_Cn_Die5"};
+    };
+    class OZG_DiceCan_Classic: OZG_DiceCan_Base
+    {
+        scope = 2;
+    };
 
     // ------------------------------------------------------------ the place
     //
@@ -618,6 +652,21 @@ class CfgVehicles
         // The field up: chess, draughts and corners, or nardy (OZG_BoardPlace).
         ozgFieldChess = "OpenZone_Games\models\board\data\ozg_board_co.paa";
         ozgFieldNardy = "OpenZone_Games\models\board\data\ozg_board_nardy_co.paa";
+    };
+    // The dice laid out: the can on a square of the mat's felt.
+    class OZG_DicePlace: OZG_Place
+    {
+        scope = 2;
+        displayName = "$STR_OZG_DICE_PLACE_NAME";
+        model = "\OpenZone_Games\models\can\ozg_can_place.p3d";
+        hiddenSelections[] = {};
+        hiddenSelectionsTextures[] = {};
+        hiddenSelectionsMaterials[] = {};
+    };
+    class OZG_DicePlacePlacing: OZG_PlacePlacing
+    {
+        scope = 1;
+        model = "\OpenZone_Games\models\can\ozg_can_place.p3d";
     };
     class OZG_BoardPlacePlacing: OZG_PlacePlacing
     {

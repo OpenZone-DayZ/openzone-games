@@ -25,6 +25,8 @@ class OZG_Const
     static const string SET_CARDS = "cards";
     static const string SET_BOARD = "board";
     static const string SET_DICE  = "dice";
+    // A die's stored record (OZG_Die_Base): its load and who knows of it.
+    static const int DIE_SAVE = 1;
 
     // ---------------------------------------------------------------- laying out
 

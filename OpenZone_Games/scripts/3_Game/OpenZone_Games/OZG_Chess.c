@@ -1325,7 +1325,7 @@ class OZG_Chess extends OZG_Game
     override bool LoadState(string data)
     {
         array<string> parts = new array<string>();
-        data.Split(";", parts);
+        OZG_Text.SplitLong(data, ";", parts);
         if (parts.Count() < 9 || parts[0] != "c1")
             return false;
         OZG_Chess again = new OZG_Chess();
@@ -1336,8 +1336,9 @@ class OZG_Chess extends OZG_Game
         again.m_Black = parts[2].ToInt();
         again.m_Keys.Insert(again.m_Pos.ChKey());
         again.m_Taken = "";
+        // The moves can pass 8191 bytes: read in place.
         array<string> moves = new array<string>();
-        Undash(parts[8]).Split(" ", moves);
+        OZG_Text.FieldPieces(data, ";", 8, " ", moves);
         for (int i = 0; i < moves.Count(); i++)
         {
             if (moves[i] == "")

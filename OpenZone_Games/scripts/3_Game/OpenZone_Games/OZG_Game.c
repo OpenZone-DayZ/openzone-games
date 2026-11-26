@@ -81,6 +81,12 @@ class OZG_Game
         return 0;
     }
 
+    // Whose dice the seats throw, the options read (OZG_DiceConst.WHOSE_*).
+    string DiceMode(map<string, string> options)
+    {
+        return OptionOf(options, OZG_DiceConst.OPT_WHOSE, OZG_DiceConst.WHOSE_HOST);
+    }
+
     // Before Begin and whenever a seat's dice change: the loads of the dice
     // `seat` throws, a loaded face (0: none) and its weight in percent each.
     void TakeDice(int seat, array<int> faces, array<int> weights)

@@ -119,6 +119,11 @@ class OZG_Settings : OZ_ConfigBase
         into.Insert("corners");
         into.Insert("nardy_long");
         into.Insert("nardy_short");
+        into.Insert("thousand");
+        into.Insert("dicepoker");
+        into.Insert("pig");
+        into.Insert("highroll");
+        into.Insert("perudo");
     }
 
     // The loupe's length as a file of version 5 or older wrote it, read off

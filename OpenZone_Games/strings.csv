@@ -597,6 +597,10 @@ STR_OZG_PIECE_DESC,Шахова фігура з дошки «3 в 1».,A chess p
 STR_OZG_DISC_DESC,"Шашка з дошки «3 в 1», для шашок і нард.","A checker of the 3-in-1 board, for draughts and nardy."
 STR_OZG_DIE_DESC,"Гральна кістка: шість граней, від одного до шести очок.","A die: six faces, one to six pips."
 STR_OZG_BOARD_MISSING,На дошці бракує фігур: партію не почати.,The board lacks pieces: the game cannot begin.
+STR_OZG_CAN_NAME,Банка з кістками,Can of dice
+STR_OZG_CAN_DESC,"Бляшана банка з кришкою, у ній п'ять гральних кісток: для тисячі, покеру на кістках, свині, «Хто більше» та перудо. Розкладіть її на столі, як колоду.","A tin can with a lid holding five dice: for thousand, dice poker, pig, high roll and perudo. Lay it out on a table as a deck."
+STR_OZG_DIE_SLOT,Місце кістки,A die's place
+STR_OZG_DICE_PLACE_NAME,Кості на сукні,Dice laid out
 STR_OZG_CHESS_END_MATE,Мат,Checkmate
 STR_OZG_CHESS_END_STALEMATE,Пат: нічия,Stalemate: a draw
 STR_OZG_BOARD_END_RESIGN,Партію здано,Resigned
@@ -654,6 +658,104 @@ STR_OZG_DICE_HOST,Господаря,The host's
 STR_OZG_DICE_OWN,Свої,Own
 STR_OZG_DICE_WISH,За бажанням,By wish
 STR_OZG_DICE_NONE,У гравця немає банки з потрібними кістками,A player has no can with the dice needed
+STR_OZG_DICE_SHORT,У банці господаря замало кісток,"The host's can holds too few dice"
+STR_OZG_DICE_LOG_THROW,%1 кидає кості,%1 throws the dice
+STR_OZG_DICE_LOG_MOVE,%1: %2,%1: %2
+STR_OZG_DICE_SHOWN,Кості: %1,Dice: %1
+STR_OZG_DICE_END_LEFT,інші вийшли з гри,the others left the game
+STR_OZG_DICE_END_WON,%1 перемагає: %2,%1 wins: %2
+STR_OZG_DICE_SCORE,%1 очок,%1 points
+STR_OZG_DICE_TURN,Хід: %1,"%1's turn"
+STR_OZG_DICE_YOUR_TURN,Ваш хід,Your turn
+STR_OZG_DICE_CHIPS,Фішок: %1,Chips: %1
+STR_OZG_DICE_POT,Банк,Pot
+STR_OZG_DICE_POT_LINE,%1 фішок,%1 chips
+STR_OZG_DICE_BTN_THROW,Кинути,Throw
+STR_OZG_DICE_RULE_ON,так,on
+STR_OZG_DICE_RULE_OFF,ні,off
+STR_OZG_DICE_STAKE,Ставка,Stake
+STR_OZG_DICE_STAKE_5,5,5
+STR_OZG_DICE_STAKE_10,10,10
+STR_OZG_DICE_STAKE_25,25,25
+STR_OZG_DICE_STAKE_50,50,50
+STR_OZG_DICE_STAKE_100,100,100
+STR_OZG_GAME_PIG,Свиня,Pig
+STR_OZG_PIG_END,набрано 100,100 reached
+STR_OZG_PIG_DIE,Кістка,The die
+STR_OZG_PIG_LINE,"Випало %1, за хід %2","Came up %1, this turn %2"
+STR_OZG_PIG_BTN_THROW,Кинути,Throw
+STR_OZG_PIG_BTN_HOLD,Записати,Hold
+STR_OZG_PIG_LOG_HOLD,%1 записує очки,%1 holds
+STR_OZG_GAME_HIGHROLL,Хто більше,High roll
+STR_OZG_HIGHROLL_DICE,Кісток,Dice
+STR_OZG_HIGHROLL_DICE_1,одна,one
+STR_OZG_HIGHROLL_DICE_2,дві,two
+STR_OZG_HIGHROLL_DICE_3,три,three
+STR_OZG_HIGHROLL_THREW,"Кинув %1, фішок %2","Threw %1, chips %2"
+STR_OZG_HIGHROLL_END,%1 забирає банк: %2,%1 takes the pot: %2
+STR_OZG_GAME_THOUSAND,Тисяча,Thousand
+STR_OZG_THOUSAND_ENTRY,Вхід,Entry
+STR_OZG_THOUSAND_ENTRY_50,50,50
+STR_OZG_THOUSAND_PITS,Ями,Pits
+STR_OZG_THOUSAND_BARREL,Бочка,Barrel
+STR_OZG_THOUSAND_OVERTAKE,Обгін,Overtaking
+STR_OZG_THOUSAND_BOLTS,Болти,Bolts
+STR_OZG_THOUSAND_END,1000 очок,1000 points
+STR_OZG_THOUSAND_END_ONES,"п'ять одиниць",five ones
+STR_OZG_THOUSAND_SEAT,"%1 очок, болтів %2","%1 points, bolts %2"
+STR_OZG_THOUSAND_SEAT_BARREL,"%1 на бочці, болтів %2","%1 on the barrel, bolts %2"
+STR_OZG_THOUSAND_THROW,Кидок,The throw
+STR_OZG_THOUSAND_ASIDE,Відкладено,Put aside
+STR_OZG_THOUSAND_ASIDE_LINE,%1: %2 очок за хід,%1: %2 points this turn
+STR_OZG_THOUSAND_BTN_SET,Відкласти %1 (%2),Put aside %1 (%2)
+STR_OZG_THOUSAND_BTN_WRITE,Записати %1,Write %1
+STR_OZG_THOUSAND_BTN_THROW,Кинути (%1),Throw (%1)
+STR_OZG_THOUSAND_LOG_SET,%1 відкладає кості,%1 puts dice aside
+STR_OZG_THOUSAND_LOG_WRITE,%1 записує очки,%1 writes the points down
+STR_OZG_GAME_PERUDO,Перудо,Perudo
+STR_OZG_PERUDO_END,лишився з кістками,the last with dice
+STR_OZG_PERUDO_SHOWN,Відкрили: %1. Таких %2 (по %3); кістку втрачає %4,Shown: %1. %2 of them (of %3s); %4 loses a die
+STR_OZG_PERUDO_DICE,Кісток: %1,Dice: %1
+STR_OZG_PERUDO_BID_NOW,Ставка,The bid
+STR_OZG_PERUDO_BID_LINE,%1 по %2 (%3),%1 of %2s (%3)
+STR_OZG_PERUDO_NO_BID,ще немає,none yet
+STR_OZG_PERUDO_LAST,Минулий раунд,The last round
+STR_OZG_PERUDO_TURN_PALIFICO,Паліфіко. Хід: %1,"Palifico. %1's turn"
+STR_OZG_PERUDO_YOURS,Ваші кості: %1,Your dice: %1
+STR_OZG_PERUDO_BTN_DUDO,Не вірю,I do not believe
+STR_OZG_PERUDO_BTN_BID,%1 по %2,%1 x %2
+STR_OZG_PERUDO_LOG_DUDO,%1: не вірю!,%1: I do not believe!
+STR_OZG_PERUDO_LOG_BID,%1: %2 по %3,%1: %2 of %3s
+STR_OZG_GAME_DICEPOKER,Покер на кістках,Dice poker
+STR_OZG_DPOKER_DRAW,Нічия: раунд ще раз,A draw: the round again
+STR_OZG_DPOKER_ROUND,Раунд за %1: %2,%1 wins the round: %2
+STR_OZG_DPOKER_END,%1 забирає банк: %2,%1 takes the pot: %2
+STR_OZG_DPOKER_HAND_0,нічого,nothing
+STR_OZG_DPOKER_HAND_1,пара,a pair
+STR_OZG_DPOKER_HAND_2,дві пари,two pairs
+STR_OZG_DPOKER_HAND_3,трійка,three of a kind
+STR_OZG_DPOKER_HAND_4,малий стрит,five-high straight
+STR_OZG_DPOKER_HAND_5,великий стрит,six-high straight
+STR_OZG_DPOKER_HAND_6,фул-хаус,full house
+STR_OZG_DPOKER_HAND_7,каре,four of a kind
+STR_OZG_DPOKER_HAND_8,покер,five of a kind
+STR_OZG_DPOKER_SEAT,"Фішок %1, раундів %2","Chips %1, rounds %2"
+STR_OZG_DPOKER_LAST,Раунд,The round
+STR_OZG_DPOKER_PHASE_0,Раунд %2: кидає %1,Round %2: %1 throws
+STR_OZG_DPOKER_PHASE_1,Раунд %2: ставить %1,Round %2: %1 bets
+STR_OZG_DPOKER_PHASE_2,Раунд %2: перекидає %1,Round %2: %1 throws again
+STR_OZG_DPOKER_BTN_RAISE,Підняти,Raise
+STR_OZG_DPOKER_BTN_CHECK,Чек,Check
+STR_OZG_DPOKER_BTN_CALL,Підтримати %1,Call %1
+STR_OZG_DPOKER_BTN_FOLD,Скинути,Fold
+STR_OZG_DPOKER_BTN_THROW,Кинути,Throw
+STR_OZG_DPOKER_BTN_AGAIN,Перекинути: %1,Throw again: %1
+STR_OZG_DPOKER_YOURS,Ваші кості: %1 (%2),Your dice: %1 (%2)
+STR_OZG_DPOKER_LOG_RAISE,%1 піднімає на %2,%1 raises %2
+STR_OZG_DPOKER_LOG_AGAIN,%1 перекидає кості,%1 throws again
+STR_OZG_DPOKER_LOG_CHECK,%1: чек,%1 checks
+STR_OZG_DPOKER_LOG_CALL,%1 підтримує,%1 calls
+STR_OZG_DPOKER_LOG_FOLD,%1 скидає,%1 folds
 # >>> generated: board
 STR_OZG_PIECE_WK,Білий король,White king
 STR_OZG_PIECE_WQ,Білий ферзь,White queen

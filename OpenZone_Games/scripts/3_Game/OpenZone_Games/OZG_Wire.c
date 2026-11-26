@@ -358,6 +358,76 @@ class OZG_Text
         }
     }
 
+    // A text split on `sep`, empty parts kept. string.Split hands back no part
+    // longer than 8191 bytes, as Substring does (measured 2026-11-26: two
+    // parts of 9000 bytes came back as 8191 each; 3000 parts of 10 bytes out
+    // of 33 KB came back whole), and drops empty ones. Here each piece is
+    // taken with Substring from an offset: a long text of short pieces is
+    // safe; a piece of its own over 8191 bytes is not, so a long list inside
+    // a record is read in place (SplitSpan, FieldSpan).
+    static void SplitLong(string text, string sep, array<string> into)
+    {
+        SplitSpan(text, 0, text.Length(), sep, into);
+    }
+
+    // The pieces of `text` from `from` up to `to` (not included), split on
+    // `sep`.
+    static void SplitSpan(string text, int from, int to, string sep, array<string> into)
+    {
+        into.Clear();
+        int step = sep.Length();
+        int at = from;
+        while (at <= to)
+        {
+            int next = text.IndexOfFrom(at, sep);
+            if (next < 0 || next > to)
+            {
+                into.Insert(text.Substring(at, to - at));
+                return;
+            }
+            into.Insert(text.Substring(at, next - at));
+            at = next + step;
+        }
+    }
+
+    // Where the field `n` (from 0) of a record of fields joined by `sep`
+    // begins and ends, without taking it out.
+    static bool FieldSpan(string text, string sep, int n, out int from, out int to)
+    {
+        from = 0;
+        to = 0;
+        int at = 0;
+        for (int i = 0; i < n; i++)
+        {
+            int next = text.IndexOfFrom(at, sep);
+            if (next < 0)
+                return false;
+            at = next + sep.Length();
+        }
+        int end = text.IndexOfFrom(at, sep);
+        if (end < 0)
+            end = text.Length();
+        from = at;
+        to = end;
+        return true;
+    }
+
+    // The pieces of the field `n` of a record (fields joined by `fieldSep`),
+    // split on `sep`; nothing for a field written "-".
+    static void FieldPieces(string text, string fieldSep, int n, string sep, array<string> into)
+    {
+        into.Clear();
+        int from;
+        int to;
+        if (!FieldSpan(text, fieldSep, n, from, to))
+            return;
+        if (to - from == 1 && text.Get(from) == "-")
+            return;
+        if (to <= from)
+            return;
+        SplitSpan(text, from, to, sep, into);
+    }
+
     static string Glue(array<string> parts)
     {
         string s = "";

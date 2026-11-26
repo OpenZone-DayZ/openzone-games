@@ -72,6 +72,11 @@ def slot_names():
     return out
 
 
+# The can of dice's five slots (boards and dice design §3.3): any die goes into
+# them as into the board's.
+CAN_SLOTS = ["OZG_Cn_Die%d" % (n + 1) for n in range(5)]
+
+
 def slots_of(face):
     return [s for s, f in slot_names() if f == face]
 
@@ -94,6 +99,9 @@ def config():
     for slot, face in slot_names():
         slots.append('    class Slot_%s { name = "%s"; displayName = "$STR_OZG_PIECE_SLOT"; '
                      'ghostIcon = "set:dayz_inventory image:missing"; };' % (slot, slot))
+    for slot in CAN_SLOTS:
+        slots.append('    class Slot_%s { name = "%s"; displayName = "$STR_OZG_DIE_SLOT"; '
+                     'ghostIcon = "set:dayz_inventory image:missing"; };' % (slot, slot))
 
     pieces = []
     for look in LOOKS:
@@ -110,7 +118,7 @@ def config():
                           % (look, side.upper(), face.upper(), face, DISC_TEXTURE % colour,
                              quoted(slots_of(face))))
     pieces.append('    class OZG_Die: OZG_Die_Base { scope = 2; displayName = "$STR_OZG_PIECE_DI"; '
-                  'ozgFace = "Di"; inventorySlot[] = {%s}; };' % quoted(slots_of("Di")))
+                  'ozgFace = "Di"; inventorySlot[] = {%s}; };' % quoted(slots_of("Di") + CAN_SLOTS))
 
     attachments = ["        attachments[] ="] + ["        {"] + rows([s for s, _ in slot_names()], "            ") + ["        };"]
 

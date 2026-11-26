@@ -13,6 +13,7 @@ class OZG_DiceConst
     static const string WHOSE_OWN = "own";
     static const string WHOSE_WISH = "wish";
     static const string NO_DICE = "STR_OZG_DICE_NONE";
+    static const string OPT_STAKE = "stake";
 }
 
 class OZG_DiceCup
@@ -133,5 +134,50 @@ class OZG_DiceText
             if (v >= 1 && v <= 6)
                 into.Insert(v);
         }
+    }
+}
+
+// The option of whose dice (§8), for nardy and the dice games.
+class OZG_DiceOptions
+{
+    static OZG_Option Whose(bool ownOnly)
+    {
+        OZG_Option o = new OZG_Option();
+        o.OptionId = OZG_DiceConst.OPT_WHOSE;
+        o.LabelKey = "STR_OZG_DICE_WHOSE";
+        if (!ownOnly)
+        {
+            o.ValueIds.Insert(OZG_DiceConst.WHOSE_HOST);
+            o.ValueKeys.Insert("STR_OZG_DICE_HOST");
+        }
+        o.ValueIds.Insert(OZG_DiceConst.WHOSE_OWN);
+        o.ValueKeys.Insert("STR_OZG_DICE_OWN");
+        if (!ownOnly)
+        {
+            o.ValueIds.Insert(OZG_DiceConst.WHOSE_WISH);
+            o.ValueKeys.Insert("STR_OZG_DICE_WISH");
+            o.DefaultId = OZG_DiceConst.WHOSE_HOST;
+        }
+        else
+        {
+            o.DefaultId = OZG_DiceConst.WHOSE_OWN;
+        }
+        return o;
+    }
+
+    // A stake each seat puts in (high roll, dice poker).
+    static OZG_Option Stake()
+    {
+        OZG_Option o = new OZG_Option();
+        o.OptionId = OZG_DiceConst.OPT_STAKE;
+        o.LabelKey = "STR_OZG_DICE_STAKE";
+        array<int> values = {5, 10, 25, 50, 100};
+        for (int i = 0; i < values.Count(); i++)
+        {
+            o.ValueIds.Insert(values[i].ToString());
+            o.ValueKeys.Insert("STR_OZG_DICE_STAKE_" + values[i].ToString());
+        }
+        o.DefaultId = "10";
+        return o;
     }
 }

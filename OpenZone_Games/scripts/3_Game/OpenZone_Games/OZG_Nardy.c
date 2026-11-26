@@ -887,32 +887,3 @@ class OZG_NardyShort extends OZG_Nardy
         return new OZG_NardyShort();
     }
 }
-
-// The option of whose dice (§8), for nardy and the dice games.
-class OZG_DiceOptions
-{
-    static OZG_Option Whose(bool ownOnly)
-    {
-        OZG_Option o = new OZG_Option();
-        o.OptionId = OZG_DiceConst.OPT_WHOSE;
-        o.LabelKey = "STR_OZG_DICE_WHOSE";
-        if (!ownOnly)
-        {
-            o.ValueIds.Insert(OZG_DiceConst.WHOSE_HOST);
-            o.ValueKeys.Insert("STR_OZG_DICE_HOST");
-        }
-        o.ValueIds.Insert(OZG_DiceConst.WHOSE_OWN);
-        o.ValueKeys.Insert("STR_OZG_DICE_OWN");
-        if (!ownOnly)
-        {
-            o.ValueIds.Insert(OZG_DiceConst.WHOSE_WISH);
-            o.ValueKeys.Insert("STR_OZG_DICE_WISH");
-            o.DefaultId = OZG_DiceConst.WHOSE_HOST;
-        }
-        else
-        {
-            o.DefaultId = OZG_DiceConst.WHOSE_OWN;
-        }
-        return o;
-    }
-}
