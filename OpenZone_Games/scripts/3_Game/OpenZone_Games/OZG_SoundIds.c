@@ -22,7 +22,14 @@ class OZG_SoundIds
     static const int DECKIN = 14;    // a sleight: a card pushed into the deck
     static const int DECKOUT = 15;    // a sleight: a card drawn out of the deck
     static const int PICK = 16;    // a sleight: cards set on top of the deck for the dealer
-    static const int LAST = 16;
+    static const int PIECE = 17;    // a piece or a disc set down on the board
+    static const int CAPTURE = 18;    // a piece taken: set down, and the taken one knocked off
+    static const int CROWN = 19;    // a piece crowned: a pawn promoted, a man made a king
+    static const int CHECK = 20;    // check
+    static const int ROLL = 21;    // dice thrown: they rattle, land and settle
+    static const int OVER = 22;    // a game over
+    static const int CLICK = 23;    // the card sharp's kit at work, heard by its owner alone
+    static const int LAST = 23;
 
     // Beside every id from 0 (none): its name, its set and its length.
     static void Fill(array<string> names, array<string> sets, array<int> lengths)
@@ -78,5 +85,26 @@ class OZG_SoundIds
         names.Insert("pick");
         sets.Insert("OZG_Pick_SoundSet");
         lengths.Insert(386);
+        names.Insert("piece");
+        sets.Insert("OZG_Piece_SoundSet");
+        lengths.Insert(80);
+        names.Insert("capture");
+        sets.Insert("OZG_Capture_SoundSet");
+        lengths.Insert(185);
+        names.Insert("crown");
+        sets.Insert("OZG_Crown_SoundSet");
+        lengths.Insert(430);
+        names.Insert("check");
+        sets.Insert("OZG_Check_SoundSet");
+        lengths.Insert(270);
+        names.Insert("roll");
+        sets.Insert("OZG_Roll_SoundSet");
+        lengths.Insert(696);
+        names.Insert("over");
+        sets.Insert("OZG_Over_SoundSet");
+        lengths.Insert(644);
+        names.Insert("click");
+        sets.Insert("OZG_Click_SoundSet");
+        lengths.Insert(33);
     }
 }

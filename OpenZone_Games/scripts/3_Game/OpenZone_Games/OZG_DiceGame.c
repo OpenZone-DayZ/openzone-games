@@ -218,6 +218,8 @@ class OZG_DiceGame extends OZG_Game
         else
         {
             v = m_Cups.Of(seat, DiceNeeded()).Throw(index, Chance());
+            // the dice rattle (boards and dice design §15): heard once a throw
+            HearSound(OZG_SoundIds.ROLL);
             m_ThrewSeat.Insert(seat);
             m_ThrewDie.Insert(index);
             m_ThrewFace.Insert(v);
@@ -370,6 +372,7 @@ class OZG_DiceGame extends OZG_Game
     {
         m_Over = true;
         m_End = words;
+        HearSound(OZG_SoundIds.OVER);
     }
 
     // ---- kept and loaded -----------------------------------------------------------
@@ -439,9 +442,13 @@ class OZG_DiceGame extends OZG_Game
         OZG_DiceGame again = OZG_DiceGame.Cast(Fresh());
         if (!again || !again.DgReplay(data))
             return false;
-        // It loads: the same once more on this game.
+        // It loads: the same once more on this game -- heard by nobody (its end was
+        // heard when it came).
         m_Have = null;
-        return DgReplay(data);
+        bool loaded = DgReplay(data);
+        array<int> unheard = new array<int>();
+        TakeHeard(unheard);
+        return loaded;
     }
 
     // The game begun again and played again from the text.

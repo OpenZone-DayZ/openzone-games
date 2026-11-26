@@ -4,9 +4,12 @@
 # deck put down on the mat and picked up; and the sleights' (card sharp's design
 # §6.1), quieter, each played on one client alone: a card slipped out of a
 # pocket, swapped, tossed onto the discards, pushed into the deck, drawn out of
-# it, cards set on top of it. Every sound is shaped noise and a few damped
-# tones, drawn with a fixed seed: the same files every run. No recording and
-# nobody else's sound is in them (art/sounds/SOURCES.md).
+# it, cards set on top of it; and the boards' and the dice's (boards and dice
+# design §15), as the design canvas's mockups make them: a piece set down, a
+# piece taken, a piece crowned, check, dice thrown, a game over, the card
+# sharp's kit at work. Every sound is shaped noise and a few damped tones,
+# drawn with a fixed seed: the same files every run. No recording and nobody
+# else's sound is in them (art/sounds/SOURCES.md).
 #
 # Usage: python -I tools/make_sounds.py [--ffmpeg <ffmpeg.exe>] [--root <dir>]
 #
@@ -56,6 +59,15 @@ SOUNDS = [
     ("deckin", "DeckIn", 1114, 0.30, "a sleight: a card pushed into the deck"),
     ("deckout", "DeckOut", 1115, 0.30, "a sleight: a card drawn out of the deck"),
     ("pick", "Pick", 1116, 0.30, "a sleight: cards set on top of the deck for the dealer"),
+    # The boards and the dice (boards and dice design §15), the canvas's sounds: heard on
+    # the place as the cards are; the kit's click on the one client that works it.
+    ("piece", "Piece", 1117, 0.45, "a piece or a disc set down on the board"),
+    ("capture", "Capture", 1118, 0.50, "a piece taken: set down, and the taken one knocked off"),
+    ("crown", "Crown", 1119, 0.30, "a piece crowned: a pawn promoted, a man made a king"),
+    ("check", "Check", 1120, 0.25, "check"),
+    ("roll", "Roll", 1121, 0.45, "dice thrown: they rattle, land and settle"),
+    ("over", "Over", 1122, 0.30, "a game over"),
+    ("click", "Click", 1123, 0.25, "the card sharp's kit at work, heard by its owner alone"),
 ]
 
 
@@ -274,10 +286,126 @@ def pick(rng):
     return out
 
 
+# ---------------------------------------------------------------- boards and dice
+#
+# The boards' and the dice's sounds (boards and dice design §15): the design canvas's
+# mockups make them in the browser out of two things, and so do these, number for number.
+# hit: white noise falling as (1 - t)^3 through the browser's band-pass (a BiquadFilter,
+# RBJ's band-pass of constant 0 dB peak), left ringing after the noise ends; tone: an
+# oscillator whose gain rises from 0.0001 to its top in 10 ms and falls back to 0.0001 by
+# its length, exponentially, as the browser's exponentialRampToValueAtTime does.
+
+def biquad_band(x, f, q):
+    w0 = 2.0 * np.pi * f / SR
+    alpha = np.sin(w0) / (2.0 * q)
+    a0 = 1.0 + alpha
+    b0, b2 = alpha / a0, -alpha / a0
+    a1, a2 = -2.0 * np.cos(w0) / a0, (1.0 - alpha) / a0
+    y = np.zeros_like(x)
+    x1 = x2 = y1 = y2 = 0.0
+    for i in range(len(x)):
+        v = b0 * x[i] + b2 * x2 - a1 * y1 - a2 * y2
+        x2, x1 = x1, x[i]
+        y2, y1 = y1, v
+        y[i] = v
+    return y
+
+
+def hit(rng, out, at, f, q, gain, length):
+    n = max(1, int(SR * length))
+    burst = rng.uniform(-1.0, 1.0, n) * (1.0 - np.arange(n) / n) ** 3
+    ring = np.concatenate([burst, np.zeros(n_of(40))])
+    put(out, biquad_band(ring, f, q), at * 1000.0, gain)
+
+
+def tone(out, at, f, length, gain, kind="sine"):
+    n = n_of((length + 0.03) * 1000.0)
+    t = np.arange(n) / SR
+    wave_ = np.zeros(n)
+    if kind == "sine":
+        wave_ = np.sin(2.0 * np.pi * f * t)
+    else:
+        # band-limited, as the browser's oscillator is: the odd harmonics under Nyquist
+        k = 1
+        while k * f < SR / 2.0:
+            if kind == "square":
+                wave_ += np.sin(2.0 * np.pi * k * f * t) / k
+            else:
+                sign = 1.0 if (k // 2) % 2 == 0 else -1.0
+                wave_ += sign * np.sin(2.0 * np.pi * k * f * t) / (k * k)
+            k += 2
+        wave_ *= (4.0 / np.pi) if kind == "square" else (8.0 / np.pi ** 2)
+    low = 0.0001
+    rise = 0.01
+    env = np.zeros(n)
+    up = t < rise
+    env[up] = low * (gain / low) ** (t[up] / rise)
+    down = (t >= rise) & (t < length)
+    env[down] = gain * (low / gain) ** ((t[down] - rise) / (length - rise))
+    put(out, wave_ * env, at * 1000.0, 1.0)
+
+
+def piece(rng):
+    out = np.zeros(n_of(200))
+    hit(rng, out, 0.0, 1400, 1.6, 0.9, 0.05)
+    tone(out, 0.0, 170, 0.07, 0.25)
+    return out
+
+
+def capture(rng):
+    out = np.zeros(n_of(300))
+    hit(rng, out, 0.0, 1500, 1.6, 0.9, 0.05)
+    tone(out, 0.0, 170, 0.07, 0.25)
+    hit(rng, out, 0.09, 1100, 1.4, 1.0, 0.07)
+    tone(out, 0.09, 130, 0.09, 0.3)
+    return out
+
+
+def crown(rng):
+    out = np.zeros(n_of(500))
+    tone(out, 0.05, 660, 0.16, 0.18, "triangle")
+    tone(out, 0.17, 990, 0.26, 0.16, "triangle")
+    return out
+
+
+def check(rng):
+    out = np.zeros(n_of(320))
+    tone(out, 0.0, 520, 0.11, 0.1, "square")
+    tone(out, 0.14, 520, 0.11, 0.08, "square")
+    return out
+
+
+def roll(rng):
+    out = np.zeros(n_of(900))
+    t = 0.0
+    for k in range(9):
+        hit(rng, out, t, 2200 + rng.uniform() * 1800, 3, 0.55, 0.025)
+        t += 0.035 + k * 0.006
+    hit(rng, out, t + 0.02, 1300, 1.5, 0.9, 0.05)
+    tone(out, t + 0.02, 150, 0.08, 0.25)
+    hit(rng, out, t + 0.11, 1600, 1.8, 0.5, 0.04)
+    return out
+
+
+def over(rng):
+    out = np.zeros(n_of(800))
+    tone(out, 0.0, 523, 0.18, 0.14, "triangle")
+    tone(out, 0.15, 659, 0.18, 0.14, "triangle")
+    tone(out, 0.3, 784, 0.34, 0.14, "triangle")
+    return out
+
+
+def click(rng):
+    out = np.zeros(n_of(100))
+    hit(rng, out, 0.0, 3000, 2, 0.35, 0.015)
+    return out
+
+
 MAKERS = {"shuffle": shuffle, "deal": deal, "trump": trump, "lay": lay, "beat": beat,
           "take": take, "sweep": sweep, "draw": draw, "putdown": putdown, "pickup": pickup,
           "slip": slip, "swap": swap, "toss": toss, "deckin": deckin, "deckout": deckout,
-          "pick": pick}
+          "pick": pick, "piece": piece, "capture": capture, "crown": crown, "check": check,
+          "roll": roll, "over": over, "click": click}
 
 
 def finish(x):

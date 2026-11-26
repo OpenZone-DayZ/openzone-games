@@ -100,6 +100,17 @@ modded class OZG_GameMenu
     protected ref array<string> m_BWHostMoves;
     // The games of the menu, in its rows.
     protected ref array<string> m_BWMenuGames;
+    // The dice's tumble (the canvas: 0.6 s on every throw, heard on the place as a roll):
+    // the dice laid by the last paint and where they rest (units of their parents), the
+    // time gone (below 0: none), the roll last seen.
+    protected static const float BW_TUMBLE = 0.6;
+    protected ref array<Widget> m_BWTumbleW;
+    protected ref array<float> m_BWTumbleX;
+    protected ref array<float> m_BWTumbleY;
+    protected ref array<float> m_BWTumbleWd;
+    protected ref array<float> m_BWTumbleHt;
+    protected float m_BWTumbleT = -1;
+    protected int m_BWRollSeen;
 
     // ------------------------------------------------------------ which window
 
@@ -177,6 +188,11 @@ modded class OZG_GameMenu
         m_SawSquares = new array<int>();
         m_BWHostMoves = new array<string>();
         m_BWMenuGames = new array<string>();
+        m_BWTumbleW = new array<Widget>();
+        m_BWTumbleX = new array<float>();
+        m_BWTumbleY = new array<float>();
+        m_BWTumbleWd = new array<float>();
+        m_BWTumbleHt = new array<float>();
     }
 
     // The window was built anew: what was laid went with the old one.
@@ -206,6 +222,10 @@ modded class OZG_GameMenu
             m_BNBadges.Clear();
         m_BWShown = "";
         m_BWShownRev = -1;
+        BWTumbleClear();
+        m_BWTumbleT = -1;
+        // a throw heard before the window opened is not tumbled
+        m_BWRollSeen = OZG_Sounds.s_RollAt;
         m_BWMenuOpen = false;
         m_BWFoldAsk = false;
         PickClear();
@@ -426,6 +446,8 @@ modded class OZG_GameMenu
         }
         pic.SetColor(colour);
         pic.SetSort(prio);
+        // a picture of the pool may have been a die turned in its tumble
+        pic.SetRotation(0, 0, 0);
         PutAt(pic, x, y, w, h);
         return pic;
     }
@@ -790,12 +812,16 @@ modded class OZG_GameMenu
             BWSlAnswered();
         if (m_Style == "board_nardy")
         {
+            BWTumbleClear();
             BWNardyPaint();
+            BWTumbleApply();
             return;
         }
         if (m_Style == "dice")
         {
+            BWTumbleClear();
             DWPaint();
+            BWTumbleApply();
             return;
         }
         BWPoolsBegin();
@@ -1784,6 +1810,142 @@ modded class OZG_GameMenu
         }
     }
 
+    // ------------------------------------------------------------ the dice's tumble
+
+    protected void BWTumbleClear()
+    {
+        if (!m_BWTumbleW)
+            return;
+        m_BWTumbleW.Clear();
+        m_BWTumbleX.Clear();
+        m_BWTumbleY.Clear();
+        m_BWTumbleWd.Clear();
+        m_BWTumbleHt.Clear();
+    }
+
+    // A die (or its shadow) just laid at x, y, w x h units of its parent: it tumbles
+    // with the next throw heard, and with one under way.
+    protected void BWTumbleAdd(Widget w, float x, float y, float width, float height)
+    {
+        if (!w || !m_BWTumbleW)
+            return;
+        m_BWTumbleW.Insert(w);
+        m_BWTumbleX.Insert(x);
+        m_BWTumbleY.Insert(y);
+        m_BWTumbleWd.Insert(width);
+        m_BWTumbleHt.Insert(height);
+    }
+
+    // A throw heard on this window's place starts the tumble; the tumble runs its time.
+    protected void BWTickTumble(float dt)
+    {
+        if (OZG_Sounds.s_RollAt != m_BWRollSeen)
+        {
+            m_BWRollSeen = OZG_Sounds.s_RollAt;
+            Object place = OZG_Place.OZG_ById(m_PlaceId);
+            if (place && OZG_Sounds.s_RollOn == place)
+                m_BWTumbleT = 0;
+        }
+        if (m_BWTumbleT < 0)
+            return;
+        m_BWTumbleT = m_BWTumbleT + dt;
+        if (m_BWTumbleT >= BW_TUMBLE)
+            m_BWTumbleT = -1;
+        BWTumbleApply();
+    }
+
+    // The dice where the tumble has them now, or at rest.
+    protected void BWTumbleApply()
+    {
+        if (!m_BWTumbleW)
+            return;
+        float ty = 0;
+        float rot = 0;
+        float sc = 1;
+        if (m_BWTumbleT >= 0)
+            BWTumbleAt(m_BWTumbleT / BW_TUMBLE, ty, rot, sc);
+        for (int i = 0; i < m_BWTumbleW.Count(); i++)
+        {
+            Widget w = m_BWTumbleW[i];
+            if (!w)
+                continue;
+            float width = m_BWTumbleWd[i] * sc;
+            float height = m_BWTumbleHt[i] * sc;
+            float x = m_BWTumbleX[i] + (m_BWTumbleWd[i] - width) * 0.5;
+            float y = m_BWTumbleY[i] + (m_BWTumbleHt[i] - height) * 0.5 + ty;
+            w.SetPos(x * m_K, y * m_K);
+            w.SetSize(width * m_K, height * m_K);
+            w.SetRotation(0, 0, rot);
+        }
+    }
+
+    // The canvas's keyframes ozgTumble at `p` (0 .. 1): 0% lifted 30 and turned -220
+    // degrees at 0.88 of its size, 55% down 5, 14 degrees, 1.04; 78% up 3, -5 degrees, 1;
+    // 100% at rest; each stretch eased by cubic-bezier(0.2, 0.8, 0.3, 1), as CSS eases
+    // every stretch between two keyframes.
+    protected void BWTumbleAt(float p, out float ty, out float rot, out float sc)
+    {
+        float a = 0.78;
+        float b = 1;
+        float ya = -3;
+        float yb = 0;
+        float ra = -5;
+        float rb = 0;
+        float sa = 1;
+        float sb = 1;
+        if (p < 0.55)
+        {
+            a = 0;
+            b = 0.55;
+            ya = -30;
+            yb = 5;
+            ra = -220;
+            rb = 14;
+            sa = 0.88;
+            sb = 1.04;
+        }
+        else if (p < 0.78)
+        {
+            a = 0.55;
+            b = 0.78;
+            ya = 5;
+            yb = -3;
+            ra = 14;
+            rb = -5;
+            sa = 1.04;
+            sb = 1;
+        }
+        float e = BWEase((p - a) / (b - a));
+        ty = ya + (yb - ya) * e;
+        rot = ra + (rb - ra) * e;
+        sc = sa + (sb - sa) * e;
+    }
+
+    // cubic-bezier(0.2, 0.8, 0.3, 1) at x: the curve's t found by Newton's steps.
+    protected float BWEase(float x)
+    {
+        if (x <= 0)
+            return 0;
+        if (x >= 1)
+            return 1;
+        float t = x;
+        for (int i = 0; i < 8; i++)
+        {
+            float u = 1 - t;
+            float bx = 3 * u * u * t * 0.2 + 3 * u * t * t * 0.3 + t * t * t;
+            float dx = 0.6 * u * u + 0.6 * u * t + 2.1 * t * t;
+            if (dx < 0.0001)
+                break;
+            t = t - (bx - x) / dx;
+            if (t < 0)
+                t = 0;
+            if (t > 1)
+                t = 1;
+        }
+        float v = 1 - t;
+        return 2.4 * v * v * t + 3 * v * t * t + t * t * t;
+    }
+
     // ------------------------------------------------------------ the dialogs
 
     protected void BWPaintDialogs()
@@ -2549,6 +2711,7 @@ modded class OZG_GameMenu
         BWInit();
         if (m_BWSlideT.Count() > 0 || m_BWFadeW.Count() > 0)
             BWTickPieces(timeslice);
+        BWTickTumble(timeslice);
         // The sleight's timer, a second at a time; the line under the board, its time.
         m_BWWaitAge = m_BWWaitAge + timeslice;
         m_BWTickAge = m_BWTickAge + timeslice;

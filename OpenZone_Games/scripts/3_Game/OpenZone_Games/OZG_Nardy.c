@@ -637,6 +637,28 @@ class OZG_Nardy extends OZG_BoardDuel
         return best;
     }
 
+    // What the table hears (boards and dice design §15): the dice thrown; a disc set down,
+    // or a disc hit to the bar (the step written with "*").
+    override protected void DuelHeard(string move, int takenBefore, int kingsBefore)
+    {
+        if (move == OZG_NardyConst.M_THROW)
+        {
+            HearSound(OZG_SoundIds.ROLL);
+            return;
+        }
+        bool hit = false;
+        int n = m_Hist.Count();
+        if (n > 0)
+        {
+            string last = m_Hist[n - 1];
+            hit = last.IndexOf("*") >= 0;
+        }
+        if (hit)
+            HearSound(OZG_SoundIds.CAPTURE);
+        else
+            HearSound(OZG_SoundIds.PIECE);
+    }
+
     override protected void DuelApply(string move)
     {
         if (move == OZG_NardyConst.M_THROW)

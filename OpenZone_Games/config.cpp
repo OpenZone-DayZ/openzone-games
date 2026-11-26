@@ -870,6 +870,48 @@ class CfgSoundShaders
         volume = 0.30;
         range = 15;
     };
+    class OZG_Piece_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_piece", 1}};
+        volume = 0.45;
+        range = 15;
+    };
+    class OZG_Capture_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_capture", 1}};
+        volume = 0.50;
+        range = 15;
+    };
+    class OZG_Crown_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_crown", 1}};
+        volume = 0.30;
+        range = 15;
+    };
+    class OZG_Check_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_check", 1}};
+        volume = 0.25;
+        range = 15;
+    };
+    class OZG_Roll_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_roll", 1}};
+        volume = 0.45;
+        range = 15;
+    };
+    class OZG_Over_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_over", 1}};
+        volume = 0.30;
+        range = 15;
+    };
+    class OZG_Click_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_click", 1}};
+        volume = 0.25;
+        range = 15;
+    };
 };
 class CfgSoundSets
 {
@@ -937,6 +979,34 @@ class CfgSoundSets
     class OZG_Pick_SoundSet: baseCharacter_SoundSet
     {
         soundShaders[] = {"OZG_Pick_SoundShader"};
+    };
+    class OZG_Piece_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_Piece_SoundShader"};
+    };
+    class OZG_Capture_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_Capture_SoundShader"};
+    };
+    class OZG_Crown_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_Crown_SoundShader"};
+    };
+    class OZG_Check_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_Check_SoundShader"};
+    };
+    class OZG_Roll_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_Roll_SoundShader"};
+    };
+    class OZG_Over_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_Over_SoundShader"};
+    };
+    class OZG_Click_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_Click_SoundShader"};
     };
 };
 // <<< generated: sounds

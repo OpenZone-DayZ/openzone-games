@@ -17,6 +17,11 @@ class OZG_Sounds
     // wraps at COUNT_ROOM, before count * COUNT_UNIT would pass 2^31.
     static const int SLOTS = 3;
     static const int ID_ROOM = 32;
+
+    // The last throw of dice heard on this client: on which thing, and when (mission
+    // time, ms). A board's window tumbles its dice with it (boards and dice design §15).
+    static Object s_RollOn;
+    static int s_RollAt;
     static const int COUNT_UNIT = 32768;
     static const int COUNT_ROOM = 65536;
 
@@ -306,6 +311,11 @@ class OZG_SoundPulse
         m_Heard = count;
         if (ids.Count() == 0)
             return;
+        if (ids.Find(OZG_SoundIds.ROLL) >= 0)
+        {
+            OZG_Sounds.s_RollOn = thing;
+            OZG_Sounds.s_RollAt = GetGame().GetTime();
+        }
         if (!m_Run)
             m_Run = new OZG_SoundRun(thing, why);
         m_Run.AddLot(ids);

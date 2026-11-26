@@ -513,6 +513,20 @@ class OZG_Draughts extends OZG_BoardDuel
         return m_Pos.Squares();
     }
 
+    // The kings on the board (W and B among LETTERS).
+    override protected int DuelKings()
+    {
+        string squares = m_Pos.Squares();
+        int n = 0;
+        for (int i = 0; i < squares.Length(); i++)
+        {
+            string c = squares.Substring(i, 1);
+            if (c == "W" || c == "B")
+                n++;
+        }
+        return n;
+    }
+
     override protected void DuelApply(string move)
     {
         array<string> moves = new array<string>();

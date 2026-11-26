@@ -1168,6 +1168,7 @@ class OZG_Chess extends OZG_Game
         m_Result = result;
         m_Reason = reason;
         m_Offer = -1;
+        HearSound(OZG_SoundIds.OVER);
     }
 
     protected string WinOf(int seat)
@@ -1247,6 +1248,16 @@ class OZG_Chess extends OZG_Game
         array<int> legal = new array<int>();
         m_Pos.ChLegal(legal);
         bool check = m_Pos.InCheck();
+        // What the table hears (boards and dice design §15): the piece set down, or a
+        // piece taken; a pawn crowned; check. The end is heard after them (End).
+        if (captured != 0)
+            HearSound(OZG_SoundIds.CAPTURE);
+        else
+            HearSound(OZG_SoundIds.PIECE);
+        if (OZG_ChessBoard.PromoOf(mv) != 0)
+            HearSound(OZG_SoundIds.CROWN);
+        if (check)
+            HearSound(OZG_SoundIds.CHECK);
         if (legal.Count() == 0)
         {
             if (check)

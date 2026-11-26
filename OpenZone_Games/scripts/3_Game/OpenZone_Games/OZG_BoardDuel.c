@@ -149,6 +149,25 @@ class OZG_BoardDuel extends OZG_Game
         return "";
     }
 
+    // How many crowned pieces stand on the board (draughts' kings): a crown is heard
+    // when there are more after a move.
+    protected int DuelKings()
+    {
+        return 0;
+    }
+
+    // What the table hears of a move (boards and dice design §15): the piece set down,
+    // or a piece taken; a piece crowned. The end is heard after them (End).
+    protected void DuelHeard(string move, int takenBefore, int kingsBefore)
+    {
+        if (m_Taken.Length() > takenBefore)
+            HearSound(OZG_SoundIds.CAPTURE);
+        else
+            HearSound(OZG_SoundIds.PIECE);
+        if (DuelKings() > kingsBefore)
+            HearSound(OZG_SoundIds.CROWN);
+    }
+
     // Does the position add up?
     protected bool DuelSound(out string why)
     {
@@ -327,6 +346,7 @@ class OZG_BoardDuel extends OZG_Game
         m_Result = result;
         m_Reason = reason;
         m_Offer = -1;
+        HearSound(OZG_SoundIds.OVER);
     }
 
     protected string WinOfSide(int side)
@@ -390,7 +410,10 @@ class OZG_BoardDuel extends OZG_Game
         DuelLegal(legal);
         if (legal.Find(move) < 0)
             return false;
+        int takenBefore = m_Taken.Length();
+        int kingsBefore = DuelKings();
         DuelApply(move);
+        DuelHeard(move, takenBefore, kingsBefore);
         // A move answers the other side's offer with no.
         if (m_Offer == other)
             m_Offer = -1;

@@ -311,6 +311,7 @@ modded class OZG_GameMenu
             pic.SetPos(i * 36 * m_K, 0);
             pic.SetSize(30 * m_K, 30 * m_K);
             pic.Show(true);
+            BWTumbleAdd(pic, i * 36, 0, 30, 30);
         }
         TextWidget note = BWText(p + "Note");
         if (note)
@@ -374,8 +375,10 @@ modded class OZG_GameMenu
             if (picked)
                 y = y - 12;
             m_DWDieX.Insert(x + size / 2);
-            BWPic(BW_FIELD, "set:ozg_dice image:die_s", x, y + 6, size, size, 30, ARGB(255, 255, 255, 255));
-            BWPic(BW_FIELD, "set:ozg_dice image:" + look + "_" + m_DWDice[i].ToString(), x, y, size, size, 31, ARGB(255, 255, 255, 255));
+            ImageWidget dieShadow = BWPic(BW_FIELD, "set:ozg_dice image:die_s", x, y + 6, size, size, 30, ARGB(255, 255, 255, 255));
+            BWTumbleAdd(dieShadow, x, y + 6, size, size);
+            ImageWidget diePic = BWPic(BW_FIELD, "set:ozg_dice image:" + look + "_" + m_DWDice[i].ToString(), x, y, size, size, 31, ARGB(255, 255, 255, 255));
+            BWTumbleAdd(diePic, x, y, size, size);
             if (picked)
                 BWPic(BW_FIELD, BW_TEX + "ozg_ring4_ca.paa", x - 6, y - 6, size + 12, size + 12, 32, ARGB(255, 231, 194, 122));
         }
@@ -515,6 +518,7 @@ modded class OZG_GameMenu
             pic.SetPos(i * 36 * m_K, 0);
             pic.SetSize(30 * m_K, 30 * m_K);
             pic.Show(true);
+            BWTumbleAdd(pic, i * 36, 0, 30, 30);
         }
     }
 

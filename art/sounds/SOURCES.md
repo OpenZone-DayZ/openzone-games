@@ -17,3 +17,12 @@ The six sounds of the sleights (card sharp's design §6.1: `slip`, `swap`, `toss
 `deckin`, `deckout`, `pick`, added 2026-11-25) are made the same way and are
 quieter (`volume` 0.30): each is played on the client of the one who does the
 sleight and on the clients of those who saw it, never through the place.
+
+The seven sounds of the boards and the dice (boards and dice design §15: `piece`,
+`capture`, `crown`, `check`, `roll`, `over`, `click`, added 2026-11-26) are the
+design canvas's mockups' own, made the same way: the mockups build them in the
+browser out of band-passed noise bursts and short oscillator tones, and the script
+builds them out of the same numbers -- the same filter (the browser's band-pass
+biquad), the same envelopes, the same frequencies and timings. All but `click` are
+heard on the place, as the cards are; `click`, the card sharp's kit at work, only on
+the client of the one who works it.
