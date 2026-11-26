@@ -296,7 +296,17 @@ def window():
     k.append(frame("OZG_BSeen", exact(430, 822, 740, 41), 60, [
         box("OZG_BSeenBox", 0, 0, 740, 41, 6, "#1c120a", "#ff8a3d", outside=True, prio=0),
         text("OZG_BSeenText", 16, 10, 708, 21, 15, "s", "#f6e8d6", 3, "center")], [("visible", 0)]))
+    k += dialogs(menu_y=138)
+    attrs = [("ignorepointer", 1), ("clipchildren", 0), ("position", "0 0"), ("size", "1600 900"),
+             ("halign", "center_ref"), ("valign", "center_ref"),
+             ("hexactpos", 1), ("vexactpos", 1), ("hexactsize", 1), ("vexactsize", 1), ("priority", 3)]
+    return block("FrameWidgetClass", "OZG_BWin", attrs, k)
 
+
+def dialogs(menu_y):
+    """What opens over a board's window: the game menu under the game's button, the pawn's
+    promotion over the board, the game over, folding the game asked."""
+    k = []
     # ---- the game menu: the games of this board
     mn = [box("OZG_BMenuBox", 0, 0, 230, 290, 6, DIALOG, DIALOG_EDGE, outside=True, prio=0),
           text("OZG_BMenuHead", 16, 12, 200, 14, 11, "s", GOLD, 3, "left", "")]
@@ -307,7 +317,7 @@ def window():
             text("OZG_BMenuItem%dText" % i, 10, 8, 200, 17, 14, "s", INK, 2)]))
     mn.append(text("OZG_BMenuFoot0", 16, 248, 200, 15, 12, "s", FAINT, 3, "left", ""))
     mn.append(text("OZG_BMenuFoot1", 16, 263, 200, 15, 12, "s", FAINT, 3, "left", ""))
-    k.append(frame("OZG_BMenu", exact(30, 138, 230, 290), 80, mn, [("visible", 0)]))
+    k.append(frame("OZG_BMenu", exact(30, menu_y, 230, 290), 80, mn, [("visible", 0)]))
 
     # ---- the pawn's promotion, over the board
     pr = [panel("OZG_BPromoDim", exact(0, 0, 880, 880), "0.039 0.024 0.012 0.55", 0),
@@ -340,11 +350,119 @@ def window():
         for bname, bx, bw, fill, ring, label, face, ink in buttons:
             d.append(btn(name + "Btn" + bname, 594 + bx, by, bw, 40, 4, fill, ring, label, 14, face, ink, prio=6))
         k.append(frame(name, exact(0, 0, 1600, 900), 95, d, [("visible", 0)]))
+    return k
 
+
+def small_plate(prefix, x, y, ring, me):
+    """A player's plate at nardy (the canvas's boards of nardy): his checker in a round
+    frame, his name, his side and how far he has to go, the chip."""
+    k = [box(prefix + "Plate", 0, 0, 330, 66, 8, PANEL, ring, prio=0),
+         image(prefix + "AvPic", exact(12, 10, 46, 46), 5, None),
+         text(prefix + "Name", 68, 14.5, 175, 20, 16, "b", INK, 5),
+         text(prefix + "Side", 68, 36.5, 175, 15, 12, "s", MUTED, 5)]
+    if me:
+        k.append(text(prefix + "You", 68, 14.5, 60, 20, 16, "s", MUTED, 5, "left", "#STR_OZG_BWIN_YOU"))
+    chip = [shape(prefix + "ChipBg", 0, 0, 76, 24, 12, rgb("#282b1c"), 0, overlap=0),
+            text(prefix + "ChipText", 10, 4.5, 56, 15, 12, "b", OK, 2)]
+    k.append(frame(prefix + "Chip", exact(242, 21, 76, 24), 6, chip))
+    return frame(prefix, exact(x, y, 330, 66), 10, k)
+
+
+def off_tray(name, x, title_key, ring, hit):
+    """Where a side's discs borne off lie: a bar for each, the count under them."""
+    k = [box(name + "Box", 0, 0, 161, 106, 8, DEEP, ring, prio=0),
+         text(name + "Title", 0, 8, 161, 14, 11, "s", GOLD, 3, "center", ""),
+         frame(name + "Stack", exact(48, 26, 64, 52), 3),
+         text(name + "Count", 0, 82, 161, 16, 13, "s", LOG_INK, 3, "center", "")]
+    if hit:
+        return button(name, x, 460, 161, 106, 10, k)
+    return frame(name, exact(x, 460, 161, 106), 10, k)
+
+
+def window_nardy():
+    """The board's other side (the canvas's boards "Довгі нарди" and "Короткі нарди"): the
+    points, the bar and the dice on the board; left the game, the other player and the
+    throw; right the log, the discs borne off, sleight of hand, the draw and resignation,
+    the player."""
+    k = []
+    k.append(panel("OZG_BBack", exact(0, 0, 1600, 900), rgb(BG), 0))
+    k.append(frame("OZG_BShadowClip", exact(0, 0, 1600, 900), 1, [
+        image("OZG_BShadow", exact(280, -52, 1040, 1040), 0, "ozg_bshadow_ca", "0 0 0 0.7")], clip=1))
+    k.append(panel("OZG_BRim", exact(359, 9, 882, 882), rgb("#020201"), 2))
+    k.append(image("OZG_BBoard", exact(360, 10, 880, 880), 3, None))
+    # what the script lays on the board: the whole board's frame, as at chess its field
+    k.append(frame("OZG_BField", exact(360, 10, 880, 880), 4))
+    k.append(button("OZG_BHit", 360, 10, 880, 880, 8, None))
+
+    # ---- left: the game; the other player; the throw
+    t = [box("OZG_BTitleBox", 0, 0, 330, 146, 8, PANEL, EDGE_TITLE, prio=0),
+         text("OZG_BTitle", 14, 11, 302, 40, 30, "p", INK, 3),
+         text("OZG_BSub0", 14, 57, 302, 18, 13, "s", MUTED, 3),
+         text("OZG_BSub1", 14, 75, 302, 18, 13, "s", MUTED, 3),
+         btn("OZG_BBtnGame", 14, 100, 147, 34, 4, BTN, BTN_EDGE, "", 13, "s", INK, label_w=131),
+         btn("OZG_BBtnDice", 169, 100, 147, 34, 4, "#221810", "#4a3726", "", 13, "s", MUTED)]
+    k.append(frame("OZG_BTitleCol", exact(16, 10, 330, 146), 10, t))
+    k.append(image("OZG_BBtnGameChev", exact(133.5, 122, 10, 10), 25, "ozg_icon_chev_ca", rgb(GOLD)))
+    k.append(small_plate("OZG_BOpp", 16, 166, EDGE, False))
+    th = [box("OZG_BThrowBox", 0, 0, 330, 196, 8, SL_BG, GOLD, prio=0),
+          text("OZG_BThrowTitle", 12, 12, 160, 22, 17, "p", INK, 3, "left", "#STR_OZG_BWIN_THROW_TITLE"),
+          text("OZG_BThrowWhose", 150, 15.5, 168, 15, 12, "s", MUTED, 3, "right"),
+          text("OZG_BThrowText0", 12, 45, 306, 19, 14, "s", LOG_INK, 3),
+          text("OZG_BThrowText1", 12, 64, 306, 19, 14, "s", LOG_INK, 3),
+          btn("OZG_BBtnThrow", 12, 92, 306, 44, 4, GOLD, None, "#STR_OZG_BWIN_THROW", 15, "b", "#1a120a", prio=6),
+          btn("OZG_BBtnSwap", 12, 146, 306, 38, 4, BTN, BTN_EDGE, "#STR_OZG_BWIN_SWAP", 13, "s", INK, prio=6)]
+    k.append(frame("OZG_BThrow", exact(16, 242, 330, 196), 10, th))
+    sw = [box("OZG_BSwapBox", 0, 0, 330, 110, 6, "#2a1d12", BTN_EDGE, prio=0),
+          text("OZG_BSwapHint", 12, 8, 306, 18, 13, "s", LOG_INK, 3)]
+    for i, (x, y) in enumerate(((12, 32), (169, 32), (12, 70), (169, 70))):
+        sw.append(btn("OZG_BSwapPick%d" % i, x, y, 149, 34, 4, SL_BTN, BTN_EDGE, "", 13, "s", INK, prio=6, visible=0))
+    k.append(frame("OZG_BSwap", exact(16, 448, 330, 110), 12, sw, [("visible", 0)]))
+    for i, (x, y) in enumerate(((16, 824), (184, 824), (16, 860), (184, 860))):
+        k.append(btn("OZG_BHost%d" % i, x, y, 162, 30, 4, BTN, BTN_EDGE, "", 12, "s", INK, prio=20, visible=0))
+
+    # ---- right: close, the log, the discs borne off, sleight of hand, draw and resign, me
+    k.append(button("OZG_BBtnClose", 1548, 10, 36, 34, 30, [
+        box("OZG_BBtnCloseBox", 0, 0, 36, 34, 4, CLOSE, prio=0),
+        image("OZG_BBtnCloseX", exact(12, 11, 12, 12), 2, "ozg_icon_x_ca", rgb(CLOSE_INK))]))
+    lg = [box("OZG_BLogBox", 0, 0, 330, 396, 8, DEEP, EDGE, prio=0),
+          text("OZG_BLogTitle", 12, 10, 306, 14, 11, "s", GOLD, 3, "left", "")]
+    for i in range(LOG_LINES):
+        lg.append(text("OZG_BLog%d" % i, 12, 30 + i * 18, 306, 18, 13, "s", LOG_INK, 3, "left", "", [("visible", 0)]))
+    k.append(frame("OZG_BLog", exact(1254, 54, 330, 396), 10, lg, clip=1))
+    k.append(off_tray("OZG_BOffB", 1254, "", EDGE, False))
+    k.append(off_tray("OZG_BOffW", 1423, "", EDGE, True))
+    sl = [box("OZG_BSlBox", 0, 0, 330, 186, 8, SL_BG, BTN_EDGE, prio=0),
+          text("OZG_BSlTitle", 12, 12, 240, 22, 17, "p", INK, 3, "left", "#STR_OZG_BWIN_SLEIGHTS"),
+          text("OZG_BSlCool", 146, 15.5, 172, 15, 12, "b", OK, 3, "right", "")]
+    for name, x, y, key in (("OZG_BSlMove", 12, 42, "MOVE"), ("OZG_BSlSwap", 169, 42, "NSWAP"),
+                            ("OZG_BSlBack", 12, 90, "NBACK"), ("OZG_BSlOff", 169, 90, "NOFF")):
+        sl.append(btn(name, x, y, 149, 40, 4, SL_BTN, BTN_EDGE, "#STR_OZG_BWIN_SL_" + key, 13, "b", INK, prio=6))
+    sl.append(text("OZG_BSlMsg0", 12, 139, 306, 18, 13, "s", MUTED, 3))
+    sl.append(text("OZG_BSlMsg1", 12, 157, 306, 18, 13, "s", MUTED, 3))
+    k.append(frame("OZG_BSl", exact(1254, 576, 330, 186), 10, sl))
+    k.append(btn("OZG_BBtnDraw", 1254, 772, 162, 42, 4, BTN, BTN_EDGE, "#STR_OZG_BWIN_DRAW", 14, "s", INK))
+    k.append(btn("OZG_BBtnResign", 1424, 772, 160, 42, 4, RED_BTN, None, "#STR_OZG_BWIN_RESIGN", 14, "b", RED_INK))
+    k.append(small_plate("OZG_BMe", 1254, 824, GOLD, True))
+
+    # ---- under the board, the canvas's "seen" line; the dialogs as at chess
+    k.append(frame("OZG_BSeen", exact(430, 822, 740, 41), 60, [
+        box("OZG_BSeenBox", 0, 0, 740, 41, 6, "#1c120a", "#ff8a3d", outside=True, prio=0),
+        text("OZG_BSeenText", 16, 10, 708, 21, 15, "s", "#f6e8d6", 3, "center")], [("visible", 0)]))
+    k += dialogs(menu_y=158)
     attrs = [("ignorepointer", 1), ("clipchildren", 0), ("position", "0 0"), ("size", "1600 900"),
              ("halign", "center_ref"), ("valign", "center_ref"),
              ("hexactpos", 1), ("vexactpos", 1), ("hexactsize", 1), ("vexactsize", 1), ("priority", 3)]
-    return block("FrameWidgetClass", "OZG_BWin", attrs, k)
+    return block("FrameWidgetClass", "OZG_BWinNardy", attrs, k)
+
+
+def badge():
+    """How many discs stand on a point when they are more than show (the canvas: a pill of
+    30 x 22, 88% dark, the number in bold)."""
+    kids = [shape("OZG_BWBadgeBg", 0, 0, 30, 22, 11, "0.078 0.047 0.024 0.88", 0, overlap=0),
+            text("OZG_BWBadgeText", 0, 0, 30, 22, 13, "b", "#f2e6cf", 2, "center", "")]
+    return block("FrameWidgetClass", "OZG_BWBadge",
+                 [("ignorepointer", 1), ("clipchildren", 0)] + exact(0, 0, 30, 22) + [("priority", 40)],
+                 kids)
 
 
 def piece_pic():
@@ -483,8 +601,10 @@ def main():
     if "--layouts" not in sys.argv:
         textures(paa)
     write("ozg_bwin.layout", window())
+    write("ozg_bwin_nardy.layout", window_nardy())
     write("ozg_bwpic.layout", piece_pic())
     write("ozg_bwtint.layout", square_tint())
+    write("ozg_bwbadge.layout", badge())
 
 
 if __name__ == "__main__":

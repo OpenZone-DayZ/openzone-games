@@ -376,10 +376,16 @@ class OZG_GameMenu : UIScriptedMenu
     }
 
     // The board games' window (OZG_GameMenuBoard.c): whether the game is a board's,
-    // the window's widgets found once built, the window painted from the view.
+    // which of its two windows ("board", "board_nardy"; "" for none), the window's
+    // widgets found once built, the window painted from the view.
     protected bool BoardWindow()
     {
         return false;
+    }
+
+    protected string BoardStyle()
+    {
+        return "";
     }
 
     protected void BoardWinFind()
@@ -393,7 +399,7 @@ class OZG_GameMenu : UIScriptedMenu
     // The window in one look; a look already shown is put away first.
     protected void Build(string style)
     {
-        if (style != "stalker" && style != "board")
+        if (style != "stalker" && style != "board" && style != "board_nardy")
             style = "classic";
         // Nothing of the old look flies or shakes on: its cards go with it.
         LandAll();
@@ -407,11 +413,15 @@ class OZG_GameMenu : UIScriptedMenu
         m_Win = null;
         GenForget();
         m_Style = style;
-        // A board's window: the canvas's board (tools/make_board_win.py).
-        if (style == "board")
+        // A board's window: the canvas's boards (tools/make_board_win.py), the field's
+        // side or the nardy side.
+        if (style == "board" || style == "board_nardy")
         {
             m_Look = OZG_TableLook.Of("classic");
-            m_Win = MakeLayout("OpenZone_Games/gui/layouts/ozg_bwin.layout", layoutRoot, "OZG_BWin");
+            if (style == "board_nardy")
+                m_Win = MakeLayout("OpenZone_Games/gui/layouts/ozg_bwin_nardy.layout", layoutRoot, "OZG_BWinNardy");
+            else
+                m_Win = MakeLayout("OpenZone_Games/gui/layouts/ozg_bwin.layout", layoutRoot, "OZG_BWin");
             if (!m_Win)
                 return;
             Measure();
@@ -1660,8 +1670,9 @@ class OZG_GameMenu : UIScriptedMenu
         string style = m_V.Style;
         if (style != "stalker")
             style = "classic";
-        if (BoardWindow())
-            style = "board";
+        string boardStyle = BoardStyle();
+        if (boardStyle != "")
+            style = boardStyle;
         bool rebuilt = false;
         if (style != m_Style || !m_Win)
         {
@@ -1702,7 +1713,7 @@ class OZG_GameMenu : UIScriptedMenu
         }
 
         Measure();
-        if (m_Style == "board")
+        if (m_Style == "board" || m_Style == "board_nardy")
         {
             BoardWinPaint();
             return;
@@ -3237,7 +3248,7 @@ class OZG_GameMenu : UIScriptedMenu
     protected void RefreshPockets(float dt)
     {
         // A board's window has no pockets (its sleights are on the field).
-        if (m_Style == "board")
+        if (m_Style == "board" || m_Style == "board_nardy")
             return;
         m_PocketsAge = m_PocketsAge + dt;
         if (m_PocketsAge < 0.5)

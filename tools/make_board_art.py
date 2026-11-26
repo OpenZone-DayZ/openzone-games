@@ -136,6 +136,66 @@ def fit_script():
     print("wrote", os.path.relpath(out, REPO))
 
 
+def tops(skill):
+    """The nardy board's checkers, seen from above (the canvas's boards of nardy): the disc's
+    top face in a circle, a little darker at its bottom edge (CSS inset 0 -2px 0, 25%
+    black); classic ivory and jet from the disc model's pictures, the stalker ones with
+    their faces; one round shadow for all (0 3px 4px, 60%)."""
+    size = 128
+    sources = {
+        "classic_w": os.path.join(REPO, "models", "disc", "data", "ozg_disc_white_co.png"),
+        "classic_b": os.path.join(REPO, "models", "disc", "data", "ozg_disc_black_co.png"),
+        "stalker_w": (os.path.join(REPO, "models", "disc", "data", "ozg_disc_stalker_white_co.png"), 0),
+        "stalker_b": (os.path.join(REPO, "models", "disc", "data", "ozg_disc_stalker_black_co.png"), 0),
+    }
+    ss = 4
+    mask = Image.new("L", (size * ss, size * ss), 0)
+    from PIL import ImageDraw
+    ImageDraw.Draw(mask).ellipse((0, 0, size * ss - 1, size * ss - 1), fill=255)
+    mask = mask.resize((size, size), LANCZOS)
+    # the inset shade: the circle less itself moved 2/54 of the size up, darkened
+    lift = int(round(size * 2 / 54.0))
+    moved = Image.new("L", (size, size), 0)
+    moved.paste(mask, (0, -lift))
+    crescent = Image.eval(Image.merge("L", [mask]), lambda v: v)
+    crescent = Image.composite(Image.new("L", (size, size), 0), crescent, moved)
+    with tempfile.TemporaryDirectory() as tmp:
+        for name, src in sources.items():
+            if isinstance(src, tuple):
+                sheet = Image.open(src[0]).convert("RGB")
+                face = sheet.crop((src[1] * 256, 0, src[1] * 256 + 256, 256))
+            else:
+                face = Image.open(src).convert("RGB")
+            face = face.resize((size, size), LANCZOS).convert("RGBA")
+            shade = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+            shade.putalpha(crescent.point(lambda v: int(v * 0.25)))
+            face = Image.alpha_composite(face, shade)
+            face.putalpha(mask)
+            face.save(os.path.join(tmp, "top_%s.png" % name))
+        ring = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+        ring.putalpha(mask)
+        shadow(ring, 2.0 * size / 54, 0.6).save(os.path.join(tmp, "top_s.png"))
+        pack("ozg_discs_top", tmp, skill)
+
+
+def dice(skill):
+    """The dice as the windows draw them (the canvas's nardy and dice boards): each face of
+    each look, square on with round corners (models/src/die_looks.py writes
+    art/dice/<look>_<n>.png), and one shadow (0 6px 12px, 55%)."""
+    src = os.path.join(REPO, "art", "dice")
+    with tempfile.TemporaryDirectory() as tmp:
+        first = None
+        for f in sorted(os.listdir(src)):
+            if not f.endswith(".png"):
+                continue
+            img = Image.open(os.path.join(src, f)).convert("RGBA")
+            img.save(os.path.join(tmp, f))
+            first = first or img
+        if first:
+            shadow(first, 6.0 * first.width / 62, 0.55).save(os.path.join(tmp, "die_s.png"))
+        pack("ozg_dice", tmp, skill)
+
+
 def discs(skill, take_from):
     dst = os.path.join(REPO, "art", "discs", "stalker")
     os.makedirs(dst, exist_ok=True)
@@ -168,6 +228,10 @@ def main():
         fit_script()
     if args.only in ("", "discs"):
         discs(args.skill, args.discs_from)
+    if args.only in ("", "tops"):
+        tops(args.skill)
+    if args.only in ("", "dice"):
+        dice(args.skill)
 
 
 if __name__ == "__main__":

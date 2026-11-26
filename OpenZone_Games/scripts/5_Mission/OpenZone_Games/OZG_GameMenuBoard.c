@@ -103,6 +103,22 @@ modded class OZG_GameMenu
 
     // ------------------------------------------------------------ which window
 
+    // Which of the board's two windows: nardy plays on the board's other side.
+    override protected string BoardStyle()
+    {
+        if (!BoardWindow())
+            return "";
+        if (m_V.GameId == OZG_NardyConst.LONG_ID || m_V.GameId == OZG_NardyConst.SHORT_ID)
+            return "board_nardy";
+        return "board";
+    }
+
+    // The board's window is up (either of the two).
+    protected bool BWUp()
+    {
+        return m_Style == "board" || m_Style == "board_nardy";
+    }
+
     // A board game, or a board laid out whose game is not chosen yet.
     override protected bool BoardWindow()
     {
@@ -182,6 +198,8 @@ modded class OZG_GameMenu
         m_BWPieceY.Clear();
         m_BWPieceA.Clear();
         BWSlidesClear();
+        if (m_BNBadges)
+            m_BNBadges.Clear();
         m_BWShown = "";
         m_BWShownRev = -1;
         m_BWMenuOpen = false;
@@ -459,7 +477,8 @@ modded class OZG_GameMenu
             JsonFileLoader<OZG_BPublic>.LoadData(view.Shared, m_BPub, err);
         if (view.Own != "")
             JsonFileLoader<OZG_BPrivate>.LoadData(view.Own, m_BOwn, err);
-        if (m_BPub && m_BPub.Board.Length() != 64)
+        // nardy's position is its points (OZG_GameMenuNardy.c), the rest the 64 squares
+        if (m_BPub && m_BPub.Board.Length() != 64 && m_BPub.Points == "")
             m_BPub = null;
     }
 
@@ -765,6 +784,11 @@ modded class OZG_GameMenu
         // A sleight this player asked for and the server did: told in the panel.
         if (m_BWSlSent)
             BWSlAnswered();
+        if (m_Style == "board_nardy")
+        {
+            BWNardyPaint();
+            return;
+        }
         BWPoolsBegin();
         BWPaintTitle();
         BWPaintPlate("OZG_BOpp", BWTopSeat(), false);
@@ -1967,7 +1991,12 @@ modded class OZG_GameMenu
         PickClear();
         BWSlClear();
         m_BWSl = kind;
-        BWSay(Tr("STR_OZG_BWIN_SL_HINT_" + BWUpper(kind)), 1);
+        string hint = "STR_OZG_BWIN_SL_HINT_";
+        if (m_Style == "board_nardy")
+            hint = "STR_OZG_BWIN_SL_NHINT_";
+        else if (BoardDiscs())
+            hint = "STR_OZG_BWIN_SL_DHINT_";
+        BWSay(Tr(hint + BWUpper(kind)), 1);
         BoardWinPaint();
     }
 
@@ -2121,7 +2150,7 @@ modded class OZG_GameMenu
         line.Replace("%1", SeatName(saw.SeatNo));
         line.Replace("%2", saw.A);
         line.Replace("%3", saw.B);
-        if (m_Style == "board")
+        if (BWUp())
         {
             BWToast(line, true);
             BoardWinPaint();
@@ -2140,7 +2169,7 @@ modded class OZG_GameMenu
     // A refusal or a note: in the panel when a sleight was asked, else under the board.
     override void Said(string text)
     {
-        if (m_Style != "board")
+        if (!BWUp())
         {
             super.Said(text);
             return;
@@ -2346,7 +2375,7 @@ modded class OZG_GameMenu
 
     override bool OnClick(Widget w, int x, int y, int button)
     {
-        if (m_Style != "board")
+        if (!BWUp())
             return super.OnClick(w, x, y, button);
         if (!w || button != MouseState.LEFT || !m_V)
             return false;
@@ -2402,6 +2431,9 @@ modded class OZG_GameMenu
             BoardWinPaint();
             return true;
         }
+        // nardy's board and its own buttons (OZG_GameMenuNardy.c)
+        if (m_Style == "board_nardy" && BNClick(n))
+            return true;
         if (n == "OZG_BHit")
         {
             BWFieldClick();
@@ -2497,7 +2529,7 @@ modded class OZG_GameMenu
     override void Update(float timeslice)
     {
         super.Update(timeslice);
-        if (m_Style != "board" || !m_Win || m_Closing || !m_V)
+        if (!BWUp() || !m_Win || m_Closing || !m_V)
             return;
         BWInit();
         if (m_BWSlideT.Count() > 0 || m_BWFadeW.Count() > 0)

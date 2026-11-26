@@ -1,0 +1,236 @@
+ImageSetClass {
+ Name "ozg_dice"
+ RefSize 512 1024
+ Textures {
+  ImageSetTextureClass {
+   mpix 1
+   path "OpenZone_Games/gui/imagesets/ozg_dice_ca.paa"
+  }
+ }
+ Images {
+  ImageSetDefClass black_1 {
+   Name "black_1"
+   Pos 2 2
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass black_2 {
+   Name "black_2"
+   Pos 100 2
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass black_3 {
+   Name "black_3"
+   Pos 198 2
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass black_4 {
+   Name "black_4"
+   Pos 296 2
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass black_5 {
+   Name "black_5"
+   Pos 394 2
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass black_6 {
+   Name "black_6"
+   Pos 2 100
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass die_s {
+   Name "die_s"
+   Pos 100 100
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass red_1 {
+   Name "red_1"
+   Pos 198 100
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass red_2 {
+   Name "red_2"
+   Pos 296 100
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass red_3 {
+   Name "red_3"
+   Pos 394 100
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass red_4 {
+   Name "red_4"
+   Pos 2 198
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass red_5 {
+   Name "red_5"
+   Pos 100 198
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass red_6 {
+   Name "red_6"
+   Pos 198 198
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass stalker_1 {
+   Name "stalker_1"
+   Pos 296 198
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass stalker_2 {
+   Name "stalker_2"
+   Pos 394 198
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass stalker_3 {
+   Name "stalker_3"
+   Pos 2 296
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass stalker_4 {
+   Name "stalker_4"
+   Pos 100 296
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass stalker_5 {
+   Name "stalker_5"
+   Pos 198 296
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass stalker_6 {
+   Name "stalker_6"
+   Pos 296 296
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass stalker_black_1 {
+   Name "stalker_black_1"
+   Pos 394 296
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass stalker_black_2 {
+   Name "stalker_black_2"
+   Pos 2 394
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass stalker_black_3 {
+   Name "stalker_black_3"
+   Pos 100 394
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass stalker_black_4 {
+   Name "stalker_black_4"
+   Pos 198 394
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass stalker_black_5 {
+   Name "stalker_black_5"
+   Pos 296 394
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass stalker_black_6 {
+   Name "stalker_black_6"
+   Pos 394 394
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass stalker_red_1 {
+   Name "stalker_red_1"
+   Pos 2 492
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass stalker_red_2 {
+   Name "stalker_red_2"
+   Pos 100 492
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass stalker_red_3 {
+   Name "stalker_red_3"
+   Pos 198 492
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass stalker_red_4 {
+   Name "stalker_red_4"
+   Pos 296 492
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass stalker_red_5 {
+   Name "stalker_red_5"
+   Pos 394 492
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass stalker_red_6 {
+   Name "stalker_red_6"
+   Pos 2 590
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass white_1 {
+   Name "white_1"
+   Pos 100 590
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass white_2 {
+   Name "white_2"
+   Pos 198 590
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass white_3 {
+   Name "white_3"
+   Pos 296 590
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass white_4 {
+   Name "white_4"
+   Pos 394 590
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass white_5 {
+   Name "white_5"
+   Pos 2 688
+   Size 96 96
+   Flags 0
+  }
+  ImageSetDefClass white_6 {
+   Name "white_6"
+   Pos 100 688
+   Size 96 96
+   Flags 0
+  }
+ }
+ Groups {
+ }
+}

@@ -69,7 +69,9 @@ class CfgMods
                     "OpenZone_Games/gui/imagesets/ozg_marks.imageset",
                     "OpenZone_Games/gui/imagesets/ozg_pieces_classic.imageset",
                     "OpenZone_Games/gui/imagesets/ozg_pieces_stalker.imageset",
-                    "OpenZone_Games/gui/imagesets/ozg_discs_stalker.imageset"
+                    "OpenZone_Games/gui/imagesets/ozg_discs_stalker.imageset",
+                    "OpenZone_Games/gui/imagesets/ozg_discs_top.imageset",
+                    "OpenZone_Games/gui/imagesets/ozg_dice.imageset"
                 };
             };
         };

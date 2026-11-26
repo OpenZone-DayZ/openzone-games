@@ -1,0 +1,44 @@
+ImageSetClass {
+ Name "ozg_discs_top"
+ RefSize 512 512
+ Textures {
+  ImageSetTextureClass {
+   mpix 1
+   path "OpenZone_Games/gui/imagesets/ozg_discs_top_ca.paa"
+  }
+ }
+ Images {
+  ImageSetDefClass top_classic_b {
+   Name "top_classic_b"
+   Pos 2 2
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass top_classic_w {
+   Name "top_classic_w"
+   Pos 132 2
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass top_s {
+   Name "top_s"
+   Pos 262 2
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass top_stalker_b {
+   Name "top_stalker_b"
+   Pos 2 132
+   Size 128 128
+   Flags 0
+  }
+  ImageSetDefClass top_stalker_w {
+   Name "top_stalker_w"
+   Pos 132 132
+   Size 128 128
+   Flags 0
+  }
+ }
+ Groups {
+ }
+}

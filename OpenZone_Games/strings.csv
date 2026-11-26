@@ -880,3 +880,36 @@ STR_OZG_BOARD_STALKER_NAME,Дошка «3 в 1»: сталкерський на�
 STR_OZG_BOARD_STALKER_DESC,"Складна дерев'яна дошка зі сталкерським набором: сталкери проти мутантів у шахах, новачки проти бандитів у шашках, дві сталкерські кістки. Фігурки за моделями оригінальної трилогії S.T.A.L.K.E.R. (GSC Game World; неофіційно). Розкладіть її на столі, як колоду.","A folding wooden board with the stalker set: stalkers against mutants in chess, rookies against bandits in draughts, two stalker dice. The figurines are after the models of the original S.T.A.L.K.E.R. trilogy (GSC Game World; unofficial). Lay it out on a table as a deck."
 STR_OZG_CAN_STALKER_NAME,Банка зі сталкерськими кістками,Can of stalker dice
 STR_OZG_CAN_STALKER_DESC,Бляшана банка з кришкою і п'ятьма сталкерськими кістками: замість точок знаки радіації. Розкладіть її на столі для гри в кості.,A tin can with a lid and five stalker dice: radiation signs for pips. Lay it out on a table for a game of dice.
+STR_OZG_BWIN_THROW_TITLE,Кидок,Throw
+STR_OZG_BWIN_THROW,Кинути кості,Throw the dice
+STR_OZG_BWIN_SWAP,Підмінити кістку,Swap a die
+STR_OZG_BWIN_SL_NSWAP,Поміняти самотні,Swap lone ones
+STR_OZG_BWIN_SL_NBACK,Повернути винесену,Put one back
+STR_OZG_BWIN_SL_NOFF,Винести,Bear one off
+STR_OZG_BWIN_NARDY_SUB_LONG,"дошка «3 в 1», зворотний бік · без ударів, з голови по одній","3-in-1 board, the other side · no hitting, one from the head"
+STR_OZG_BWIN_NARDY_SUB_SHORT,"дошка «3 в 1», зворотний бік · удари, бар, марс і кокс","3-in-1 board, the other side · hitting, the bar, gammon and backgammon"
+STR_OZG_BWIN_DICE_CHIP,Кості: %1,Dice: %1
+STR_OZG_BWIN_TO_GO,%1 · до кінця %2 пунктів,%1 · %2 pips to go
+STR_OZG_BWIN_N_OVER,Партію закінчено.,The game is over.
+STR_OZG_BWIN_N_YOUR_THROW,Ваш кидок. Перед ним можна підмінити кістку.,Your throw. You may swap a die before it.
+STR_OZG_BWIN_N_MOVE,"Ходіть: шашка, потім пункт. Лишилось: %1.","Move: a disc, then a point. Left: %1."
+STR_OZG_BWIN_N_AWAY,%1 відійшов — стіл чекає на нього.,%1 is away: the table waits.
+STR_OZG_BWIN_N_THEIRS,Ходить %1.,%1 moves.
+STR_OZG_BWIN_SWAP_WHICH,Яку свою кістку підкласти?,Which of your dice goes in?
+STR_OZG_BWIN_SWAP_NONE,У вас немає своїх кісток.,You carry no dice of your own.
+STR_OZG_BWIN_SWAP_FOR,Замість якої кістки?,Instead of which die?
+STR_OZG_BWIN_SWAP_DIE,Кістка %1,Die %1
+STR_OZG_BWIN_OFF_B,Винесені чорні,Black borne off
+STR_OZG_BWIN_OFF_W,Винесені білі,White borne off
+STR_OZG_BWIN_OFF_COUNT,%1 з 15,%1 of 15
+STR_OZG_BWIN_SL_NHINT_MOVE,Переставити: оберіть шашку на пункті.,Move: pick a disc on a point.
+STR_OZG_BWIN_SL_NHINT_SWAP,Поміняти: оберіть самотню шашку.,Swap: pick a lone disc.
+STR_OZG_BWIN_SL_NHINT_BACK,"Повернути: клацніть свій лоток винесених, праворуч.","Put back: click your tray of discs borne off, right."
+STR_OZG_BWIN_SL_NHINT_OFF,Винести: оберіть шашку на пункті.,Bear off: pick a disc on a point.
+STR_OZG_BWIN_SL_NHINT_MOVE2,"Тепер пункт, куди її поставити.",Now the point to put it on.
+STR_OZG_BWIN_SL_NHINT_SWAP2,Тепер самотню шашку іншого кольору.,Now a lone disc of the other colour.
+STR_OZG_BWIN_SL_NHINT_BACK2,Тепер пункт для шашки.,Now the point for the disc.
+STR_OZG_BWIN_SL_DHINT_MOVE,Переставити: оберіть шашку на дошці.,Move: pick a disc on the board.
+STR_OZG_BWIN_SL_DHINT_SWAP,Поміняти місцями: оберіть першу шашку.,Swap: pick the first disc.
+STR_OZG_BWIN_SL_DHINT_BACK,Повернути: оберіть зняту шашку біля табличок.,"Put back: pick a disc taken, by the plates."
+STR_OZG_BWIN_SL_DHINT_OFF,Зняти: оберіть шашку.,Take off: pick a disc.

@@ -413,9 +413,22 @@ class OZG_BoardRead
             seen.Insert(face);
             if (looks != "")
                 looks = looks + ";";
-            looks = looks + face + "=" + LookOf(one.GetType());
+            string look = LookOf(one.GetType());
+            if (face == "Di")
+                look = DieLookOf(one.GetType());
+            looks = looks + face + "=" + look;
         }
         return looks;
+    }
+
+    // A die's look as the windows draw it (art/dice): "white", "black", "red", "stalker",
+    // "stalker_black", "stalker_red"; "white" when its config says none.
+    static string DieLookOf(string cls)
+    {
+        string look = GetGame().ConfigGetTextOut("CfgVehicles " + cls + " ozgDieLook");
+        if (look == "")
+            return "white";
+        return look;
     }
 
     // The faces of every piece the board on a place holds, one entry a piece,

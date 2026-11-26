@@ -1151,6 +1151,8 @@ def draw_board():
     for side, turned in (("white", False), ("black", True)):
         big = board_picture(random.Random(1126), 1024, turned)[0]
         save(big, "boards", "ozg_board_win_%s_co.png" % side, root=os.path.join(REPO, "art"))
+    # The board window's nardy side (the design canvas's boards of long and short nardy).
+    save(nardy_picture(random.Random(1130), 1024), "boards", "ozg_board_win_nardy_co.png", root=os.path.join(REPO, "art"))
 
 
 def draw_chess():
