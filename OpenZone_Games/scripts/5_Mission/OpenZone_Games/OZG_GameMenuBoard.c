@@ -106,6 +106,8 @@ modded class OZG_GameMenu
     // Which of the board's two windows: nardy plays on the board's other side.
     override protected string BoardStyle()
     {
+        if (DiceWindow())
+            return "dice";
         if (!BoardWindow())
             return "";
         if (m_V.GameId == OZG_NardyConst.LONG_ID || m_V.GameId == OZG_NardyConst.SHORT_ID)
@@ -116,7 +118,7 @@ modded class OZG_GameMenu
     // The board's window is up (either of the two).
     protected bool BWUp()
     {
-        return m_Style == "board" || m_Style == "board_nardy";
+        return m_Style == "board" || m_Style == "board_nardy" || m_Style == "dice";
     }
 
     // A board game, or a board laid out whose game is not chosen yet.
@@ -190,6 +192,8 @@ modded class OZG_GameMenu
             m_BWTintsUsed[i] = 0;
         }
         m_BWPoolParent[BW_FIELD] = BW("OZG_BField");
+        if (!m_BWPoolParent[BW_FIELD])
+            m_BWPoolParent[BW_FIELD] = BW("OZG_DField");
         m_BWPoolParent[BW_OPP] = BW("OZG_BOppTaken");
         m_BWPoolParent[BW_ME] = BW("OZG_BMeTaken");
         m_BWPieceW.Clear();
@@ -789,6 +793,11 @@ modded class OZG_GameMenu
             BWNardyPaint();
             return;
         }
+        if (m_Style == "dice")
+        {
+            DWPaint();
+            return;
+        }
         BWPoolsBegin();
         BWPaintTitle();
         BWPaintPlate("OZG_BOpp", BWTopSeat(), false);
@@ -848,7 +857,10 @@ modded class OZG_GameMenu
 
     protected bool BWMenuAllowed()
     {
-        return m_V.IsHost == 1 && !BWPlaying() && m_V.GameIds.Count() > 1;
+        bool playing = BWPlaying();
+        if (m_Style == "dice")
+            playing = DWPlaying();
+        return m_V.IsHost == 1 && !playing && m_V.GameIds.Count() > 1;
     }
 
     // A player's plate: the pieces his side took, his king, his name and side, the chip.
@@ -2431,6 +2443,9 @@ modded class OZG_GameMenu
             BoardWinPaint();
             return true;
         }
+        // the dice games' window (OZG_GameMenuDice.c)
+        if (m_Style == "dice" && DWClick(n))
+            return true;
         // nardy's board and its own buttons (OZG_GameMenuNardy.c)
         if (m_Style == "board_nardy" && BNClick(n))
             return true;

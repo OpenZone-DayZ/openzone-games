@@ -455,6 +455,115 @@ def window_nardy():
     return block("FrameWidgetClass", "OZG_BWinNardy", attrs, k)
 
 
+def window_dice():
+    """The dice games' window (the canvas's boards "Тисяча", "Покер на кістках", "Свиня",
+    "Хто більше", "Перудо"; the frame they share measured on "Тисяча"): a header bar with the
+    game, its rules, the game and whose dice; the felt tray, the other players' panels and
+    the dice on it; right the score, what this player may do, the swap of a die, the log.
+    The panels on the tray, the zones and the buttons are placed by the script for the
+    game (OZG_GameMenuDice.c)."""
+    k = [panel("OZG_DBack", exact(0, 0, 1600, 900), rgb("#0b0a08"), 0),
+         box("OZG_DBox", 40, 28, 1520, 844, 8, "#15100b", "#4a3726", outside=True, prio=1),
+         shape("OZG_DHead", 40, 28, 1520, 46, 8, rgb("#1c140d"), 2),
+         panel("OZG_DHeadFoot", exact(40, 50, 1520, 23), rgb("#1c140d"), 2),
+         panel("OZG_DHeadLine", exact(40, 73, 1520, 1), rgb("#8a6a3e"), 3),
+         text("OZG_DTitle", 60, 35, 420, 31, 23, "p", INK, 5),
+         text("OZG_DSub", 200, 42.5, 760, 16, 13, "s", MUTED, 5),
+         panel("OZG_DSep", exact(1250, 37.5, 1, 26), rgb("#4a3726"), 5),
+         btn("OZG_DBtnGame", 1265, 35.5, 160, 30, 4, BTN, BTN_EDGE, "", 13, "s", INK, prio=6),
+         btn("OZG_DBtnDice", 1375.5, 35.5, 132.5, 30, 4, "#241a12", BTN_EDGE, "", 13, "s", MUTED, prio=6),
+         button("OZG_DBtnClose", 1518, 35.5, 32, 30, 30, [
+             box("OZG_DBtnCloseBox", 0, 0, 32, 30, 4, CLOSE, prio=0),
+             image("OZG_DBtnCloseX", exact(10, 9, 12, 12), 2, "ozg_icon_x_ca", rgb(CLOSE_INK))])]
+    # the tray: its felt, what the script lays on it, the button that takes its clicks
+    tray = [shape("OZG_DTrayBg", 0, 0, 1100, 774, 6, rgb("#120c08"), 0),
+            image("OZG_DTrayPic", exact(0, 0, 1100, 774), 1, None),
+            frame("OZG_DField", exact(0, 0, 1100, 774), 20)]
+    for i in range(6):
+        s = "OZG_DSeat%d" % i
+        tray.append(frame(s, exact(68, 64, 300, 148), 10, [
+            box(s + "Box", 0, 0, 300, 148, 8, "#110b06", "#4a3726", prio=0),
+            text(s + "Name", 12, 16, 200, 20, 16, "b", INK, 3),
+            text(s + "Score", 150, 10, 138, 32, 24, "p", INK, 3, "right"),
+            frame(s + "Chip0", exact(12, 50, 149, 22), 3, [
+                shape(s + "Chip0Bg", 0, 0, 149, 22, 11, rgb("#362917"), 0, overlap=0),
+                text(s + "Chip0Text", 8, 3.5, 133, 15, 12, "b", "#e7c27a", 1)]),
+            frame(s + "Chip1", exact(12, 78, 149, 22), 3, [
+                shape(s + "Chip1Bg", 0, 0, 149, 22, 11, rgb("#1f1811"), 0, overlap=0),
+                text(s + "Chip1Text", 8, 3.5, 133, 15, 12, "b", MUTED, 1)]),
+            frame(s + "Dice", exact(12, 108, 276, 30), 3),
+            text(s + "Note", 180, 115.5, 108, 15, 12, "s", MUTED, 3)], [("visible", 0)]))
+    tray.append(text("OZG_DCentre0", 240, 364, 620, 20, 16, "s", "#b6ae9b", 6, "center"))
+    tray.append(text("OZG_DCentre1", 240, 384, 620, 20, 16, "s", "#b6ae9b", 6, "center"))
+    for i in range(3):
+        z = "OZG_DZone%d" % i
+        tray.append(frame(z, exact(68, 554, 120, 64), 10, [
+            box(z + "Box", 0, 0, 120, 64, 8, "#110b06", BTN_EDGE, prio=0),
+            text(z + "Label", 14, 24.5, 100, 15, 12, "s", GOLD, 3),
+            text(z + "Value", 60, 12, 50, 40, 30, "p", INK, 3, "right"),
+            frame(z + "Dice", exact(100, 17, 200, 30), 3)], [("visible", 0)]))
+    tray.append(text("OZG_DRule", 327, 577.5, 705, 17, 14, "s", LOG_INK, 6))
+    tray.append(button("OZG_DHit", 0, 0, 1100, 774, 30, None))
+    k.append(frame("OZG_DTray", exact(52, 86, 1100, 774), 4, tray, clip=1))
+
+    # the right column
+    col = [box("OZG_DColBox", 0, 0, 384, 774, 6, "#1e1610", "#3d2d1d", prio=0)]
+    sc = [shape("OZG_DScoreBg", 0, 0, 360, 130, 6, rgb("#221911"), 0),
+          text("OZG_DScoreTitle", 12, 10, 336, 14, 11, "s", GOLD, 2, "left", "")]
+    for i in range(6):
+        y = 30 + i * 32
+        sc += [shape("OZG_DScoreRow%d" % i, 12, y, 336, 26, 4, rgb("#3d2f1d"), 1, extra=[("visible", 0)]),
+               text("OZG_DScoreName%d" % i, 18, y + 4.5, 176, 17, 14, "s", INK, 2),
+               text("OZG_DScoreMe%d" % i, 18, y + 4.5, 176, 17, 14, "b", INK, 2),
+               text("OZG_DScoreNote%d" % i, 202, y + 4.5, 76, 17, 12, "s", MUTED, 2),
+               text("OZG_DScoreTotal%d" % i, 286, y + 3.5, 56, 19, 15, "b", INK, 2, "right")]
+    col.append(frame("OZG_DScore", exact(12, 12, 360, 130), 5, sc))
+    act = [box("OZG_DActBox", 0, 0, 360, 150, 6, "#2a1d12", GOLD, prio=0),
+           text("OZG_DActTitle", 12, 12, 200, 22, 17, "p", INK, 2, "left", ""),
+           text("OZG_DActInfo", 150, 15.5, 198, 15, 12, "s", MUTED, 2, "right")]
+    for i in range(16):
+        act.append(btn("OZG_DAct%d" % i, 12, 44, 336, 42, 4, SL_BTN, BTN_EDGE, "", 15, "b", INK, prio=6, visible=0))
+    act.append(frame("OZG_DAmount", exact(12, 44, 336, 42), 6, [
+        box("OZG_DAmountBox", 0, 0, 120, 42, 4, "#120c08", BTN_EDGE, prio=0),
+        ("EditBoxWidgetClass", "OZG_DAmountEdit", exact(6, 6, 108, 30) + [
+            ("color", rgb(INK)), ("priority", 2), ("style", "Editor"),
+            ("font", '"gui/fonts/sdf_MetronLight24"'), ("exact text", 1), ("exact text size", 18),
+            ("text halign", "center")], None),
+        btn("OZG_DAmountBtn", 128, 0, 208, 42, 4, GOLD, None, "", 15, "b", "#1a120a", prio=3)], [("visible", 0)]))
+    col.append(frame("OZG_DAct", exact(12, 152, 360, 150), 6, act))
+    sw = [box("OZG_DSwapBox", 0, 0, 360, 175, 6, "#2a1d12", BTN_EDGE, prio=0),
+          text("OZG_DSwapTitle", 12, 10, 200, 21, 16, "p", INK, 2, "left", "#STR_OZG_BWIN_SWAP"),
+          text("OZG_DSwapInfo", 150, 13, 198, 15, 12, "s", MUTED, 2, "right"),
+          text("OZG_DSwapPocket", 12, 50.5, 88, 15, 12, "s", MUTED, 2, "left", "#STR_OZG_DWIN_POCKET"),
+          text("OZG_DSwapCan", 12, 96.5, 88, 15, 12, "s", MUTED, 2, "left", "")]
+    for i in range(4):
+        sw.append(button("OZG_DPocket%d" % i, 108 + i * 44, 39, 38, 38, 4, [
+            image("OZG_DPocket%dPic" % i, exact(0, 0, 38, 38), 1, None)], visible=0))
+    for i in range(5):
+        sw.append(button("OZG_DTarget%d" % i, 106 + i * 44, 85, 38, 38, 4, [
+            shape("OZG_DTarget%dBg" % i, 0, 0, 38, 38, 8, rgb("#bfb49d"), 0),
+            text("OZG_DTarget%dText" % i, 0, 0, 38, 38, 14, "b", "#1a120a", 1, "center")], visible=0))
+    sw += [text("OZG_DSwapHint0", 12, 131, 336, 17, 13, "s", MUTED, 2),
+           text("OZG_DSwapHint1", 12, 148, 336, 17, 13, "s", MUTED, 2)]
+    col.append(frame("OZG_DSwap", exact(12, 312, 360, 175), 6, sw))
+    lg = [shape("OZG_DLogBg", 0, 0, 360, 265, 6, rgb("#221911"), 0),
+          text("OZG_DLogTitle", 12, 10, 336, 14, 11, "s", GOLD, 2, "left", "")]
+    for i in range(LOG_LINES):
+        lg.append(text("OZG_DLog%d" % i, 12, 28 + i * 21, 336, 17, 13, "s", LOG_INK, 2, "left", "", [("visible", 0)]))
+    col.append(frame("OZG_DLog", exact(12, 497, 360, 265), 5, lg, clip=1))
+    for i, (x, y) in enumerate(((12, 497), (186, 497), (12, 533), (186, 533))):
+        col.append(btn("OZG_DHost%d" % i, x, y, 168, 30, 4, BTN, BTN_EDGE, "", 12, "s", INK, prio=20, visible=0))
+    k.append(frame("OZG_DCol", exact(1164, 86, 384, 774), 6, col))
+    k.append(frame("OZG_DSeen", exact(352, 822, 600, 41), 60, [
+        box("OZG_DSeenBox", 0, 0, 600, 41, 6, "#1c120a", "#ff8a3d", outside=True, prio=0),
+        text("OZG_DSeenText", 16, 10, 568, 21, 15, "s", "#f6e8d6", 3, "center")], [("visible", 0)]))
+    k += dialogs(menu_y=70)
+    attrs = [("ignorepointer", 1), ("clipchildren", 0), ("position", "0 0"), ("size", "1600 900"),
+             ("halign", "center_ref"), ("valign", "center_ref"),
+             ("hexactpos", 1), ("vexactpos", 1), ("hexactsize", 1), ("vexactsize", 1), ("priority", 3)]
+    return block("FrameWidgetClass", "OZG_DWin", attrs, k)
+
+
 def badge():
     """How many discs stand on a point when they are more than show (the canvas: a pill of
     30 x 22, 88% dark, the number in bold)."""
@@ -602,6 +711,7 @@ def main():
         textures(paa)
     write("ozg_bwin.layout", window())
     write("ozg_bwin_nardy.layout", window_nardy())
+    write("ozg_dwin.layout", window_dice())
     write("ozg_bwpic.layout", piece_pic())
     write("ozg_bwtint.layout", square_tint())
     write("ozg_bwbadge.layout", badge())

@@ -369,6 +369,8 @@ class OZG_GameMenu : UIScriptedMenu
             OZG_Deck_Base deck = place.OZG_Deck();
             if (deck && deck.IsInherited(OZG_Board_Base))
                 return "board";
+            if (deck && deck.IsInherited(OZG_DiceCan_Base))
+                return "dice";
             if (deck)
                 return OZG_Decks.StyleOf(deck.GetType());
         }
@@ -399,7 +401,7 @@ class OZG_GameMenu : UIScriptedMenu
     // The window in one look; a look already shown is put away first.
     protected void Build(string style)
     {
-        if (style != "stalker" && style != "board" && style != "board_nardy")
+        if (style != "stalker" && style != "board" && style != "board_nardy" && style != "dice")
             style = "classic";
         // Nothing of the old look flies or shakes on: its cards go with it.
         LandAll();
@@ -415,10 +417,12 @@ class OZG_GameMenu : UIScriptedMenu
         m_Style = style;
         // A board's window: the canvas's boards (tools/make_board_win.py), the field's
         // side or the nardy side.
-        if (style == "board" || style == "board_nardy")
+        if (style == "board" || style == "board_nardy" || style == "dice")
         {
             m_Look = OZG_TableLook.Of("classic");
-            if (style == "board_nardy")
+            if (style == "dice")
+                m_Win = MakeLayout("OpenZone_Games/gui/layouts/ozg_dwin.layout", layoutRoot, "OZG_DWin");
+            else if (style == "board_nardy")
                 m_Win = MakeLayout("OpenZone_Games/gui/layouts/ozg_bwin_nardy.layout", layoutRoot, "OZG_BWinNardy");
             else
                 m_Win = MakeLayout("OpenZone_Games/gui/layouts/ozg_bwin.layout", layoutRoot, "OZG_BWin");
@@ -1713,7 +1717,7 @@ class OZG_GameMenu : UIScriptedMenu
         }
 
         Measure();
-        if (m_Style == "board" || m_Style == "board_nardy")
+        if (m_Style == "board" || m_Style == "board_nardy" || m_Style == "dice")
         {
             BoardWinPaint();
             return;
@@ -3248,7 +3252,7 @@ class OZG_GameMenu : UIScriptedMenu
     protected void RefreshPockets(float dt)
     {
         // A board's window has no pockets (its sleights are on the field).
-        if (m_Style == "board" || m_Style == "board_nardy")
+        if (m_Style == "board" || m_Style == "board_nardy" || m_Style == "dice")
             return;
         m_PocketsAge = m_PocketsAge + dt;
         if (m_PocketsAge < 0.5)

@@ -913,3 +913,24 @@ STR_OZG_BWIN_SL_DHINT_MOVE,Переставити: оберіть шашку н�
 STR_OZG_BWIN_SL_DHINT_SWAP,Поміняти місцями: оберіть першу шашку.,Swap: pick the first disc.
 STR_OZG_BWIN_SL_DHINT_BACK,Повернути: оберіть зняту шашку біля табличок.,"Put back: pick a disc taken, by the plates."
 STR_OZG_BWIN_SL_DHINT_OFF,Зняти: оберіть шашку.,Take off: pick a disc.
+STR_OZG_DWIN_POCKET,У кишені,In the pocket
+STR_OZG_DWIN_DICE,Ваші кості,Your dice
+STR_OZG_DWIN_LAST,останній кидок,last throw
+STR_OZG_DWIN_SCORE,Рахунок,Score
+STR_OZG_DWIN_OUT,вибув,out
+STR_OZG_DWIN_YOUR_THROW,Ваш кидок,Your throw
+STR_OZG_DWIN_TURN,Хід: %1,%1's turn
+STR_OZG_DWIN_TABLE,Стіл,The table
+STR_OZG_DWIN_SWAP_INFO,одна за кидок · на гру %1 з %2,one a throw · %1 of %2 a game
+STR_OZG_DWIN_SWAP_HINT,"Перед кидком: кістка з кишені, потім кістка, яку вона замінить.","Before a throw: a die from the pocket, then the die it replaces."
+STR_OZG_DWIN_SWAP_NONE,У кишені немає кісток.,No dice in your pockets.
+STR_OZG_DWIN_SUB_THOUSAND,банка з кістками · вхід 50 · ями 200–300 і 600–700 · бочка з 880 · обгін −50 · три болти −100,a can of dice · entry 50 · pits 200–300 and 600–700 · the barrel from 880 · overtaking −50 · three bolts −100
+STR_OZG_DWIN_SUB_DICEPOKER,на фішки · до двох виграних раундів,for chips · to two rounds won
+STR_OZG_DWIN_SUB_PIG,"одна кістка · кидайте, доки не зупинитесь або не випаде одиниця · до 100",one die · throw until you stop or a one comes up · to 100
+STR_OZG_DWIN_SUB_HIGHROLL,"на фішки · найбільша сума забирає банк · нічия — перекидають ті, хто зрівнявся",for chips · the highest total takes the pot · a tie is thrown again by those tied
+STR_OZG_DWIN_SUB_PERUDO,"свої кості під своєю банкою · одиниці — будь-яка грань · хто помилився, втрачає кістку",own dice under one's own can · ones are any face · who was wrong loses a die
+STR_OZG_DWIN_RULE_THOUSAND,"Очки дають одиниці (10), п’ятірки (5), три однакові й стріти.","Points: ones (10), fives (5), three of a kind and straights."
+STR_OZG_DWIN_RULE_DICEPOKER,"Від найкращої руки: п’ять однакових, чотири, фул, стріти, три, дві пари, пара.","From the best hand: five of a kind, four, a full house, straights, three, two pairs, a pair."
+STR_OZG_DWIN_RULE_PIG,Одиниця забирає очки ходу.,A one takes the turn's points.
+STR_OZG_DWIN_RULE_HIGHROLL,Найбільша сума забирає банк.,The highest total takes the pot.
+STR_OZG_DWIN_RULE_PERUDO,Ставка — на кості всього столу.,A bid is on the whole table's dice.
