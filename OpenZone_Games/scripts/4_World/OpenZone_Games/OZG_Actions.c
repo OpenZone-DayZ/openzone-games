@@ -319,5 +319,6 @@ modded class ActionConstructor
         actions.Insert(OZG_ActionWatch);
         actions.Insert(OZG_ActionGather);
         actions.Insert(OZG_ActionStudy);
+        actions.Insert(OZG_ActionOpenKit);
     }
 }

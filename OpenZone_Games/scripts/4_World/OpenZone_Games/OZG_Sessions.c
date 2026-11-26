@@ -555,6 +555,10 @@ class OZG_Service : OZ_ServiceHandler
             return body;
         }
 
+        // The card sharp's kit's window (boards and dice design §10): no place's.
+        if (op == OZG_Const.OP_KIT_VIEW || op == OZG_Const.OP_KIT_MARK || op == OZG_Const.OP_KIT_LOAD || op == OZG_Const.OP_KIT_LOOK)
+            return OZG_KitService.Handle(op, json, player, ok, error);
+
         OZG_WAsk ask = new OZG_WAsk();
         if (json != "")
         {

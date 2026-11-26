@@ -113,6 +113,13 @@ modded class MissionGameplay
         if (serviceId != OZG_Const.SERVICE)
             return;
 
+        // The card sharp's kit's window (boards and dice design §10): its own menu.
+        if (op == OZG_Const.OP_KIT_VIEW || op == OZG_Const.OP_KIT_LOOK || op == OZG_Const.OP_KIT_MARK || op == OZG_Const.OP_KIT_LOAD)
+        {
+            OZG_KitMenu.Answer(op, ok, json, error);
+            return;
+        }
+
         OZG_GameMenu menu = OZG_GameMenu.Current();
 
         if (!ok)
@@ -325,6 +332,12 @@ modded class MissionGameplay
         if (id == OZG_Const.MENU_GAME)
         {
             menu = new OZG_GameMenu();
+            menu.SetID(id);
+            return menu;
+        }
+        if (id == OZG_Const.MENU_KIT)
+        {
+            menu = new OZG_KitMenu();
             menu.SetID(id);
             return menu;
         }

@@ -510,4 +510,64 @@ class OZG_Text
             t.Replace(s_Lower[i], s_Upper[i]);
         return t;
     }
+
+    // The first letter written small ("Дама чирв" -> "дама чирв"): a name that stands
+    // inside a sentence. A Ukrainian letter by the pairs above, a Latin one by ToLower.
+    static string LowerFirst(string s)
+    {
+        int n = s.LengthUtf8();
+        if (n == 0)
+            return s;
+        string head = s.SubstringUtf8(0, 1);
+        string rest = "";
+        if (n > 1)
+            rest = s.SubstringUtf8(1, n - 1);
+        if (head.Length() > 1)
+        {
+            Upper("");
+            int at = s_Upper.Find(head);
+            if (at >= 0)
+                head = s_Lower[at];
+        }
+        else
+        {
+            head.ToLower();
+        }
+        return head + rest;
+    }
+}
+
+// The card sharp's kit's window (boards and dice design §10): one card or die this
+// player carries, and what he knows of it. A card: its face and deck look, 1 when he
+// marked it, 2 when he reads another's mark; a die: its look (art/dice), the face it
+// is loaded on and how heavy (1 to 3) when he knows it, 1 when he loaded it, 2 when
+// another did. Where: "pocket", "deck", "can".
+class OZG_WKitThing
+{
+    string Key;
+    string Kind;
+    string Face;
+    string Look;
+    string Where;
+    int Mark;
+    int LoadFace;
+    int LoadStep;
+    // the mark's sign when he knows it (where it lies in the back's pattern, OZG_MarkPlaces)
+    int Sign;
+}
+
+// What the kit's window shows: the kit's uses left (-1: no kit carried) and the things;
+// what was just done, as words.
+class OZG_WKit
+{
+    int Uses;
+    ref array<ref OZG_WKitThing> Things;
+    string Said;
+    string SaidKey;
+
+    void OZG_WKit()
+    {
+        Uses = -1;
+        Things = new array<ref OZG_WKitThing>();
+    }
 }

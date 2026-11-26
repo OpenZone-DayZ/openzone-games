@@ -772,7 +772,7 @@ STR_OZG_SAY_STUDY_DIE_FAIR,Кістка чесна,The die is fair
 STR_OZG_SAY_STUDY_DIE_LOADED,"Кістка заряджена: %1, %2","The die is loaded: %1, %2"
 STR_OZG_LOAD_STEP_1,трохи,a little
 STR_OZG_LOAD_STEP_2,добре,well
-STR_OZG_LOAD_STEP_3,сильно,heavily
+STR_OZG_LOAD_STEP_3,важко,heavily
 STR_OZG_BSAW_MOVE,%1 переставив фігуру з %2 на %3,%1 moved a piece from %2 to %3
 STR_OZG_BSAW_SWAP,%1 поміняв місцями фігури на %2 і %3,%1 swapped the pieces on %2 and %3
 STR_OZG_BSAW_BACK,%1 повернув збиту фігуру на %3,%1 put a piece taken off back on %3
@@ -934,3 +934,57 @@ STR_OZG_DWIN_RULE_DICEPOKER,"Від найкращої руки: п’ять о�
 STR_OZG_DWIN_RULE_PIG,Одиниця забирає очки ходу.,A one takes the turn's points.
 STR_OZG_DWIN_RULE_HIGHROLL,Найбільша сума забирає банк.,The highest total takes the pot.
 STR_OZG_DWIN_RULE_PERUDO,Ставка — на кості всього столу.,A bid is on the whole table's dice.
+STR_OZG_KIT_OPEN,Відкрити набір,Open the kit
+STR_OZG_KWIN_TITLE,Шулерський набір,Card sharp's kit
+STR_OZG_KWIN_SUB,"ваші карти й кістки — у кишенях, у колоді й банці, які ви несете","your cards and dice — in your pockets, in the deck and the can you carry"
+STR_OZG_KWIN_USES,Лишилось використань,Uses left
+STR_OZG_KWIN_NOTE_A,Одне використання — одна покраплена карта або одна заряджена кістка. Порожній набір зникає.,One use marks one card or loads one die. An empty kit is gone.
+STR_OZG_KWIN_NOTE_B,"На картах і кістках тут видно лише те, що знаєте ви: свій крап і свій груз, прочитане й помічене. Чужу роботу, якої ви не знаєте, не видно, доки її не оберете.","Cards and dice show here only what you know: your own marks and loads, what you read and what you noticed. Another's work you do not know stays unseen until you pick it."
+STR_OZG_KWIN_FOOT,"Позначки: олівцем — карта, яку ви читаєте; кружок з цифрою — кістка, заряджена на цю грань.","Tags: in pencil, a card you read; a disc with a number, a die loaded on that face."
+STR_OZG_KWIN_EMPTY,"Ви не несете ні карт, ні кісток.",You carry no cards and no dice.
+STR_OZG_KWIN_POCKET,У кишенях,In the pockets
+STR_OZG_KWIN_DECK,У колоді,In the deck
+STR_OZG_KWIN_CAN,У банці з кістками,In the can of dice
+STR_OZG_KWIN_CARDS_1,%1 карта,%1 card
+STR_OZG_KWIN_CARDS_2,%1 карти,%1 cards
+STR_OZG_KWIN_CARDS_5,%1 карт,%1 cards
+STR_OZG_KWIN_DICE_1,%1 кістка,%1 die
+STR_OZG_KWIN_DICE_2,%1 кістки,%1 dice
+STR_OZG_KWIN_DICE_5,%1 кісток,%1 dice
+STR_OZG_KWIN_AND,%1 й %2,%1 and %2
+STR_OZG_KWIN_DECK_NOTE,%1 · %2,%1 · %2
+STR_OZG_KWIN_LOOK_CLASSIC,класична,classic
+STR_OZG_KWIN_LOOK_STALKER,сталкерська,stalker
+STR_OZG_KWIN_TAG_MINE,мій крап,my mark
+STR_OZG_KWIN_TAG_READ,читаю,reading
+STR_OZG_KWIN_PICK,Оберіть карту або кістку,Pick a card or a die
+STR_OZG_KWIN_PICK_TEXT,"Карту набір крапить: знак випаде сам, місця не обирають. Кістку заряджає: ви обираєте грань і силу.","The kit marks a card: the sign falls by itself, no place is chosen. It loads a die: you choose the face and the weight."
+STR_OZG_KWIN_CARD_CLEAN,"Чиста карта. Набір покрапить її: знак випаде сам, у візерунку сорочки.","A clean card. The kit will mark it: the sign falls by itself, in the back's pattern."
+STR_OZG_KWIN_CARD_MINE,"Ваш крап: знак у візерунку сорочки, ви її читаєте. Покрапити вдруге нема чого.","Your mark: a sign in the back's pattern, you read it. There is nothing to mark again."
+STR_OZG_KWIN_CARD_READ,Покраплена кимось — тепер ви її читаєте. Свій крап поверх не кладуть.,Marked by someone — now you read it. No mark of your own goes over it.
+STR_OZG_KWIN_MARK,Покрапити (−1 використання),Mark (−1 use)
+STR_OZG_KWIN_MARKED,Вже покраплена,Marked already
+STR_OZG_KWIN_EMPTY_KIT,Набір порожній,The kit is empty
+STR_OZG_KWIN_DIE_POCKET,Кістка з кишені,A die from the pocket
+STR_OZG_KWIN_DIE_CAN,Кістка з банки,A die from the can
+STR_OZG_KWIN_DIE_FAIR,"Наскільки ви знаєте, чесна. Оберіть грань і силу.","Fair, as far as you know. Choose the face and the weight."
+STR_OZG_KWIN_DIE_MINE,"Заряджена на %1, %2 — вашою рукою. Можна зарядити наново.","Loaded on %1, %2 — by your hand. It can be loaded anew."
+STR_OZG_KWIN_DIE_OTHER,"Заряджена на %1, %2 — не вами. Можна зарядити наново.","Loaded on %1, %2 — not by you. It can be loaded anew."
+STR_OZG_KWIN_FACE,Яка грань випадатиме,Which face will come up
+STR_OZG_KWIN_WEIGHT,Наскільки частіше,How much more often
+STR_OZG_KWIN_STEP_1,Трохи,A little
+STR_OZG_KWIN_STEP_2,Добре,Well
+STR_OZG_KWIN_STEP_3,Важко,Heavily
+STR_OZG_KWIN_WEIGHT_NOTE_1,%1% кидків · помітять не скоро,%1% of throws · noticed late
+STR_OZG_KWIN_WEIGHT_NOTE_2,%1% кидків · помітять швидше,%1% of throws · noticed sooner
+STR_OZG_KWIN_WEIGHT_NOTE_3,%1% кидків · помітять найшвидше,%1% of throws · noticed soonest
+STR_OZG_KWIN_LOAD,"Зарядити на %1, %2 (−1)","Load on %1, %2 (−1)"
+STR_OZG_KWIN_WORK_MARK,Крапите %1…,Marking the %1…
+STR_OZG_KWIN_WORK_LOAD,Заряджаєте кістку на %1…,Loading the die on %1…
+STR_OZG_KWIN_SAID_CARD_OPENED,%1 вже покраплена кимось. Тепер ви її читаєте. Набір не витрачено.,%1 is marked by someone already. Now you read it. The kit is not spent.
+STR_OZG_KWIN_SAID_DIE_OPENED,"Ця кістка вже заряджена: на %1, %2. Тепер ви це знаєте. Набір не витрачено.","This die is loaded already: on %1, %2. Now you know it. The kit is not spent."
+STR_OZG_KWIN_SAID_MARKED,Покраплено: %1. Тепер ви її читаєте.,Marked: the %1. Now you read it.
+STR_OZG_KWIN_SAID_MARKED_LAST,Покраплено. Набір порожній — він зникне.,Marked. The kit is empty — it will be gone.
+STR_OZG_KWIN_SAID_LOADED,"Кістку заряджено: %1, %2.","The die is loaded: %1, %2."
+STR_OZG_KWIN_SAID_LOADED_LAST,Заряджено. Набір порожній — він зникне.,Loaded. The kit is empty — it will be gone.
+STR_OZG_KWIN_SAID_KNOWN,Цю карту ви вже читаєте.,You read this card already.

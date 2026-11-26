@@ -165,6 +165,13 @@ class OZG_Const
     // seen (told to whoever has the window open).
     static const string OP_BSLEIGHT = "bsleight";
     static const string OP_DSWAP = "dswap";
+    // The card sharp's kit's window (boards and dice design §10): what this player
+    // carries and knows; a card marked, a die loaded from it.
+    static const string OP_KIT_VIEW = "kitview";
+    static const string OP_KIT_MARK = "kitmark";
+    static const string OP_KIT_LOAD = "kitload";
+    // A thing picked in the kit's window: another's mark or load on it opens to him.
+    static const string OP_KIT_LOOK = "kitlook";
     static const string OP_BSAW = "bsaw";
 
     // The kinds of sleight, as the server's log, the settings (CaughtOf) and
@@ -225,6 +232,7 @@ class OZG_Const
     // window, 134 the radio's keypad, 135 the research tree, 136 the trade
     // screen.
     static const int MENU_GAME = 137;
+    static const int MENU_KIT = 138;
 
     // The key that steps through the modes while aiming (data/inputs.xml).
     static const string INPUT_MODE = "UAOZGMode";
