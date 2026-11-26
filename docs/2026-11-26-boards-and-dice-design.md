@@ -38,6 +38,9 @@ Date: 2026-11-25/26. The owner's words, in this order (chat, Russian; here in En
     cards you know must be seen there. And trying to mark a card or load a die that is
     already loaded or marked and unknown to you, they 'open' to you."
 15. "That is, the marked cards and dice known to you in your inventory, not ALL of them."
+16. (2026-11-26, before the mockups of the windows) "I want to release several different
+    models of chess sets and boards (as with decks). And the pieces on one board may be
+    from different sets."
 
 What the words leave open is decided below and named in §14.
 
@@ -105,7 +108,8 @@ A folding wooden board of the classic "3 in 1" kind (the owner's word 2).
   the king, the queen, two rooks, two bishops, two knights, eight pawns (32); 15 white
   and 15 black discs (30); two dice (2).
 - **Looks**: the classic one now; another look is a config class and its art (the stalker
-  set of §15 is the owner's).
+  set of §15 is the owner's). Several boards and chess sets will ship, as decks do (the
+  owner's word 16), and the window takes its look from the board's.
 
 ### 3.2 Pieces
 
@@ -118,6 +122,12 @@ A folding wooden board of the classic "3 in 1" kind (the owner's word 2).
 
 Every piece is an item of its own: it can be carried, lost, swapped (§9), and a game is
 played with what its set really holds.
+
+**Pieces of several sets on one board** (the owner's word 16). A piece of any look fits
+the slot of its kind on a board of any look: a lost queen is made up by another set's
+queen. The game itself knows only kinds and colours; the window draws every piece in the
+look of the item it stands for (on the board and among the taken ones), as it draws a
+card of another deck in its own art.
 
 ### 3.3 The can of dice
 
@@ -398,6 +408,8 @@ Decided while building (2026-11-26, `2026-11-26-boards-and-dice-record.md`):
   not grown deal after deal (§10).
 - A swap seen at `SpotPercent` (§9.2).
 - Thousand's house rules on or off, their numbers fixed (§6.1).
+- The window's look follows the board's (or the can's) look, as the card table's follows
+  the deck's (§3.1).
 - Until the mockups the window's "Variant" changes a game's first option only, and the
   sleights on a board, the swap and the kit's window have no buttons: their server half
   and the stand's ops are there.
