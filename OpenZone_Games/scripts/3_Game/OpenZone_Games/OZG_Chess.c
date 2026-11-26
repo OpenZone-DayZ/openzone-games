@@ -406,6 +406,62 @@ class OZG_ChessBoard
         return KingB;
     }
 
+    // After pieces were moved by hand: where the kings stand, the castling a
+    // king and rook still on their squares keep, no en passant.
+    void ChFixUp()
+    {
+        KingW = -1;
+        KingB = -1;
+        int wk = OZG_ChessConst.KING;
+        int bk = OZG_ChessConst.KING | OZG_ChessConst.BLACK;
+        for (int i = 0; i < 64; i++)
+        {
+            if (Sq[i] == wk)
+                KingW = i;
+            else if (Sq[i] == bk)
+                KingB = i;
+        }
+        int wr = OZG_ChessConst.ROOK;
+        int br = OZG_ChessConst.ROOK | OZG_ChessConst.BLACK;
+        int keep = 0;
+        if ((Castle & 1) != 0 && Sq[4] == wk && Sq[7] == wr)
+            keep = keep | 1;
+        if ((Castle & 2) != 0 && Sq[4] == wk && Sq[0] == wr)
+            keep = keep | 2;
+        if ((Castle & 4) != 0 && Sq[60] == bk && Sq[63] == br)
+            keep = keep | 4;
+        if ((Castle & 8) != 0 && Sq[60] == bk && Sq[56] == br)
+            keep = keep | 8;
+        Castle = keep;
+        Ep = -1;
+    }
+
+    // Does the position stand: one king a side, no pawn on the first or last
+    // rank, the side not to move not in check?
+    bool ChStands()
+    {
+        int whites = 0;
+        int blacks = 0;
+        for (int i = 0; i < 64; i++)
+        {
+            int p = Sq[i];
+            if (p == 0)
+                continue;
+            int kind = p & 7;
+            if (kind == OZG_ChessConst.KING && (p & OZG_ChessConst.BLACK) != 0)
+                blacks++;
+            else if (kind == OZG_ChessConst.KING)
+                whites++;
+            int rank = i / 8;
+            if (kind == OZG_ChessConst.PAWN && (rank == 0 || rank == 7))
+                return false;
+        }
+        if (whites != 1 || blacks != 1)
+            return false;
+        int other = OZG_ChessConst.BLACK - Side;
+        return !ChAttacked(KingOf(other), Side);
+    }
+
     // Is the side to move in check?
     bool InCheck()
     {
@@ -989,6 +1045,106 @@ class OZG_Chess extends OZG_Game
         return true;
     }
 
+    // ---- sleights on the board (boards and dice design §9.1) ----------------
+
+    override bool BoardSleight(int seat, string kind, string a, string b, out string refusal)
+    {
+        refusal = OZG_Const.NO_MOVE;
+        if (m_Over || (seat != m_White && seat != m_Black))
+            return false;
+        if (!ChSleight(kind, a, b, refusal))
+            return false;
+        m_Played.Insert(OZG_DuelConst.SleightText(kind, a, b));
+        ChAfterSleight();
+        refusal = "";
+        return true;
+    }
+
+    // A piece moved, two swapped, one taken off put back (written as its
+    // letter), one taken off: never a king off or back, never a pawn on the
+    // first or last rank, never the side not to move left in check. The
+    // position as it was when refused.
+    protected bool ChSleight(string kind, string a, string b, out string refusal)
+    {
+        refusal = OZG_DuelConst.NO_SLEIGHT;
+        string before = m_Pos.ToFen();
+        string taken = m_Taken;
+        int from = OZG_ChessBoard.SqOf(a);
+        int to = OZG_ChessBoard.SqOf(b);
+        bool done = false;
+        if (kind == OZG_DuelConst.S_MOVE && from >= 0 && to >= 0)
+        {
+            if (m_Pos.Sq[from] != 0 && m_Pos.Sq[to] == 0)
+            {
+                m_Pos.Sq[to] = m_Pos.Sq[from];
+                m_Pos.Sq[from] = 0;
+                done = true;
+            }
+        }
+        else if (kind == OZG_DuelConst.S_SWAP && from >= 0 && to >= 0 && from != to)
+        {
+            if (m_Pos.Sq[from] != 0 && m_Pos.Sq[to] != 0)
+            {
+                int keep = m_Pos.Sq[to];
+                m_Pos.Sq[to] = m_Pos.Sq[from];
+                m_Pos.Sq[from] = keep;
+                done = true;
+            }
+        }
+        else if (kind == OZG_DuelConst.S_OFF && from >= 0)
+        {
+            int off = m_Pos.Sq[from];
+            if (off != 0 && (off & 7) != OZG_ChessConst.KING)
+            {
+                m_Taken = m_Taken + OZG_ChessBoard.LetterOf(off);
+                m_Pos.Sq[from] = 0;
+                done = true;
+            }
+        }
+        else if (kind == OZG_DuelConst.S_BACK && to >= 0)
+        {
+            int piece = OZG_ChessBoard.PieceOf(a);
+            int at = m_Taken.IndexOf(a);
+            bool kingThere = (m_Pos.Sq[to] & 7) == OZG_ChessConst.KING;
+            if (piece != 0 && at >= 0 && (piece & 7) != OZG_ChessConst.KING && !kingThere)
+            {
+                if (m_Pos.Sq[to] != 0)
+                    m_Taken = m_Taken + OZG_ChessBoard.LetterOf(m_Pos.Sq[to]);
+                string head = m_Taken.Substring(0, at);
+                string tail = m_Taken.Substring(at + 1, m_Taken.Length() - at - 1);
+                m_Taken = head + tail;
+                m_Pos.Sq[to] = piece;
+                done = true;
+            }
+        }
+        if (!done)
+            return false;
+        m_Pos.ChFixUp();
+        if (!m_Pos.ChStands())
+        {
+            m_Pos.FromFen(before);
+            m_Taken = taken;
+            refusal = OZG_DuelConst.BAD_SLEIGHT;
+            return false;
+        }
+        refusal = "";
+        return true;
+    }
+
+    // A sleight may leave the side to move with no move: mate or stalemate.
+    protected void ChAfterSleight()
+    {
+        array<int> legal = new array<int>();
+        m_Pos.ChLegal(legal);
+        if (legal.Count() > 0)
+            return;
+        int mover = SeatToMove();
+        if (m_Pos.InCheck())
+            End(WinOf(OtherOf(mover)), OZG_ChessConst.END_MATE);
+        else
+            End("1/2", OZG_ChessConst.END_STALEMATE);
+    }
+
     // The seat whose move it is; -1 when over.
     int SeatToMove()
     {
@@ -1345,6 +1501,18 @@ class OZG_Chess extends OZG_Game
                 continue;
             if (again.m_Over)
                 return false;
+            string sKind;
+            string sA;
+            string sB;
+            if (OZG_DuelConst.SleightOf(moves[i], sKind, sA, sB))
+            {
+                string refusal;
+                if (!again.ChSleight(sKind, sA, sB, refusal))
+                    return false;
+                again.m_Played.Insert(moves[i]);
+                again.ChAfterSleight();
+                continue;
+            }
             int mv = again.m_Pos.FromWire(moves[i]);
             if (mv < 0)
                 return false;

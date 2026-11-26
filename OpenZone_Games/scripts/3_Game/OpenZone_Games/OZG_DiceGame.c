@@ -5,6 +5,8 @@
 class OZG_DiceGameConst
 {
     static const string M_THROW = "throw";
+    // A seat gone, kept among the moves so a loaded game has it too.
+    static const string M_DROP = "~drop";
     static const string SHORT_DICE = "STR_OZG_DICE_SHORT";
 }
 
@@ -34,6 +36,11 @@ class OZG_DiceGame extends OZG_Game
     protected ref array<int> m_Gone;
     protected int m_Turn;
     protected int m_First;
+    // The dice thrown since the session last asked (TakeThrows): the seat,
+    // the die's place among its dice, the face.
+    protected ref array<int> m_ThrewSeat;
+    protected ref array<int> m_ThrewDie;
+    protected ref array<int> m_ThrewFace;
 
     void OZG_DiceGame()
     {
@@ -46,6 +53,9 @@ class OZG_DiceGame extends OZG_Game
         m_StartChips = new array<int>();
         m_Hist = new array<string>();
         m_Gone = new array<int>();
+        m_ThrewSeat = new array<int>();
+        m_ThrewDie = new array<int>();
+        m_ThrewFace = new array<int>();
         m_Whose = OZG_DiceConst.WHOSE_HOST;
     }
 
@@ -208,6 +218,9 @@ class OZG_DiceGame extends OZG_Game
         else
         {
             v = m_Cups.Of(seat, DiceNeeded()).Throw(index, Chance());
+            m_ThrewSeat.Insert(seat);
+            m_ThrewDie.Insert(index);
+            m_ThrewFace.Insert(v);
         }
         m_Rolled.Insert(v);
         return v;
@@ -240,6 +253,29 @@ class OZG_DiceGame extends OZG_Game
     override bool IsOver()
     {
         return m_Over;
+    }
+
+    override void TakeThrows(array<int> seats, array<int> dice, array<int> faces)
+    {
+        for (int i = 0; i < m_ThrewSeat.Count(); i++)
+        {
+            seats.Insert(m_ThrewSeat[i]);
+            dice.Insert(m_ThrewDie[i]);
+            faces.Insert(m_ThrewFace[i]);
+        }
+        m_ThrewSeat.Clear();
+        m_ThrewDie.Clear();
+        m_ThrewFace.Clear();
+    }
+
+    // A throw is the seat's next move: its turn, and nothing else to do first.
+    override bool ThrowsNext(int seat)
+    {
+        if (m_Over || seat != DgCurrent())
+            return false;
+        array<string> can = new array<string>();
+        Moves(seat, can);
+        return can.Find(OZG_DiceGameConst.M_THROW) >= 0;
     }
 
     override string Outcome()
@@ -279,21 +315,11 @@ class OZG_DiceGame extends OZG_Game
         return !m_Over && seat == DgCurrent();
     }
 
-    // An absent player's turn passes (design §6.3).
-    override bool Skippable(int seat)
-    {
-        return Waits(seat);
-    }
+    // A throw is never a move one may pass over (design §6.3): the table waits
+    // for an absent player, or the host lets him go. So nothing is Skippable.
 
-    override void SkipSeat(int seat)
-    {
-        if (!Waits(seat))
-            return;
-        DgPassTurn();
-    }
-
-    // The turn passed on with nothing done (a seat skipped); a kind ends what
-    // its turn had going.
+    // The turn passed on with nothing done (a seat gone); a kind ends what its
+    // turn had going.
     protected void DgPassTurn()
     {
         m_Turn = DgNextIndex(m_Turn);
@@ -304,6 +330,7 @@ class OZG_DiceGame extends OZG_Game
         int i = m_Seats.Find(seat);
         if (i < 0 || m_Gone.Find(i) >= 0 || m_Over)
             return;
+        m_Moves.Insert(seat.ToString() + " " + OZG_DiceGameConst.M_DROP);
         bool current = i == m_Turn;
         m_Gone.Insert(i);
         DgGone(i);
@@ -456,6 +483,11 @@ class OZG_DiceGame extends OZG_Game
             }
             int seat = line.Substring(0, space).ToInt();
             string move = line.Substring(space + 1, line.Length() - space - 1);
+            if (move == OZG_DiceGameConst.M_DROP)
+            {
+                DropSeat(seat);
+                continue;
+            }
             if (!Act(seat, move, refusal))
             {
                 OZG_Log.Warn(GameId() + " load: move " + i.ToString() + " (" + line + ") refused: " + refusal + "; " + Everything());

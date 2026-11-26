@@ -1644,6 +1644,9 @@ class OZG_Session
     protected string DiceFor(OZG_Game game, array<int> seats, map<string, string> options)
     {
         int need = game.DiceNeeded();
+        if (!m_SeatDice)
+            m_SeatDice = new map<int, ref array<EntityAI>>();
+        m_SeatDice.Clear();
         if (need <= 0)
             return "";
         string whose = game.DiceMode(options);
@@ -1670,9 +1673,14 @@ class OZG_Session
             array<int> weights = new array<int>();
             OZG_DiceRead.Loads(dice, faces, weights);
             game.TakeDice(seats[i], faces, weights);
+            m_SeatDice.Set(seats[i], dice);
         }
         return "";
     }
+
+    // The dice each seat of the game throws, as the deal handed them
+    // (DiceFor): what a swap and the noticing of a loaded die look up.
+    protected ref map<int, ref array<EntityAI>> m_SeatDice;
 
     // The names a deal gave the cards `chosen`: each item's key looked up
     // beside the records the deal was read into.

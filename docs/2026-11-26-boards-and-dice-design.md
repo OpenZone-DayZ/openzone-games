@@ -214,8 +214,8 @@ The host's options, from the house rules (all on by default): entry (the first p
 need 50 in one turn), pits (a total may not stay in 200-300 or 600-700: a turn ending
 there is lost), the barrel (from 880 a player's turn counts only when it reaches 1000;
 after three turns on the barrel that do not, he falls back 120), overtaking (the one
-overtaken loses 50), three bolts in a row lose 100. The numbers of the house rules are the
-host's options; these are the defaults.
+overtaken loses 50), three bolts in a row lose 100. Each house rule is the host's to switch
+on or off, the entry 50 or none; the numbers are fixed (built so on 2026-11-26, §14).
 
 ### 6.2 Dice poker
 
@@ -310,9 +310,9 @@ its castling; a man put on the far rank is crowned.
 The card sharp's sleights (cardsharp design §6), for dice: when it is his throw, a
 player may swap one of the dice he is about to throw -- the host's or his own -- for a
 die he carries. The items move: his die goes in, the other into his pocket. One swap a
-throw, `DiceSwaps` a game; it may show (`ChanceDiceSwap`, %), and then each other player
-notices (`NoticeOther`); the server's log keeps every swap. Without loaded dice a swap
-changes nothing, which is the point of §10.
+throw, `DiceSwaps` a game; it may show (`ChanceDiceSwap`, %), and then each other seated
+player sees it at `SpotPercent`, the card sleights' own; the server's log keeps every swap.
+Without loaded dice a swap changes nothing, which is the point of §10.
 
 ## 10. Loaded dice, and the kit's window
 
@@ -340,10 +340,10 @@ What a loaded die is:
 - **It shows its face** as often as it was loaded for; the server throws it so.
 - **Studying a die closely** (the action cards have) tells whether it is loaded and to
   what.
-- **Noticing**: after a throw in which a loaded die showed its face, each other player
-  notices it with `NoticeLoaded` (%) times the load's weight step (1, 2, 3), grown deal
-  after deal as marks are (cardsharp design §5); a noticed die is marked for him in the
-  window.
+- **Noticing**: after a throw in which a loaded die showed its face, each other seated
+  player notices it with `NoticeLoaded` (%) times the load's weight step (1, 2, 3), at
+  every such throw (it does not grow deal after deal as the cards' noticing does: built so
+  on 2026-11-26, §14); a noticed die is marked for him in the window.
 
 ## 11. Settings
 
@@ -389,6 +389,18 @@ Each built and checked on the stand by itself, in English and Ukrainian.
 - The kit's window: three weights of a load, 30, 50 and 70%, the heavier noticed sooner;
   one use of the kit whatever is chosen; opening what somebody else did spends nothing.
 - Whose dice and swaps in nardy too (§5.7).
+
+Decided while building (2026-11-26, `2026-11-26-boards-and-dice-record.md`):
+
+- A dice game's throw is never passed over for an absent player: the table waits, or the
+  host lets him go, and a seat let go is kept among the moves.
+- Noticing a loaded die: `NoticeLoaded` times its step at each throw it shows its face,
+  not grown deal after deal (§10).
+- A swap seen at `SpotPercent` (§9.2).
+- Thousand's house rules on or off, their numbers fixed (§6.1).
+- Until the mockups the window's "Variant" changes a game's first option only, and the
+  sleights on a board, the swap and the kit's window have no buttons: their server half
+  and the stand's ops are there.
 
 ## 15. Not in this design
 

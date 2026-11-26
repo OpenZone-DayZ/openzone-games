@@ -48,6 +48,12 @@ class OZG_WorldOps
     }
 
     // who=me is the first connected player, anything else an id.
+    // Who(), for the other stand ops.
+    static PlayerBase WhoOf(map<string, string> args, out string uid)
+    {
+        return Who(args, uid);
+    }
+
     protected static PlayerBase Who(map<string, string> args, out string uid)
     {
         uid = OZG_VerbOps.Arg(args, "who", "me");
@@ -375,6 +381,7 @@ class OZG_WorldOps
         ask.OptValue = OZG_VerbOps.Arg(args, "val", "");
         ask.PoseNo = OZG_VerbOps.Arg(args, "pose", "0").ToInt();
         ask.Stack = OZG_VerbOps.Arg(args, "stack", "");
+        ask.CardKey = OZG_VerbOps.Arg(args, "key", "");
 
         if (what == OZG_Const.OP_FOLD)
         {
@@ -1368,19 +1375,33 @@ class OZG_WorldOps
             cfg.NoticeStep = rise.ToInt();
         if (most != "")
             cfg.NoticeMax = most.ToInt();
+        // loaded= the percent a loaded face shown is noticed at, a step;
+        // swaps= and swapshow= the swaps of a die and the percent one shows.
+        string loaded = OZG_VerbOps.Arg(args, "loaded", "");
+        if (loaded != "")
+            cfg.NoticeLoaded = loaded.ToInt();
+        string swaps = OZG_VerbOps.Arg(args, "swaps", "");
+        if (swaps != "")
+            cfg.DiceSwaps = swaps.ToInt();
+        string swapShow = OZG_VerbOps.Arg(args, "swapshow", "");
+        if (swapShow != "")
+            cfg.ChanceDiceSwap = swapShow.ToInt();
         int putRight;
         cfg.Validate(putRight);
         detail = "notice grace=" + cfg.NoticeGrace.ToString() + " step=" + cfg.NoticeStep.ToString();
-        detail = detail + " max=" + cfg.NoticeMax.ToString() + " putright=" + putRight.ToString();
+        detail = detail + " max=" + cfg.NoticeMax.ToString() + " loaded=" + cfg.NoticeLoaded.ToString();
+        detail = detail + " swaps=" + cfg.DiceSwaps.ToString() + " swapshow=" + cfg.ChanceDiceSwap.ToString();
+        detail = detail + " putright=" + putRight.ToString();
         return true;
     }
 
     // sleightcfg [per=] [slip=] [swap=] [throw=] [deckin=] [deckout=] [pick=]
-    // [spot=] [picks=] [all=]: the sleights' settings (card sharp's design §7)
-    // set on the running server, through the settings' own bounds, for a
-    // check; all= sets the seven chances at once. The file is not written,
-    // and a restart reads it again. Answers the nine as they stand and how
-    // many the bounds put right.
+    // [spot=] [picks=] [all=] [board=]: the sleights' settings (card sharp's
+    // design §7) set on the running server, through the settings' own bounds,
+    // for a check; all= sets the seven chances at once, board= the minutes
+    // between a player's sleights on a board (0: no wait). The file is not
+    // written, and a restart reads it again. Answers them as they stand and
+    // how many the bounds put right.
     static bool OpSleightCfg(map<string, string> args, out string detail)
     {
         OZG_Settings cfg = OZG_Cfg.Get();
@@ -1423,6 +1444,9 @@ class OZG_WorldOps
         v = OZG_VerbOps.Arg(args, "picks", "");
         if (v != "")
             cfg.DealerPicks = v.ToInt();
+        v = OZG_VerbOps.Arg(args, "board", "");
+        if (v != "")
+            cfg.BoardSleightMinutes = v.ToInt();
         int putRight;
         cfg.Validate(putRight);
         detail = "sleights per=" + cfg.SleightsPerDeal.ToString() + " slip=" + cfg.CaughtSlip.ToString();
@@ -1430,7 +1454,7 @@ class OZG_WorldOps
         detail = detail + " deckin=" + cfg.CaughtDeckIn.ToString() + " deckout=" + cfg.CaughtDeckOut.ToString();
         detail = detail + " pick=" + cfg.CaughtPick.ToString() + " spot=" + cfg.SpotPercent.ToString();
         detail = detail + " picks=" + cfg.DealerPicks.ToString() + " cheating=" + cfg.Cheating.ToString();
-        detail = detail + " putright=" + putRight.ToString();
+        detail = detail + " board=" + cfg.BoardSleightMinutes.ToString() + " putright=" + putRight.ToString();
         return true;
     }
 

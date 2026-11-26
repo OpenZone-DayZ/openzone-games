@@ -128,6 +128,10 @@ class OZG_VerbOps
             return OZG_WorldOps.OpSleightCfg(args, detail);
         if (op == "cheat")
             return OZG_Bench.OpCheat(args, detail);
+        if (op == "dice")
+            return OZG_BoardOps.OpDice(args, detail);
+        if (op == "loaddie")
+            return OZG_BoardOps.OpLoadDie(args, detail);
         if (op == "splitlen")
             return OZG_BoardOps.OpSplitLen(args, detail);
         if (op == "dperft")
@@ -171,6 +175,7 @@ class OZG_VerbOps
         string known = "status, deck, names, games, begin, act, play, outcome, brief, all, can, drop, away, view, save, load, fuzz, heard";
         known = known + ", ring, level, cards, pull, undeck, held, stuff, loose, lay, places, sess, seats, puppet, move, ask, sit, ticks, gather, hand, give, chat, bots, auto, face, stage, mark, markof, craft, reads, noticecfg, noticer, whole, redeal, notices, shake, sound";
         known = known + ", sleightcfg, cheat, pockets, sleight, stack, deckreads, sleights";
+        known = known + ", gfuzz, phands, bscores, pscores, perft, dperft, split, splitlen, dice, loaddie";
         return known;
     }
 

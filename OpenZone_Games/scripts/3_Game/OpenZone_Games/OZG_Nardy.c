@@ -319,6 +319,10 @@ class OZG_Nardy extends OZG_BoardDuel
     protected int m_HeadLeft = 1;
     protected bool m_FirstW = true;
     protected bool m_FirstB = true;
+    // The dice thrown since the session last asked (TakeThrows).
+    protected ref array<int> m_ThrewSeat;
+    protected ref array<int> m_ThrewDie;
+    protected ref array<int> m_ThrewFace;
 
     void OZG_Nardy()
     {
@@ -327,6 +331,34 @@ class OZG_Nardy extends OZG_BoardDuel
         m_Cups = new OZG_DiceCups();
         m_Dice = new array<int>();
         m_Roll = new array<int>();
+        m_ThrewSeat = new array<int>();
+        m_ThrewDie = new array<int>();
+        m_ThrewFace = new array<int>();
+    }
+
+    protected void NaThrew(int seat, int die, int face)
+    {
+        m_ThrewSeat.Insert(seat);
+        m_ThrewDie.Insert(die);
+        m_ThrewFace.Insert(face);
+    }
+
+    override void TakeThrows(array<int> seats, array<int> dice, array<int> faces)
+    {
+        for (int i = 0; i < m_ThrewSeat.Count(); i++)
+        {
+            seats.Insert(m_ThrewSeat[i]);
+            dice.Insert(m_ThrewDie[i]);
+            faces.Insert(m_ThrewFace[i]);
+        }
+        m_ThrewSeat.Clear();
+        m_ThrewDie.Clear();
+        m_ThrewFace.Clear();
+    }
+
+    override bool ThrowsNext(int seat)
+    {
+        return !m_Over && !m_Thrown && seat == SeatToMove();
     }
 
     override string GameId()
@@ -402,6 +434,8 @@ class OZG_Nardy extends OZG_BoardDuel
             a = m_Cups.Of(m_White, 2).Throw(0, dice);
             b = m_Cups.Of(m_Black, 2).Throw(0, dice);
         }
+        NaThrew(m_White, 0, a);
+        NaThrew(m_Black, 0, b);
         if (a == b)
             b = a % 6 + 1;
         NaOpen(a, b);
@@ -611,6 +645,8 @@ class OZG_Nardy extends OZG_BoardDuel
             OZG_DiceCup cup = m_Cups.Of(seat, 2);
             int a = cup.Throw(0, Chance());
             int b = cup.Throw(1, Chance());
+            NaThrew(seat, 0, a);
+            NaThrew(seat, 1, b);
             NaThrown(a, b, true);
             m_Last = "";
             return;
@@ -706,6 +742,97 @@ class OZG_Nardy extends OZG_BoardDuel
         if (side == 1)
             score = "0-" + points.ToString();
         End(score, why);
+    }
+
+    // A disc moved from point to point, two lone discs of the two colours
+    // swapped, a disc borne off, or one put back from those borne off (the
+    // bar first, in short nardy): never onto a point of the other colour.
+    override protected bool DuelSleight(string kind, string a, string b, out string refusal)
+    {
+        refusal = OZG_DuelConst.NO_SLEIGHT;
+        int from = a.ToInt();
+        int to = b.ToInt();
+        if (kind == OZG_DuelConst.S_MOVE)
+        {
+            if (from < 1 || from > 24 || to < 1 || to > 24 || from == to)
+                return false;
+            int side = NaSideAt(from);
+            if (side < 0 || m_Pos.Mine(1 - side, to) > 0)
+                return false;
+            m_Pos.Put(side, from, -1);
+            m_Pos.Put(side, to, 1);
+        }
+        else if (kind == OZG_DuelConst.S_SWAP)
+        {
+            if (from < 1 || from > 24 || to < 1 || to > 24)
+                return false;
+            int sa = NaSideAt(from);
+            int sb = NaSideAt(to);
+            if (sa < 0 || sb < 0 || sa == sb)
+                return false;
+            if (m_Pos.Mine(sa, from) != 1 || m_Pos.Mine(sb, to) != 1)
+                return false;
+            m_Pos.Put(sa, from, -1);
+            m_Pos.Put(sb, to, -1);
+            m_Pos.Put(sa, to, 1);
+            m_Pos.Put(sb, from, 1);
+        }
+        else if (kind == OZG_DuelConst.S_OFF)
+        {
+            if (from < 1 || from > 24)
+                return false;
+            int off = NaSideAt(from);
+            if (off < 0)
+                return false;
+            m_Pos.Put(off, from, -1);
+            m_Pos.Off[off] = m_Pos.Off[off] + 1;
+        }
+        else if (kind == OZG_DuelConst.S_BACK)
+        {
+            int back = -1;
+            if (a == "w")
+                back = 0;
+            else if (a == "b")
+                back = 1;
+            if (back < 0 || to < 1 || to > 24 || m_Pos.Mine(1 - back, to) > 0)
+                return false;
+            if (m_Pos.Bar[back] > 0)
+                m_Pos.Bar[back] = m_Pos.Bar[back] - 1;
+            else if (m_Pos.Off[back] > 0)
+                m_Pos.Off[back] = m_Pos.Off[back] - 1;
+            else
+                return false;
+            m_Pos.Put(back, to, 1);
+        }
+        else
+        {
+            return false;
+        }
+        refusal = "";
+        return true;
+    }
+
+    // The side whose discs stand on point `g`, -1 for none.
+    protected int NaSideAt(int g)
+    {
+        if (m_Pos.Mine(0, g) > 0)
+            return 0;
+        if (m_Pos.Mine(1, g) > 0)
+            return 1;
+        return -1;
+    }
+
+    // A disc borne off by hand may be the last.
+    override protected void DuelAfterSleight()
+    {
+        for (int side = 0; side < 2; side++)
+        {
+            if (m_Pos.Off[side] >= OZG_NardyConst.DISCS)
+            {
+                NaWon(side);
+                return;
+            }
+        }
     }
 
     override protected void DuelTake(OZG_BoardDuel from)

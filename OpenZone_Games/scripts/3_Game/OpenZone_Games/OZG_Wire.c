@@ -49,6 +49,17 @@ class OZG_Regions
 
 // An item's network id as a text both sides read the same: the key a client
 // names a card by in a sleight, and the server finds it by.
+// A sleight on the board seen (boards and dice design §9.1): told at once to
+// whoever has the window open on the place.
+class OZG_WBoardSaw
+{
+    string PlaceId;
+    int    SeatNo;
+    string Kind;
+    string A;
+    string B;
+}
+
 class OZG_Keys
 {
     static string Of(Object thing)
@@ -426,6 +437,18 @@ class OZG_Text
         if (to <= from)
             return;
         SplitSpan(text, from, to, sep, into);
+    }
+
+    static string JoinIds(array<string> ids)
+    {
+        string s = "";
+        for (int i = 0; i < ids.Count(); i++)
+        {
+            if (i > 0)
+                s = s + ",";
+            s = s + ids[i];
+        }
+        return s;
     }
 
     static string Glue(array<string> parts)

@@ -139,6 +139,13 @@ class OZG_Die_Base extends OZG_Piece_Base
         return m_OZG_Knowers.Find(uid) >= 0;
     }
 
+    // Studied closely in the hands (OZG_ActionStudy), as a card is.
+    override void SetActions()
+    {
+        super.SetActions();
+        AddAction(OZG_ActionStudy);
+    }
+
     void OZG_AddKnower(string uid)
     {
         if (uid != "" && m_OZG_Knowers.Find(uid) < 0)
@@ -166,6 +173,8 @@ class OZG_Die_Base extends OZG_Piece_Base
         ctx.Write(n);
         for (int i = 0; i < n; i++)
             ctx.Write(m_OZG_Knowers[i]);
+        if (m_OZG_LoadFace > 0)
+            OZG_Log.Dbg("die " + OZG_Keys.Of(this) + " stored, loaded " + m_OZG_LoadFace.ToString() + " at " + m_OZG_LoadWeight.ToString());
     }
 
     override bool OnStoreLoad(ParamsReadContext ctx, int version)
@@ -194,6 +203,8 @@ class OZG_Die_Base extends OZG_Piece_Base
         m_OZG_LoadFace = face;
         m_OZG_LoadWeight = weight;
         m_OZG_LoadBy = by;
+        if (face > 0)
+            OZG_Log.Dbg("die read back, loaded " + face.ToString() + " at " + weight.ToString());
         return true;
     }
 }
@@ -240,12 +251,20 @@ class OZG_DiceRead
         OfThing(held, into);
     }
 
+    // The dice a board or a can holds, in the order of its die slots (Die1,
+    // Die2, ..): the order attachments are listed in is not kept across a
+    // restart, the slots are, and a swapped die takes the slot of the one it
+    // replaced.
     static void OfThing(EntityAI holder, array<EntityAI> into)
     {
-        int n = holder.GetInventory().AttachmentCount();
-        for (int i = 0; i < n; i++)
+        TStringArray slots = new TStringArray;
+        GetGame().ConfigGetTextArray("CfgVehicles " + holder.GetType() + " attachments", slots);
+        for (int i = 0; i < slots.Count(); i++)
         {
-            EntityAI a = holder.GetInventory().GetAttachmentFromIndex(i);
+            if (slots[i].IndexOf("Die") < 0)
+                continue;
+            int id = InventorySlots.GetSlotIdFromString(slots[i]);
+            EntityAI a = holder.GetInventory().FindAttachment(id);
             if (a && a.IsKindOf("OZG_Die_Base"))
                 into.Insert(a);
         }

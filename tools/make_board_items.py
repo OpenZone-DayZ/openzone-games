@@ -147,25 +147,46 @@ def strings():
     return len(lines)
 
 
+def entry(name, restock, usages):
+    """One class's lines for types.xml, the decks' numbers: nothing spawns until an
+    admin raises the nominal."""
+    lines = ['    <type name="%s">' % name,
+             "        <nominal>0</nominal>",
+             "        <lifetime>14400</lifetime>",
+             "        <restock>%d</restock>" % restock,
+             "        <min>0</min>",
+             "        <quantmin>-1</quantmin>",
+             "        <quantmax>-1</quantmax>",
+             "        <cost>100</cost>",
+             '        <flags count_in_cargo="0" count_in_hoarder="0" count_in_map="1" '
+             'count_in_player="0" crafted="0" deloot="0"/>',
+             '        <category name="tools"/>']
+    lines += ['        <usage name="%s"/>' % u for u in usages]
+    lines.append("    </type>")
+    return lines
+
+
 def types():
-    lines = []
+    lines = ["    <!-- The board and the can of dice: small things of a house, as the decks. -->"]
+    count = 0
     for look in LOOKS:
-        lines += ['    <type name="OZG_Board_%s">' % look,
-                  "        <nominal>0</nominal>",
-                  "        <lifetime>14400</lifetime>",
-                  "        <restock>0</restock>",
-                  "        <min>0</min>",
-                  "        <quantmin>-1</quantmin>",
-                  "        <quantmax>-1</quantmax>",
-                  "        <cost>100</cost>",
-                  '        <flags count_in_cargo="0" count_in_hoarder="0" count_in_map="1" '
-                  'count_in_player="0" crafted="0" deloot="0"/>',
-                  '        <category name="tools"/>',
-                  "    </type>"]
+        lines += entry("OZG_Board_%s" % look, 1800, ["Town", "Village"])
+        lines += entry("OZG_DiceCan_%s" % look, 1800, ["Town", "Village"])
+        count += 2
+    lines.append("    <!-- A piece out of its board or can is a thing of its own; one entry a class. -->")
+    for look in LOOKS:
+        for side, _, _, _, _ in SIDES:
+            for letter, _, _, _, _ in CHESS:
+                lines += entry("OZG_Chess_%s_%s%s" % (look, side, letter), 0, [])
+                count += 1
+            lines += entry("OZG_Disc_%s_%s" % (look, side.upper()), 0, [])
+            count += 1
+    lines += entry("OZG_Die", 0, [])
+    count += 1
     text, bom, crlf = read(TYPES)
-    text = between(text, "<!-- >>> generated: board -->", "<!-- <<< generated: board -->", lines)
+    text = between(text, "<!-- >>> generated: board -->", "    <!-- <<< generated: board -->", lines)
     write(TYPES, text, bom, crlf)
-    return len(LOOKS)
+    return count
 
 
 s, p = config()

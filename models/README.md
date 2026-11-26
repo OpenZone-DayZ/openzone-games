@@ -1,16 +1,22 @@
 # The models of OpenZone Games
 
-Six small models, drawn from nothing by the scripts in this folder: the laid-out game, the
-deck, a single card, the fan of cards in a hand, the mark of a seat and the card sharp's
-kit. Nothing in them is copied from another game or mod; meshes and textures alike are made
-by the scripts (the pictures some cards of the stalkers' deck carry are GSC Game World's,
-see the mod's NOTICE).
+Small models drawn from nothing by the scripts in this folder. For the cards: the laid-out
+game, the deck, a single card, the fan of cards in a hand, the mark of a seat and the card
+sharp's kit. For the boards and dice (`docs/2026-11-26-boards-and-dice-design.md`): the
+"3 in 1" board folded and laid out, six chess pieces, the disc, the die, the can of dice
+and the can laid out. Nothing in them is copied from another game or mod; meshes and
+textures alike are made by the scripts (the pictures some cards of the stalkers' deck carry
+are GSC Game World's, see the mod's NOTICE).
 
 | | |
 |---|---|
 | ![place](preview/place.png) | ![deck](preview/deck.png) |
 | ![card](preview/card.png) | ![hand](preview/hand.png) |
 | ![mark](preview/mark.png) | ![sharpkit](preview/sharpkit.png) |
+| ![board](preview/board.png) | ![board_open](preview/board_open.png) |
+| ![chess_k](preview/chess_k.png) | ![chess_n](preview/chess_n.png) |
+| ![disc](preview/disc.png) | ![die](preview/die.png) |
+| ![can](preview/can.png) | ![can_place](preview/can_place.png) |
 
 The picture of the fan shows it twice: on the left as others see it, on the right the same
 fan turned round, as its holder sees it.
@@ -47,6 +53,18 @@ off the exported MLODs by `measure.py`.
 | `hand/ozg_hand.p3d` | 0.149 x 0.112 x 0.0045 | 32 | `card1` ... `card8` | Geometry: one box 0.06 x 0.09 x 0.01 |
 | `mark/ozg_mark.p3d` | 0.480 x 0.040 x 0.480 | 68 | `camo` | none |
 | `sharpkit/ozg_sharpkit.p3d` | 0.092 x 0.034 x 0.092 | 1212 | `camo` | Geometry and Fire Geometry: one box 0.092 x 0.018 x 0.092, 0.2 kg; View Geometry: the same, 0.034 high; Memory: the inventory's camera |
+| `board/ozg_board.p3d` | 0.320 x 0.050 x 0.160 | 12 | `camo` | Geometry, View Geometry, Fire Geometry: the same box, 1.5 kg, wood; Memory: the inventory's camera |
+| `board/ozg_board_open.p3d` | 0.320 x 0.025 x 0.320 | 12 | `camo` | Geometry, View Geometry, Fire Geometry: the same box, 1.5 kg, wood |
+| `chess/ozg_chess_k.p3d` | 0.027 x 0.068 x 0.027 | 742 | `camo` | Geometry, View Geometry, Fire Geometry: the box round it, 0.035 kg, wood; Memory: the inventory's camera |
+| `chess/ozg_chess_q.p3d` | 0.027 x 0.060 x 0.027 | 926 | `camo` | the same, 0.030 kg |
+| `chess/ozg_chess_r.p3d` | 0.025 x 0.039 x 0.025 | 606 | `camo` | the same, 0.025 kg |
+| `chess/ozg_chess_b.p3d` | 0.025 x 0.052 x 0.025 | 838 | `camo` | the same, 0.022 kg |
+| `chess/ozg_chess_n.p3d` | 0.025 x 0.051 x 0.0295 | 414 | `camo` | the same, 0.025 deep (the head looks out of it), 0.022 kg |
+| `chess/ozg_chess_p.p3d` | 0.021 x 0.034 x 0.021 | 678 | `camo` | the same, 0.015 kg |
+| `disc/ozg_disc.p3d` | 0.030 x 0.007 x 0.030 | 210 | `camo` | Geometry, View Geometry, Fire Geometry: the box round it, 0.010 kg, plastic; Memory: the inventory's camera |
+| `die/ozg_die.p3d` | 0.016 x 0.016 x 0.016 | 44 | `camo` | the same, 0.005 kg, plastic |
+| `can/ozg_can.p3d` | 0.077 x 0.090 x 0.077 | 328 | `camo` | Geometry, View Geometry, Fire Geometry: the box round it, 0.25 kg, metal plate; Memory: the inventory's camera |
+| `can/ozg_can_place.p3d` | 0.300 x 0.096 x 0.300 | 340 | `camo` | Geometry, View Geometry, Fire Geometry: the felt alone, 0.30 x 0.006 x 0.30, 0.6 kg, cloth |
 
 Each has one visual LOD (resolution 1): at these sizes a second one would save nothing.
 Every `model.cfg` has a `CfgModels` class named as its file, no skeleton, no animations,
@@ -223,6 +241,67 @@ The material, `data/ozg_sharpkit.rvmat`, is the place's with the shine of the ga
 kit (specular 0.54, power 100, fresnel 2, 0.81). `ozg_sharpkit_smdi.paa` says where it
 shines: glass, the blade and bare steel most, the enamel less, paper, wood and sand hardly.
 
+### board: the "3 in 1" board
+
+One picture serves both models (`data/ozg_board_co.paa`, 512 px, `make_textures.py`
+`board_picture`): the 8 x 8 field of 35 mm squares, light maple and dark walnut, a1 dark,
+within a frame of dark wood 20 mm wide that carries the files a-h and the ranks 1-8 and a
+light line inlaid round the field. The picture covers the 320 mm of the laid-out board.
+
+- **Folded** (`ozg_board.p3d`, the item): a box 0.32 x 0.05 x 0.16 lying flat, the field's
+  far half on top and its near half underneath, as the halves fold together. The middle of
+  the underside is the origin (`autocenter = 0`); `rotationFlags = 0`.
+- **Laid out** (`ozg_board_open.p3d`, the place `OZG_BoardPlace`): 0.32 x 0.025 x 0.32, the
+  field up, the same origin. The place puts on the side the chosen game is played on,
+  through the hidden selection: `ozgFieldChess` (the field above) for chess, draughts,
+  giveaway and corners, `ozgFieldNardy` (`data/ozg_board_nardy_co.paa`, `nardy_picture`:
+  two halves of six points a side in walnut and cherry, the bar between them in the frame's
+  wood) for nardy.
+- `ozg_board_nohq.paa` raises the inlaid line, `ozg_board_smdi.paa` (256 px) lets the field
+  shine like lacquered wood and the letters less. The hologram puts on
+  `data/ozg_board_deployable.rvmat` and `ozg_board_undeployable.rvmat`.
+
+The table window's two pictures of the field are the same wood at 1024 px, the files and
+ranks as White reads them and as Black does (`art/boards/ozg_board_win_white_co.png`,
+`..._black_co.png`, drawn by `make_textures.py board`).
+
+### chess, disc, die: the pieces
+
+- **Chess** (`chess.py`): six turned pieces, the king 68 mm high and the pawn 34, each
+  STANDING as on the board, the middle of its base at the origin; the knight looks towards
+  +Z. One model a kind: the colour is `camo`, boxwood (`data/ozg_chess_white_co.paa`) or
+  ebony (`..._black_co.paa`), 256 px; every face takes the whole wood picture, round a
+  turned body along u and up it along v.
+- **Disc** (`disc.py`): 30 mm across and 7 mm high lying flat, the middle of its underside
+  at the origin; ivory or jet through `camo` (`data/ozg_disc_white_co.paa`,
+  `..._black_co.paa`), the top showing turned rings.
+- **Die** (`die.py`): a cube of 16 mm with its edges and corners cut off, the middle of its
+  underside at the origin, opposite faces adding up to seven: 1 up, 6 down, 2 towards +Z,
+  5 towards -Z, 3 towards +X, 4 towards -X. The picture (`data/ozg_die_co.paa`, 256 x 128)
+  has a face in each 64 px cell (`DIE_CELLS`); the cuts take the plain bone of the last
+  cell. One class, `OZG_Die`, for the board and the can alike.
+
+All three keep `rotationFlags = 0`, a Geometry box round the piece (`autocenter = 0`) and
+the inventory's camera in Memory.
+
+The table window draws the pieces from these models: `models/src/sprites.py` renders each
+onto a clear ground, `tools/make_board_art.py` rings it with dark wood and packs the
+imageset `OpenZone_Games/gui/imagesets/ozg_pieces_classic.imageset`.
+
+### can: the can of dice
+
+A tin can 75 mm across and 90 mm high with its lid on (`ozg_can.p3d`, the item), the middle
+of its bottom at the origin: a body of 28 sides, and a lid over its top 13 mm standing 1.1
+mm proud of it.
+One picture, 512 px (`data/ozg_can_co.paa`, `make_textures.py can`): green enamel, a cream
+band of dice faces round the body, a gold ring and a five on the lid, the bottom bare tin,
+the enamel rubbed through here and there. `can.py` says where each part of the picture
+lies. `camo` is every face.
+
+Laid out (`ozg_can_place.p3d`, the place `OZG_DicePlace`): a square of the card mat's felt,
+0.30 x 0.30 and 6 mm thick, wearing the mat's own picture, with the can standing at its back
+left corner. Its Geometry is the felt alone.
+
 ## The deck sheet
 
 `OpenZone_Games/data/cards/ozg_deck_<style>_co.paa`, 512 x 512, opaque, drawn by
@@ -294,6 +373,31 @@ rotationFlags = 0;
 hiddenSelections[] = {"camo"};
 hiddenSelectionsTextures[] = {"OpenZone_Games\models\sharpkit\data\ozg_sharpkit_co.paa"};
 hiddenSelectionsMaterials[] = {"OpenZone_Games\models\sharpkit\data\ozg_sharpkit.rvmat"};
+
+// the board, folded (tools/make_board_items.py writes its 64 slots and the pieces' classes)
+model = "\OpenZone_Games\models\board\ozg_board.p3d";
+rotationFlags = 0;
+hiddenSelections[] = {"camo"};
+hiddenSelectionsTextures[] = {"OpenZone_Games\models\board\data\ozg_board_co.paa"};
+
+// the board laid out: the side up follows the game
+model = "\OpenZone_Games\models\board\ozg_board_open.p3d";
+hiddenSelections[] = {"camo"};
+ozgFieldChess = "OpenZone_Games\models\board\data\ozg_board_co.paa";
+ozgFieldNardy = "OpenZone_Games\models\board\data\ozg_board_nardy_co.paa";
+
+// a piece: one model a kind, the colour through camo
+model = "\OpenZone_Games\models\chess\ozg_chess_k.p3d";
+hiddenSelections[] = {"camo"};
+hiddenSelectionsTextures[] = {"OpenZone_Games\models\chess\data\ozg_chess_white_co.paa"};
+hiddenSelectionsMaterials[] = {"OpenZone_Games\models\chess\data\ozg_chess.rvmat"};
+
+// the can, and the can laid out (no hidden selection: the felt keeps the mat's picture)
+model = "\OpenZone_Games\models\can\ozg_can.p3d";
+hiddenSelections[] = {"camo"};
+hiddenSelectionsTextures[] = {"OpenZone_Games\models\can\data\ozg_can_co.paa"};
+hiddenSelectionsMaterials[] = {"OpenZone_Games\models\can\data\ozg_can.rvmat"};
+model = "\OpenZone_Games\models\can\ozg_can_place.p3d";
 ```
 
 `camo` and `deck` overlap on the place: the deck's faces are in both, and a texture put on
@@ -306,14 +410,14 @@ first with the mat's texture, and the deck's sheet after it.
 The texture sources, when a picture changes:
 
 ```
-python -I models/src/make_textures.py [place] [deck] [mark] [card] [sharpkit]
+python -I models/src/make_textures.py [place] [deck] [mark] [card] [sharpkit] [board] [chess] [disc] [die] [can]
 asset_convert(source="models/place/data/ozg_place_co.png",
               output="../../../OpenZone_Games/models/place/data/ozg_place_co.paa")
 ```
 
 (with no name it draws them all) and so for each PNG (`output` is read from the source's
-own folder): `models/place/data/*`, `models/mark/data/*` and `models/sharpkit/data/*` go to
-the model's own `data/`, `models/cards/data/*` to
+own folder): `models/<model>/data/*` (place, mark, sharpkit, board, chess, disc, die, can)
+go to the model's own `data/`, `models/cards/data/*` to
 `OpenZone_Games/data/cards/`. ImageToPAA picks the format by the source's name (`_co` DXT1,
 `_nohq` DXT5 with the swizzle, `_smdi` DXT1). The `.rvmat` files are kept by hand.
 
@@ -357,6 +461,8 @@ Read off the files (2026-11-24):
 - the bounding centre each built model carries (`measure.py`): 0, 0, 0 for all five.
 - the card sharp's kit (2026-11-25) likewise: clean for `asset_check`, its bounding
   centre 0, 0, 0; what the game showed of it is under its own heading.
+- the boards and dice (2026-11-26): the sizes, triangles and masses in the table off the
+  MLODs, and a bounding centre of 0, 0, 0 for all twelve built models (`measure.py`).
 
 Seen in the game (2026-11-24, diag 1.30, the NHChernobyl stand): the deck and the card in
 the inventory, in the hand and on the ground, as written under each; both decks' cards in
@@ -372,7 +478,10 @@ Not checked, because only the game can say:
 - the mark as an item with no geometry at all: that nothing meets it, and that it stands
   where it is put;
 - the hologram's two materials on the place;
-- that a blanked card is gone and the others stay.
+- that a blanked card is gone and the others stay;
+- the boards' and dice's models in the world: the board and the can lying, in the hand and
+  laid out, the pieces out of their set. The windows these games are played in wait for
+  their mockups, and the models are to be looked at with them.
 
 ## Author and licence
 

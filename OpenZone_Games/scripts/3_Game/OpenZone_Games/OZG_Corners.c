@@ -390,11 +390,71 @@ class OZG_Corners extends OZG_BoardDuel
         m_BlackMoves = same.m_BlackMoves;
     }
 
+    // A disc moved, swapped, put back or taken off by hand.
+    override protected bool DuelSleight(string kind, string a, string b, out string refusal)
+    {
+        refusal = OZG_DuelConst.NO_SLEIGHT;
+        int from = OZG_ChessBoard.SqOf(a);
+        int to = OZG_ChessBoard.SqOf(b);
+        string letters = OZG_CornersConst.LETTERS;
+        if (kind == OZG_DuelConst.S_MOVE)
+        {
+            if (from < 0 || to < 0 || m_Pos.Sq[from] == OZG_CornersConst.EMPTY || m_Pos.Sq[to] != OZG_CornersConst.EMPTY)
+                return false;
+            m_Pos.Sq[to] = m_Pos.Sq[from];
+            m_Pos.Sq[from] = OZG_CornersConst.EMPTY;
+        }
+        else if (kind == OZG_DuelConst.S_SWAP)
+        {
+            if (from < 0 || to < 0 || from == to)
+                return false;
+            if (m_Pos.Sq[from] == OZG_CornersConst.EMPTY || m_Pos.Sq[to] == OZG_CornersConst.EMPTY)
+                return false;
+            int keep = m_Pos.Sq[to];
+            m_Pos.Sq[to] = m_Pos.Sq[from];
+            m_Pos.Sq[from] = keep;
+        }
+        else if (kind == OZG_DuelConst.S_OFF)
+        {
+            if (from < 0 || m_Pos.Sq[from] == OZG_CornersConst.EMPTY)
+                return false;
+            m_Taken = m_Taken + letters.Get(m_Pos.Sq[from]);
+            m_Pos.Sq[from] = OZG_CornersConst.EMPTY;
+        }
+        else if (kind == OZG_DuelConst.S_BACK)
+        {
+            int piece = letters.IndexOf(a);
+            if ((a != "w" && a != "b") || to < 0 || m_Taken.IndexOf(a) < 0)
+                return false;
+            if (m_Pos.Sq[to] != OZG_CornersConst.EMPTY)
+                m_Taken = m_Taken + letters.Get(m_Pos.Sq[to]);
+            TakeBack(a);
+            m_Pos.Sq[to] = piece;
+        }
+        else
+        {
+            return false;
+        }
+        refusal = "";
+        return true;
+    }
+
+    protected int TakenOf(string letter)
+    {
+        int n = 0;
+        for (int i = 0; i < m_Taken.Length(); i++)
+        {
+            if (m_Taken.Get(i) == letter)
+                n++;
+        }
+        return n;
+    }
+
     override protected bool DuelSound(out string why)
     {
         why = "";
-        int white = m_Pos.Count(0);
-        int black = m_Pos.Count(1);
+        int white = m_Pos.Count(0) + TakenOf("w");
+        int black = m_Pos.Count(1) + TakenOf("b");
         if (white != m_Size || black != m_Size)
         {
             why = "discs " + white.ToString() + "/" + black.ToString();

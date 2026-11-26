@@ -415,6 +415,12 @@ modded class OZG_GameMenu
         }
         if (m_BPub.Check >= 0)
             BoardLight(m_BPub.Check, ARGB(150, 220, 40, 30), 0);
+        // A sleight just seen: its squares in red a while.
+        if (m_SawSquares && GetGame().GetTime() < m_SawUntil)
+        {
+            for (int sw = 0; sw < m_SawSquares.Count(); sw++)
+                BoardLight(m_SawSquares[sw], ARGB(150, 230, 60, 60), 0);
+        }
         array<int> next = new array<int>();
         PickNext(next);
         if (Picked().Count() > 0 && next.Count() == 0 && PickExact().Count() == 0)
@@ -538,6 +544,42 @@ modded class OZG_GameMenu
         ask.SetText(Caps(Tr("STR_OZG_CHESS_PROMOTE")));
         ask.SetSort(25);
         PutAt(ask, rowX - m_BS, rowY + m_BS + 2, m_BS * 6, 22);
+    }
+
+    // ---- a sleight seen ------------------------------------------------------------
+
+    protected ref array<int> m_SawSquares;
+    protected int m_SawUntil;
+
+    // A sleight on the board seen (§9.1): said, and its squares lit a while.
+    void BoardSaw(OZG_WBoardSaw saw)
+    {
+        if (!m_SawSquares)
+            m_SawSquares = new array<int>();
+        m_SawSquares.Clear();
+        int a = OZG_ChessBoard.SqOf(saw.A);
+        int b = OZG_ChessBoard.SqOf(saw.B);
+        if (a >= 0)
+            m_SawSquares.Insert(a);
+        if (b >= 0)
+            m_SawSquares.Insert(b);
+        m_SawUntil = GetGame().GetTime() + 8000;
+        string key = "STR_OZG_BSAW_" + saw.Kind;
+        key.ToUpper();
+        string who = SeatName(saw.SeatNo);
+        string line = Tr(key);
+        line.Replace("%1", who);
+        line.Replace("%2", saw.A);
+        line.Replace("%3", saw.B);
+        Said(line);
+        BoardPaint();
+    }
+
+    // Words with their arguments in this client's language, for what the
+    // server says outside a view (a notice).
+    string WordsOf(string words)
+    {
+        return Words(words);
     }
 
     // ---- moves -----------------------------------------------------------------

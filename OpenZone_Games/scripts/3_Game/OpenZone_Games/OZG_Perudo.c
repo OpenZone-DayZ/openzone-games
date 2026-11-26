@@ -59,6 +59,11 @@ class OZG_Perudo extends OZG_DiceGame
         return true;
     }
 
+    override bool ThrowsNext(int seat)
+    {
+        return false;
+    }
+
     override protected bool DgBegin(out string refusal)
     {
         refusal = "";

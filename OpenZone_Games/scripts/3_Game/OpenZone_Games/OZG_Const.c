@@ -161,6 +161,11 @@ class OZG_Const
     static const string OP_SLIP  = "slip";
     static const string OP_SWAP  = "swap";
     static const string OP_THROW = "throw";
+    // A sleight on the board, a die swapped (asked); a sleight on the board
+    // seen (told to whoever has the window open).
+    static const string OP_BSLEIGHT = "bsleight";
+    static const string OP_DSWAP = "dswap";
+    static const string OP_BSAW = "bsaw";
 
     // The kinds of sleight, as the server's log, the settings (CaughtOf) and
     // the doer's message name them.
@@ -184,6 +189,20 @@ class OZG_Const
     static const string SAY_SLEIGHT_NO_CARD = "STR_OZG_SAY_SLEIGHT_NO_CARD";
     static const string SAY_SLEIGHT_NOT_GAME = "STR_OZG_SAY_SLEIGHT_NOT_GAME";
     static const string SAY_SLEIGHT_NO_ROOM = "STR_OZG_SAY_SLEIGHT_NO_ROOM";
+    static const string SAY_BSLEIGHT_WAIT = "STR_OZG_SAY_BSLEIGHT_WAIT";
+    static const string SAY_DSWAP_NOT_NOW = "STR_OZG_SAY_DSWAP_NOT_NOW";
+    static const string SAY_DSWAP_ONE = "STR_OZG_SAY_DSWAP_ONE";
+    static const string SAY_DSWAP_NO_DIE = "STR_OZG_SAY_DSWAP_NO_DIE";
+    static const string SAY_DSWAP_SEEN = "STR_OZG_SAY_DSWAP_SEEN";
+    static const string SAY_LOAD_NOTICED = "STR_OZG_SAY_LOAD_NOTICED";
+    static const string SAY_LOAD_OPENED = "STR_OZG_SAY_LOAD_OPENED";
+    static const string SAY_LOAD_DONE = "STR_OZG_SAY_LOAD_DONE";
+    static const string SAY_LOAD_BAD = "STR_OZG_SAY_LOAD_BAD";
+    static const string SAY_LOAD_NO_KIT = "STR_OZG_SAY_LOAD_NO_KIT";
+    static const string SAY_STUDY_DIE_FAIR = "STR_OZG_SAY_STUDY_DIE_FAIR";
+    static const string SAY_STUDY_DIE_LOADED = "STR_OZG_SAY_STUDY_DIE_LOADED";
+    // The three weights of a load, as words: STR_OZG_LOAD_STEP_1 .. _3.
+    static const string LOAD_STEP = "STR_OZG_LOAD_STEP_";
 
     // The server's word to open the window (OZ_Rpc.Show), followed by the
     // place's id.
@@ -195,6 +214,10 @@ class OZG_Const
     static const string NOTICE_SIT  = "games.sit";
     static const string NOTICE_SAY  = "games.say";
     static const string NOTICE_STUDY = "games.study";
+    // Cheating at a board and with dice (boards and dice design §9, §10).
+    static const string NOTICE_DSWAP = "games.dswap";
+    static const string NOTICE_LOADED = "games.loaded";
+    static const string NOTICE_LOAD = "games.load";
 
     // The window. The id MUST BE SMALL: with a large number EnterScriptedMenu
     // returns null and the mission is never asked (measured by the series'

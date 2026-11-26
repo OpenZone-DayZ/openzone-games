@@ -51,6 +51,10 @@ when exactly one connected player bears it.
 | `!ozg deck stalker` | the stalkers' deck: stalkers on the aces and kings, mutants on the queens, jacks and tens, and two jokers (54 cards) |
 | `!ozg deck sharp` | a card sharp's deck (classic): the same fifty-two cards and ten empty slots more |
 | `!ozg deck stalkersharp` | a card sharp's deck in the stalkers' look: the 54 and ten empty slots (64) |
+| `!ozg board` | the "3 in 1" board with its 32 chess pieces, 30 discs and two dice, into your hands (in the first seconds after joining the hands take nothing yet, and it lands at your feet) |
+| `!ozg can` | the can of dice with its five dice |
+| `!ozg die` | one die, to carry for a swap |
+| `!ozg kit` | the card sharp's kit (three uses) |
 | `!ozg table` | a kitchen table two metres in front of you |
 | `!ozg bots` | two bots sit down at the nearest laid-out game (within 30 m) and start playing |
 | `!ozg bots 4` | four of them (as many as there are free seats) |
@@ -318,6 +322,89 @@ bridge's scores, preferans' pools and a closed pool's balance):
 
 The numbers of 2026-11-25 are in `2026-11-25-stakes-and-games-record.md`.
 
+## Boards and dice (2026-11-26)
+
+The board and the can are laid out like a deck ("Choose placement", "Lay out the game"):
+the board unfolds on the table, the can stands on a square of felt. The host's "Game"
+button steps through the games of the set laid out: on a board chess, draughts, giveaway,
+corners, long nardy and short nardy (the field turns over for nardy); on a can thousand,
+dice poker, pig, high roll and perudo. The board games are for two, the dice games for two
+to six. `!ozg bots` seats bots at both; a bot plays a move the game offers.
+
+**The window is a working one until the mockups** (the owner's word of 2026-11-26): a
+board's piece is clicked, then a lit square (a capture of several squares square by
+square, promotion asks the piece); nardy's moves and every dice game's moves are buttons.
+"Variant" steps through a game's FIRST option only: whose dice in the dice games (the
+host's, own, by wish), the size of corners. The other options through the bridge:
+
+    oz_games {"op":"ask","id":"<place>","who":"me","ask":"game","val":"thousand"}
+    oz_games {"op":"ask","id":"<place>","who":"me","ask":"opt","opt":"dice","val":"own"}      host | own | wish
+    oz_games {"op":"ask","id":"<place>","who":"me","ask":"opt","opt":"pits","val":"off"}      thousand: entry 50|0, pits, barrel, overtake, bolts on|off
+    oz_games {"op":"ask","id":"<place>","who":"me","ask":"deal"}
+    oz_games {"op":"ask","id":"<place>","who":"me","ask":"act","move":"throw"}
+
+The games' ids: `chess`, `draughts`, `giveaway`, `corners`, `nardy_long`, `nardy_short`,
+`thousand`, `dicepoker`, `pig`, `highroll`, `perudo`. Moves as the games write them:
+`e2e4`, `e7e8q`; `c3-d4`, `c3:e5:c7`; nardy `m:<from>:<to>:<die>`; thousand `throw`,
+`set:<positions>`, `write`; pig `throw`, `hold`.
+
+**Own dice**: a seat that must throw its own carries a can holding enough dice (perudo is
+played so only); without one the deal says who is short. The dice thrown are the real
+items, in the order of their slots.
+
+**Studying a die**: a die in the hands has "Study closely", as a card has: "Nothing found",
+or the face it is loaded on and how heavily; the player knows that load from then on.
+
+**Sleights on a board** (design §9.1): move, swap, put back, take off. Whoever has the
+window open on the place is told at once and sees the squares lit; whoever does not is told
+nothing. One a player every `BoardSleightMinutes` (5). The window has no buttons for them
+yet (mockups first); through the bridge, `move` is `<kind>:<a>:<b>`, the squares as in the
+moves (`d8`; nardy points 1-24) and, for `back`, what is put back first: chess its letter
+as a FEN writes it (`Q` a white queen, `q` a black one), draughts `w W b B`, nardy `w` or
+`b`:
+
+    oz_games {"op":"sleightcfg","board":"0"}                                          no wait between a player's sleights (a restart reads the file again)
+    oz_games {"op":"ask","id":"<place>","who":"puppet3","ask":"bsleight","move":"off:d8:"}
+    oz_games {"op":"ask","id":"<place>","who":"puppet3","ask":"bsleight","move":"move:e2:e5"}
+    oz_games {"op":"ask","id":"<place>","who":"puppet3","ask":"bsleight","move":"swap:a1:h1"}
+    oz_games {"op":"ask","id":"<place>","who":"puppet3","ask":"bsleight","move":"back:q:d8"}
+
+**Loading and swapping dice** (design §9.2, §10). The kit's window comes with the mockups;
+the server's half is there. A loaded die shows its face `LoadWeights` percent of its throws
+(30, 50, 70); a die loaded by somebody else and unknown to the loader opens to him for free.
+A swap, on the player's throw: a die he carries for one of the dice he is about to throw
+(`seat` is its place among them, 0 first); one a throw, `DiceSwaps` (2) a game; it shows at
+`ChanceDiceSwap` (30%), and then every other seated player rolls `SpotPercent`. After a
+throw in which a loaded die showed its face, every other seated player notices it at
+`NoticeLoaded` (4) times the load's step (1 to 3) percent.
+
+    oz_games {"op":"dice","who":"me"}                                     the dice you carry: key=face@weight, and whether you know it
+    oz_games {"op":"dice","id":"<place>"}                                 the dice of the set laid out, in their slots' order
+    oz_games {"op":"loaddie","who":"me","key":"<key>","face":"6","step":"3"}            with the kit you carry (force=1: without one)
+    oz_games {"op":"ask","id":"<place>","who":"me","ask":"dswap","seat":"0","key":"<key>"}   your die for the first die you throw
+    oz_games {"op":"noticecfg","loaded":"100","swaps":"5","swapshow":"100"}  every loaded face noticed, five swaps a game, every swap shows
+    oz_games {"op":"whole","id":"<place>"}                                every die thrown so far, and the scores
+
+The server's log has a line for each: `sleight: <id> seat <n> <kind> ...` (a board's and
+the dice swap: `dice-swap <out> for <in>`, with the rolls), `load: <id> loaded <key> on
+<face> at <weight>%`, `load-open: <id> opened <key> ...`, `notice-load: <id> noticed <key>
+...`. A puppet needs jeans (`give what=Jeans_Blue`) before it can carry a die.
+
+**The rules alone, by script**: `gfuzz` plays every one of the eleven (`wild=0`: the bots
+alone, which play a board game to its end; `reload=` how often a save is loaded back, 7 by
+default: long games want more, a thousand of three runs to 2300 moves); `perft` counts
+chess's move paths against the published numbers; `dperft` draughts' (and lists the moves
+of a position); `begin ... pos=` starts a board game from a position (chess a FEN, the rest
+64 letters of `.wWbB` and `w` or `b`):
+
+    oz_games {"op":"gfuzz","game":"draughts","deals":"200","wild":"0"}
+    oz_games {"op":"gfuzz","game":"thousand","deals":"2","players":"3","reload":"150"}
+    oz_games {"op":"perft","depth":"4"}
+    oz_games {"op":"dperft","depth":"6"}
+    oz_games {"op":"splitlen","n":"9000","parts":"2"}     what string.Split makes of long parts
+
+The numbers of 2026-11-26 are in `2026-11-26-boards-and-dice-record.md`.
+
 ## The games in the OpenZone window of VPP
 
 With `OpenZone_Games_VPP` loaded (it needs VPP Admin Tools and the core's
@@ -354,7 +441,8 @@ faces out of a carried deck or a laid-out one, and gone), `undeck` (a player's d
 deleted), `stuff` (cards of a face and a look into a laid-out game: the deck's free slots, then beside
 it), `held` (what a place holds: its deck, and how many cards beside it), `loose` (the
 cards lying on the ground near a point; `sweep=1` deletes them). For noticing:
-`noticecfg`, `noticer`, `notices`, `whole` and `redeal` (above). `lay` takes `deck=`
+`noticecfg`, `noticer`, `notices`, `whole` and `redeal` (above); for the boards and dice
+`dice`, `loaddie`, `perft`, `dperft`, `split` and `splitlen` (above). `lay` takes `deck=`
 (a deck's class), `give` too. The header of each op in
 `OpenZone_Games_Bridge/scripts/5_Mission/OpenZone_Games_Bridge/OZG_WorldOps.c` says what
 it takes. The ops of the rules alone (`begin`, `play`, `fuzz`, `heard` and the rest) are

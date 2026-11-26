@@ -553,7 +553,9 @@ class OZG_GameMenu : UIScriptedMenu
 
     override void OnHide()
     {
-        if (m_V && m_V.Mine < 0)
+        // Seated or not: the server keeps who has the window open (a sleight
+        // on a board is told to them at once).
+        if (m_V)
             Send(OZG_Const.OP_UNWATCH, "", -1, "", "", "", 0);
         // No card stays in the air, and no part of the table shaken.
         LandAll();

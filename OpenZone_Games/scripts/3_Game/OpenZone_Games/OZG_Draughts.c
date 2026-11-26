@@ -389,6 +389,18 @@ class OZG_DraughtsBoard
         }
     }
 
+    // Every man on its far rank a king: after a piece was put there by hand.
+    void DrCrown()
+    {
+        for (int i = 0; i < 64; i++)
+        {
+            if (Sq[i] == OZG_DraughtsConst.W_MAN && FarRank(i, 0))
+                Sq[i] = OZG_DraughtsConst.W_KING;
+            else if (Sq[i] == OZG_DraughtsConst.B_MAN && FarRank(i, 1))
+                Sq[i] = OZG_DraughtsConst.B_KING;
+        }
+    }
+
     // For the stand: the number of move lines `depth` plies deep.
     int DrPerft(int depth)
     {
@@ -516,9 +528,18 @@ class OZG_Draughts extends OZG_BoardDuel
         m_Hist.Insert(move);
         m_Last = move;
         bool thrice = KeepKey();
+        if (DrEnded())
+            return;
+        if (thrice)
+            End(OZG_DuelConst.DRAWN, OZG_DuelConst.END_REPETITION);
+        else if (m_Pos.KingPlies >= OZG_DraughtsConst.KING_PLIES)
+            End(OZG_DuelConst.DRAWN, OZG_DraughtsConst.END_KINGS);
+    }
 
-        // The side to move now: with no piece or no move it has lost (won,
-        // in giveaway).
+    // The side to move with no piece or no move: it has lost (won, in
+    // giveaway). True when that ended the game.
+    protected bool DrEnded()
+    {
         int next = m_Pos.Side;
         array<string> after = new array<string>();
         array<string> afterTakes = new array<string>();
@@ -528,18 +549,72 @@ class OZG_Draughts extends OZG_BoardDuel
             why = OZG_DraughtsConst.END_NO_PIECES;
         else if (after.Count() == 0)
             why = OZG_DraughtsConst.END_NO_MOVE;
-        if (why != "")
+        if (why == "")
+            return false;
+        if (LastWins())
+            End(WinOfSide(next), why);
+        else
+            End(WinOfSide(1 - next), why);
+        return true;
+    }
+
+    // A disc moved, swapped, put back or taken off by hand: dark squares only,
+    // a man on its far rank crowned.
+    override protected bool DuelSleight(string kind, string a, string b, out string refusal)
+    {
+        refusal = OZG_DuelConst.NO_SLEIGHT;
+        int from = OZG_ChessBoard.SqOf(a);
+        int to = OZG_ChessBoard.SqOf(b);
+        string letters = OZG_DraughtsConst.LETTERS;
+        if (kind == OZG_DuelConst.S_MOVE)
         {
-            if (LastWins())
-                End(WinOfSide(next), why);
-            else
-                End(WinOfSide(mover), why);
-            return;
+            if (from < 0 || to < 0 || !OZG_DraughtsBoard.Dark(to))
+                return false;
+            if (m_Pos.Sq[from] == OZG_DraughtsConst.EMPTY || m_Pos.Sq[to] != OZG_DraughtsConst.EMPTY)
+                return false;
+            m_Pos.Sq[to] = m_Pos.Sq[from];
+            m_Pos.Sq[from] = OZG_DraughtsConst.EMPTY;
         }
-        if (thrice)
-            End(OZG_DuelConst.DRAWN, OZG_DuelConst.END_REPETITION);
-        else if (m_Pos.KingPlies >= OZG_DraughtsConst.KING_PLIES)
-            End(OZG_DuelConst.DRAWN, OZG_DraughtsConst.END_KINGS);
+        else if (kind == OZG_DuelConst.S_SWAP)
+        {
+            if (from < 0 || to < 0 || from == to)
+                return false;
+            if (m_Pos.Sq[from] == OZG_DraughtsConst.EMPTY || m_Pos.Sq[to] == OZG_DraughtsConst.EMPTY)
+                return false;
+            int keep = m_Pos.Sq[to];
+            m_Pos.Sq[to] = m_Pos.Sq[from];
+            m_Pos.Sq[from] = keep;
+        }
+        else if (kind == OZG_DuelConst.S_OFF)
+        {
+            if (from < 0 || m_Pos.Sq[from] == OZG_DraughtsConst.EMPTY)
+                return false;
+            m_Taken = m_Taken + letters.Get(m_Pos.Sq[from]);
+            m_Pos.Sq[from] = OZG_DraughtsConst.EMPTY;
+        }
+        else if (kind == OZG_DuelConst.S_BACK)
+        {
+            int piece = letters.IndexOf(a);
+            if (piece <= 0 || to < 0 || !OZG_DraughtsBoard.Dark(to) || m_Taken.IndexOf(a) < 0)
+                return false;
+            if (m_Pos.Sq[to] != OZG_DraughtsConst.EMPTY)
+                m_Taken = m_Taken + letters.Get(m_Pos.Sq[to]);
+            TakeBack(a);
+            m_Pos.Sq[to] = piece;
+        }
+        else
+        {
+            return false;
+        }
+        m_Pos.DrCrown();
+        m_Pos.KingPlies = 0;
+        refusal = "";
+        return true;
+    }
+
+    override protected void DuelAfterSleight()
+    {
+        DrEnded();
     }
 
     override protected void DuelTake(OZG_BoardDuel from)

@@ -31,6 +31,31 @@ class OZG_Study
     }
 }
 
+// Studying a die closely (boards and dice design §10): whether it is loaded,
+// and to what; the player knows its load from then on.
+class OZG_StudyDie
+{
+    static void Done(PlayerBase player, OZG_Die_Base die)
+    {
+        if (!GetGame().IsServer() || !player || !die)
+            return;
+        string uid = OZG_Who.Uid(player);
+        if (uid == "")
+            return;
+        string word = OZG_Const.SAY_STUDY_DIE_FAIR;
+        if (die.OZG_Loaded())
+        {
+            die.OZG_AddKnower(uid);
+            int step = OZG_Cfg.Get().LoadStep(die.OZG_LoadWeight());
+            word = OZG_Words.W2(OZG_Const.SAY_STUDY_DIE_LOADED, die.OZG_LoadFace().ToString(), OZG_Words.KeyArg(OZG_Const.LOAD_STEP + step.ToString()));
+        }
+        PlayerIdentity id = player.GetIdentity();
+        if (id)
+            OZ_Rpc.Notice(id, OZG_Const.NOTICE_STUDY, true, word);
+        OZG_Log.Info("study: " + uid + " studied a die " + OZG_Keys.Of(die) + ", load " + die.OZG_LoadFace().ToString() + " at " + die.OZG_LoadWeight().ToString() + "%");
+    }
+}
+
 // The time it takes: the setting, a client's from the sync.
 class OZG_ActionStudyCB : ActionContinuousBaseCB
 {
@@ -70,13 +95,19 @@ class OZG_ActionStudy : ActionContinuousBase
 
     override bool ActionCondition(PlayerBase player, ActionTarget target, ItemBase item)
     {
-        if (!OZG_Card_Base.Cast(item))
+        if (!OZG_Card_Base.Cast(item) && !OZG_Die_Base.Cast(item))
             return false;
         return OZG_Cfg.Get().Cheating == 1;
     }
 
     override void OnFinishProgressServer(ActionData action_data)
     {
+        OZG_Die_Base die = OZG_Die_Base.Cast(action_data.m_MainItem);
+        if (die)
+        {
+            OZG_StudyDie.Done(action_data.m_Player, die);
+            return;
+        }
         OZG_Study.Done(action_data.m_Player, OZG_Card_Base.Cast(action_data.m_MainItem));
     }
 }

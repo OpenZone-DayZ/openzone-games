@@ -81,6 +81,17 @@ class OZG_Settings : OZ_ConfigBase
     int   CaughtPick;
     int   SpotPercent;
     int   DealerPicks;
+    // Cheating at a board and with dice (boards and dice design §9, §10): a
+    // sleight on the board once in so many minutes a player; the three
+    // weights of a load (how often the loaded face comes up, percent); the
+    // percent a throw that showed a loaded face is noticed at, times the
+    // load's step (1, 2, 3); swaps of a die a player a game, and the percent
+    // one shows (each other player then rolls SpotPercent).
+    int   BoardSleightMinutes;
+    ref array<int> LoadWeights;
+    int   NoticeLoaded;
+    int   DiceSwaps;
+    int   ChanceDiceSwap;
 
     void OZG_Settings()
     {
@@ -211,6 +222,38 @@ class OZG_Settings : OZ_ConfigBase
         NoticeStep = 4;
         NoticeMax = 40;
         DefaultSleights();
+        DefaultDiceCheats();
+    }
+
+    protected void DefaultDiceCheats()
+    {
+        BoardSleightMinutes = 5;
+        LoadWeights = new array<int>();
+        LoadWeights.Insert(30);
+        LoadWeights.Insert(50);
+        LoadWeights.Insert(70);
+        NoticeLoaded = 4;
+        DiceSwaps = 2;
+        ChanceDiceSwap = 30;
+    }
+
+    // The step (1, 2, 3) of a load's weight: the nearest of LoadWeights.
+    int LoadStep(int weight)
+    {
+        int best = 1;
+        int gap = 1000;
+        for (int i = 0; i < LoadWeights.Count() && i < 3; i++)
+        {
+            int d = LoadWeights[i] - weight;
+            if (d < 0)
+                d = -d;
+            if (d < gap)
+            {
+                gap = d;
+                best = i + 1;
+            }
+        }
+        return best;
     }
 
     override bool Migrate(int from)
@@ -275,6 +318,7 @@ class OZG_Settings : OZ_ConfigBase
         {
             if (!GameIds)
                 GameIds = new array<string>();
+            DefaultDiceCheats();
             array<string> added = new array<string>();
             NewIn9(added);
             for (int n = 0; n < added.Count(); n++)
@@ -467,6 +511,43 @@ class OZG_Settings : OZ_ConfigBase
         if (DealerPicks < 0)
         {
             DealerPicks = 2;
+            warnings++;
+        }
+        if (BoardSleightMinutes < 0)
+        {
+            BoardSleightMinutes = 5;
+            warnings++;
+        }
+        bool weights = LoadWeights && LoadWeights.Count() == 3;
+        if (weights)
+        {
+            for (int lw = 0; lw < 3; lw++)
+            {
+                if (LoadWeights[lw] < 1 || LoadWeights[lw] > 100)
+                    weights = false;
+            }
+        }
+        if (!weights)
+        {
+            LoadWeights = new array<int>();
+            LoadWeights.Insert(30);
+            LoadWeights.Insert(50);
+            LoadWeights.Insert(70);
+            warnings++;
+        }
+        if (!IsPercent(NoticeLoaded))
+        {
+            NoticeLoaded = 4;
+            warnings++;
+        }
+        if (DiceSwaps < 0)
+        {
+            DiceSwaps = 2;
+            warnings++;
+        }
+        if (!IsPercent(ChanceDiceSwap))
+        {
+            ChanceDiceSwap = 30;
             warnings++;
         }
         if (DebugLog != 0)

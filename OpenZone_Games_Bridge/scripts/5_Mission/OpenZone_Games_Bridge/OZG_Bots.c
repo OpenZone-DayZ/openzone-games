@@ -588,12 +588,25 @@ class OZG_Bots
                 deck = "OZG_Deck_Stalker";
             if (arg == "stalkersharp")
                 deck = "OZG_Deck_Stalker_Sharp";
-            EntityAI made = player.GetHumanInventory().CreateInHands(deck);
-            if (!made)
-                made = player.GetInventory().CreateInInventory(deck);
-            if (!made)
-                made = EntityAI.Cast(GetGame().CreateObjectEx(deck, player.GetPosition(), ECE_PLACE_ON_SURFACE));
+            GiveThing(player, deck);
             Reply(player, "a deck: " + deck);
+            return;
+        }
+
+        // The sets of the boards and dice, a loose die and the card sharp's kit.
+        string thing = "";
+        if (cmd == "board")
+            thing = "OZG_Board_Classic";
+        if (cmd == "can")
+            thing = "OZG_DiceCan_Classic";
+        if (cmd == "die")
+            thing = "OZG_Die";
+        if (cmd == "kit")
+            thing = "OZG_MarkTool";
+        if (thing != "")
+        {
+            GiveThing(player, thing);
+            Reply(player, "given: " + thing);
             return;
         }
 
@@ -683,7 +696,17 @@ class OZG_Bots
             return;
         }
 
-        Reply(player, "!ozg deck [stalker|sharp|stalkersharp] | table | bots [n] | pause | clear | noon | day | feed");
+        Reply(player, "!ozg deck [stalker|sharp|stalkersharp] | board | can | die | kit | table | bots [n] | pause | clear | noon | day | feed");
+    }
+
+    // Into the hands, else the inventory, else at the feet.
+    protected static void GiveThing(PlayerBase player, string type)
+    {
+        EntityAI made = player.GetHumanInventory().CreateInHands(type);
+        if (!made)
+            made = player.GetInventory().CreateInInventory(type);
+        if (!made)
+            made = EntityAI.Cast(GetGame().CreateObjectEx(type, player.GetPosition(), ECE_PLACE_ON_SURFACE));
     }
 }
 

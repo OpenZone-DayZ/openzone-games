@@ -756,6 +756,27 @@ STR_OZG_DPOKER_LOG_AGAIN,%1 перекидає кості,%1 throws again
 STR_OZG_DPOKER_LOG_CHECK,%1: чек,%1 checks
 STR_OZG_DPOKER_LOG_CALL,%1 підтримує,%1 calls
 STR_OZG_DPOKER_LOG_FOLD,%1 скидає,%1 folds
+STR_OZG_BSLEIGHT_NO,Так не можна,That cannot be done
+STR_OZG_BSLEIGHT_BAD,Після цього позиція неможлива,That would leave an impossible position
+STR_OZG_SAY_BSLEIGHT_WAIT,Ще зарано для нового трюку,Too soon for another trick
+STR_OZG_SAY_DSWAP_NOT_NOW,Підмінити кістку можна лише перед своїм кидком,A die can be swapped only before your own throw
+STR_OZG_SAY_DSWAP_ONE,Одна підміна на кидок,One swap a throw
+STR_OZG_SAY_DSWAP_NO_DIE,Немає такої кістки,No such die
+STR_OZG_SAY_DSWAP_SEEN,%1 підмінив кістку!,%1 swapped a die!
+STR_OZG_SAY_LOAD_NOTICED,Якась кістка надто часто дає %1,A die comes up %1 too often
+STR_OZG_SAY_LOAD_OPENED,"Кістка вже заряджена: %1, %2","The die is loaded already: %1, %2"
+STR_OZG_SAY_LOAD_DONE,"Кістку заряджено: %1, %2","The die is loaded: %1, %2"
+STR_OZG_SAY_LOAD_BAD,Немає такої грані або ваги,No such face or weight
+STR_OZG_SAY_LOAD_NO_KIT,Потрібен шулерський набір,"You need the card sharp's kit"
+STR_OZG_SAY_STUDY_DIE_FAIR,Кістка чесна,The die is fair
+STR_OZG_SAY_STUDY_DIE_LOADED,"Кістка заряджена: %1, %2","The die is loaded: %1, %2"
+STR_OZG_LOAD_STEP_1,трохи,a little
+STR_OZG_LOAD_STEP_2,добре,well
+STR_OZG_LOAD_STEP_3,сильно,heavily
+STR_OZG_BSAW_MOVE,%1 переставив фігуру з %2 на %3,%1 moved a piece from %2 to %3
+STR_OZG_BSAW_SWAP,%1 поміняв місцями фігури на %2 і %3,%1 swapped the pieces on %2 and %3
+STR_OZG_BSAW_BACK,%1 повернув збиту фігуру на %3,%1 put a piece taken off back on %3
+STR_OZG_BSAW_OFF,%1 зняв фігуру з %2,%1 took the piece off %2
 # >>> generated: board
 STR_OZG_PIECE_WK,Білий король,White king
 STR_OZG_PIECE_WQ,Білий ферзь,White queen

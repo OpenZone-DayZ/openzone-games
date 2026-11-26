@@ -20,6 +20,41 @@ class OZG_DuelConst
     static const string NO_PIECES = "STR_OZG_BOARD_MISSING";
     static const string WHITE_DISC = "wD";
     static const string BLACK_DISC = "bD";
+    // A sleight on the board (§9.1): its kinds, and how a game keeps it among
+    // its moves ("!<kind>:<a>:<b>", "-" for nothing).
+    static const string S_MOVE = "move";
+    static const string S_SWAP = "swap";
+    static const string S_BACK = "back";
+    static const string S_OFF = "off";
+    static const string SLEIGHT_MARK = "!";
+    static const string NO_SLEIGHT = "STR_OZG_BSLEIGHT_NO";
+    static const string BAD_SLEIGHT = "STR_OZG_BSLEIGHT_BAD";
+
+    static string SleightText(string kind, string a, string b)
+    {
+        string s = SLEIGHT_MARK + kind;
+        s = s + ":" + OZG_BoardDuel.Dash(a);
+        s = s + ":" + OZG_BoardDuel.Dash(b);
+        return s;
+    }
+
+    // A kept sleight's parts; false for a text that is not one.
+    static bool SleightOf(string text, out string kind, out string a, out string b)
+    {
+        kind = "";
+        a = "";
+        b = "";
+        if (text.IndexOf(SLEIGHT_MARK) != 0)
+            return false;
+        array<string> parts = new array<string>();
+        text.Substring(1, text.Length() - 1).Split(":", parts);
+        if (parts.Count() != 3)
+            return false;
+        kind = parts[0];
+        a = OZG_BoardDuel.Undash(parts[1]);
+        b = OZG_BoardDuel.Undash(parts[2]);
+        return true;
+    }
 }
 
 class OZG_BoardDuel extends OZG_Game
@@ -610,9 +645,63 @@ class OZG_BoardDuel extends OZG_Game
         return true;
     }
 
+    // ---- sleights on the board (§9.1) ---------------------------------------
+
+    override bool BoardSleight(int seat, string kind, string a, string b, out string refusal)
+    {
+        refusal = OZG_Const.NO_MOVE;
+        if (m_Over || (seat != m_White && seat != m_Black))
+            return false;
+        if (!DuelSleight(kind, a, b, refusal))
+            return false;
+        // Kept among the moves, so a saved game has it; the move list shows
+        // nothing of it.
+        m_Played.Insert(OZG_DuelConst.SleightText(kind, a, b));
+        DuelAfterSleight();
+        refusal = "";
+        return true;
+    }
+
+    // A kind of game's sleight on its position: checked against what it
+    // forbids, the position as it was when refused.
+    protected bool DuelSleight(string kind, string a, string b, out string refusal)
+    {
+        refusal = OZG_DuelConst.NO_SLEIGHT;
+        return false;
+    }
+
+    // The end looked for after a sleight: a side left with no piece or no move.
+    protected void DuelAfterSleight()
+    {
+    }
+
+    // One letter less of the pieces taken off; false when none is there.
+    protected bool TakeBack(string letter)
+    {
+        int at = m_Taken.IndexOf(letter);
+        if (letter.Length() != 1 || at < 0)
+            return false;
+        string head = m_Taken.Substring(0, at);
+        string tail = m_Taken.Substring(at + 1, m_Taken.Length() - at - 1);
+        m_Taken = head + tail;
+        return true;
+    }
+
     // A saved move made again on load; false when it does not fit.
     protected bool DuelReplay(string move)
     {
+        string kind;
+        string a;
+        string b;
+        if (OZG_DuelConst.SleightOf(move, kind, a, b))
+        {
+            string refusal;
+            if (!DuelSleight(kind, a, b, refusal))
+                return false;
+            m_Played.Insert(move);
+            DuelAfterSleight();
+            return true;
+        }
         array<string> legal = new array<string>();
         DuelLegal(legal);
         if (legal.Find(move) < 0)

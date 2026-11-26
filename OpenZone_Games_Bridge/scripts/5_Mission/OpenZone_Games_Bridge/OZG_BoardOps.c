@@ -43,6 +43,91 @@ class OZG_BoardOps
         return true;
     }
 
+    // dice who=<id|me>: the dice a player carries -- each one's key, its load
+    // (face at weight) and how many know it, and whether he does.
+    static bool OpDice(map<string, string> args, out string detail)
+    {
+        // id=<place>: the dice of the set laid out there, in their slots' order.
+        string placeId = OZG_VerbOps.Arg(args, "id", "");
+        if (placeId != "")
+        {
+            OZG_Session s = OZG_Sessions.ById(placeId);
+            if (!s)
+            {
+                detail = "dice: no place " + placeId;
+                return false;
+            }
+            array<EntityAI> held = new array<EntityAI>();
+            OZG_DiceRead.OfPlace(s.m_Place, held);
+            detail = "dice of place " + placeId + ":";
+            for (int h = 0; h < held.Count(); h++)
+            {
+                OZG_Die_Base one = OZG_Die_Base.Cast(held[h]);
+                if (one)
+                    detail = detail + " " + OZG_Keys.Of(one) + "=" + one.OZG_LoadFace().ToString() + "@" + one.OZG_LoadWeight().ToString();
+            }
+            return true;
+        }
+        string uid;
+        PlayerBase p = OZG_WorldOps.WhoOf(args, uid);
+        if (!p)
+        {
+            detail = "dice: nobody is '" + uid + "'";
+            return false;
+        }
+        array<EntityAI> items = new array<EntityAI>();
+        p.GetInventory().EnumerateInventory(InventoryTraversalType.PREORDER, items);
+        detail = "dice of " + uid + ":";
+        int n = 0;
+        for (int i = 0; i < items.Count(); i++)
+        {
+            OZG_Die_Base die = OZG_Die_Base.Cast(items[i]);
+            if (!die)
+                continue;
+            n++;
+            string knows = "no";
+            if (die.OZG_Knows(uid))
+                knows = "yes";
+            detail = detail + " " + OZG_Keys.Of(die) + "=" + die.OZG_LoadFace().ToString() + "@" + die.OZG_LoadWeight().ToString();
+            detail = detail + "(knows " + knows + ")";
+        }
+        if (n == 0)
+            detail = detail + " none";
+        return true;
+    }
+
+    // loaddie who=<id|me> key=<die> face=<1..6> step=<1..3>: loaded with
+    // the kit he carries (a die already loaded and unknown to him opens).
+    static bool OpLoadDie(map<string, string> args, out string detail)
+    {
+        string uid;
+        PlayerBase p = OZG_WorldOps.WhoOf(args, uid);
+        if (!p)
+        {
+            detail = "loaddie: nobody is '" + uid + "'";
+            return false;
+        }
+        OZG_Die_Base die = OZG_Die_Base.Cast(OZG_Keys.Find(OZG_VerbOps.Arg(args, "key", "")));
+        int face = OZG_VerbOps.Arg(args, "face", "6").ToInt();
+        int step = OZG_VerbOps.Arg(args, "step", "2").ToInt();
+        // force=1: loaded where it lies, with no kit (the stand's checks).
+        if (OZG_VerbOps.Arg(args, "force", "0") == "1" && die)
+        {
+            die.OZG_Load(face, OZG_Cfg.Get().LoadWeights[step - 1], uid);
+            detail = "loaddie forced " + OZG_Keys.Of(die) + " " + face.ToString() + "@" + die.OZG_LoadWeight().ToString();
+            return true;
+        }
+        string said;
+        string why = OZG_DiceCheat.Load(p, die, face, step, said);
+        if (why != "")
+        {
+            detail = "loaddie refused " + why;
+            return true;
+        }
+        detail = "loaddie: " + said;
+        return true;
+    }
+
     // perft fen=<FEN> depth=<n>: how many move paths of that length the
     // position has, against the published numbers (the start position: 20,
     // 400, 8902, 197281).

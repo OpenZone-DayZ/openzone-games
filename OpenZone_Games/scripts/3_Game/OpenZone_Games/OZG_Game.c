@@ -81,6 +81,32 @@ class OZG_Game
         return 0;
     }
 
+    // ---- cheating at a board and with dice (boards and dice design §9, §10) --
+
+    // A sleight on the board by `seat` (§9.1): `kind` "move" (a piece from
+    // square `a` to the free square `b`), "swap" (the pieces on `a` and `b`),
+    // "back" (a piece taken off, written `a` as its letter, onto `b`; what
+    // stood there is taken off in its turn), "off" (the piece on `a` taken
+    // off). Checked against what the game forbids, applied, kept with the
+    // game. False with a key of the string table.
+    bool BoardSleight(int seat, string kind, string a, string b, out string refusal)
+    {
+        refusal = OZG_Const.NO_MOVE;
+        return false;
+    }
+
+    // Is the seat's next move a throw of dice (a swap of a die is done then)?
+    bool ThrowsNext(int seat)
+    {
+        return false;
+    }
+
+    // Every die thrown since the last ask: the seat, the die's place among the
+    // dice it throws (from 0) and the face; the lists emptied.
+    void TakeThrows(array<int> seats, array<int> dice, array<int> faces)
+    {
+    }
+
     // Whose dice the seats throw, the options read (OZG_DiceConst.WHOSE_*).
     string DiceMode(map<string, string> options)
     {

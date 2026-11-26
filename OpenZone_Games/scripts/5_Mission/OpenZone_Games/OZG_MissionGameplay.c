@@ -68,13 +68,17 @@ modded class MissionGameplay
     {
         if (op.IndexOf(OZG_Const.NOTICE) != 0)
             return;
+        // Words with their arguments ("key|arg|.."), or a key alone.
+        string text = OZ_Notice.Text();
+        if (why.IndexOf(OZG_Words.SEP) > 0)
+            text = OZG_WordsText.Of(why);
         OZG_GameMenu menu = OZG_GameMenu.Current();
         if (menu)
         {
-            menu.Said(OZ_Notice.Text());
+            menu.Said(text);
             return;
         }
-        NotificationSystem.AddNotificationExtended(4, "#STR_OZG_MODNAME", OZ_Notice.Text(), "");
+        NotificationSystem.AddNotificationExtended(4, "#STR_OZG_MODNAME", text, "");
     }
 
     void OZG_Show(string what)
@@ -170,6 +174,18 @@ modded class MissionGameplay
                 menu.CloseBecause(closed.Why);
             else if (closed.Why != "")
                 NotificationSystem.AddNotificationExtended(4, "#STR_OZG_MODNAME", "#" + closed.Why, "");
+            return;
+        }
+
+        // A sleight on the board seen (boards and dice design §9.1).
+        if (op == OZG_Const.OP_BSAW)
+        {
+            OZG_WBoardSaw saw;
+            string wrongSaw;
+            if (!JsonFileLoader<OZG_WBoardSaw>.LoadData(json, saw, wrongSaw) || !saw)
+                return;
+            if (menu && menu.PlaceId() == saw.PlaceId)
+                menu.BoardSaw(saw);
             return;
         }
 
