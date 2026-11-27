@@ -398,3 +398,29 @@ swap fly on faces taken for that flight.
 **Left as it is**: the captions in bold of 14 px (the steps' labels, a row's name) show
 faint specks under their Latin letters at 3840 x 1600 -- in the swap's window as well, so
 since 2026-11-26; at 1920 x 1080 and in the Ukrainian texts they do not show.
+
+## Published again (the same evening)
+
+The owner, after the report on the can and the dice: "Yes, publish".
+
+- **GitHub**: `3f7907f..d622176`, four commits -- the swap offering only dice apart from
+  the game and the five numbers in VPP (`fad7e28`, `91a9006`), the choice of the can and
+  the dice (`d3e7849`), two pictures for the strip (`d622176`).
+- **OpenZone Games** 3845773524, from the `dayz` MCP: the build of `d3e7849` (23 885 240
+  bytes, 14 s), version 0.3.1; a change note in English and Ukrainian; two pictures added
+  to the strip (the window "Банка й кості" at high roll, English and Ukrainian -- sixteen
+  now); the page with its phrase on the choice (7783 bytes). Before the upload: the pbo's
+  463 entries against `d3e7849`, every one the same; the signatures against the key; a boot
+  of that build judged good on the server and on a client in each language.
+- **OpenZone Games for VPP Admin Tools** 3845883015: the build of the same tree (206 777
+  bytes), version 0.2; a change note; two pictures (the page "Шулерство" with the boards'
+  and dice's groups -- eight now); the page as it was (5962 bytes).
+
+The public API read both pages back equal to their files (updated 19:38:59Z and
+19:39:46Z); the items' pages show sixteen and eight pictures, Required items CF and
+OpenZone Core, and OpenZone Games, OpenZone Core, its VPP tab and VPP Admin Tools.
+
+**The owner's to do, if he wishes**: the glue's strip still has the two pictures of
+2026-11-25 of the same page (`OpenZone_Games_VPP.shot3.en.jpg`, `shot4.uk.jpg`: "Card
+sharping" before the boards' and dice's groups, marks per tool 20); a picture is taken off
+the strip only on the item's page.
