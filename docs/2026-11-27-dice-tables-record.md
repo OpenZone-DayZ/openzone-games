@@ -314,11 +314,11 @@ Decided here, the owner's to overrule:
 - The stand's tool `dice who=` says where each die lies (`[can <key>]`, `[loose]`).
 - The versions for the next upload: the games 0.3.1, the glue 0.2.
 
-Checked on the stand (NHChernobyl, diag 1.30; Ukrainian at 1920 x 1080, English at 3840 x
-1600). Pig on the player's own can, which held two dice: the swap's window listed 16 of the
+Checked on the stand (NHChernobyl, diag 1.30; the page in Ukrainian and in English, each at
+1920 x 1080 and at 3840 x 1600). Pig on the player's own can, which held two dice: the swap's window listed 16 of the
 18 dice he carried, neither die of that can; an ask naming the can's other die was refused;
-a loose die went in, and the can held two dice after each of two swaps. The page in both
-languages; four boxes changed (80, 10, 5, 7): the line, the bar and the strip named them,
+a loose die went in, and the can held two dice after each of two swaps. On the page four
+boxes changed (80, 10, 5, 7): the line, the bar and the strip named them,
 the file held them after "yes", the boxes read them back; without reconnecting the swap's
 window said "лишилось 3 з 5" and "важко, 8 з 10", a chess window "Одна хитрість на 7
 хвилин"; the shipped numbers were put back through the English page, and the longest line
