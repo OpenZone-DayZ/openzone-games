@@ -1,6 +1,6 @@
 sharp: GamesSharp.dc.html -> OpenZone_Games_VPP/gui/layouts/ozg_vpp_sharp.layout
 design size 1360 x 812, measured again one, two and three steps of 240 x 160 larger
-widgets: 146; 1 of them the browser re-flows as the page grows (the rule keeps them as designed)
+widgets: 206; 5 of them the browser re-flows as the page grows (the rule keeps them as designed)
 
 FILES
   OpenZone_Games_VPP/gui/layouts/ozg_vpp_sharp.layout
@@ -29,6 +29,25 @@ NAMED WIDGETS OF THE PAGE (FindAnyWidget)
   OzgD_MarkKnowers  TextWidget (filled by script)
   OzgBox_MarkKnowers  Frame (parts: OzgBox_MarkKnowersEdge, OzgBox_MarkKnowersBg)
   Ozg_MarkKnowers  EditBox
+  OzgShLeg4  Frame (parts: OzgShLeg4Bar)
+  OzgShLeg4Text  TextWidget (a caption: recolour only)
+  OzgL_LoadWeight1  TextWidget (filled by script)
+  OzgD_LoadWeight1  TextWidget (filled by script)
+  OzgBox_LoadWeight1  Frame (parts: OzgBox_LoadWeight1Edge, OzgBox_LoadWeight1Bg)
+  Ozg_LoadWeight1  EditBox
+  OzgL_LoadWeight2  TextWidget (filled by script)
+  OzgD_LoadWeight2  TextWidget (filled by script)
+  OzgBox_LoadWeight2  Frame (parts: OzgBox_LoadWeight2Edge, OzgBox_LoadWeight2Bg)
+  Ozg_LoadWeight2  EditBox
+  OzgL_LoadWeight3  TextWidget (filled by script)
+  OzgD_LoadWeight3  TextWidget (filled by script)
+  OzgBox_LoadWeight3  Frame (parts: OzgBox_LoadWeight3Edge, OzgBox_LoadWeight3Bg)
+  Ozg_LoadWeight3  EditBox
+  OzgL_NoticeLoaded  TextWidget (filled by script)
+  OzgD_NoticeLoaded  TextWidget (filled by script)
+  OzgBox_NoticeLoaded  Frame (parts: OzgBox_NoticeLoadedEdge, OzgBox_NoticeLoadedBg)
+  Ozg_NoticeLoaded  EditBox
+  OzgShLoads  TextWidget (filled by script)
   OzgShLeg1  Frame (parts: OzgShLeg1Bar)
   OzgShLeg1Text  TextWidget (a caption: recolour only)
   OzgL_NoticeGrace  TextWidget (filled by script)
@@ -58,6 +77,16 @@ NAMED WIDGETS OF THE PAGE (FindAnyWidget)
   OzgD_SpotPercent  TextWidget (filled by script)
   OzgBox_SpotPercent  Frame (parts: OzgBox_SpotPercentEdge, OzgBox_SpotPercentBg)
   Ozg_SpotPercent  EditBox
+  OzgShLeg5  Frame (parts: OzgShLeg5Bar)
+  OzgShLeg5Text  TextWidget (a caption: recolour only)
+  OzgL_DiceSwaps  TextWidget (filled by script)
+  OzgD_DiceSwaps  TextWidget (filled by script)
+  OzgBox_DiceSwaps  Frame (parts: OzgBox_DiceSwapsEdge, OzgBox_DiceSwapsBg)
+  Ozg_DiceSwaps  EditBox
+  OzgL_ChanceDiceSwap  TextWidget (filled by script)
+  OzgD_ChanceDiceSwap  TextWidget (filled by script)
+  OzgBox_ChanceDiceSwap  Frame (parts: OzgBox_ChanceDiceSwapEdge, OzgBox_ChanceDiceSwapBg)
+  Ozg_ChanceDiceSwap  EditBox
   OzgShLeg3  Frame (parts: OzgShLeg3Bar)
   OzgShLeg3Text  TextWidget (a caption: recolour only)
   OzgL_CaughtSlip  TextWidget (filled by script)
@@ -84,12 +113,22 @@ NAMED WIDGETS OF THE PAGE (FindAnyWidget)
   OzgD_CaughtPick  TextWidget (filled by script)
   OzgBox_CaughtPick  Frame (parts: OzgBox_CaughtPickEdge, OzgBox_CaughtPickBg)
   Ozg_CaughtPick  EditBox
+  OzgShLeg6  Frame (parts: OzgShLeg6Bar)
+  OzgShLeg6Text  TextWidget (a caption: recolour only)
+  OzgL_BoardSleightMinutes  TextWidget (filled by script)
+  OzgD_BoardSleightMinutes  TextWidget (filled by script)
+  OzgBox_BoardSleightMinutes  Frame (parts: OzgBox_BoardSleightMinutesEdge, OzgBox_BoardSleightMinutesBg)
+  Ozg_BoardSleightMinutes  EditBox
   OzgShDirty  TextWidget (filled by script)
   BtnOzgShDrop  ButtonWidget (parts: BtnOzgShDropEdge, BtnOzgShDropBg)
   BtnOzgShSave  ButtonWidget (parts: BtnOzgShSaveBg)
 
 CSS THE ENGINE HAS NO ANSWER FOR
-  border-radius  x23
+  border-radius  x33
 
 RESIZE: WHERE THE BROWSER RE-FLOWS (a text unwraps, a box changes its row); the first of them
   Panel gh6
+  Panel gh10
+  Frame OzgShLeg4
+  Panel gh16
+  Panel gh22

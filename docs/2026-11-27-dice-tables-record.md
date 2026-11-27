@@ -267,3 +267,62 @@ The owner, 2026-11-27, after the report: "push and publish".
 
 The public API read the games' page back equal to the file (updated 2026-11-27 12:22:38Z);
 the item's page shows the fourteen pictures and Required items CF and OpenZone Core.
+
+## After the publication, the same day
+
+The owner, on the report: yes to the five numbers as boxes of VPP's module; the game in the
+world not now; and of the swap's list offering the other dice of a player's own can, "some
+nonsense" -- "dice that are already in the game, in the can, must not be offered for the
+swap, only those that are not in the game, in the inventory".
+
+**The swap's own dice.** Pig throws one die of a can's five, high roll two or three, nardy
+two: on a player's own dice the rest of his can were offered as carried dice, and one of
+them slipped in left its own slot of that can empty, the die taken out going to a pocket.
+Now a die of a can the game is thrown from is no pocket's die, thrown or not:
+`OZG_Session.DicePlayed` gathers the dice the seats throw and the cans they lie in,
+`DiePlayed` answers for one die; the swap's head (`DiceSwapHead`) offers none of them and
+the ask (`DiceSwapAsk`) refuses one (`STR_OZG_SAY_DSWAP_NO_DIE`). A die lying in another can
+he carries is still offered.
+
+**The five numbers in VPP** (design §11). The page "Шулерство" of the module "Ігри" has
+three more groups, drawn on the board `GamesSharp.dc.html` and converted as the page was:
+"Заряджені кості" -- `LoadWeights` as three boxes (1 to 100 each), `NoticeLoaded` and a
+line the script works out of it (the chance for a load of each step: the box times 1, 2
+and 3, 100 at most); "Підміна кістки" -- `DiceSwaps` (0: none) and `ChanceDiceSwap`;
+"Дошки" -- `BoardSleightMinutes` (0: no wait). The boxes are rows of the pane's table like
+the rest (`OZG_VppPane.c`): the bar names them, the strip asks, the save writes them.
+Sixteen strings.
+
+**What a client is told.** Two of these numbers are worded by the windows themselves -- the
+board's rule line (`BoardSleightMinutes`) and the "N of 10 throws" of the swap's window and
+the kit's (`LoadWeights`) -- and a client was never told them: it showed the shipped 5 and
+30, 50, 70 whatever the file said. `OZG_ClientCfg` carries them now (`LoadWeight1..3`; -1
+is "not told", and the client keeps its own). `OZG_Settings.Validate` makes the loads' list
+anew by script, as it does the poses.
+
+Decided here, the owner's to overrule:
+
+- A die lying in another can the player carries stays a carried die: taken for a swap it
+  leaves its slot there empty and the die taken out goes to a pocket, as the design says
+  (§9.2).
+- The three new groups stand under the page's old ones, one a column, so that nothing of
+  the page moved: "Заряджені кості" under "Шулерство", "Підміна кістки" under "Спритність
+  рук", "Дошки" under "Шанс попастися".
+- The worked-out line names its unit once and is one row ("За кидок на свою грань, %:
+  трохи 4, добре 8, важко 12."): written with "4 %" in it, the engine broke the row between
+  a number and its sign, and the longest values must fit a widget that cuts what does not.
+- The stand's tool `dice who=` says where each die lies (`[can <key>]`, `[loose]`).
+- The versions for the next upload: the games 0.3.1, the glue 0.2.
+
+Checked on the stand (NHChernobyl, diag 1.30; Ukrainian at 1920 x 1080, English at 3840 x
+1600). Pig on the player's own can, which held two dice: the swap's window listed 16 of the
+18 dice he carried, neither die of that can; an ask naming the can's other die was refused;
+a loose die went in, and the can held two dice after each of two swaps. The page in both
+languages; four boxes changed (80, 10, 5, 7): the line, the bar and the strip named them,
+the file held them after "yes", the boxes read them back; without reconnecting the swap's
+window said "лишилось 3 з 5" and "важко, 8 з 10", a chess window "Одна хитрість на 7
+хвилин"; the shipped numbers were put back through the English page, and the longest line
+(100, 100, 100) fits its row. Both verdicts pass on the last build.
+
+Not pushed, not published: the games' pbo and the glue's have both changed since the
+upload of `c6f21bc`.

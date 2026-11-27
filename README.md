@@ -122,7 +122,8 @@ The Workshop items: [OpenZone Games](https://steamcommunity.com/sharedfiles/file
   comes up 30, 50 or 70 times of a hundred); a die held can be studied closely; a loaded
   die that shows its face may be noticed by the others (`NoticeLoaded`), who from then see
   a badge on it. A player may swap a die he carries for one he is about to throw
-  (`DiceSwaps` a game), in a window of its own: he sees his die hop into the can, and so
+  (`DiceSwaps` a game; a die carried apart from the game -- no die of a can the game is
+  thrown from is offered), in a window of its own: he sees his die hop into the can, and so
   does each player who noticed (`ChanceDiceSwap`), who keeps an eye on that die. Until it
   is thrown a die slipped in looks, to those who did not see, like the one it replaced; in
   perudo, where the dice lie under the cans, a loaded face is noticed when the dice are
@@ -159,10 +160,9 @@ the records of its rules
 of its windows
 ([docs/2026-11-26-board-window-record.md](docs/2026-11-26-board-window-record.md)) and of
 the dice tables
-([docs/2026-11-27-dice-tables-record.md](docs/2026-11-27-dice-tables-record.md)). Two
-things of that design are not built: the pieces and the dice shown in the world on the
-thing laid out (they are seen in the window), and the five settings of the boards and dice
-as boxes of VPP's module (they are in the file and in the core's admin window).
+([docs/2026-11-27-dice-tables-record.md](docs/2026-11-27-dice-tables-record.md)). One
+thing of that design is not built: the pieces and the dice shown in the world on the thing
+laid out (they are seen in the window).
 
 ## What is where
 
@@ -219,8 +219,10 @@ a dealer may deal himself (`DealerPicks`); for the boards and the dice, how many
 lie between a player's sleights on a board (`BoardSleightMinutes`), how often a loaded die
 shows its face at each of the three weights (`LoadWeights`), how readily a loaded face is
 noticed (`NoticeLoaded`), how many dice a player may swap in a game (`DiceSwaps`) and the
-chance a swap shows (`ChanceDiceSwap`) -- these five in the file and the core's window,
-not yet among the module's forms. `Cheating` 0 stops every sleight too.
+chance a swap shows (`ChanceDiceSwap`) -- these five among the module's forms too, on its
+page "Шулерство". `Cheating` 0 stops every sleight too. A client is told what its own
+windows word: the radii, the times, the poses, the wait between sleights on a board and the
+three weights of a load.
 
 The decks, the boards, the cans and what they hold are not in any loot table:
 [docs/examples](docs/examples) has the lines for `types.xml`, with a nominal of 0 for an
@@ -305,15 +307,16 @@ OpenZone), колоду тримають у долоні, одну карту �
 грань з однією з трьох ваг (`LoadWeights`: грань випадає 30, 50 або 70 разів зі ста);
 кістку в руках можна детально роздивитися; заряджену кістку, що лягла своєю гранню, інші
 можуть помітити (`NoticeLoaded`) і відтоді бачать на ній позначку. Свою кістку можна
-підкласти замість тієї, яку зараз кидатимеш (`DiceSwaps` на гру), в окремому вікні: гравець
+підкласти замість тієї, яку зараз кидатимеш (`DiceSwaps` на гру; свою — це ту, що лежить
+окремо від гри: костей банки, з якої йде гра, вікно не пропонує), в окремому вікні: гравець
 бачить, як його кістка летить у банку, і так само це бачить кожен, хто помітив
 (`ChanceDiceSwap`), і далі тримає цю кістку на оці. Доки підкладену кістку не кинули, для
 тих, хто не бачив, вона виглядає як та, яку замінила; у перудо, де кості лежать під
 банками, заряджену грань помічають, коли кості відкривають. Вікно набору («Відкрити
 набір» на наборі в руках) показує всі карти й кості, які гравець несе: карту можна
-позначити, кістку — зарядити на грань і вагу. З того задуму не зроблено двох речей: фігур
-і костей у світі на розкладці (їх видно у вікні) і п'яти налаштувань дошок та костей у
-модулі VPP (вони є у файлі та в адмін-вікні ядра).
+позначити, кістку — зарядити на грань і вагу. П'ять налаштувань дошок і костей є і в
+модулі VPP, на сторінці «Шулерство». З того задуму не зроблено одного: фігур і костей у
+світі на розкладці (їх видно у вікні).
 
 Моди в Steam Workshop з 2026-11-25: [OpenZone Games](https://steamcommunity.com/sharedfiles/filedetails/?id=3845773524) і
 [OpenZone Games для VPP Admin Tools](https://steamcommunity.com/sharedfiles/filedetails/?id=3845883015).

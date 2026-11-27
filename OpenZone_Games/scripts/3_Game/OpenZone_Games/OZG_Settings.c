@@ -519,22 +519,26 @@ class OZG_Settings : OZ_ConfigBase
             warnings++;
         }
         bool weights = LoadWeights && LoadWeights.Count() == 3;
+        array<int> loads = new array<int>();
         if (weights)
         {
             for (int lw = 0; lw < 3; lw++)
             {
-                if (LoadWeights[lw] < 1 || LoadWeights[lw] > 100)
+                int load = LoadWeights[lw];
+                if (load < 1 || load > 100)
                     weights = false;
+                loads.Insert(load);
             }
         }
         if (!weights)
         {
-            LoadWeights = new array<int>();
-            LoadWeights.Insert(30);
-            LoadWeights.Insert(50);
-            LoadWeights.Insert(70);
+            loads.Clear();
+            loads.Insert(30);
+            loads.Insert(50);
+            loads.Insert(70);
             warnings++;
         }
+        LoadWeights = loads;
         if (!IsPercent(NoticeLoaded))
         {
             NoticeLoaded = 4;
@@ -617,6 +621,22 @@ class OZG_ClientCfg
     int   Cheating;
     int   MarkSeconds2;
     int   StudySeconds;
+    // What the windows word for a player (2026-11-27): the wait between sleights on a
+    // board (the board window's rule line) and how often a load of each step shows its
+    // face (the swap's and the kit's "N of 10 throws"). -1: not told -- a server that
+    // sends less leaves the client its own.
+    int   BoardSleightMinutes;
+    int   LoadWeight1;
+    int   LoadWeight2;
+    int   LoadWeight3;
+
+    void OZG_ClientCfg()
+    {
+        BoardSleightMinutes = -1;
+        LoadWeight1 = -1;
+        LoadWeight2 = -1;
+        LoadWeight3 = -1;
+    }
 }
 
 // The settings in force on this machine.
@@ -682,6 +702,13 @@ class OZG_Cfg
         c.Cheating = now.Cheating;
         c.MarkSeconds2 = now.MarkSeconds2;
         c.StudySeconds = now.StudySeconds;
+        c.BoardSleightMinutes = now.BoardSleightMinutes;
+        if (now.LoadWeights && now.LoadWeights.Count() == 3)
+        {
+            c.LoadWeight1 = now.LoadWeights[0];
+            c.LoadWeight2 = now.LoadWeights[1];
+            c.LoadWeight3 = now.LoadWeights[2];
+        }
         string text;
         string err;
         JsonFileLoader<OZG_ClientCfg>.MakeData(c, text, err, false);
@@ -726,6 +753,16 @@ class OZG_Cfg
         fresh.Cheating = c.Cheating;
         fresh.MarkSeconds2 = c.MarkSeconds2;
         fresh.StudySeconds = c.StudySeconds;
+        if (c.BoardSleightMinutes >= 0)
+            fresh.BoardSleightMinutes = c.BoardSleightMinutes;
+        if (c.LoadWeight1 > 0 && c.LoadWeight2 > 0 && c.LoadWeight3 > 0)
+        {
+            array<int> loads = new array<int>();
+            loads.Insert(c.LoadWeight1);
+            loads.Insert(c.LoadWeight2);
+            loads.Insert(c.LoadWeight3);
+            fresh.LoadWeights = loads;
+        }
         array<ref OZG_Pose> poses = new array<ref OZG_Pose>();
         for (int i = 0; i < poseTexts.Count(); i++)
         {

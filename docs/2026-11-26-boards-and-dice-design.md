@@ -392,6 +392,13 @@ throw, `DiceSwaps` a game; it may show (`ChanceDiceSwap`, %), and then each othe
 player sees it at `SpotPercent`, the card sleights' own; the server's log keeps every swap.
 Without loaded dice a swap changes nothing, which is the point of §10.
 
+A die he carries is a die apart from the game (the owner, 2026-11-27: "dice that are
+already in the game, in the can, must not be offered for the swap, only those that are not
+in the game, in the inventory"). Pig, high roll and nardy throw fewer dice than a can holds:
+the rest of a can the game is thrown from are no pocket's dice, and neither the swap's
+window offers them nor the server takes one. A die lying in another can he carries is
+offered as any carried die is.
+
 ## 10. Loaded dice, and the kit's window
 
 **The kit's window** (the owner's words 13 to 15). The kit in the hands has an action of
@@ -428,6 +435,13 @@ What a loaded die is:
 Settings version 9: the eleven games join `GameIds`; `BoardSleightMinutes`,
 `LoadWeights`, `NoticeLoaded`, `DiceSwaps`, `ChanceDiceSwap`; each of them in VPP's
 module "Games".
+
+Built 2026-11-27 (`2026-11-27-dice-tables-record.md`, "The five numbers in VPP"): the page
+"Шулерство" of the module has three more groups -- "Заряджені кості" (`LoadWeights` as
+three boxes, `NoticeLoaded`, and a line worked out of it), "Підміна кістки" (`DiceSwaps`,
+`ChanceDiceSwap`) and "Дошки" (`BoardSleightMinutes`). A client is told the two of them its
+windows word, `BoardSleightMinutes` and `LoadWeights`, with the rest of what it is told of
+the settings; until then it showed the shipped numbers whatever the file said.
 
 ## 12. The game in the world
 

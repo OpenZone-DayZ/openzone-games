@@ -3,7 +3,10 @@
 // register it in the core's admin console as "games_settings" (OZG_Cfg.ADMIN_NAME):
 //   Налаштування -- which games are played, the table and its seats, presence, time,
 //                   the mod's detailed log;
-//   Шулерство    -- marks, noticing and sleight of hand (card sharp's design §7);
+//   Шулерство    -- marks, noticing and sleight of hand (card sharp's design §7), and
+//                   since 2026-11-27 the numbers of boards and dice (boards and dice
+//                   design §11): the loads of a die and how they are noticed, the swap,
+//                   the wait between sleights on a board;
 //   Пози         -- how a player sits or stands at a game (PoseList).
 // Файли конфігів joins the module by itself: the core's window adds it under every
 // module that owns a file of its console.
@@ -278,7 +281,7 @@ modded class OZ_VppAdminMenu
         }
         else if (m_Shown == OZG_PAGE_SHARP)
         {
-            for (g = 0; g < 4; g++)
+            for (g = 0; g < 7; g++)
             {
                 if (!OzgFitLegend(m_OzgShPane, "OzgShLeg" + g.ToString()))
                     done = false;
@@ -352,6 +355,15 @@ modded class OZ_VppAdminMenu
         OzgRow("CaughtDeckIn",    "C_DECKIN",     "#STR_OZG_VPP_G_CAUGHT",   false, 0, 100);
         OzgRow("CaughtDeckOut",   "C_DECKOUT",    "#STR_OZG_VPP_G_CAUGHT",   false, 0, 100);
         OzgRow("CaughtPick",      "C_PICK",       "#STR_OZG_VPP_G_CAUGHT",   false, 0, 100);
+        // Boards and dice. LoadWeights is a list of three, one a step of the load: a box
+        // for each place (OzgLoad, OzgSetLoad).
+        OzgRow("LoadWeight1",     "LOAD1",        "#STR_OZG_VPP_G_LOADED",   false, 1, 100);
+        OzgRow("LoadWeight2",     "LOAD2",        "#STR_OZG_VPP_G_LOADED",   false, 1, 100);
+        OzgRow("LoadWeight3",     "LOAD3",        "#STR_OZG_VPP_G_LOADED",   false, 1, 100);
+        OzgRow("NoticeLoaded",    "NOTICELOADED", "#STR_OZG_VPP_G_LOADED",   false, 0, 100);
+        OzgRow("DiceSwaps",       "DICESWAPS",    "#STR_OZG_VPP_G_DSWAP",    false, 0, -1);
+        OzgRow("ChanceDiceSwap",  "C_DSWAP",      "#STR_OZG_VPP_G_DSWAP",    false, 0, 100);
+        OzgRow("BoardSleightMinutes", "BOARDSLEIGHT", "#STR_OZG_VPP_G_BOARDS", false, 0, -1);
     }
 
     private void OzgRow(string key, string code, string group, bool fraction, float min, float max)
@@ -367,8 +379,24 @@ modded class OZ_VppAdminMenu
         m_OzgMaxs.Insert(max);
     }
 
+    // A place of LoadWeights (from 0); 0 when the list is not the three it must be.
+    private float OzgLoad(OZG_Settings c, int at)
+    {
+        if (!c.LoadWeights || at < 0 || at >= c.LoadWeights.Count())
+            return 0;
+        int weight = c.LoadWeights.Get(at);
+        return weight;
+    }
+
+    private void OzgSetLoad(OZG_Settings c, int at, int weight)
+    {
+        if (!c.LoadWeights || at < 0 || at >= c.LoadWeights.Count())
+            return;
+        c.LoadWeights.Set(at, weight);
+    }
+
     // A field of OZG_Settings by its name, as a number. The class has no reflection to
-    // lean on, so the twenty-five are named here once.
+    // lean on, so the thirty-two are named here once.
     private float OzgGet(OZG_Settings c, string key)
     {
         if (key == "MaxSeats")
@@ -421,6 +449,20 @@ modded class OZ_VppAdminMenu
             return c.CaughtDeckOut;
         if (key == "CaughtPick")
             return c.CaughtPick;
+        if (key == "LoadWeight1")
+            return OzgLoad(c, 0);
+        if (key == "LoadWeight2")
+            return OzgLoad(c, 1);
+        if (key == "LoadWeight3")
+            return OzgLoad(c, 2);
+        if (key == "NoticeLoaded")
+            return c.NoticeLoaded;
+        if (key == "DiceSwaps")
+            return c.DiceSwaps;
+        if (key == "ChanceDiceSwap")
+            return c.ChanceDiceSwap;
+        if (key == "BoardSleightMinutes")
+            return c.BoardSleightMinutes;
         return 0;
     }
 
@@ -480,6 +522,20 @@ modded class OZ_VppAdminMenu
             c.CaughtDeckOut = n;
         else if (key == "CaughtPick")
             c.CaughtPick = n;
+        else if (key == "LoadWeight1")
+            OzgSetLoad(c, 0, n);
+        else if (key == "LoadWeight2")
+            OzgSetLoad(c, 1, n);
+        else if (key == "LoadWeight3")
+            OzgSetLoad(c, 2, n);
+        else if (key == "NoticeLoaded")
+            c.NoticeLoaded = n;
+        else if (key == "DiceSwaps")
+            c.DiceSwaps = n;
+        else if (key == "ChanceDiceSwap")
+            c.ChanceDiceSwap = n;
+        else if (key == "BoardSleightMinutes")
+            c.BoardSleightMinutes = n;
     }
 
     // A field as its box shows it: a fraction as the engine writes it, a whole number
@@ -651,6 +707,18 @@ modded class OZ_VppAdminMenu
                 games.Insert(t.GameIds[i]);
         }
         t.GameIds = games;
+        // The loads: three numbers, or the shipped three when the file holds another
+        // count (the server's own check puts the same in their place).
+        array<int> loads = new array<int>();
+        bool three = t.LoadWeights && t.LoadWeights.Count() == 3;
+        for (i = 0; i < 3; i++)
+        {
+            int weight = OzgLoad(m_OzgDef, i);
+            if (three)
+                weight = t.LoadWeights.Get(i);
+            loads.Insert(weight);
+        }
+        t.LoadWeights = loads;
 
         m_OzgCfg = t;
         OzgFillFromCfg();
@@ -694,6 +762,7 @@ modded class OZ_VppAdminMenu
         OzgBuildPoses();
         OzgPaintCard();
         OzgPaintNotice();
+        OzgPaintLoads();
         OzgPaintDirty();
     }
 
@@ -719,6 +788,8 @@ modded class OZ_VppAdminMenu
         string defWord = Widget.TranslateString("#STR_OZG_VPP_DEFAULT");
         string changedWord = Widget.TranslateString("#STR_OZG_VPP_CHANGED");
         string neverWord = Widget.TranslateString("#STR_OZG_VPP_NEVER");
+        string noWaitWord = Widget.TranslateString("#STR_OZG_VPP_ZERO_NOWAIT");
+        string noSwapsWord = Widget.TranslateString("#STR_OZG_VPP_ZERO_NONE");
 
         string key;
         string line;
@@ -734,6 +805,10 @@ modded class OZ_VppAdminMenu
             line = defWord + " " + shipped;
             if (key == "IdleMinutes")
                 line = line + " · " + neverWord;
+            if (key == "BoardSleightMinutes")
+                line = line + " · " + noWaitWord;
+            if (key == "DiceSwaps")
+                line = line + " · " + noSwapsWord;
             ink = cMuted;
             edge = cEdge;
             if (dirty)
@@ -830,6 +905,41 @@ modded class OZ_VppAdminMenu
         line.Replace("%3", most.ToString());
         line.Replace("%4", full.ToString());
         OzgSay("OzgShNotice", line, cMuted);
+    }
+
+    // Шулерство › Заряджені кості: what the box of noticing makes for each step of a
+    // load, as the server rolls it -- NoticeLoaded times the step (1, 2, 3) at every throw
+    // that shows the loaded face (boards and dice design §10); over 100 is 100.
+    private void OzgPaintLoads()
+    {
+        if (!m_OzgShPane)
+            return;
+        int perStep = OzgTypedInt("NoticeLoaded");
+        int cMuted = ARGB(255, 160, 159, 153);
+        if (perStep <= 0)
+        {
+            OzgSay("OzgShLoads", "#STR_OZG_VPP_LOADS_OFF", cMuted);
+            return;
+        }
+        int little = perStep;
+        int well = perStep * 2;
+        int heavy = perStep * 3;
+        if (little > 100)
+            little = 100;
+        if (well > 100)
+            well = 100;
+        if (heavy > 100)
+            heavy = 100;
+        // Put in by hand, as the noticing line is: string.Format drops a percent sign
+        // that no digit follows.
+        string littleText = little.ToString();
+        string wellText = well.ToString();
+        string heavyText = heavy.ToString();
+        string line = Widget.TranslateString("#STR_OZG_VPP_LOADS_LINE");
+        line.Replace("%1", littleText);
+        line.Replace("%2", wellText);
+        line.Replace("%3", heavyText);
+        OzgSay("OzgShLoads", line, cMuted);
     }
 
     // A whole-number box's value; the file's when the box holds no whole number.
@@ -1720,6 +1830,7 @@ modded class OZ_VppAdminMenu
             {
                 OzgPaintNumbers();
                 OzgPaintNotice();
+                OzgPaintLoads();
                 OzgPaintDirty();
                 return true;
             }

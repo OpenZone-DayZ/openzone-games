@@ -44,7 +44,8 @@ class OZG_BoardOps
     }
 
     // dice who=<id|me>: the dice a player carries -- each one's key, its load
-    // (face at weight) and how many know it, and whether he does.
+    // (face at weight), whether he knows it, and where it lies: "[can <key>]" in a slot
+    // of a can he carries, "[loose]" in his pockets.
     static bool OpDice(map<string, string> args, out string detail)
     {
         // id=<place>: the dice of the set laid out there, in their slots' order.
@@ -90,6 +91,12 @@ class OZG_BoardOps
                 knows = "yes";
             detail = detail + " " + OZG_Keys.Of(die) + "=" + die.OZG_LoadFace().ToString() + "@" + die.OZG_LoadWeight().ToString();
             detail = detail + "(knows " + knows + ")";
+            // where it lies: a slot of a can he carries (the can's key), or loose
+            EntityAI holder = die.GetHierarchyParent();
+            string lies = "loose";
+            if (holder && holder.IsKindOf("OZG_DiceCan_Base"))
+                lies = "can " + OZG_Keys.Of(holder);
+            detail = detail + "[" + lies + "]";
         }
         if (n == 0)
             detail = detail + " none";

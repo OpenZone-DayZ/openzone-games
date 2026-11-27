@@ -363,8 +363,53 @@ modded class OZG_Session
         }
     }
 
+    // The dice in play and what holds them: every die a dealt seat throws, and each can
+    // (or board) such a die lies in, once.
+    protected void DicePlayed(array<EntityAI> dice, array<EntityAI> cans)
+    {
+        dice.Clear();
+        cans.Clear();
+        if (!m_SeatDice)
+            return;
+        for (int s = 0; s < m_R.Dealt.Count(); s++)
+        {
+            int dealtSeat = m_R.Dealt[s];
+            array<EntityAI> seatDice;
+            if (!m_SeatDice.Find(dealtSeat, seatDice) || !seatDice)
+                continue;
+            for (int d = 0; d < seatDice.Count(); d++)
+            {
+                EntityAI played = seatDice[d];
+                if (!played)
+                    continue;
+                if (dice.Find(played) < 0)
+                    dice.Insert(played);
+                EntityAI holder = played.GetHierarchyParent();
+                if (holder && cans.Find(holder) < 0)
+                    cans.Insert(holder);
+            }
+        }
+    }
+
+    // Is this die in play: one a seat throws, or another die of a can the game is thrown
+    // from? Such a die is no pocket's (the owner, 2026-11-27: a die that lies in the can
+    // of the game is not offered for the swap, only one carried apart from it) -- pig,
+    // high roll and nardy throw fewer dice than a can holds, and the rest of an own can
+    // used to be offered: slipped in, such a die left its own slot of that can empty.
+    protected bool DiePlayed(EntityAI die, array<EntityAI> dice, array<EntityAI> cans)
+    {
+        if (!die)
+            return false;
+        if (dice.Find(die) >= 0)
+            return true;
+        EntityAI holder = die.GetHierarchyParent();
+        if (holder && cans.Find(holder) >= 0)
+            return true;
+        return false;
+    }
+
     // The dice games' swap panel: the swaps this player has left and whether he may swap
-    // now (DiceSwapAsk's own rules), the dice he carries and does not throw with the load
+    // now (DiceSwapAsk's own rules), the dice he carries apart from the game with the load
     // he knows on each, and the load he knows on each die of his own throw.
     protected void DiceSwapHead(OZG_WView v, string uid, int seat, bool dealt)
     {
@@ -384,20 +429,10 @@ modded class OZG_Session
         bool waits = m_SwapWaits.Find(uid) >= 0;
         if (left > 0 && canThrow && !waits)
             v.DiceSwapNow = 1;
-        // the dice in play: none of them is a pocket's
-        array<EntityAI> inPlay = new array<EntityAI>();
-        if (m_SeatDice)
-        {
-            for (int s = 0; s < m_R.Dealt.Count(); s++)
-            {
-                int dealtSeat = m_R.Dealt[s];
-                array<EntityAI> seatDice;
-                if (!m_SeatDice.Find(dealtSeat, seatDice) || !seatDice)
-                    continue;
-                for (int d = 0; d < seatDice.Count(); d++)
-                    inPlay.Insert(seatDice[d]);
-            }
-        }
+        // the dice in play, and the rest of the cans they lie in: none of them is a pocket's
+        array<EntityAI> playDice = new array<EntityAI>();
+        array<EntityAI> playCans = new array<EntityAI>();
+        DicePlayed(playDice, playCans);
         PlayerBase player = OZG_Sessions.PlayerOf(uid);
         if (player)
         {
@@ -405,7 +440,7 @@ modded class OZG_Session
             for (int i = 0; i < items.Count(); i++)
             {
                 OZG_Die_Base die = OZG_Die_Base.Cast(items[i]);
-                if (!die || inPlay.Find(die) >= 0)
+                if (!die || DiePlayed(die, playDice, playCans))
                     continue;
                 int face = 0;
                 int step = 0;
@@ -486,6 +521,13 @@ modded class OZG_Session
         if (!goingOut || !comingIn || comingIn == goingOut)
             return OZG_Const.SAY_DSWAP_NO_DIE;
         if (comingIn.GetHierarchyRootPlayer() != player)
+            return OZG_Const.SAY_DSWAP_NO_DIE;
+        // a die of the game is no pocket's (DiePlayed): the panel offers none, and an ask
+        // that names one is refused
+        array<EntityAI> playDice = new array<EntityAI>();
+        array<EntityAI> playCans = new array<EntityAI>();
+        DicePlayed(playDice, playCans);
+        if (DiePlayed(comingIn, playDice, playCans))
             return OZG_Const.SAY_DSWAP_NO_DIE;
         if (!OZG_DiceCheat.Exchange(goingOut, comingIn, player))
             return OZG_Const.SAY_DSWAP_NO_ROOM;

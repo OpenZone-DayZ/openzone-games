@@ -7,7 +7,7 @@
 name        = "OpenZone Games";
 author      = "OpenZone";
 authorID    = "";
-version     = "0.3";
+version     = "0.3.1";
 
 description = "Table games for DayZ: lay a deck, a board or a can of dice out on a table, a counter or the floor, sit round it with other players and play in a window. Cards: durak, ochko, Texas hold'em, preferans and bridge; boards: chess, draughts, giveaway, corners and nardy; dice: thousand, dice poker, pig, high roll and perudo; four of them for chips the host hands out. Every card, piece and die is an item, and a card sharp may mark cards, load dice and cheat. The stalkers' deck, table and chess set use pictures and models from the S.T.A.L.K.E.R. games, created and owned by GSC Game World: a fan-made mod, not official, no affiliation with GSC Game World; the original games at store.steampowered.com/franchise/stalker. Needs Community Framework and OpenZone Core. github.com/OpenZone-DayZ/openzone-games";
 

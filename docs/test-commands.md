@@ -417,7 +417,12 @@ then an eye on that die while it lies in the can. Until it is thrown the die sho
 mouth as the die it replaced to everybody who did not see it go in; once thrown everybody sees it
 as it is. Every die on the felt shows its own colour. Give yourself dice to carry with
 `give what=OZG_Die_Red` (or `OZG_Die`, the white one, `OZG_Die_Black`, `OZG_Die_Stalker`) and load
-one with `loaddie`. A swap into your own can works wherever the can lies (a pocket, a backpack).
+one with `loaddie`. The swap's window offers only dice carried apart from the game (the
+owner, 2026-11-27): no die of a can the game is thrown from, the ones it does not throw
+included -- pig throws one die of a can's five, high roll two or three, nardy two. `dice
+who=me` says where each die lies, `[can <key>]` or `[loose]`; an ask that names a die of the
+can in play is refused (`refused STR_OZG_SAY_DSWAP_NO_DIE`), and after a swap the can holds
+as many dice as before. A swap into your own can works wherever the can lies (a pocket, a backpack).
 The die that goes out needs a free place in your pockets: with none the swap
 is refused (`refused STR_OZG_SAY_DSWAP_NO_ROOM`) and the note says so (give yourself dice until
 `give` answers 0 to see it; `world_move` of a thing to the ground frees a place -- on the diag
@@ -529,7 +534,11 @@ With `OpenZone_Games_VPP` loaded (it needs VPP Admin Tools and the core's
 3. **Налаштування**: a tick for every game (switch one off, and the host's "Game" button
    skips it), the table, presence, time, the mod's detailed log. **Шулерство**: card
    sharping on or off, the marks, noticing (the line under it works the chance out of the
-   three boxes), sleight of hand, the chances of being seen. **Пози**: the list, a card,
+   three boxes), sleight of hand, the chances of being seen; and the numbers of boards and
+   dice (2026-11-27): **Заряджені кості** (how often a die loaded a little, well and
+   heavily shows its face -- `LoadWeights` as three boxes -- and `NoticeLoaded`, with a line
+   that works out the chance for each of the three), **Підміна кістки** (`DiceSwaps`, 0 for
+   none, and `ChanceDiceSwap`) and **Дошки** (`BoardSleightMinutes`, 0 for no wait). **Пози**: the list, a card,
    higher / lower / new / delete, and the checks (the last asks this client whether it has
    the pose's gesture). **Файли конфігів**: the same file raw.
 4. Change something on any page: the bar at the bottom of all three names it in the alert
@@ -538,7 +547,11 @@ With `OpenZone_Games_VPP` loaded (it needs VPP Admin Tools and the core's
    seats outside 2 to 12, a percent above 100, who sees nearer than who plays) is refused
    with the rule named, and nothing is sent.
 5. A player online gets the saved settings at once (the core's sync packet is sent to
-   everyone): a pose added shows in his window's pose switch without reconnecting.
+   everyone): a pose added shows in his window's pose switch without reconnecting. So do
+   the two numbers his windows word: save `LoadWeights` 30, 50, 80 and the swap's window
+   (and the kit's) says "важко, 8 з 10"; save `BoardSleightMinutes` 7 and a board's window
+   says "Одна хитрість на 7 хвилин". The swaps left ("лишилось 3 з 5") come with the game's
+   own view.
 6. **Ядро › Огляд** has the card **Ігри**: games on, games laid out, being played, players
    seated, card sharping, and the settings' problems.
 

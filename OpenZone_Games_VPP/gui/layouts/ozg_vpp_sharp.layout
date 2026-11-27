@@ -731,17 +731,486 @@ FrameWidgetClass OzgShPane {
    visible 1
    ignorepointer 1
    color 0.235 0.235 0.228 1
+   position 24 438
+   size 427 245
+   hexactpos 1
+   vexactpos 1
+   hexactsize 1
+   vexactsize 1
+   priority 5
+   userID 66560
+   style rover_sim_colorable
+   {
+    PanelWidgetClass gh11 {
+     visible 1
+     ignorepointer 1
+     color 0.074 0.074 0.071 1
+     position 1 1
+     size 425 243
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 1
+     userID 68608
+     style rover_sim_colorable
+    }
+    TextWidgetClass OzgL_LoadWeight1 {
+     visible 1
+     ignorepointer 1
+     color 0.878 0.875 0.855 1
+     position 17 23
+     size 287 15
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 2
+     userID 68608
+     text ""
+     font "OpenZone_VPP/gui/fonts/ozv_sans28"
+     "exact text" 1
+     "exact text size" 14
+     "text halign" left
+     "text valign" center
+    }
+    TextWidgetClass OzgD_LoadWeight1 {
+     visible 1
+     ignorepointer 1
+     color 0.627 0.624 0.6 1
+     position 17 41
+     size 287 14
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 3
+     userID 68608
+     text ""
+     font "OpenZone_VPP/gui/fonts/ozv_sans28"
+     "exact text" 1
+     "exact text size" 13
+     "text halign" left
+     "text valign" center
+    }
+    FrameWidgetClass OzgBox_LoadWeight1 {
+     visible 1
+     ignorepointer 1
+     position 306 24
+     size 104 32
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 4
+     userID 65548
+     {
+      PanelWidgetClass OzgBox_LoadWeight1Edge {
+       visible 1
+       ignorepointer 1
+       color 0.235 0.235 0.228 1
+       position 0 0
+       size 104 32
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 1
+       style rover_sim_colorable
+      }
+      PanelWidgetClass OzgBox_LoadWeight1Bg {
+       visible 1
+       ignorepointer 1
+       color 0.028 0.028 0.028 1
+       position 1 1
+       size 102 30
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 2
+       style rover_sim_colorable
+      }
+      EditBoxWidgetClass Ozg_LoadWeight1 {
+       visible 1
+       color 0.878 0.875 0.855 1
+       position 11 1
+       size 82 30
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 3
+       text ""
+       style Default
+       font "OpenZone_VPP/gui/fonts/ozv_field14"
+       "exact text" 1
+       "text halign" right
+      }
+     }
+    }
+    TextWidgetClass OzgL_LoadWeight2 {
+     visible 1
+     ignorepointer 1
+     color 0.878 0.875 0.855 1
+     position 17 71
+     size 287 15
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 5
+     userID 68608
+     text ""
+     font "OpenZone_VPP/gui/fonts/ozv_sans28"
+     "exact text" 1
+     "exact text size" 14
+     "text halign" left
+     "text valign" center
+    }
+    TextWidgetClass OzgD_LoadWeight2 {
+     visible 1
+     ignorepointer 1
+     color 0.627 0.624 0.6 1
+     position 17 89
+     size 287 14
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 6
+     userID 68608
+     text ""
+     font "OpenZone_VPP/gui/fonts/ozv_sans28"
+     "exact text" 1
+     "exact text size" 13
+     "text halign" left
+     "text valign" center
+    }
+    FrameWidgetClass OzgBox_LoadWeight2 {
+     visible 1
+     ignorepointer 1
+     position 306 72
+     size 104 32
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 7
+     userID 65548
+     {
+      PanelWidgetClass OzgBox_LoadWeight2Edge {
+       visible 1
+       ignorepointer 1
+       color 0.235 0.235 0.228 1
+       position 0 0
+       size 104 32
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 1
+       style rover_sim_colorable
+      }
+      PanelWidgetClass OzgBox_LoadWeight2Bg {
+       visible 1
+       ignorepointer 1
+       color 0.028 0.028 0.028 1
+       position 1 1
+       size 102 30
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 2
+       style rover_sim_colorable
+      }
+      EditBoxWidgetClass Ozg_LoadWeight2 {
+       visible 1
+       color 0.878 0.875 0.855 1
+       position 11 1
+       size 82 30
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 3
+       text ""
+       style Default
+       font "OpenZone_VPP/gui/fonts/ozv_field14"
+       "exact text" 1
+       "text halign" right
+      }
+     }
+    }
+    TextWidgetClass OzgL_LoadWeight3 {
+     visible 1
+     ignorepointer 1
+     color 0.878 0.875 0.855 1
+     position 17 119
+     size 287 15
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 8
+     userID 68608
+     text ""
+     font "OpenZone_VPP/gui/fonts/ozv_sans28"
+     "exact text" 1
+     "exact text size" 14
+     "text halign" left
+     "text valign" center
+    }
+    TextWidgetClass OzgD_LoadWeight3 {
+     visible 1
+     ignorepointer 1
+     color 0.627 0.624 0.6 1
+     position 17 137
+     size 287 14
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 9
+     userID 68608
+     text ""
+     font "OpenZone_VPP/gui/fonts/ozv_sans28"
+     "exact text" 1
+     "exact text size" 13
+     "text halign" left
+     "text valign" center
+    }
+    FrameWidgetClass OzgBox_LoadWeight3 {
+     visible 1
+     ignorepointer 1
+     position 306 120
+     size 104 32
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 10
+     userID 65548
+     {
+      PanelWidgetClass OzgBox_LoadWeight3Edge {
+       visible 1
+       ignorepointer 1
+       color 0.235 0.235 0.228 1
+       position 0 0
+       size 104 32
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 1
+       style rover_sim_colorable
+      }
+      PanelWidgetClass OzgBox_LoadWeight3Bg {
+       visible 1
+       ignorepointer 1
+       color 0.028 0.028 0.028 1
+       position 1 1
+       size 102 30
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 2
+       style rover_sim_colorable
+      }
+      EditBoxWidgetClass Ozg_LoadWeight3 {
+       visible 1
+       color 0.878 0.875 0.855 1
+       position 11 1
+       size 82 30
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 3
+       text ""
+       style Default
+       font "OpenZone_VPP/gui/fonts/ozv_field14"
+       "exact text" 1
+       "text halign" right
+      }
+     }
+    }
+    TextWidgetClass OzgL_NoticeLoaded {
+     visible 1
+     ignorepointer 1
+     color 0.878 0.875 0.855 1
+     position 17 167
+     size 287 15
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 11
+     userID 68608
+     text ""
+     font "OpenZone_VPP/gui/fonts/ozv_sans28"
+     "exact text" 1
+     "exact text size" 14
+     "text halign" left
+     "text valign" center
+    }
+    TextWidgetClass OzgD_NoticeLoaded {
+     visible 1
+     ignorepointer 1
+     color 0.627 0.624 0.6 1
+     position 17 185
+     size 287 14
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 12
+     userID 68608
+     text ""
+     font "OpenZone_VPP/gui/fonts/ozv_sans28"
+     "exact text" 1
+     "exact text size" 13
+     "text halign" left
+     "text valign" center
+    }
+    FrameWidgetClass OzgBox_NoticeLoaded {
+     visible 1
+     ignorepointer 1
+     position 306 168
+     size 104 32
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 13
+     userID 65548
+     {
+      PanelWidgetClass OzgBox_NoticeLoadedEdge {
+       visible 1
+       ignorepointer 1
+       color 0.235 0.235 0.228 1
+       position 0 0
+       size 104 32
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 1
+       style rover_sim_colorable
+      }
+      PanelWidgetClass OzgBox_NoticeLoadedBg {
+       visible 1
+       ignorepointer 1
+       color 0.028 0.028 0.028 1
+       position 1 1
+       size 102 30
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 2
+       style rover_sim_colorable
+      }
+      EditBoxWidgetClass Ozg_NoticeLoaded {
+       visible 1
+       color 0.878 0.875 0.855 1
+       position 11 1
+       size 82 30
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 3
+       text ""
+       style Default
+       font "OpenZone_VPP/gui/fonts/ozv_field14"
+       "exact text" 1
+       "text halign" right
+      }
+     }
+    }
+    TextWidgetClass OzgShLoads {
+     visible 1
+     ignorepointer 1
+     color 0.627 0.624 0.6 1
+     position 17 214
+     size 393 14
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 14
+     userID 68608
+     text ""
+     font "OpenZone_VPP/gui/fonts/ozv_sans28"
+     "exact text" 1
+     "exact text size" 13
+     "text halign" left
+     "text valign" center
+    }
+   }
+  }
+  FrameWidgetClass OzgShLeg4 {
+   visible 1
+   ignorepointer 1
+   position 41 431
+   size 124 15
+   hexactpos 1
+   vexactpos 1
+   hexactsize 1
+   vexactsize 1
+   priority 6
+   {
+    PanelWidgetClass OzgShLeg4Bar {
+     visible 1
+     ignorepointer 1
+     color 0.074 0.074 0.071 1
+     position 0 7
+     size 124 8
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 1
+     style rover_sim_colorable
+    }
+    TextWidgetClass OzgShLeg4Text {
+     visible 1
+     ignorepointer 1
+     color 0.627 0.624 0.6 1
+     position 6 0
+     size 112 15
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 2
+     text "#STR_OZG_VPP_G_LOADED"
+     font "OpenZone_VPP/gui/fonts/ozv_condt28"
+     "exact text" 1
+     "exact text size" 15
+     "text halign" left
+     "text valign" center
+    }
+   }
+  }
+  PanelWidgetClass gh12 {
+   visible 1
+   ignorepointer 1
+   color 0.235 0.235 0.228 1
    position 467 103
    size 426 197
    hexactpos 1
    vexactpos 1
    hexactsize 1
    vexactsize 1
-   priority 5
+   priority 7
    userID 66564
    style rover_sim_colorable
    {
-    PanelWidgetClass gh11 {
+    PanelWidgetClass gh13 {
      visible 1
      ignorepointer 1
      color 0.074 0.074 0.071 1
@@ -1067,7 +1536,7 @@ FrameWidgetClass OzgShPane {
    vexactpos 1
    hexactsize 1
    vexactsize 1
-   priority 6
+   priority 8
    userID 65540
    {
     PanelWidgetClass OzgShLeg1Bar {
@@ -1103,7 +1572,7 @@ FrameWidgetClass OzgShPane {
     }
    }
   }
-  PanelWidgetClass gh12 {
+  PanelWidgetClass gh14 {
    visible 1
    ignorepointer 1
    color 0.235 0.235 0.228 1
@@ -1113,11 +1582,11 @@ FrameWidgetClass OzgShPane {
    vexactpos 1
    hexactsize 1
    vexactsize 1
-   priority 7
+   priority 9
    userID 66564
    style rover_sim_colorable
    {
-    PanelWidgetClass gh13 {
+    PanelWidgetClass gh15 {
      visible 1
      ignorepointer 1
      color 0.074 0.074 0.071 1
@@ -1424,7 +1893,7 @@ FrameWidgetClass OzgShPane {
    vexactpos 1
    hexactsize 1
    vexactsize 1
-   priority 8
+   priority 10
    userID 65540
    {
     PanelWidgetClass OzgShLeg2Bar {
@@ -1460,7 +1929,292 @@ FrameWidgetClass OzgShPane {
     }
    }
   }
-  PanelWidgetClass gh14 {
+  PanelWidgetClass gh16 {
+   visible 1
+   ignorepointer 1
+   color 0.235 0.235 0.228 1
+   position 467 517
+   size 426 167
+   hexactpos 1
+   vexactpos 1
+   hexactsize 1
+   vexactsize 1
+   priority 11
+   userID 66564
+   style rover_sim_colorable
+   {
+    PanelWidgetClass gh17 {
+     visible 1
+     ignorepointer 1
+     color 0.074 0.074 0.071 1
+     position 1 1
+     size 424 165
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 1
+     userID 117760
+     style rover_sim_colorable
+    }
+    TextWidgetClass OzgL_DiceSwaps {
+     visible 1
+     ignorepointer 1
+     color 0.878 0.875 0.855 1
+     position 17 23
+     size 286 15
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 2
+     userID 68608
+     text ""
+     font "OpenZone_VPP/gui/fonts/ozv_sans28"
+     "exact text" 1
+     "exact text size" 14
+     "text halign" left
+     "text valign" center
+    }
+    TextWidgetClass OzgD_DiceSwaps {
+     visible 1
+     ignorepointer 1
+     color 0.627 0.624 0.6 1
+     position 17 41
+     size 286 14
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 3
+     userID 68608
+     text ""
+     font "OpenZone_VPP/gui/fonts/ozv_sans28"
+     "exact text" 1
+     "exact text size" 13
+     "text halign" left
+     "text valign" center
+    }
+    FrameWidgetClass OzgBox_DiceSwaps {
+     visible 1
+     ignorepointer 1
+     position 305 24
+     size 104 32
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 4
+     userID 65548
+     {
+      PanelWidgetClass OzgBox_DiceSwapsEdge {
+       visible 1
+       ignorepointer 1
+       color 0.235 0.235 0.228 1
+       position 0 0
+       size 104 32
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 1
+       style rover_sim_colorable
+      }
+      PanelWidgetClass OzgBox_DiceSwapsBg {
+       visible 1
+       ignorepointer 1
+       color 0.028 0.028 0.028 1
+       position 1 1
+       size 102 30
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 2
+       style rover_sim_colorable
+      }
+      EditBoxWidgetClass Ozg_DiceSwaps {
+       visible 1
+       color 0.878 0.875 0.855 1
+       position 11 1
+       size 82 30
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 3
+       text ""
+       style Default
+       font "OpenZone_VPP/gui/fonts/ozv_field14"
+       "exact text" 1
+       "text halign" right
+      }
+     }
+    }
+    TextWidgetClass OzgL_ChanceDiceSwap {
+     visible 1
+     ignorepointer 1
+     color 0.878 0.875 0.855 1
+     position 17 71
+     size 286 15
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 5
+     userID 68608
+     text ""
+     font "OpenZone_VPP/gui/fonts/ozv_sans28"
+     "exact text" 1
+     "exact text size" 14
+     "text halign" left
+     "text valign" center
+    }
+    TextWidgetClass OzgD_ChanceDiceSwap {
+     visible 1
+     ignorepointer 1
+     color 0.627 0.624 0.6 1
+     position 17 89
+     size 286 14
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 6
+     userID 68608
+     text ""
+     font "OpenZone_VPP/gui/fonts/ozv_sans28"
+     "exact text" 1
+     "exact text size" 13
+     "text halign" left
+     "text valign" center
+    }
+    FrameWidgetClass OzgBox_ChanceDiceSwap {
+     visible 1
+     ignorepointer 1
+     position 305 72
+     size 104 32
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 7
+     userID 65548
+     {
+      PanelWidgetClass OzgBox_ChanceDiceSwapEdge {
+       visible 1
+       ignorepointer 1
+       color 0.235 0.235 0.228 1
+       position 0 0
+       size 104 32
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 1
+       style rover_sim_colorable
+      }
+      PanelWidgetClass OzgBox_ChanceDiceSwapBg {
+       visible 1
+       ignorepointer 1
+       color 0.028 0.028 0.028 1
+       position 1 1
+       size 102 30
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 2
+       style rover_sim_colorable
+      }
+      EditBoxWidgetClass Ozg_ChanceDiceSwap {
+       visible 1
+       color 0.878 0.875 0.855 1
+       position 11 1
+       size 82 30
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 3
+       text ""
+       style Default
+       font "OpenZone_VPP/gui/fonts/ozv_field14"
+       "exact text" 1
+       "text halign" right
+      }
+     }
+    }
+    RichTextWidgetClass gh18 {
+     visible 1
+     ignorepointer 1
+     color 0.627 0.624 0.6 1
+     position 17 117
+     size 384 36
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 8
+     userID 117760
+     text "#STR_OZG_VPP_DSWAP_NOTE"
+     font "OpenZone_VPP/gui/fonts/ozv_sdf_sans32"
+     "exact text" 1
+     "exact text size" 13
+     wrap 1
+     "size to text h" 0
+     "size to text v" 0
+     "text halign" left
+     "text valign" top
+    }
+   }
+  }
+  FrameWidgetClass OzgShLeg5 {
+   visible 1
+   ignorepointer 1
+   position 484 510
+   size 114 15
+   hexactpos 1
+   vexactpos 1
+   hexactsize 1
+   vexactsize 1
+   priority 12
+   userID 65540
+   {
+    PanelWidgetClass OzgShLeg5Bar {
+     visible 1
+     ignorepointer 1
+     color 0.074 0.074 0.071 1
+     position 0 7
+     size 114 8
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 1
+     style rover_sim_colorable
+    }
+    TextWidgetClass OzgShLeg5Text {
+     visible 1
+     ignorepointer 1
+     color 0.627 0.624 0.6 1
+     position 6 0
+     size 102 15
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 2
+     text "#STR_OZG_VPP_G_DSWAP"
+     font "OpenZone_VPP/gui/fonts/ozv_condt28"
+     "exact text" 1
+     "exact text size" 15
+     "text halign" left
+     "text valign" center
+    }
+   }
+  }
+  PanelWidgetClass gh19 {
    visible 1
    ignorepointer 1
    color 0.235 0.235 0.228 1
@@ -1470,11 +2224,11 @@ FrameWidgetClass OzgShPane {
    vexactpos 1
    hexactsize 1
    vexactsize 1
-   priority 9
+   priority 13
    userID 66568
    style rover_sim_colorable
    {
-    PanelWidgetClass gh15 {
+    PanelWidgetClass gh20 {
      visible 1
      ignorepointer 1
      color 0.074 0.074 0.071 1
@@ -2052,7 +2806,7 @@ FrameWidgetClass OzgShPane {
       }
      }
     }
-    RichTextWidgetClass gh16 {
+    RichTextWidgetClass gh21 {
      visible 1
      ignorepointer 1
      color 0.627 0.624 0.6 1
@@ -2085,7 +2839,7 @@ FrameWidgetClass OzgShPane {
    vexactpos 1
    hexactsize 1
    vexactsize 1
-   priority 10
+   priority 14
    userID 65544
    {
     PanelWidgetClass OzgShLeg3Bar {
@@ -2121,7 +2875,198 @@ FrameWidgetClass OzgShPane {
     }
    }
   }
-  PanelWidgetClass gh17 {
+  PanelWidgetClass gh22 {
+   visible 1
+   ignorepointer 1
+   color 0.235 0.235 0.228 1
+   position 909 485
+   size 427 119
+   hexactpos 1
+   vexactpos 1
+   hexactsize 1
+   vexactsize 1
+   priority 15
+   userID 66568
+   style rover_sim_colorable
+   {
+    PanelWidgetClass gh23 {
+     visible 1
+     ignorepointer 1
+     color 0.074 0.074 0.071 1
+     position 1 1
+     size 425 117
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 1
+     userID 117760
+     style rover_sim_colorable
+    }
+    TextWidgetClass OzgL_BoardSleightMinutes {
+     visible 1
+     ignorepointer 1
+     color 0.878 0.875 0.855 1
+     position 17 23
+     size 287 15
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 2
+     userID 68608
+     text ""
+     font "OpenZone_VPP/gui/fonts/ozv_sans28"
+     "exact text" 1
+     "exact text size" 14
+     "text halign" left
+     "text valign" center
+    }
+    TextWidgetClass OzgD_BoardSleightMinutes {
+     visible 1
+     ignorepointer 1
+     color 0.627 0.624 0.6 1
+     position 17 41
+     size 287 14
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 3
+     userID 68608
+     text ""
+     font "OpenZone_VPP/gui/fonts/ozv_sans28"
+     "exact text" 1
+     "exact text size" 13
+     "text halign" left
+     "text valign" center
+    }
+    FrameWidgetClass OzgBox_BoardSleightMinutes {
+     visible 1
+     ignorepointer 1
+     position 306 24
+     size 104 32
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 4
+     userID 65548
+     {
+      PanelWidgetClass OzgBox_BoardSleightMinutesEdge {
+       visible 1
+       ignorepointer 1
+       color 0.235 0.235 0.228 1
+       position 0 0
+       size 104 32
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 1
+       style rover_sim_colorable
+      }
+      PanelWidgetClass OzgBox_BoardSleightMinutesBg {
+       visible 1
+       ignorepointer 1
+       color 0.028 0.028 0.028 1
+       position 1 1
+       size 102 30
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 2
+       style rover_sim_colorable
+      }
+      EditBoxWidgetClass Ozg_BoardSleightMinutes {
+       visible 1
+       color 0.878 0.875 0.855 1
+       position 11 1
+       size 82 30
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 3
+       text ""
+       style Default
+       font "OpenZone_VPP/gui/fonts/ozv_field14"
+       "exact text" 1
+       "text halign" right
+      }
+     }
+    }
+    RichTextWidgetClass gh24 {
+     visible 1
+     ignorepointer 1
+     color 0.627 0.624 0.6 1
+     position 17 69
+     size 385 36
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 5
+     userID 117760
+     text "#STR_OZG_VPP_BOARDS_NOTE"
+     font "OpenZone_VPP/gui/fonts/ozv_sdf_sans32"
+     "exact text" 1
+     "exact text size" 13
+     wrap 1
+     "size to text h" 0
+     "size to text v" 0
+     "text halign" left
+     "text valign" top
+    }
+   }
+  }
+  FrameWidgetClass OzgShLeg6 {
+   visible 1
+   ignorepointer 1
+   position 926 478
+   size 73 15
+   hexactpos 1
+   vexactpos 1
+   hexactsize 1
+   vexactsize 1
+   priority 16
+   userID 65544
+   {
+    PanelWidgetClass OzgShLeg6Bar {
+     visible 1
+     ignorepointer 1
+     color 0.074 0.074 0.071 1
+     position 0 7
+     size 73 8
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 1
+     style rover_sim_colorable
+    }
+    TextWidgetClass OzgShLeg6Text {
+     visible 1
+     ignorepointer 1
+     color 0.627 0.624 0.6 1
+     position 6 0
+     size 61 15
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 2
+     text "#STR_OZG_VPP_G_BOARDS"
+     font "OpenZone_VPP/gui/fonts/ozv_condt28"
+     "exact text" 1
+     "exact text size" 15
+     "text halign" left
+     "text valign" center
+    }
+   }
+  }
+  PanelWidgetClass gh25 {
    visible 1
    ignorepointer 1
    color 0.074 0.074 0.071 1
@@ -2131,11 +3076,11 @@ FrameWidgetClass OzgShPane {
    vexactpos 1
    hexactsize 1
    vexactsize 1
-   priority 11
+   priority 17
    userID 68800
    style rover_sim_colorable
    {
-    PanelWidgetClass gh18 {
+    PanelWidgetClass gh26 {
      visible 1
      ignorepointer 1
      color 0.235 0.235 0.228 1
@@ -2207,7 +3152,7 @@ FrameWidgetClass OzgShPane {
        priority 2
        style rover_sim_colorable
       }
-      TextWidgetClass gh19 {
+      TextWidgetClass gh27 {
        visible 1
        ignorepointer 1
        color 0.878 0.875 0.855 1
@@ -2253,7 +3198,7 @@ FrameWidgetClass OzgShPane {
        priority 1
        style rover_sim_colorable
       }
-      TextWidgetClass gh20 {
+      TextWidgetClass gh28 {
        visible 1
        ignorepointer 1
        color 0.078 0.039 0.008 1
