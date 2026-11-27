@@ -912,6 +912,24 @@ class CfgSoundShaders
         volume = 0.25;
         range = 15;
     };
+    class OZG_Rattle_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_rattle", 1}};
+        volume = 0.45;
+        range = 15;
+    };
+    class OZG_Land_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_land", 1}};
+        volume = 0.45;
+        range = 15;
+    };
+    class OZG_DieSlip_SoundShader: baseCharacter_SoundShader
+    {
+        samples[] = {{"OpenZone_Games\sounds\ozg_dieslip", 1}};
+        volume = 0.30;
+        range = 15;
+    };
 };
 class CfgSoundSets
 {
@@ -1007,6 +1025,18 @@ class CfgSoundSets
     class OZG_Click_SoundSet: baseCharacter_SoundSet
     {
         soundShaders[] = {"OZG_Click_SoundShader"};
+    };
+    class OZG_Rattle_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_Rattle_SoundShader"};
+    };
+    class OZG_Land_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_Land_SoundShader"};
+    };
+    class OZG_DieSlip_SoundSet: baseCharacter_SoundSet
+    {
+        soundShaders[] = {"OZG_DieSlip_SoundShader"};
     };
 };
 // <<< generated: sounds

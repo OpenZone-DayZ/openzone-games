@@ -491,6 +491,7 @@ class OZG_Session
         v.PlaceId = m_R.PlaceId;
         v.Rev = m_R.Rev;
         v.St = m_R.St;
+        v.DealNo = m_R.DealNo;
         v.Style = OZG_Decks.StyleOf(m_R.DeckClass);
         v.GameId = m_R.GameId;
         v.OptIds.Copy(m_R.OptIds);
@@ -549,6 +550,16 @@ class OZG_Session
         v.PieceLooks = OZG_BoardRead.LooksOf(m_Place);
         if (m_OwnDiceSeats)
             v.OwnDiceSeats.Copy(m_OwnDiceSeats);
+        if (m_SeatCanLook)
+        {
+            for (int sc = 0; sc < m_R.Dealt.Count(); sc++)
+            {
+                int scSeat = m_R.Dealt[sc];
+                string scLook;
+                if (m_SeatCanLook.Find(scSeat, scLook))
+                    v.SeatCanLooks.Insert(scSeat.ToString() + "=" + scLook);
+            }
+        }
         if (m_SeatDice)
         {
             for (int sd = 0; sd < m_R.Dealt.Count(); sd++)
@@ -597,6 +608,9 @@ class OZG_Session
     // The look each die had when its seat threw it last: what the window draws a seat's
     // thrown dice in (a die swapped into the set after shows in the throws made with it).
     protected ref map<int, ref array<string>> m_ThrownLooks;
+    // Beside m_ThrownLooks: the die itself each place held when its seat threw it last
+    // (what a player knows of a die lying on the felt is known of that die).
+    protected ref map<int, ref array<EntityAI>> m_ThrownDice;
 
     // Dice were thrown: `seats` and the place of each among the dice its seat throws.
     protected void ThrownLooksNote(array<int> seats, array<int> places)
@@ -625,6 +639,17 @@ class OZG_Session
             if (die)
                 look = OZG_BoardRead.DieLookOf(die.GetType());
             looks[at] = look;
+            if (!m_ThrownDice)
+                m_ThrownDice = new map<int, ref array<EntityAI>>();
+            array<EntityAI> thrown;
+            if (!m_ThrownDice.Find(seat, thrown) || !thrown)
+            {
+                thrown = new array<EntityAI>();
+                m_ThrownDice.Set(seat, thrown);
+            }
+            while (thrown.Count() <= at)
+                thrown.Insert(null);
+            thrown[at] = die;
         }
     }
 
@@ -632,6 +657,8 @@ class OZG_Session
     {
         if (m_ThrownLooks)
             m_ThrownLooks.Clear();
+        if (m_ThrownDice)
+            m_ThrownDice.Clear();
     }
 
     // The three texts of a view for one client.
@@ -1752,19 +1779,31 @@ class OZG_Session
         if (!m_OwnDiceSeats)
             m_OwnDiceSeats = new array<int>();
         m_OwnDiceSeats.Clear();
+        if (!m_SeatCanLook)
+            m_SeatCanLook = new map<int, string>();
+        m_SeatCanLook.Clear();
         if (need <= 0)
             return "";
         string whose = game.DiceMode(options);
         array<EntityAI> hostDice = new array<EntityAI>();
         OZG_DiceRead.OfPlace(m_Place, hostDice);
+        string hostCan = OZG_BoardRead.LookOf(m_R.DeckClass);
         for (int i = 0; i < seats.Count(); i++)
         {
             array<EntityAI> dice = new array<EntityAI>();
             bool own = false;
+            string canLook = hostCan;
             if (whose != OZG_DiceConst.WHOSE_HOST)
             {
                 PlayerBase player = OZG_Sessions.PlayerOf(m_R.Seats[seats[i]].Uid);
                 own = OZG_DiceRead.OwnCan(player, need, dice);
+                // the can its own dice lie in: every die of a can is that can's attachment
+                if (own && dice.Count() > 0 && dice[0])
+                {
+                    EntityAI ownCan = dice[0].GetHierarchyParent();
+                    if (ownCan)
+                        canLook = OZG_BoardRead.LookOf(ownCan.GetType());
+                }
             }
             if (whose == OZG_DiceConst.WHOSE_OWN && !own)
                 return OZG_DiceConst.NO_DICE;
@@ -1781,9 +1820,15 @@ class OZG_Session
             m_SeatDice.Set(seats[i], dice);
             if (own)
                 m_OwnDiceSeats.Insert(seats[i]);
+            else
+                canLook = hostCan;
+            m_SeatCanLook.Set(seats[i], canLook);
         }
         return "";
     }
+
+    // The can each seat throws from, by its look ("classic", "stalker"): the window draws it.
+    protected ref map<int, string> m_SeatCanLook;
 
     // The seats that throw their own dice this game (the rest the host's): their plates
     // say so.

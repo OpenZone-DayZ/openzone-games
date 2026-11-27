@@ -14,7 +14,7 @@ FrameWidgetClass OZG_DGC_perudo {
    ignorepointer 1
    clipchildren 0
    position 12 12
-   size 360 260
+   size 360 323
    hexactpos 1
    vexactpos 1
    hexactsize 1
@@ -25,7 +25,7 @@ FrameWidgetClass OZG_DGC_perudo {
      ignorepointer 1
      clipchildren 0
      position 0 0
-     size 360 260
+     size 360 323
      hexactpos 1
      vexactpos 1
      hexactsize 1
@@ -36,7 +36,7 @@ FrameWidgetClass OZG_DGC_perudo {
        ignorepointer 1
        clipchildren 0
        position 0 0
-       size 360 260
+       size 360 323
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -78,7 +78,7 @@ FrameWidgetClass OZG_DGC_perudo {
         ImageWidgetClass OZG_DRAskBoxEdgeBL {
          ignorepointer 1
          color 0.788 0.643 0.361 1
-         position 0 254
+         position 0 317
          size 6 6
          hexactpos 1
          vexactpos 1
@@ -94,7 +94,7 @@ FrameWidgetClass OZG_DGC_perudo {
         ImageWidgetClass OZG_DRAskBoxEdgeBR {
          ignorepointer 1
          color 0.788 0.643 0.361 1
-         position 354 254
+         position 354 317
          size 6 6
          hexactpos 1
          vexactpos 1
@@ -110,7 +110,7 @@ FrameWidgetClass OZG_DGC_perudo {
         PanelWidgetClass OZG_DRAskBoxEdgeM {
          ignorepointer 1
          position 0 5
-         size 360 250
+         size 360 313
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -133,7 +133,7 @@ FrameWidgetClass OZG_DGC_perudo {
         }
         PanelWidgetClass OZG_DRAskBoxEdgeB {
          ignorepointer 1
-         position 5 253
+         position 5 316
          size 350 7
          hexactpos 1
          vexactpos 1
@@ -149,7 +149,7 @@ FrameWidgetClass OZG_DGC_perudo {
        ignorepointer 1
        clipchildren 0
        position 1 1
-       size 358 258
+       size 358 321
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -191,7 +191,7 @@ FrameWidgetClass OZG_DGC_perudo {
         ImageWidgetClass OZG_DRAskBoxBgBL {
          ignorepointer 1
          color 0.165 0.114 0.071 1
-         position 0 253
+         position 0 316
          size 5 5
          hexactpos 1
          vexactpos 1
@@ -207,7 +207,7 @@ FrameWidgetClass OZG_DGC_perudo {
         ImageWidgetClass OZG_DRAskBoxBgBR {
          ignorepointer 1
          color 0.165 0.114 0.071 1
-         position 353 253
+         position 353 316
          size 5 5
          hexactpos 1
          vexactpos 1
@@ -223,7 +223,7 @@ FrameWidgetClass OZG_DGC_perudo {
         PanelWidgetClass OZG_DRAskBoxBgM {
          ignorepointer 1
          position 0 4
-         size 358 250
+         size 358 313
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -246,7 +246,7 @@ FrameWidgetClass OZG_DGC_perudo {
         }
         PanelWidgetClass OZG_DRAskBoxBgB {
          ignorepointer 1
-         position 4 252
+         position 4 315
          size 350 6
          hexactpos 1
          vexactpos 1
@@ -263,7 +263,7 @@ FrameWidgetClass OZG_DGC_perudo {
     TextWidgetClass OZG_DRAskTitle {
      ignorepointer 1
      position 12 12
-     size 336 22
+     size 250 22
      hexactpos 1
      vexactpos 1
      hexactsize 1
@@ -276,6 +276,150 @@ FrameWidgetClass OZG_DGC_perudo {
      "text halign" left
      "text valign" center
      priority 2
+    }
+    FrameWidgetClass OZG_DRPal {
+     ignorepointer 1
+     clipchildren 0
+     position 260 12
+     size 88 22
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 3
+     visible 0
+     {
+      FrameWidgetClass OZG_DRPalBg {
+       ignorepointer 1
+       clipchildren 0
+       position 0 0
+       size 88 22
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 0
+       {
+        ImageWidgetClass OZG_DRPalBgTL {
+         ignorepointer 1
+         color 0.227 0.184 0.110 1
+         position 0 0
+         size 11 11
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 0
+         image0 "OpenZone_Games/gui/textures/ozg_rc_tl_ca.paa"
+         mode blend
+         "src alpha" 1
+         "stretch mode" stretch_w_h
+         "clamp mode" clamp
+        }
+        ImageWidgetClass OZG_DRPalBgTR {
+         ignorepointer 1
+         color 0.227 0.184 0.110 1
+         position 77 0
+         size 11 11
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 0
+         image0 "OpenZone_Games/gui/textures/ozg_rc_tr_ca.paa"
+         mode blend
+         "src alpha" 1
+         "stretch mode" stretch_w_h
+         "clamp mode" clamp
+        }
+        ImageWidgetClass OZG_DRPalBgBL {
+         ignorepointer 1
+         color 0.227 0.184 0.110 1
+         position 0 11
+         size 11 11
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 0
+         image0 "OpenZone_Games/gui/textures/ozg_rc_bl_ca.paa"
+         mode blend
+         "src alpha" 1
+         "stretch mode" stretch_w_h
+         "clamp mode" clamp
+        }
+        ImageWidgetClass OZG_DRPalBgBR {
+         ignorepointer 1
+         color 0.227 0.184 0.110 1
+         position 77 11
+         size 11 11
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 0
+         image0 "OpenZone_Games/gui/textures/ozg_rc_br_ca.paa"
+         mode blend
+         "src alpha" 1
+         "stretch mode" stretch_w_h
+         "clamp mode" clamp
+        }
+        PanelWidgetClass OZG_DRPalBgM {
+         ignorepointer 1
+         position 0 10
+         size 88 2
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         color 0.227 0.184 0.110 1
+         style rover_sim_colorable
+         priority 0
+        }
+        PanelWidgetClass OZG_DRPalBgT {
+         ignorepointer 1
+         position 10 0
+         size 68 12
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         color 0.227 0.184 0.110 1
+         style rover_sim_colorable
+         priority 0
+        }
+        PanelWidgetClass OZG_DRPalBgB {
+         ignorepointer 1
+         position 10 10
+         size 68 12
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         color 0.227 0.184 0.110 1
+         style rover_sim_colorable
+         priority 0
+        }
+       }
+      }
+      TextWidgetClass OZG_DRPalText {
+       ignorepointer 1
+       position 8 3.5
+       size 200 15
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.906 0.761 0.478 1
+       text "#STR_OZG_DWIN_PR_PALIFICO"
+       font "gui/fonts/MetronBook-Bold22"
+       "exact text" 1
+       "exact text size" 14
+       "text halign" left
+       "text valign" center
+       priority 1
+      }
+     }
     }
     TextWidgetClass OZG_DRAskSub {
      ignorepointer 1
@@ -967,7 +1111,7 @@ FrameWidgetClass OZG_DGC_perudo {
     ButtonWidgetClass OZG_DRFace0 {
      visible 1
      position 12 119
-     size 51 48
+     size 46 46
      hexactpos 1
      vexactpos 1
      hexactsize 1
@@ -982,7 +1126,7 @@ FrameWidgetClass OZG_DGC_perudo {
        ignorepointer 1
        clipchildren 0
        position -3 -3
-       size 57 54
+       size 52 52
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -1011,7 +1155,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          color 0.788 0.643 0.361 1
-         position 46 0
+         position 41 0
          size 11 11
          hexactpos 1
          vexactpos 1
@@ -1028,7 +1172,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          color 0.788 0.643 0.361 1
-         position 0 43
+         position 0 41
          size 11 11
          hexactpos 1
          vexactpos 1
@@ -1045,7 +1189,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          color 0.788 0.643 0.361 1
-         position 46 43
+         position 41 41
          size 11 11
          hexactpos 1
          vexactpos 1
@@ -1062,7 +1206,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          position 0 10
-         size 57 34
+         size 52 32
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1075,7 +1219,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          position 10 0
-         size 37 12
+         size 32 12
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1087,8 +1231,8 @@ FrameWidgetClass OZG_DGC_perudo {
         PanelWidgetClass OZG_DRFace0RingB {
          inheritalpha 1
          ignorepointer 1
-         position 10 42
-         size 37 12
+         position 10 40
+         size 32 12
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1104,7 +1248,7 @@ FrameWidgetClass OZG_DGC_perudo {
        ignorepointer 1
        color 1 1 1 1
        position 0 0
-       size 51 48
+       size 46 46
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -1119,8 +1263,8 @@ FrameWidgetClass OZG_DGC_perudo {
     }
     ButtonWidgetClass OZG_DRFace1 {
      visible 1
-     position 69 119
-     size 51 48
+     position 70 119
+     size 46 46
      hexactpos 1
      vexactpos 1
      hexactsize 1
@@ -1135,7 +1279,7 @@ FrameWidgetClass OZG_DGC_perudo {
        ignorepointer 1
        clipchildren 0
        position -3 -3
-       size 57 54
+       size 52 52
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -1164,7 +1308,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          color 0.788 0.643 0.361 1
-         position 46 0
+         position 41 0
          size 11 11
          hexactpos 1
          vexactpos 1
@@ -1181,7 +1325,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          color 0.788 0.643 0.361 1
-         position 0 43
+         position 0 41
          size 11 11
          hexactpos 1
          vexactpos 1
@@ -1198,7 +1342,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          color 0.788 0.643 0.361 1
-         position 46 43
+         position 41 41
          size 11 11
          hexactpos 1
          vexactpos 1
@@ -1215,7 +1359,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          position 0 10
-         size 57 34
+         size 52 32
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1228,7 +1372,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          position 10 0
-         size 37 12
+         size 32 12
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1240,8 +1384,8 @@ FrameWidgetClass OZG_DGC_perudo {
         PanelWidgetClass OZG_DRFace1RingB {
          inheritalpha 1
          ignorepointer 1
-         position 10 42
-         size 37 12
+         position 10 40
+         size 32 12
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1257,7 +1401,7 @@ FrameWidgetClass OZG_DGC_perudo {
        ignorepointer 1
        color 1 1 1 1
        position 0 0
-       size 51 48
+       size 46 46
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -1272,8 +1416,8 @@ FrameWidgetClass OZG_DGC_perudo {
     }
     ButtonWidgetClass OZG_DRFace2 {
      visible 1
-     position 126 119
-     size 51 48
+     position 128 119
+     size 46 46
      hexactpos 1
      vexactpos 1
      hexactsize 1
@@ -1288,7 +1432,7 @@ FrameWidgetClass OZG_DGC_perudo {
        ignorepointer 1
        clipchildren 0
        position -3 -3
-       size 57 54
+       size 52 52
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -1317,7 +1461,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          color 0.788 0.643 0.361 1
-         position 46 0
+         position 41 0
          size 11 11
          hexactpos 1
          vexactpos 1
@@ -1334,7 +1478,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          color 0.788 0.643 0.361 1
-         position 0 43
+         position 0 41
          size 11 11
          hexactpos 1
          vexactpos 1
@@ -1351,7 +1495,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          color 0.788 0.643 0.361 1
-         position 46 43
+         position 41 41
          size 11 11
          hexactpos 1
          vexactpos 1
@@ -1368,7 +1512,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          position 0 10
-         size 57 34
+         size 52 32
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1381,7 +1525,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          position 10 0
-         size 37 12
+         size 32 12
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1393,8 +1537,8 @@ FrameWidgetClass OZG_DGC_perudo {
         PanelWidgetClass OZG_DRFace2RingB {
          inheritalpha 1
          ignorepointer 1
-         position 10 42
-         size 37 12
+         position 10 40
+         size 32 12
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1410,7 +1554,7 @@ FrameWidgetClass OZG_DGC_perudo {
        ignorepointer 1
        color 1 1 1 1
        position 0 0
-       size 51 48
+       size 46 46
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -1425,8 +1569,8 @@ FrameWidgetClass OZG_DGC_perudo {
     }
     ButtonWidgetClass OZG_DRFace3 {
      visible 1
-     position 183 119
-     size 51 48
+     position 186 119
+     size 46 46
      hexactpos 1
      vexactpos 1
      hexactsize 1
@@ -1441,7 +1585,7 @@ FrameWidgetClass OZG_DGC_perudo {
        ignorepointer 1
        clipchildren 0
        position -3 -3
-       size 57 54
+       size 52 52
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -1470,7 +1614,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          color 0.788 0.643 0.361 1
-         position 46 0
+         position 41 0
          size 11 11
          hexactpos 1
          vexactpos 1
@@ -1487,7 +1631,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          color 0.788 0.643 0.361 1
-         position 0 43
+         position 0 41
          size 11 11
          hexactpos 1
          vexactpos 1
@@ -1504,7 +1648,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          color 0.788 0.643 0.361 1
-         position 46 43
+         position 41 41
          size 11 11
          hexactpos 1
          vexactpos 1
@@ -1521,7 +1665,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          position 0 10
-         size 57 34
+         size 52 32
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1534,7 +1678,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          position 10 0
-         size 37 12
+         size 32 12
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1546,8 +1690,8 @@ FrameWidgetClass OZG_DGC_perudo {
         PanelWidgetClass OZG_DRFace3RingB {
          inheritalpha 1
          ignorepointer 1
-         position 10 42
-         size 37 12
+         position 10 40
+         size 32 12
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1563,7 +1707,7 @@ FrameWidgetClass OZG_DGC_perudo {
        ignorepointer 1
        color 1 1 1 1
        position 0 0
-       size 51 48
+       size 46 46
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -1578,8 +1722,8 @@ FrameWidgetClass OZG_DGC_perudo {
     }
     ButtonWidgetClass OZG_DRFace4 {
      visible 1
-     position 240 119
-     size 51 48
+     position 244 119
+     size 46 46
      hexactpos 1
      vexactpos 1
      hexactsize 1
@@ -1594,7 +1738,7 @@ FrameWidgetClass OZG_DGC_perudo {
        ignorepointer 1
        clipchildren 0
        position -3 -3
-       size 57 54
+       size 52 52
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -1623,7 +1767,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          color 0.788 0.643 0.361 1
-         position 46 0
+         position 41 0
          size 11 11
          hexactpos 1
          vexactpos 1
@@ -1640,7 +1784,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          color 0.788 0.643 0.361 1
-         position 0 43
+         position 0 41
          size 11 11
          hexactpos 1
          vexactpos 1
@@ -1657,7 +1801,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          color 0.788 0.643 0.361 1
-         position 46 43
+         position 41 41
          size 11 11
          hexactpos 1
          vexactpos 1
@@ -1674,7 +1818,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          position 0 10
-         size 57 34
+         size 52 32
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1687,7 +1831,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          position 10 0
-         size 37 12
+         size 32 12
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1699,8 +1843,8 @@ FrameWidgetClass OZG_DGC_perudo {
         PanelWidgetClass OZG_DRFace4RingB {
          inheritalpha 1
          ignorepointer 1
-         position 10 42
-         size 37 12
+         position 10 40
+         size 32 12
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1716,7 +1860,7 @@ FrameWidgetClass OZG_DGC_perudo {
        ignorepointer 1
        color 1 1 1 1
        position 0 0
-       size 51 48
+       size 46 46
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -1731,8 +1875,8 @@ FrameWidgetClass OZG_DGC_perudo {
     }
     ButtonWidgetClass OZG_DRFace5 {
      visible 1
-     position 297 119
-     size 51 48
+     position 302 119
+     size 46 46
      hexactpos 1
      vexactpos 1
      hexactsize 1
@@ -1747,7 +1891,7 @@ FrameWidgetClass OZG_DGC_perudo {
        ignorepointer 1
        clipchildren 0
        position -3 -3
-       size 57 54
+       size 52 52
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -1776,7 +1920,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          color 0.788 0.643 0.361 1
-         position 46 0
+         position 41 0
          size 11 11
          hexactpos 1
          vexactpos 1
@@ -1793,7 +1937,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          color 0.788 0.643 0.361 1
-         position 0 43
+         position 0 41
          size 11 11
          hexactpos 1
          vexactpos 1
@@ -1810,7 +1954,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          color 0.788 0.643 0.361 1
-         position 46 43
+         position 41 41
          size 11 11
          hexactpos 1
          vexactpos 1
@@ -1827,7 +1971,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          position 0 10
-         size 57 34
+         size 52 32
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1840,7 +1984,7 @@ FrameWidgetClass OZG_DGC_perudo {
          inheritalpha 1
          ignorepointer 1
          position 10 0
-         size 37 12
+         size 32 12
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1852,8 +1996,8 @@ FrameWidgetClass OZG_DGC_perudo {
         PanelWidgetClass OZG_DRFace5RingB {
          inheritalpha 1
          ignorepointer 1
-         position 10 42
-         size 37 12
+         position 10 40
+         size 32 12
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -1869,7 +2013,7 @@ FrameWidgetClass OZG_DGC_perudo {
        ignorepointer 1
        color 1 1 1 1
        position 0 0
-       size 51 48
+       size 46 46
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -1882,9 +2026,26 @@ FrameWidgetClass OZG_DGC_perudo {
       }
      }
     }
-    TextWidgetClass OZG_DRNote {
+    TextWidgetClass OZG_DRNote0 {
      ignorepointer 1
-     position 12 177
+     position 12 175
+     size 336 17
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     color 0.722 0.647 0.522 1
+     text ""
+     font "gui/fonts/etelkatextpro22"
+     "exact text" 1
+     "exact text size" 15
+     "text halign" left
+     "text valign" center
+     priority 2
+    }
+    TextWidgetClass OZG_DRNote1 {
+     ignorepointer 1
+     position 12 192
      size 336 17
      hexactpos 1
      vexactpos 1
@@ -1901,7 +2062,7 @@ FrameWidgetClass OZG_DGC_perudo {
     }
     ButtonWidgetClass OZG_DRBidBtn {
      visible 1
-     position 12 204
+     position 12 219
      size 164 44
      hexactpos 1
      vexactpos 1
@@ -2058,7 +2219,7 @@ FrameWidgetClass OZG_DGC_perudo {
     }
     ButtonWidgetClass OZG_DRDudoBtn {
      visible 1
-     position 184 204
+     position 184 219
      size 164 44
      hexactpos 1
      vexactpos 1

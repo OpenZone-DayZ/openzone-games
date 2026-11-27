@@ -14,7 +14,7 @@ FrameWidgetClass OZG_DGC_pig {
    ignorepointer 1
    clipchildren 0
    position 12 12
-   size 360 158
+   size 360 254
    hexactpos 1
    vexactpos 1
    hexactsize 1
@@ -25,7 +25,7 @@ FrameWidgetClass OZG_DGC_pig {
      ignorepointer 1
      clipchildren 0
      position 0 0
-     size 360 158
+     size 360 254
      hexactpos 1
      vexactpos 1
      hexactsize 1
@@ -36,7 +36,7 @@ FrameWidgetClass OZG_DGC_pig {
        ignorepointer 1
        clipchildren 0
        position 0 0
-       size 360 158
+       size 360 254
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -78,7 +78,7 @@ FrameWidgetClass OZG_DGC_pig {
         ImageWidgetClass OZG_DPgActBoxEdgeBL {
          ignorepointer 1
          color 0.788 0.643 0.361 1
-         position 0 152
+         position 0 248
          size 6 6
          hexactpos 1
          vexactpos 1
@@ -94,7 +94,7 @@ FrameWidgetClass OZG_DGC_pig {
         ImageWidgetClass OZG_DPgActBoxEdgeBR {
          ignorepointer 1
          color 0.788 0.643 0.361 1
-         position 354 152
+         position 354 248
          size 6 6
          hexactpos 1
          vexactpos 1
@@ -110,7 +110,7 @@ FrameWidgetClass OZG_DGC_pig {
         PanelWidgetClass OZG_DPgActBoxEdgeM {
          ignorepointer 1
          position 0 5
-         size 360 148
+         size 360 244
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -133,7 +133,7 @@ FrameWidgetClass OZG_DGC_pig {
         }
         PanelWidgetClass OZG_DPgActBoxEdgeB {
          ignorepointer 1
-         position 5 151
+         position 5 247
          size 350 7
          hexactpos 1
          vexactpos 1
@@ -149,7 +149,7 @@ FrameWidgetClass OZG_DGC_pig {
        ignorepointer 1
        clipchildren 0
        position 1 1
-       size 358 156
+       size 358 252
        hexactpos 1
        vexactpos 1
        hexactsize 1
@@ -191,7 +191,7 @@ FrameWidgetClass OZG_DGC_pig {
         ImageWidgetClass OZG_DPgActBoxBgBL {
          ignorepointer 1
          color 0.165 0.114 0.071 1
-         position 0 151
+         position 0 247
          size 5 5
          hexactpos 1
          vexactpos 1
@@ -207,7 +207,7 @@ FrameWidgetClass OZG_DGC_pig {
         ImageWidgetClass OZG_DPgActBoxBgBR {
          ignorepointer 1
          color 0.165 0.114 0.071 1
-         position 353 151
+         position 353 247
          size 5 5
          hexactpos 1
          vexactpos 1
@@ -223,7 +223,7 @@ FrameWidgetClass OZG_DGC_pig {
         PanelWidgetClass OZG_DPgActBoxBgM {
          ignorepointer 1
          position 0 4
-         size 358 148
+         size 358 244
          hexactpos 1
          vexactpos 1
          hexactsize 1
@@ -246,7 +246,7 @@ FrameWidgetClass OZG_DGC_pig {
         }
         PanelWidgetClass OZG_DPgActBoxBgB {
          ignorepointer 1
-         position 4 150
+         position 4 246
          size 350 6
          hexactpos 1
          vexactpos 1
@@ -260,7 +260,7 @@ FrameWidgetClass OZG_DGC_pig {
       }
      }
     }
-    TextWidgetClass OZG_DPgActTitle {
+    TextWidgetClass OZG_DPgTitle {
      ignorepointer 1
      position 12 12
      size 336 22
@@ -277,9 +277,60 @@ FrameWidgetClass OZG_DGC_pig {
      "text valign" center
      priority 2
     }
+    TextWidgetClass OZG_DPgHint0 {
+     ignorepointer 1
+     position 12 44
+     size 336 19
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     color 0.902 0.847 0.737 1
+     text ""
+     font "gui/fonts/etelkatextpro22"
+     "exact text" 1
+     "exact text size" 17
+     "text halign" left
+     "text valign" center
+     priority 2
+    }
+    TextWidgetClass OZG_DPgHint1 {
+     ignorepointer 1
+     position 12 63
+     size 336 19
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     color 0.902 0.847 0.737 1
+     text ""
+     font "gui/fonts/etelkatextpro22"
+     "exact text" 1
+     "exact text size" 17
+     "text halign" left
+     "text valign" center
+     priority 2
+    }
+    TextWidgetClass OZG_DPgHint2 {
+     ignorepointer 1
+     position 12 82
+     size 336 19
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     color 0.902 0.847 0.737 1
+     text ""
+     font "gui/fonts/etelkatextpro22"
+     "exact text" 1
+     "exact text size" 17
+     "text halign" left
+     "text valign" center
+     priority 2
+    }
     ButtonWidgetClass OZG_DPgThrow {
      visible 1
-     position 12 44
+     position 12 92
      size 336 46
      hexactpos 1
      vexactpos 1
@@ -436,7 +487,7 @@ FrameWidgetClass OZG_DGC_pig {
     }
     ButtonWidgetClass OZG_DPgHold {
      visible 1
-     position 12 100
+     position 12 148
      size 336 46
      hexactpos 1
      vexactpos 1

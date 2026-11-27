@@ -7,7 +7,9 @@
 # it, cards set on top of it; and the boards' and the dice's (boards and dice
 # design §15), as the design canvas's mockups make them: a piece set down, a
 # piece taken, a piece crowned, check, dice thrown, a game over, the card
-# sharp's kit at work. Every sound is shaped noise and a few damped tones,
+# sharp's kit at work; and the dice tables' own (the canvas's boards of 2026-11-27),
+# played by the window with what it shows: the dice rattling in a can shaken, landing
+# on the felt, a die slipped into a can. Every sound is shaped noise and a few damped tones,
 # drawn with a fixed seed: the same files every run. No recording and nobody
 # else's sound is in them (art/sounds/SOURCES.md).
 #
@@ -68,6 +70,12 @@ SOUNDS = [
     ("roll", "Roll", 1121, 0.45, "dice thrown: they rattle, land and settle"),
     ("over", "Over", 1122, 0.30, "a game over"),
     ("click", "Click", 1123, 0.25, "the card sharp's kit at work, heard by its owner alone"),
+    # The dice tables (the canvas's boards of 2026-11-27): played by the window of a client
+    # with what it shows -- the can shaken, the dice flying out -- in place of `roll`, which
+    # the place carries to everybody near; a die slipped in on the clients that see it.
+    ("rattle", "Rattle", 1124, 0.45, "dice rattling in a can shaken"),
+    ("land", "Land", 1125, 0.45, "dice landing on the felt"),
+    ("dieslip", "DieSlip", 1126, 0.30, "a sleight: a die slipped into a can"),
 ]
 
 
@@ -401,11 +409,40 @@ def click(rng):
     return out
 
 
+def rattle(rng):
+    out = np.zeros(n_of(1000))
+    t = 0.0
+    for _k in range(13):
+        hit(rng, out, t, 2600 + rng.uniform() * 2200, 4, 0.5, 0.03)
+        tone(out, t, 900 + rng.uniform() * 500, 0.03, 0.05, "triangle")
+        t += 0.036 + rng.uniform() * 0.02
+    return out
+
+
+def land(rng):
+    out = np.zeros(n_of(400))
+    hit(rng, out, 0.0, 1300, 1.5, 0.9, 0.05)
+    tone(out, 0.0, 150, 0.08, 0.25)
+    hit(rng, out, 0.09, 1600, 1.8, 0.6, 0.04)
+    hit(rng, out, 0.17, 1900, 2, 0.35, 0.03)
+    return out
+
+
+def dieslip(rng):
+    # the canvas sounds it 0.38 s after the die leaves the hand, as it gets to the can:
+    # the window waits that long itself (OZG_GameMenuCans.c), the sound has no lead
+    out = np.zeros(n_of(200))
+    hit(rng, out, 0.0, 2400, 3, 0.45, 0.03)
+    tone(out, 0.0, 1100, 0.04, 0.05, "triangle")
+    return out
+
+
 MAKERS = {"shuffle": shuffle, "deal": deal, "trump": trump, "lay": lay, "beat": beat,
           "take": take, "sweep": sweep, "draw": draw, "putdown": putdown, "pickup": pickup,
           "slip": slip, "swap": swap, "toss": toss, "deckin": deckin, "deckout": deckout,
           "pick": pick, "piece": piece, "capture": capture, "crown": crown, "check": check,
-          "roll": roll, "over": over, "click": click}
+          "roll": roll, "over": over, "click": click, "rattle": rattle, "land": land,
+          "dieslip": dieslip}
 
 
 def finish(x):

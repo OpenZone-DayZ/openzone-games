@@ -25,12 +25,16 @@ class OZG_GSeat
     int Out;
     // 1: the dealer, the button, the banker -- a mark on its plate.
     int Mark;
+    // Dice (Faces a seat's last throw): the place of each among the dice the seat throws,
+    // from 0 -- the window draws each die in its own look; empty for cards.
+    ref array<int> FacePlaces;
 
     void OZG_GSeat()
     {
         Backs = new array<int>();
         Faces = new array<string>();
         FaceLooks = new array<int>();
+        FacePlaces = new array<int>();
         SeatNo = -1;
     }
 }
@@ -49,12 +53,19 @@ class OZG_GZone
     ref array<int> By;
     int Backs;
     int BackLook;
+    // A zone of dice (its Line words them): the seat whose dice they are, -1 for nobody's
+    // (a bid), and the place of each among the dice that seat throws, from 0 -- the window
+    // draws each die in its own look, wherever the game laid it.
+    int DiceSeat;
+    ref array<int> DicePlaces;
 
     void OZG_GZone()
     {
         Faces = new array<string>();
         Looks = new array<int>();
         By = new array<int>();
+        DicePlaces = new array<int>();
+        DiceSeat = -1;
     }
 }
 
@@ -100,9 +111,14 @@ class OZG_GPublic
     string Result;
     // The score sheet: a line of words each.
     ref array<string> Score;
+    // Dice: how many throws the game has seen and the seat that threw last (-1: none). A
+    // window that sees the number grow plays the throw: the can shaken, tipped, the dice out.
+    int Throws;
+    int ThrowSeat;
 
     void OZG_GPublic()
     {
+        ThrowSeat = -1;
         SeatList = new array<ref OZG_GSeat>();
         Zones = new array<ref OZG_GZone>();
         Awaited = new array<int>();

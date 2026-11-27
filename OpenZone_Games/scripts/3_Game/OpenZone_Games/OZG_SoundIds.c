@@ -29,7 +29,10 @@ class OZG_SoundIds
     static const int ROLL = 21;    // dice thrown: they rattle, land and settle
     static const int OVER = 22;    // a game over
     static const int CLICK = 23;    // the card sharp's kit at work, heard by its owner alone
-    static const int LAST = 23;
+    static const int RATTLE = 24;    // dice rattling in a can shaken
+    static const int LAND = 25;    // dice landing on the felt
+    static const int DIESLIP = 26;    // a sleight: a die slipped into a can
+    static const int LAST = 26;
 
     // Beside every id from 0 (none): its name, its set and its length.
     static void Fill(array<string> names, array<string> sets, array<int> lengths)
@@ -106,5 +109,14 @@ class OZG_SoundIds
         names.Insert("click");
         sets.Insert("OZG_Click_SoundSet");
         lengths.Insert(33);
+        names.Insert("rattle");
+        sets.Insert("OZG_Rattle_SoundSet");
+        lengths.Insert(606);
+        names.Insert("land");
+        sets.Insert("OZG_Land_SoundSet");
+        lengths.Insert(215);
+        names.Insert("dieslip");
+        sets.Insert("OZG_DieSlip_SoundSet");
+        lengths.Insert(60);
     }
 }

@@ -75,7 +75,7 @@ modded class MissionGameplay
         OZG_GameMenu menu = OZG_GameMenu.Current();
         if (menu)
         {
-            menu.Said(text);
+            menu.Noticed(op, text);
             return;
         }
         NotificationSystem.AddNotificationExtended(4, "#STR_OZG_MODNAME", text, "");
@@ -193,6 +193,19 @@ modded class MissionGameplay
                 return;
             if (menu && menu.PlaceId() == saw.PlaceId)
                 menu.BoardSaw(saw);
+            return;
+        }
+
+        // A die swapped at a dice game (boards and dice design §9.2): played by the window
+        // for the one who did it and for each who noticed.
+        if (op == OZG_Const.OP_DSAW)
+        {
+            OZG_WDiceSaw dieSaw;
+            string wrongDie;
+            if (!JsonFileLoader<OZG_WDiceSaw>.LoadData(json, dieSaw, wrongDie) || !dieSaw)
+                return;
+            if (menu && menu.PlaceId() == dieSaw.PlaceId)
+                menu.DiceSaw(dieSaw);
             return;
         }
 

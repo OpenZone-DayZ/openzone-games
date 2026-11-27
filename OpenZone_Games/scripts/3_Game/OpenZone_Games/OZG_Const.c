@@ -173,6 +173,8 @@ class OZG_Const
     // A thing picked in the kit's window: another's mark or load on it opens to him.
     static const string OP_KIT_LOOK = "kitlook";
     static const string OP_BSAW = "bsaw";
+    // a die swapped at a dice game, told to the one who did it and to who noticed
+    static const string OP_DSAW = "dsaw";
 
     // The kinds of sleight, as the server's log, the settings (CaughtOf) and
     // the doer's message name them.

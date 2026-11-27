@@ -60,6 +60,26 @@ class OZG_WBoardSaw
     string B;
 }
 
+// A die swapped at a dice game (boards and dice design §9.2), told to the one who did it
+// and to each player who noticed: whose can, the looks of the die that went in and of the
+// one that came out, which of the can's dice it is (its place, from 0), and 1 for a player
+// who noticed (0: the one who did it). The window plays it: a die flies into the can.
+class OZG_WDiceSaw
+{
+    string PlaceId;
+    int    SeatNo;
+    string InLook;
+    string OutLook;
+    int    Place;
+    int    Noticed;
+
+    void OZG_WDiceSaw()
+    {
+        SeatNo = -1;
+        Place = -1;
+    }
+}
+
 class OZG_Keys
 {
     static string Of(Object thing)
@@ -207,6 +227,8 @@ class OZG_WView
     string PlaceId;
     int    Rev;
     int    St;
+    // the deals this place has seen: another number, another game
+    int    DealNo;
     string Style;
     string GameId;
     ref array<string> OptIds;
@@ -266,8 +288,9 @@ class OZG_WView
     // The dice games' swap (design §9.2; the canvas's panel "Підміна кістки"): the swaps
     // this player has left in this game and how many a game allows; 1 when he may swap
     // now; the dice he carries and does not throw (keys), with the load he knows on each
-    // (its face and how heavy, 0 for none known); the load he knows on each die his seat
-    // throws, in order. The seats that throw their own dice (the rest the host's).
+    // (its face and how heavy, 0 for none known); the dice his seat throws now, each by its
+    // place among his dice (thousand throws again only the dice left on the table), with
+    // the load he knows on it. The seats that throw their own dice (the rest the host's).
     int    DiceSwapsLeft;
     int    DiceSwapsMost;
     int    DiceSwapNow;
@@ -275,6 +298,7 @@ class OZG_WView
     ref array<string> PocketLooks;
     ref array<int> PocketLoads;
     ref array<int> PocketSteps;
+    ref array<int> MyDicePlaces;
     ref array<int> MyDiceLoads;
     ref array<int> MyDiceSteps;
     ref array<int> OwnDiceSeats;
@@ -285,9 +309,21 @@ class OZG_WView
     // "" a die not thrown yet): the dice a seat threw stay on the felt as they were thrown,
     // whatever is swapped into the set after.
     ref array<string> ThrownDiceLooks;
+    // What this player knows of every die a seat throws, a number a die the same way
+    // ("<seat>=0,63,100"): the face a load he knows is on times ten plus how heavy (1 to
+    // 3), and 100 more for a die he saw slipped into the can (design §9.2). SeatDiceMarks:
+    // the dice the seat throws now; ThrownDiceMarks: the dice as it threw them last.
+    ref array<string> SeatDiceMarks;
+    ref array<string> ThrownDiceMarks;
+    // The can each seat throws from ("<seat>=classic", "<seat>=stalker"): its own, or the
+    // one of the set laid out.
+    ref array<string> SeatCanLooks;
 
     void OZG_WView()
     {
+        SeatDiceMarks = new array<string>();
+        ThrownDiceMarks = new array<string>();
+        SeatCanLooks = new array<string>();
         Looking = new array<int>();
         PocketDice = new array<string>();
         PocketLooks = new array<string>();
@@ -295,6 +331,7 @@ class OZG_WView
         ThrownDiceLooks = new array<string>();
         PocketLoads = new array<int>();
         PocketSteps = new array<int>();
+        MyDicePlaces = new array<int>();
         MyDiceLoads = new array<int>();
         MyDiceSteps = new array<int>();
         OwnDiceSeats = new array<int>();

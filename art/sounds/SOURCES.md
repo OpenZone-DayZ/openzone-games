@@ -26,3 +26,12 @@ builds them out of the same numbers -- the same filter (the browser's band-pass
 biquad), the same envelopes, the same frequencies and timings. All but `click` are
 heard on the place, as the cards are; `click`, the card sharp's kit at work, only on
 the client of the one who works it.
+
+The three sounds of the dice tables (`rattle`, `land`, `dieslip`, added 2026-11-27) are
+the redone canvas's own (its boards of that day), made the same way out of its numbers:
+the dice rattling in a can shaken (thirteen clacks), the dice landing on the felt, a die
+clacking into a can. None of them is heard through the place. The window of a client plays
+`rattle` and `land` with the throw it shows -- the can shaken, the dice flying out -- in
+place of the place's `roll`, which that client then leaves unplayed; `dieslip` sounds on
+the clients that see a die slipped in (the one who does it and those who noticed), as the
+die gets to the can.

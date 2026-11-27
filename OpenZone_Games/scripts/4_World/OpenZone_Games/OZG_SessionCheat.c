@@ -15,6 +15,19 @@ modded class OZG_Session
     // since their last throw.
     protected ref map<string, int> m_Swaps;
     protected ref array<string> m_SwapWaits;
+    // The dice somebody saw slipped into a can (a die's key), and who saw each: his window
+    // marks that die with an eye while it lies in the can it was slipped into.
+    protected ref map<string, ref array<string>> m_DiceEyes;
+    // A die slipped into a set and not thrown since, by its key: the look of the die it
+    // took the place of, and who slipped it. A can's mouth shows the dice in it, so until
+    // the die is thrown only he and those who saw it go in see it there.
+    protected ref map<string, string> m_SlipLooks;
+    protected ref map<string, string> m_SlipBy;
+    // The dice of a throw nobody but its owner saw (perudo, under the cans), kept until
+    // the dice are opened: the die itself, the face it showed, who threw it.
+    protected ref array<EntityAI> m_HidDice;
+    protected ref array<int> m_HidFaces;
+    protected ref array<string> m_HidBy;
 
     protected void CheatInit()
     {
@@ -26,6 +39,18 @@ modded class OZG_Session
             m_Swaps = new map<string, int>();
         if (!m_SwapWaits)
             m_SwapWaits = new array<string>();
+        if (!m_DiceEyes)
+            m_DiceEyes = new map<string, ref array<string>>();
+        if (!m_SlipLooks)
+            m_SlipLooks = new map<string, string>();
+        if (!m_SlipBy)
+            m_SlipBy = new map<string, string>();
+        if (!m_HidDice)
+            m_HidDice = new array<EntityAI>();
+        if (!m_HidFaces)
+            m_HidFaces = new array<int>();
+        if (!m_HidBy)
+            m_HidBy = new array<string>();
     }
 
     override string Ask(PlayerBase player, string op, OZG_WAsk ask)
@@ -55,8 +80,11 @@ modded class OZG_Session
             }
         }
         // A move or a swap after a restart: the dice each seat throws read
-        // again first, so that a loaded die counts.
-        if (op == OZG_Const.OP_ACT || op == OZG_Const.OP_DSWAP)
+        // again first, so that a loaded die counts. A window opened too: it shows
+        // whose dice each seat throws, the can they lie in and what may be swapped.
+        bool acts = op == OZG_Const.OP_ACT || op == OZG_Const.OP_DSWAP;
+        bool looks = op == OZG_Const.OP_OPEN || op == OZG_Const.OP_WATCH;
+        if (acts || looks)
             DiceAgain();
         if (op == OZG_Const.OP_BSLEIGHT)
             return BoardSleightAsk(player, uid, ask);
@@ -91,6 +119,8 @@ modded class OZG_Session
     {
         CheatInit();
         super.SleightHead(v, uid, seat, dealt);
+        DiceLooksHead(v, uid);
+        DiceMarksHead(v, uid);
         DiceSwapHead(v, uid, seat, dealt);
         v.BoardSleights = 0;
         v.BoardWait = 0;
@@ -113,6 +143,8 @@ modded class OZG_Session
     {
         CheatInit();
         ThrownLooksForget();
+        // before the game is begun: its first throw is made, and taken, inside the deal
+        HiddenForget();
         string why = super.DealPieces(game, seats, amounts, options, hint);
         if (why == "")
         {
@@ -129,14 +161,25 @@ modded class OZG_Session
         super.Changed();
     }
 
-    // The dice each seat throws, read again when none are known: a game that
+    // When the seats' dice were last read again (the server's time, ms), and how long
+    // before they are read once more while some are still not known.
+    protected int m_DiceAgainAt;
+    protected static const int DICE_AGAIN_MS = 3000;
+
+    // The dice each seat throws, read again when they are not all known: a game that
     // came back from the world's storage after a restart.
     protected void DiceAgain()
     {
         if (!m_Game || m_R.St != OZG_Const.ST_PLAYING || m_Game.DiceNeeded() <= 0)
             return;
-        if (m_SeatDice && m_SeatDice.Count() > 0)
+        // all known: nothing to read. Some not (a game on own dice whose player is not
+        // back yet, his can with him): read again when asked, a few seconds apart
+        if (m_SeatDice && m_SeatDice.Count() >= m_R.Dealt.Count())
             return;
+        int now = GetGame().GetTime();
+        if (m_DiceAgainAt > 0 && now - m_DiceAgainAt < DICE_AGAIN_MS)
+            return;
+        m_DiceAgainAt = now;
         map<string, string> options = new map<string, string>();
         for (int i = 0; i < m_R.OptIds.Count() && i < m_R.OptVals.Count(); i++)
             options.Set(m_R.OptIds[i], m_R.OptVals[i]);
@@ -212,6 +255,114 @@ modded class OZG_Session
         return "";
     }
 
+    // What a player knows of a die, as one number (OZG_WView.SeatDiceMarks): the face a
+    // load he knows is on times ten plus how heavy, 100 more for a die he saw slipped in.
+    protected int DieMark(EntityAI thing, string uid)
+    {
+        OZG_Die_Base die = OZG_Die_Base.Cast(thing);
+        if (!die || uid == "")
+            return 0;
+        int mark = 0;
+        if (die.OZG_Loaded() && die.OZG_Knows(uid))
+        {
+            OZG_Settings cfg = OZG_Cfg.Get();
+            mark = die.OZG_LoadFace() * 10 + cfg.LoadStep(die.OZG_LoadWeight());
+        }
+        array<string> saw;
+        if (m_DiceEyes && m_DiceEyes.Find(OZG_Keys.Of(die), saw) && saw && saw.Find(uid) >= 0)
+            mark = mark + 100;
+        return mark;
+    }
+
+    // "<seat>=<mark>,<mark>.." of the first `most` of `dice`.
+    protected string DiceMarksLine(int seat, array<EntityAI> dice, int most, string uid)
+    {
+        string line = seat.ToString() + "=";
+        for (int k = 0; k < dice.Count() && k < most; k++)
+        {
+            if (k > 0)
+                line = line + ",";
+            int mark = DieMark(dice[k], uid);
+            line = line + mark.ToString();
+        }
+        return line;
+    }
+
+    // Does this player know of a die slipped in and not thrown yet: he slipped it, or
+    // saw it go in.
+    protected bool SlipKnown(string key, string uid)
+    {
+        if (uid == "")
+            return false;
+        string by;
+        if (m_SlipBy.Find(key, by) && by == uid)
+            return true;
+        array<string> saw;
+        if (m_DiceEyes.Find(key, saw) && saw && saw.Find(uid) >= 0)
+            return true;
+        return false;
+    }
+
+    // The dice in the cans as this player may see them (the view's SeatDiceLooks made
+    // again): a die slipped in and not thrown since shows as the die it took the place of.
+    protected void DiceLooksHead(OZG_WView v, string uid)
+    {
+        if (!m_SlipLooks || m_SlipLooks.Count() == 0 || !m_SeatDice || !m_Game)
+            return;
+        v.SeatDiceLooks.Clear();
+        for (int s = 0; s < m_R.Dealt.Count(); s++)
+        {
+            int seat = m_R.Dealt[s];
+            array<EntityAI> dice;
+            if (!m_SeatDice.Find(seat, dice) || !dice)
+                continue;
+            string line = seat.ToString() + "=";
+            int most = m_Game.DiceThrown(seat);
+            for (int k = 0; k < dice.Count() && k < most; k++)
+            {
+                if (k > 0)
+                    line = line + ",";
+                string look = "white";
+                EntityAI die = dice[k];
+                if (die)
+                {
+                    look = OZG_BoardRead.DieLookOf(die.GetType());
+                    string key = OZG_Keys.Of(die);
+                    string was;
+                    if (m_SlipLooks.Find(key, was) && !SlipKnown(key, uid))
+                        look = was;
+                }
+                line = line + look;
+            }
+            v.SeatDiceLooks.Insert(line);
+        }
+    }
+
+    // What this player knows of the dice every seat throws, and of the dice as each seat
+    // threw them last: beside the view's SeatDiceLooks and ThrownDiceLooks.
+    protected void DiceMarksHead(OZG_WView v, string uid)
+    {
+        if (uid == "" || !m_Game || !m_SeatDice || m_Game.DiceNeeded() <= 0)
+            return;
+        for (int s = 0; s < m_R.Dealt.Count(); s++)
+        {
+            int seat = m_R.Dealt[s];
+            array<EntityAI> dice;
+            if (m_SeatDice.Find(seat, dice) && dice)
+            {
+                int thrownNow = m_Game.DiceThrown(seat);
+                string nowLine = DiceMarksLine(seat, dice, thrownNow, uid);
+                v.SeatDiceMarks.Insert(nowLine);
+            }
+            array<EntityAI> thrown;
+            if (m_ThrownDice && m_ThrownDice.Find(seat, thrown) && thrown)
+            {
+                string thrownLine = DiceMarksLine(seat, thrown, thrown.Count(), uid);
+                v.ThrownDiceMarks.Insert(thrownLine);
+            }
+        }
+    }
+
     // The dice games' swap panel: the swaps this player has left and whether he may swap
     // now (DiceSwapAsk's own rules), the dice he carries and does not throw with the load
     // he knows on each, and the load he knows on each die of his own throw.
@@ -272,11 +423,16 @@ modded class OZG_Session
         array<EntityAI> mineDice;
         if (!m_SeatDice || !m_SeatDice.Find(seat, mineDice) || !mineDice)
             return;
-        // the dice he throws now: the first so many of his (perudo loses them)
-        int thrown = m_Game.DiceThrown(seat);
-        for (int k = 0; k < mineDice.Count() && k < thrown; k++)
+        // the dice he throws now, by their places among his: the first so many (perudo
+        // loses them), or the ones left on the table (thousand)
+        array<int> thrownAt = new array<int>();
+        m_Game.DiceThrownAt(seat, thrownAt);
+        for (int k = 0; k < thrownAt.Count(); k++)
         {
-            OZG_Die_Base own = OZG_Die_Base.Cast(mineDice[k]);
+            int place = thrownAt[k];
+            if (place < 0 || place >= mineDice.Count())
+                continue;
+            OZG_Die_Base own = OZG_Die_Base.Cast(mineDice[place]);
             int ownFace = 0;
             int ownStep = 0;
             if (own && own.OZG_Loaded() && own.OZG_Knows(uid))
@@ -284,6 +440,7 @@ modded class OZG_Session
                 ownFace = own.OZG_LoadFace();
                 ownStep = cfg.LoadStep(own.OZG_LoadWeight());
             }
+            v.MyDicePlaces.Insert(place);
             v.MyDiceLoads.Insert(ownFace);
             v.MyDiceSteps.Insert(ownStep);
         }
@@ -291,8 +448,8 @@ modded class OZG_Session
 
     // ---- a die swapped (§9.2) --------------------------------------------------
 
-    // ask.CardKey: the die he carries; ask.SeatNo: which of the dice he is
-    // about to throw goes out (from 0).
+    // ask.CardKey: the die he carries; ask.SeatNo: which of his dice goes out, by its
+    // place among them (from 0) -- one of those he is about to throw.
     protected string DiceSwapAsk(PlayerBase player, string uid, OZG_WAsk ask)
     {
         OZG_Settings cfg = OZG_Cfg.Get();
@@ -318,8 +475,11 @@ modded class OZG_Session
         array<EntityAI> mineDice;
         if (!m_SeatDice || !m_SeatDice.Find(mine, mineDice) || ask.SeatNo < 0 || ask.SeatNo >= mineDice.Count())
             return OZG_Const.SAY_DSWAP_NO_DIE;
-        // only a die he is about to throw goes out
-        if (ask.SeatNo >= m_Game.DiceThrown(mine))
+        // only a die he is about to throw goes out (thousand: not one put aside)
+        int goes = ask.SeatNo;
+        array<int> thrownAt = new array<int>();
+        m_Game.DiceThrownAt(mine, thrownAt);
+        if (thrownAt.Find(goes) < 0)
             return OZG_Const.SAY_DSWAP_NO_DIE;
         EntityAI goingOut = mineDice[ask.SeatNo];
         OZG_Die_Base comingIn = OZG_Die_Base.Cast(OZG_Keys.Find(ask.CardKey));
@@ -368,10 +528,51 @@ modded class OZG_Session
                     saw.Insert(rec.Uid);
             }
         }
+        // The die that went out is nobody's planted die any more; the one that came in is
+        // marked for each who saw it. The window plays the swap for the one who did it and
+        // for each who noticed (a die flies into the can); a player whose window is shut
+        // is told in words.
+        string outKey = OZG_Keys.Of(goingOut);
+        string inKey = OZG_Keys.Of(comingIn);
+        m_DiceEyes.Remove(outKey);
+        m_DiceEyes.Remove(inKey);
+        // until it is thrown the die that came in looks, to who did not see, like the one
+        // that went out (or like the one that one stood for, slipped in and never thrown)
+        string stoodFor = OZG_BoardRead.DieLookOf(goingOut.GetType());
+        string stoodBefore;
+        if (m_SlipLooks.Find(outKey, stoodBefore))
+            stoodFor = stoodBefore;
+        m_SlipLooks.Remove(outKey);
+        m_SlipBy.Remove(outKey);
+        m_SlipLooks.Set(inKey, stoodFor);
+        m_SlipBy.Set(inKey, uid);
+        if (saw.Count() > 0)
+        {
+            array<string> eyes = new array<string>();
+            eyes.Copy(saw);
+            m_DiceEyes.Set(inKey, eyes);
+        }
+        OZG_WDiceSaw told = new OZG_WDiceSaw();
+        told.PlaceId = m_R.PlaceId;
+        told.SeatNo = mine;
+        told.InLook = OZG_BoardRead.DieLookOf(comingIn.GetType());
+        told.OutLook = OZG_BoardRead.DieLookOf(goingOut.GetType());
+        told.Place = goes;
+        told.Noticed = 0;
+        string toldBody;
+        string toldErr;
+        JsonFileLoader<OZG_WDiceSaw>.MakeData(told, toldBody, toldErr, false);
+        SendTo(player, OZG_Const.OP_DSAW, toldBody);
+        told.Noticed = 1;
+        JsonFileLoader<OZG_WDiceSaw>.MakeData(told, toldBody, toldErr, false);
         for (int k = 0; k < saw.Count(); k++)
         {
             PlayerBase seer = OZG_Sessions.PlayerOf(saw[k]);
-            if (seer && seer.GetIdentity())
+            if (!seer || !seer.GetIdentity())
+                continue;
+            if (m_Looking.Find(saw[k]) >= 0)
+                SendTo(seer, OZG_Const.OP_DSAW, toldBody);
+            else
                 OZ_Rpc.Notice(seer.GetIdentity(), OZG_Const.NOTICE_DSWAP, true, OZG_Words.W1(OZG_Const.SAY_DSWAP_SEEN, OZG_Words.SeatArg(mine)));
         }
         string seenBy = "nobody";
@@ -391,6 +592,10 @@ modded class OZG_Session
     {
         if (!m_Game)
             return;
+        // dice thrown under the cans and opened now (perudo's showdown): the table sees
+        // what they showed
+        if (m_Game.TakeShown())
+            NoticeHidden();
         array<int> seats = new array<int>();
         array<int> idx = new array<int>();
         array<int> faces = new array<int>();
@@ -403,9 +608,29 @@ modded class OZG_Session
             if (seats[w] >= 0 && seats[w] < m_R.Seats.Count())
                 m_SwapWaits.RemoveItem(m_R.Seats[seats[w]].Uid);
         }
+        // a die thrown is seen by everybody as it is: no more a die slipped in unseen
+        if (m_SlipLooks && m_SlipLooks.Count() > 0 && m_SeatDice)
+        {
+            for (int q = 0; q < seats.Count(); q++)
+            {
+                array<EntityAI> flown;
+                if (!m_SeatDice.Find(seats[q], flown) || !flown || idx[q] < 0 || idx[q] >= flown.Count())
+                    continue;
+                EntityAI flew = flown[idx[q]];
+                if (!flew)
+                    continue;
+                string flewKey = OZG_Keys.Of(flew);
+                m_SlipLooks.Remove(flewKey);
+                m_SlipBy.Remove(flewKey);
+            }
+        }
         OZG_Settings cfg = OZG_Cfg.Get();
         if (cfg.Cheating != 1 || cfg.NoticeLoaded <= 0 || !m_SeatDice)
             return;
+        // a throw nobody saw (perudo, under the cans) is kept until its dice are opened
+        bool hides = m_Game.ThrowsHidden();
+        if (hides)
+            HiddenForget();
         OZG_Random r = new OZG_Random();
         for (int k = 0; k < seats.Count(); k++)
         {
@@ -413,28 +638,86 @@ modded class OZG_Session
             if (!m_SeatDice.Find(seats[k], dice) || idx[k] < 0 || idx[k] >= dice.Count())
                 continue;
             OZG_Die_Base die = OZG_Die_Base.Cast(dice[idx[k]]);
-            if (!die || !die.OZG_Loaded() || die.OZG_LoadFace() != faces[k])
+            if (!die)
                 continue;
-            int chance = cfg.NoticeLoaded * cfg.LoadStep(die.OZG_LoadWeight());
+            int face = faces[k];
             string thrower = "";
             if (seats[k] < m_R.Seats.Count())
                 thrower = m_R.Seats[seats[k]].Uid;
-            for (int i = 0; i < m_R.Seats.Count(); i++)
+            if (hides)
             {
-                OZG_SeatRec rec = m_R.Seats[i];
-                if (rec.St != OZG_Const.SEAT_TAKEN || rec.Uid == "" || rec.Uid == thrower)
-                    continue;
-                if (die.OZG_Knows(rec.Uid))
-                    continue;
-                int roll = r.Below(100);
-                if (roll >= chance)
-                    continue;
-                die.OZG_AddKnower(rec.Uid);
-                PlayerBase p = OZG_Sessions.PlayerOf(rec.Uid);
-                if (p && p.GetIdentity())
-                    OZ_Rpc.Notice(p.GetIdentity(), OZG_Const.NOTICE_LOADED, true, OZG_Words.W1(OZG_Const.SAY_LOAD_NOTICED, die.OZG_LoadFace().ToString()));
-                OZG_Log.Info("notice-load: " + rec.Uid + " noticed " + OZG_Keys.Of(die) + " (" + die.OZG_LoadFace().ToString() + " at " + die.OZG_LoadWeight().ToString() + "%), place " + m_R.PlaceId + ", rolled " + roll.ToString() + " at " + chance.ToString() + "%");
+                m_HidDice.Insert(die);
+                m_HidFaces.Insert(face);
+                m_HidBy.Insert(thrower);
+                continue;
             }
+            NoticeLoadedFace(die, face, thrower, r);
+        }
+        if (hides)
+            OZG_Log.Dbg("a throw under the cans kept: " + m_HidDice.Count().ToString() + " dice, place " + m_R.PlaceId);
+    }
+
+    protected void HiddenForget()
+    {
+        if (!m_HidDice)
+            return;
+        m_HidDice.Clear();
+        m_HidFaces.Clear();
+        m_HidBy.Clear();
+    }
+
+    // The dice of the throw kept are opened: each that lies on its loaded face is noticed
+    // as any die seen thrown is.
+    protected void NoticeHidden()
+    {
+        CheatInit();
+        OZG_Log.Dbg("the dice under the cans opened: " + m_HidDice.Count().ToString() + " kept, place " + m_R.PlaceId);
+        OZG_Settings cfg = OZG_Cfg.Get();
+        if (cfg.Cheating == 1 && cfg.NoticeLoaded > 0)
+        {
+            OZG_Random r = new OZG_Random();
+            for (int k = 0; k < m_HidDice.Count(); k++)
+            {
+                OZG_Die_Base die = OZG_Die_Base.Cast(m_HidDice[k]);
+                if (!die)
+                    continue;
+                int face = m_HidFaces[k];
+                string thrower = m_HidBy[k];
+                NoticeLoadedFace(die, face, thrower, r);
+            }
+        }
+        HiddenForget();
+    }
+
+    // A die that showed `face` in a throw of `thrower`'s, seen by the table: when that is
+    // its loaded face, each other seated player notices it at NoticeLoaded percent times
+    // its weight's step.
+    protected void NoticeLoadedFace(OZG_Die_Base die, int face, string thrower, OZG_Random r)
+    {
+        if (!die || !die.OZG_Loaded() || die.OZG_LoadFace() != face)
+            return;
+        OZG_Settings cfg = OZG_Cfg.Get();
+        int chance = cfg.NoticeLoaded * cfg.LoadStep(die.OZG_LoadWeight());
+        string faceText = die.OZG_LoadFace().ToString();
+        string weightText = die.OZG_LoadWeight().ToString();
+        string what = OZG_Keys.Of(die) + " (" + faceText + " at " + weightText + "%), place " + m_R.PlaceId;
+        for (int i = 0; i < m_R.Seats.Count(); i++)
+        {
+            OZG_SeatRec rec = m_R.Seats[i];
+            if (rec.St != OZG_Const.SEAT_TAKEN || rec.Uid == "" || rec.Uid == thrower)
+                continue;
+            if (die.OZG_Knows(rec.Uid))
+                continue;
+            int roll = r.Below(100);
+            if (roll >= chance)
+                continue;
+            die.OZG_AddKnower(rec.Uid);
+            PlayerBase p = OZG_Sessions.PlayerOf(rec.Uid);
+            if (p && p.GetIdentity())
+                OZ_Rpc.Notice(p.GetIdentity(), OZG_Const.NOTICE_LOADED, true, OZG_Words.W1(OZG_Const.SAY_LOAD_NOTICED, faceText));
+            string line = "notice-load: " + rec.Uid + " noticed " + what;
+            line = line + ", rolled " + roll.ToString() + " at " + chance.ToString() + "%";
+            OZG_Log.Info(line);
         }
     }
 }

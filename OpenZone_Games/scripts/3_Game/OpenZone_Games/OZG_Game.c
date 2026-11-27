@@ -88,6 +88,17 @@ class OZG_Game
         return DiceNeeded();
     }
 
+    // Which of its dice a seat throws now, by their places among them (from 0): the first
+    // DiceThrown of them, but for a game that throws again only the dice left on the table
+    // (thousand). What the swap panel offers to take out, and what the session lets go.
+    void DiceThrownAt(int seat, array<int> into)
+    {
+        into.Clear();
+        int n = DiceThrown(seat);
+        for (int i = 0; i < n; i++)
+            into.Insert(i);
+    }
+
     // ---- cheating at a board and with dice (boards and dice design §9, §10) --
 
     // A sleight on the board by `seat` (§9.1): `kind` "move" (a piece from
@@ -112,6 +123,19 @@ class OZG_Game
     // dice it throws (from 0) and the face; the lists emptied.
     void TakeThrows(array<int> seats, array<int> dice, array<int> faces)
     {
+    }
+
+    // Do the dice of a throw fall where nobody but their owner sees them (perudo's, under
+    // the cans)? What such a throw showed is seen by the table when the dice are opened.
+    bool ThrowsHidden()
+    {
+        return false;
+    }
+
+    // Have the dice thrown hidden been opened since the last ask? Asked once a change.
+    bool TakeShown()
+    {
+        return false;
     }
 
     // Whose dice the seats throw, the options read (OZG_DiceConst.WHOSE_*).

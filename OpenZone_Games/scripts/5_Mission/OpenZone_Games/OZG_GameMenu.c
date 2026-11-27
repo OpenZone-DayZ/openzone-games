@@ -669,6 +669,13 @@ class OZG_GameMenu : UIScriptedMenu
         m_SaidLeft = 6.0;
     }
 
+    // The same by the notice's kind (OZG_Const.NOTICE_*): a window that shows a throw a
+    // moment after the server made it keeps the words about that throw until then.
+    void Noticed(string kind, string text)
+    {
+        Said(text);
+    }
+
     override void Update(float timeslice)
     {
         super.Update(timeslice);
@@ -2595,6 +2602,33 @@ class OZG_GameMenu : UIScriptedMenu
         return rest.Substring(space + 1, rest.Length() - space - 1);
     }
 
+    // "opt <id>=<value>" worded: the option's name and the value chosen then (an option of
+    // another game, chosen before the game was changed: the variant as it stands).
+    protected string LogOpt(string rest)
+    {
+        int eq = rest.IndexOf("=");
+        OZG_Game sample = OZG_Games.Sample(m_V.GameId);
+        if (eq > 0 && sample)
+        {
+            string id = rest.Substring(0, eq);
+            string value = rest.Substring(eq + 1, rest.Length() - eq - 1);
+            array<ref OZG_Option> opts = new array<ref OZG_Option>();
+            sample.OptionList(opts);
+            for (int i = 0; i < opts.Count(); i++)
+            {
+                OZG_Option o = opts[i];
+                if (o.OptionId != id)
+                    continue;
+                string chosen = value;
+                int v = o.ValueIds.Find(value);
+                if (v >= 0 && v < o.ValueKeys.Count())
+                    chosen = Tr(o.ValueKeys[v]);
+                return Tr(o.LabelKey) + ": " + chosen;
+            }
+        }
+        return Tr1("STR_OZG_WIN_VARIANT", VariantLabel());
+    }
+
     // One line of the log, worded.
     protected string LogWord(string line)
     {
@@ -2636,7 +2670,7 @@ class OZG_GameMenu : UIScriptedMenu
         if (head == "host")
             return Tr1("STR_OZG_LOG_HOST", LogWho(rest));
         if (head == "opt")
-            return Tr1("STR_OZG_WIN_VARIANT", VariantLabel());
+            return LogOpt(rest);
         if (head == "end")
         {
             if (rest == "durak=-1" || rest == "")

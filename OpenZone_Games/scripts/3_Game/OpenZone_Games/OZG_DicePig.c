@@ -151,7 +151,7 @@ class OZG_Pig extends OZG_DiceGame
             v.Awaited.Insert(DgCurrent());
             v.Status = OZG_Words.W1("STR_OZG_DICE_TURN", OZG_Words.SeatArg(DgCurrent()));
         }
-        return DgPublicText(v);
+        return DgPublicOut(v);
     }
 
     override string SeatView(int seat)
@@ -500,7 +500,7 @@ class OZG_HighRoll extends OZG_DiceGame
             v.Awaited.Insert(DgCurrent());
             v.Status = OZG_Words.W1("STR_OZG_DICE_TURN", OZG_Words.SeatArg(DgCurrent()));
         }
-        return DgPublicText(v);
+        return DgPublicOut(v);
     }
 
     override string SeatView(int seat)

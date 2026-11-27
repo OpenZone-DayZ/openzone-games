@@ -313,7 +313,13 @@ class OZG_Nardy extends OZG_BoardDuel
     // The dice left to play this turn, and the throw as it fell.
     protected ref array<int> m_Dice;
     protected ref array<int> m_Roll;
+    // Beside m_Roll: the seat that threw each die and its place among that seat's two.
+    protected ref array<int> m_RollSeat;
+    protected ref array<int> m_RollAt;
     protected bool m_Thrown;
+    // The throws the game has seen and the seat that threw last (OZG_GPublic.Throws).
+    protected int m_ThrowNo;
+    protected int m_ThrowSeat = -1;
     // Long nardy: how many discs may still leave the head this turn; whether
     // each side's first turn is still to come.
     protected int m_HeadLeft = 1;
@@ -331,6 +337,8 @@ class OZG_Nardy extends OZG_BoardDuel
         m_Cups = new OZG_DiceCups();
         m_Dice = new array<int>();
         m_Roll = new array<int>();
+        m_RollSeat = new array<int>();
+        m_RollAt = new array<int>();
         m_ThrewSeat = new array<int>();
         m_ThrewDie = new array<int>();
         m_ThrewFace = new array<int>();
@@ -481,6 +489,27 @@ class OZG_Nardy extends OZG_BoardDuel
         m_Roll.Clear();
         m_Roll.Insert(a);
         m_Roll.Insert(b);
+        m_ThrowNo++;
+        m_ThrowSeat = SeatToMove();
+        // whose dice they are: the two of the seat to move; the opening throw (not
+        // recorded as a throw) is the first die of each side
+        m_RollSeat.Clear();
+        m_RollAt.Clear();
+        if (record)
+        {
+            int thrower = SeatToMove();
+            m_RollSeat.Insert(thrower);
+            m_RollAt.Insert(0);
+            m_RollSeat.Insert(thrower);
+            m_RollAt.Insert(1);
+        }
+        else
+        {
+            m_RollSeat.Insert(m_White);
+            m_RollAt.Insert(0);
+            m_RollSeat.Insert(m_Black);
+            m_RollAt.Insert(0);
+        }
         m_Dice.Clear();
         m_Dice.Insert(a);
         m_Dice.Insert(b);
@@ -866,6 +895,10 @@ class OZG_Nardy extends OZG_BoardDuel
         m_Whose = same.m_Whose;
         m_Dice = same.m_Dice;
         m_Roll = same.m_Roll;
+        m_RollSeat = same.m_RollSeat;
+        m_RollAt = same.m_RollAt;
+        m_ThrowNo = same.m_ThrowNo;
+        m_ThrowSeat = same.m_ThrowSeat;
         m_Thrown = same.m_Thrown;
         m_HeadLeft = same.m_HeadLeft;
         m_FirstW = same.m_FirstW;
@@ -892,6 +925,12 @@ class OZG_Nardy extends OZG_BoardDuel
         v.Points = m_Pos.Text();
         v.Dice = OZG_DiceText.Line(m_Roll);
         v.DiceLeft = OZG_DiceText.Line(m_Dice);
+        v.DiceSeats.Copy(m_RollSeat);
+        v.DiceAt.Copy(m_RollAt);
+        v.Throws = m_ThrowNo;
+        v.ThrowSeat = m_ThrowSeat;
+        if (m_Thrown && !m_Over)
+            v.Thrown = 1;
         OZG_GZone zone = new OZG_GZone();
         zone.Id = "dice";
         zone.Label = OZG_Words.W0("STR_OZG_NARDY_DICE");

@@ -595,7 +595,12 @@ class OZG_DicePoker extends OZG_DiceGame
         {
             OZG_GZone open = new OZG_GZone();
             open.Id = "dpoker_open";
-            string openLine = m_ShownRound.ToString() + "|" + m_ShownWinner.ToString() + "|" + m_ShownFolded;
+            // every part holds something: a line split leaves out an empty one, and the
+            // hands after it would be read one place early
+            string shownFolded = m_ShownFolded;
+            if (shownFolded == "")
+                shownFolded = "-";
+            string openLine = m_ShownRound.ToString() + "|" + m_ShownWinner.ToString() + "|" + shownFolded;
             for (int h = 0; h < m_ShownHands.Count(); h++)
             {
                 int openSeat = m_Seats[h];
@@ -625,7 +630,7 @@ class OZG_DicePoker extends OZG_DiceGame
             string key = "STR_OZG_DPOKER_PHASE_" + m_Phase.ToString();
             v.Status = OZG_Words.W2(key, OZG_Words.SeatArg(DgCurrent()), m_Round.ToString());
         }
-        return DgPublicText(v);
+        return DgPublicOut(v);
     }
 
     override string SeatView(int seat)

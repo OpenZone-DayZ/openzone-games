@@ -860,6 +860,9 @@ STR_OZG_BWIN_LETTERS,"Кр,Ф,Т,С,К","K,Q,R,B,N"
 STR_OZG_BWIN_COOL_OK,можна,ready
 STR_OZG_BWIN_COOL_WAIT,наступна через %1,next in %1
 STR_OZG_BWIN_SL_RULE,"Одна хитрість на %1 хвилин. Хто дивиться на дошку, побачить її одразу.",One sleight every %1 minutes. Whoever watches the board sees it at once.
+STR_OZG_BWIN_SL_RULE_DRAUGHTS,"Одна хитрість на %1 хвилин. Шашка, поставлена на останню лінію, одразу стає дамкою.",One sleight every %1 minutes. A disc put on the last row is a king at once.
+STR_OZG_BWIN_SL_RULE_CORNERS,"Одна хитрість на %1 хвилин. Шашка, знята з дошки, не дійде до кута.",One sleight every %1 minutes. A disc taken off the board never reaches the corner.
+STR_OZG_BWIN_SL_RULE_NARDY,"Одна хитрість на %1 хвилин: переставити, поміняти, повернути винесену, винести.","One sleight every %1 minutes: move, swap, put one back, bear one off."
 STR_OZG_BWIN_SL_WAIT,Ще не можна: наступна хитрість через %1.,Not yet: the next sleight in %1.
 STR_OZG_BWIN_SL_HINT_MOVE,Переставити: оберіть фігуру на дошці.,Move: pick a piece on the board.
 STR_OZG_BWIN_SL_HINT_SWAP,Поміняти місцями: оберіть першу фігуру.,Swap: pick the first piece.
@@ -895,10 +898,6 @@ STR_OZG_BWIN_N_YOUR_THROW,Ваш кидок. Перед ним можна під
 STR_OZG_BWIN_N_MOVE,"Ходіть: шашка, потім пункт. Лишилось: %1.","Move: a disc, then a point. Left: %1."
 STR_OZG_BWIN_N_AWAY,%1 відійшов — стіл чекає на нього.,%1 is away: the table waits.
 STR_OZG_BWIN_N_THEIRS,Ходить %1.,%1 moves.
-STR_OZG_BWIN_SWAP_WHICH,Яку свою кістку підкласти?,Which of your dice goes in?
-STR_OZG_BWIN_SWAP_NONE,У вас немає своїх кісток.,You carry no dice of your own.
-STR_OZG_BWIN_SWAP_FOR,Замість якої кістки?,Instead of which die?
-STR_OZG_BWIN_SWAP_DIE,Кістка %1,Die %1
 STR_OZG_BWIN_OFF_B,Винесені чорні,Black borne off
 STR_OZG_BWIN_OFF_W,Винесені білі,White borne off
 STR_OZG_BWIN_OFF_COUNT,%1 з 15,%1 of 15
@@ -919,17 +918,11 @@ STR_OZG_DWIN_OUT,вибув,out
 STR_OZG_DWIN_YOUR_THROW,Ваш кидок,Your throw
 STR_OZG_DWIN_TURN,Хід: %1,%1's turn
 STR_OZG_DWIN_TABLE,Стіл,The table
-STR_OZG_DWIN_SWAP_NONE,У кишені немає кісток.,No dice in your pockets.
-STR_OZG_DWIN_SUB_THOUSAND,банка з кістками · вхід 50 · ями 200–300 і 600–700 · бочка з 880 · обгін −50 · три болти −100,a can of dice · entry 50 · pits 200–300 and 600–700 · the barrel from 880 · overtaking −50 · three bolts −100
-STR_OZG_DWIN_SUB_DICEPOKER,на фішки · до двох виграних раундів,for chips · to two rounds won
+STR_OZG_DWIN_SUB_THOUSAND,вхід 50 · ями 200–300 і 600–700 · бочка з 880 · обгін −50 · три болти −100,entry 50 · pits 200–300 and 600–700 · the barrel from 880 · overtaking −50 · three bolts −100
+STR_OZG_DWIN_SUB_DICEPOKER,ставка %1 · п’ять кісток · одне перекидання · до двох виграних раундів,stake %1 · five dice · one throw again · to two rounds won
 STR_OZG_DWIN_SUB_PIG,"одна кістка · кидайте, доки не зупинитесь або не випаде одиниця · до 100",one die · throw until you stop or a one comes up · to 100
-STR_OZG_DWIN_SUB_HIGHROLL,"на фішки · найбільша сума забирає банк · нічия — перекидають ті, хто зрівнявся",for chips · the highest total takes the pot · a tie is thrown again by those tied
-STR_OZG_DWIN_SUB_PERUDO,"свої кості під своєю банкою · одиниці — будь-яка грань · хто помилився, втрачає кістку",own dice under one's own can · ones are any face · who was wrong loses a die
-STR_OZG_DWIN_RULE_THOUSAND,"Очки дають одиниці (10), п’ятірки (5), три однакові й стріти.","Points: ones (10), fives (5), three of a kind and straights."
-STR_OZG_DWIN_RULE_DICEPOKER,"Від найкращої руки: п’ять однакових, чотири, фул, стріти, три, дві пари, пара.","From the best hand: five of a kind, four, a full house, straights, three, two pairs, a pair."
-STR_OZG_DWIN_RULE_PIG,Одиниця забирає очки ходу.,A one takes the turn's points.
-STR_OZG_DWIN_RULE_HIGHROLL,Найбільша сума забирає банк.,The highest total takes the pot.
-STR_OZG_DWIN_RULE_PERUDO,Ставка — на кості всього столу.,A bid is on the whole table's dice.
+STR_OZG_DWIN_SUB_HIGHROLL,кожен кидає свої кості · найбільша сума забирає банк · нічию перекидають,everybody throws his dice · the highest total takes the pot · a tie is thrown again
+STR_OZG_DWIN_SUB_PERUDO,свої кості під банкою · ставка на весь стіл · одиниці — будь-яка грань,own dice under the can · a bid on the whole table · ones are any face
 STR_OZG_KIT_OPEN,Відкрити набір,Open the kit
 STR_OZG_KWIN_TITLE,Шулерський набір,Card sharp's kit
 STR_OZG_KWIN_SUB,"ваші карти й кістки — у кишенях, у колоді й банці, які ви несете","your cards and dice — in your pockets, in the deck and the can you carry"
@@ -1034,28 +1027,19 @@ STR_OZG_PERUDO_FELL,ставка не трималась,the bid fell short
 STR_OZG_PERUDO_SAID_OUT,%1 вибуває.,%1 is out.
 STR_OZG_DWIN_SWAP_TITLE,Підміна кістки,Swapping a die
 STR_OZG_DWIN_SWAP_LEFT,лишилось %1 з %2,%1 of %2 left
-STR_OZG_DWIN_SWAP_IN_PLAY,"Ваша кістка, заряджена на %1 (%2), у грі — з позначкою. Чи помітив хтось підміну, ви не дізнаєтесь.","Your die, loaded on %1 (%2), is in play: it is marked. Whether anybody saw the swap you will not learn."
-STR_OZG_DWIN_SWAP_WHEN_PIG,"Підмінити можна у свій хід, перед кидком.","You may swap in your turn, before a throw."
-STR_OZG_DWIN_SWAP_WHEN_THROW,Підмінити можна перед кидком.,You may swap before your throw.
-STR_OZG_DWIN_SWAP_WHEN_PERUDO,"Підкласти можна на початку кола, до першої ставки: ляже з наступного кола.","You may slip it in at a round's start, before the first bid: it lies from the next round."
-STR_OZG_DWIN_SWAP_NOT_PIG,Підмінити можна у свій хід,You may swap in your turn
-STR_OZG_DWIN_SWAP_NOT_THROW,Підмінити можна перед кидком,You may swap before your throw
-STR_OZG_DWIN_SWAP_NOT_PERUDO,"Можна на початку кола, у свій хід","At a round's start, in your turn"
-STR_OZG_DWIN_SWAP_NO_MORE,Підміни скінчились,No swaps left
-STR_OZG_DWIN_SWAP_NOTHING,Нічим підмінити,Nothing to swap with
 STR_OZG_DWIN_DP_ROUND,Раунд %1 · %2,Round %1 · %2
 STR_OZG_DWIN_DP_PHASE_0,ставки,stakes
 STR_OZG_DWIN_DP_PHASE_1,кидок,the throw
 STR_OZG_DWIN_DP_PHASE_2,підвищення,raising
 STR_OZG_DWIN_DP_PHASE_3,перекидання,throwing again
 STR_OZG_DWIN_DP_PHASE_4,розкриття,the showdown
-STR_OZG_DWIN_DP_HINT_THROW,Киньте свої п’ять кісток. Перед кидком можна підмінити одну.,Throw your five dice. Before the throw you may swap one.
+STR_OZG_DWIN_DP_HINT_THROW,Киньте свої п’ять кісток: кнопкою або клацнувши банку. Перед кидком можна підмінити одну.,"Throw your five dice, with the button or by clicking the can. Before the throw you may swap one."
 STR_OZG_DWIN_DP_HINT_THROWS,Кидає %1. Потім підвищення й перекидання.,%1 throws. Then the raising and the second throw.
 STR_OZG_DWIN_DP_HINT_RAISE,"Можна підняти ставку: решта або доставлять стільки ж, або спасують.",You may raise the stake: the others either match it or fold.
 STR_OZG_DWIN_DP_HINT_CALL,%1 підняв на %2: доставте стільки ж або спасуйте.,%1 raised %2: match it or fold.
 STR_OZG_DWIN_DP_HINT_BETS,Ставить %1: підняти чи ні.,%1 bets: to raise or not.
-STR_OZG_DWIN_DP_HINT_PICK,"Клацніть кістки, які хочете перекинути (один раз). Решта лишиться.",Click the dice you want to throw again (once). The rest stay.
-STR_OZG_DWIN_DP_HINT_PICKED,"Обрано %1: вони полетять знову, решта лишиться.","%1 picked: they fly again, the rest stay."
+STR_OZG_DWIN_DP_HINT_PICK,"Клацніть свої кістки, які хочете перекинути (один раз). Решта лишиться.",Click the dice of yours you want to throw again (once). The rest stay.
+STR_OZG_DWIN_DP_HINT_PICKED,"Обрано %1: вони повернуться в банку й полетять знову, решта лишиться.","%1 picked: they go back into the can and fly again, the rest stay."
 STR_OZG_DWIN_DP_HINT_AGAINS,Перекидає %1. Потім розкриття.,%1 throws again. Then the showdown.
 STR_OZG_DWIN_DP_THROW,Кинути кості,Throw the dice
 STR_OZG_DWIN_DP_RAISE,Підняти на %1,Raise %1
@@ -1064,19 +1048,11 @@ STR_OZG_DWIN_DP_CALL,Доставити %1,Match %1
 STR_OZG_DWIN_DP_FOLD,Спасувати,Fold
 STR_OZG_DWIN_DP_AGAIN,Перекинути вибрані: %1,Throw the picked again: %1
 STR_OZG_DWIN_DP_KEEP,Залишити все як є,Keep them all
-STR_OZG_DWIN_DP_YOUR_THROW,Ваш кидок — праворуч «Кинути кості»,Your throw: “Throw the dice” on the right
-STR_OZG_DWIN_DP_THROWS,Кидає %1,%1 throws
 STR_OZG_DWIN_DP_FOLDED,спасував,folded
 STR_OZG_DWIN_DP_PUT,у банку %1,%1 in the pot
-STR_OZG_DWIN_DP_YOU,У вас,You have
-STR_OZG_DWIN_DP_HANDS_TITLE,Від найсильнішої,From the strongest
-STR_OZG_DWIN_DP_HANDS,П’ять однакових · каре · фул-хаус · великий стрит 2–6 · малий стрит 1–5 · трійка · дві пари · пара · нічого,Five of a kind · four of a kind · full house · straight 2–6 · straight 1–5 · three of a kind · two pairs · a pair · nothing
 STR_OZG_DWIN_NOT_THROWN,ще не кидав,has not thrown
 STR_OZG_DWIN_TURN_OF,Хід: %1,%1's turn
 STR_OZG_DWIN_PIG_TURN,За хід,This turn
-STR_OZG_DWIN_PIG_FIRST,Ваш хід: киньте кістку.,Your turn: throw the die.
-STR_OZG_DWIN_PIG_MORE,Ще кидок — чи зупинитися й записати %1?,"Another throw, or stop and keep %1?"
-STR_OZG_DWIN_PIG_THROWS,%1 кидає.,%1 throws.
 STR_OZG_DWIN_PIG_HOLD,Зупинитися: +%1,Stop: +%1
 STR_OZG_DWIN_HR_OWN,свої кості,own dice
 STR_OZG_DWIN_HR_HOST,кості господаря,the host's dice
@@ -1084,21 +1060,18 @@ STR_OZG_DWIN_HR_STAKE,ставка %1,stake %1
 STR_OZG_DWIN_HR_OUT,вибув із перекидання,out of the throw-off
 STR_OZG_DWIN_HR_WON,забирає банк,takes the pot
 STR_OZG_DWIN_HR_POT,Банк %1,Pot %1
-STR_OZG_DWIN_HR_HINT_THROW,Ваш кидок. Найбільша сума забирає банк.,Your throw. The highest total takes the pot.
 STR_OZG_DWIN_HR_HINT_WAIT,Чекаємо на кидки інших.,Waiting for the others' throws.
 STR_OZG_DWIN_HR_HINT_OVER,Банк розіграно.,The pot is played out.
 STR_OZG_DWIN_HR_THROW,Кинути %1,Throw %1
 STR_OZG_DWIN_HR_WAITING,Кидають інші…,The others throw…
-STR_OZG_DWIN_HR_COUNT,Кісток кожному: %1,Dice each: %1
 STR_OZG_DWIN_PR_DICE,кісток: %1,dice: %1
-STR_OZG_DWIN_PR_CUP,кості під банкою,dice under the can
 STR_OZG_DWIN_PR_HIS_BID,остання ставка його,the last bid is his
 STR_OZG_DWIN_PR_THINKS,думає…,thinking…
 STR_OZG_DWIN_PR_LOSES,втрачає кістку,loses a die
 STR_OZG_DWIN_PR_BID_BY,Ставка: %1,The bid: %1
 STR_OZG_DWIN_PR_NO_BID,ще ніхто не ставив,nobody has bid yet
 STR_OZG_DWIN_PR_OPEN,Розкриття,The showdown
-STR_OZG_DWIN_PR_OPEN_SUB,"Розкриття: підсвічено те, що рахується",The showdown: what counts is lit
+STR_OZG_DWIN_PR_OPEN_SUB,"Розкриття: банки підняті, підсвічено те, що рахується","The showdown: the cans are lifted, what counts is lit"
 STR_OZG_DWIN_PR_TABLE_ONE,на столі %1 кістка,%1 die on the table
 STR_OZG_DWIN_PR_TABLE_FEW,на столі %1 кістки,%1 dice on the table
 STR_OZG_DWIN_PR_TABLE_MANY,на столі %1 кісток,%1 dice on the table
@@ -1132,18 +1105,7 @@ STR_OZG_FACE_5_MANY,%1 п’ятірок,%1 fives
 STR_OZG_FACE_6_ONE,%1 шістка,%1 six
 STR_OZG_FACE_6_FEW,%1 шістки,%1 sixes
 STR_OZG_FACE_6_MANY,%1 шісток,%1 sixes
-STR_OZG_DWIN_SWAP_PICK_LOADED,Обрана кістка заряджена на %1 (%2).,The die picked is loaded on %1 (%2).
-STR_OZG_DWIN_SWAP_PICK_PLAIN,Обрана кістка — без відомого вам вантажу.,The die picked carries no load you know of.
-STR_OZG_DWIN_SWAP_FROM,З кишені,From the pocket
-STR_OZG_DWIN_SWAP_FOR,Замість кістки,Instead of the die
-STR_OZG_DWIN_SWAP_CHOOSE,"Оберіть кістку з кишені і ту, яку вона замінить.",Pick a die from the pocket and the one it replaces.
-STR_OZG_DWIN_SWAP_CHOOSE_FOR,"Оберіть, яку кістку вона замінить.",Pick the die it replaces.
-STR_OZG_DWIN_SWAP_PICK_BOTH,Оберіть обидві кістки,Pick both dice
-STR_OZG_DWIN_SWAP_DO,Підмінити: обрану замість кістки %1,Swap: the one picked for die %1
-STR_OZG_DWIN_SWAP_DO_UNDER,Підкласти обрану замість кістки %1,Slip the one picked in for die %1
-STR_OZG_DWIN_DP_HINT_STAKES,"Кожен кладе ставку в банк, потім усі кидають по п’ять кісток.","Everybody puts a stake in the pot, then all throw five dice."
-STR_OZG_DWIN_DP_FIRST_STAKES,Спершу ставки,The stakes first
-STR_OZG_DWIN_SUB_STAKE, · ставка %1, · stake %1
+STR_OZG_DWIN_DP_HINT_STAKES,"Кожен кладе ставку в банк, потім усі по черзі кидають свої п’ять кісток.","Everybody puts a stake in the pot, then all throw their five dice in turn."
 STR_OZG_DWIN_OVER_TITLE,Гру закінчено,The game is over
 STR_OZG_DWIN_NEW,Нова гра,New game
 STR_OZG_DWIN_LOOK,Подивитися на стіл,Look at the table
@@ -1156,4 +1118,78 @@ STR_OZG_DWIN_FOLD_TEXT,"Гра скінчиться, і банка з кістк
 STR_OZG_DWIN_PR_YOU_OUT,У вас не лишилося кісток — ви вибули.,You have no dice left: you are out.
 STR_OZG_SAY_DSWAP_NO_ROOM,"У кишенях немає вільного місця для кістки, яку знімаєте","No free place in your pockets for the die you take out"
 STR_OZG_DWIN_TH_ASIDE,Відкласти обрані,Put the picked aside
-STR_OZG_DWIN_TH_PICK,клацніть кості на сукні,click the dice on the felt
+STR_OZG_DWIN_SWAP_NONE_LEFT,Підміни на цю гру скінчились.,No swaps left for this game.
+STR_OZG_DWIN_SWAP_WHEN_PERUDO_SHORT,"Підкласти можна на початку кола, у свій хід, до першої ставки","A die can be slipped in at a round's start, in your turn, before the first bid"
+STR_OZG_DWIN_DIE_WHITE,Біла кістка,White die
+STR_OZG_DWIN_DIE_BLACK,Чорна кістка,Black die
+STR_OZG_DWIN_DIE_RED,Червона кістка,Red die
+STR_OZG_DWIN_DIE_WHITE_ACC,білу,the white
+STR_OZG_DWIN_DIE_BLACK_ACC,чорну,the black
+STR_OZG_DWIN_DIE_RED_ACC,червону,the red
+STR_OZG_DWIN_SWAP_ONE_A,одна за кидок,one a throw
+STR_OZG_DWIN_SWAP_ONE_ROUND,одна за коло,one a round
+STR_OZG_DWIN_SWAP_FAIR,чесна — або її вантажу ви не знаєте,"fair, or its load is not known to you"
+STR_OZG_DWIN_SWAP_LOADED_ON,заряджена на %1,loaded on %1
+STR_OZG_DWIN_SWAP_OF_TEN,%1 з 10 кидків,%1 of 10 throws
+STR_OZG_DWIN_SWAP_OF_TEN_SHORT,%1 з 10,%1 of 10
+STR_OZG_DWIN_SWAP_NO_POCKET,У кишенях немає кісток. Свою кістку можна зарядити шулерським набором.,No dice in your pockets. A die of your own can be loaded with a card sharp's kit.
+STR_OZG_DWIN_SWAP_CAN_NOTE,"Кістки, які ви зараз кидатимете. Підміну може помітити кожен за столом — він побачить, як кістка летить у банку.",The dice you are about to throw. Anyone at the table may notice the swap: he will see the die fly into the can.
+STR_OZG_DWIN_SWAP_CAN_NOTE_UNDER,Кістки під вашою банкою. Підкладена ляже з наступного кола. Підміну може помітити кожен за столом.,The dice under your can. The one slipped in lies from the next round. Anyone at the table may notice the swap.
+STR_OZG_DWIN_SWAP_SUM_BOTH,Оберіть свою кістку ліворуч і кістку банки праворуч.,Pick a die of yours on the left and a die of the can on the right.
+STR_OZG_DWIN_SWAP_SUM_CAN,"Тепер кістку банки, яку вона замінить.",Now the die of the can it replaces.
+STR_OZG_DWIN_SWAP_SUM_POCKET,Тепер свою кістку з кишені.,Now a die of yours from the pocket.
+STR_OZG_DWIN_SWAP_SUM_LOAD,"(на %1, %2)","(on %1, %2)"
+STR_OZG_DWIN_SWAP_SUM_DO,Підкласти %1 замість кістки %2. Та піде до вас у кишеню.,Slip in %1 die for die %2. That one goes to your pocket.
+STR_OZG_DWIN_SWAP_GO,Підкласти,Slip it in
+STR_OZG_DWIN_SWAP_STEP1,Яку свою кістку покласти в банку,Which die of yours goes into the can
+STR_OZG_DWIN_SWAP_STEP2,Замість якої кістки банки,Which die of the can it replaces
+STR_OZG_DWIN_SWAP_LEGEND,Вантаж — як часто кістка лягає своєю гранню:,A load: how often the die falls on its face:
+STR_OZG_DWIN_SWAP_SEEN_SUB,"Ви бачили, яка кістка пішла в банку: на ній око. На що вона заряджена — не знаєте.",You saw which die went into the can: it carries an eye. What it is loaded on you do not know.
+STR_OZG_DWIN_SWAP_SEEN_SUB_UNDER,"Ви бачили, яка кістка пішла під банку: при розкритті на ній буде око.",You saw which die went under the can: at the showdown it will carry an eye.
+STR_OZG_DWIN_SWAP_DID,Ви підклали %1 кістку замість кістки %2.,You slipped in %1 die for die %2.
+STR_OZG_DWIN_SWAP_DID_SUB,Чи помітив хтось — ви не дізнаєтесь.,"Whether anyone noticed, you will not learn."
+STR_OZG_DWIN_SWAP_DID_SUB_UNDER,Вона ляже з наступного кола. Чи помітив хтось — ви не дізнаєтесь.,"It lies from the next round. Whether anyone noticed, you will not learn."
+STR_OZG_DWIN_TAG_THROWS,кидає…,throwing…
+STR_OZG_DWIN_TAG_YOURS,ваш хід,your turn
+STR_OZG_DWIN_ONE_HOST,кістка господаря,the host's die
+STR_OZG_DWIN_ONE_OWN,своя кістка,own die
+STR_OZG_DWIN_THROWS,Кидає %1,%1 throws
+STR_OZG_DWIN_TH_NOTE_BARREL,на бочці,on the barrel
+STR_OZG_DWIN_TH_PIT,у ямі,in a pit
+STR_OZG_DWIN_TH_NOTE_BOLTS,болтів %1,bolts %1
+STR_OZG_DWIN_TH_BARREL,на бочці · спроба %1 з 3,on the barrel · try %1 of 3
+STR_OZG_DWIN_TH_BOLTS,болтів: %1,bolts: %1
+STR_OZG_DWIN_TH_HINT_HOST,%1 кидає кості господаря: банка в нього.,%1 throws the host's dice: the can is his.
+STR_OZG_DWIN_TH_HINT_OWN,%1 кидає свої кості.,%1 throws his own dice.
+STR_OZG_DWIN_TH_PICK_TITLE,Оберіть кістки,Pick the dice
+STR_OZG_DWIN_TH_HINT_PICK,"Клацніть на сукні кістки, що дають очки: вони піднімуться.",Click the dice on the felt that score: they will lift.
+STR_OZG_DWIN_TH_HINT_GIVES,Набір дає %1. Можна додати ще кістки або відкласти.,"The set gives %1. Add more dice, or put it aside."
+STR_OZG_DWIN_TH_HINT_BAD,У наборі є кістка без очок — так не відкласти.,The set has a die that scores nothing: it cannot be put aside so.
+STR_OZG_DWIN_TH_CHOOSE_TITLE,Кидати чи записати?,Throw or write down?
+STR_OZG_DWIN_TH_HINT_CHOOSE,За хід %1. Ризикнути ще %2 кістками або записати.,"%1 this turn. Risk %2 more dice, or write it down."
+STR_OZG_DWIN_TH_HINT_CHOOSE_ONE,За хід %1. Ризикнути останньою кісткою або записати.,"%1 this turn. Risk the last die, or write it down."
+STR_OZG_DWIN_TH_HINT_PIT,Обережно: запис зараз — у яму.,"Careful: written now, it falls into a pit."
+STR_OZG_DWIN_TH_HINT_THROW,"Киньте кості: кнопкою або клацнувши свою банку. Очки дають одиниці (10), п’ятірки (5), три однакові й стріти.","Throw the dice: with the button or by clicking your can. Ones (10), fives (5), three of a kind and straights score."
+STR_OZG_DWIN_TH_BOLT_TITLE,Болт,A bolt
+STR_OZG_DWIN_TH_HINT_BOLT,Нічого не випало: очки за хід згоріли.,Nothing scored: the turn's points are lost.
+STR_OZG_DWIN_TH_IN_THROW,у кидку %1 з 5,%1 of 5 in the throw
+STR_OZG_DWIN_TH_ASIDE_PTS,Відкласти: +%1,Put aside: +%1
+STR_OZG_DWIN_TH_WRITE,Записати %1,Write %1
+STR_OZG_DWIN_PIG_HINT_HOST,%1 кидає: банка в нього.,%1 throws: the can is his.
+STR_OZG_DWIN_PIG_HINT_OWN,%1 кидає свою кістку.,%1 throws his own die.
+STR_OZG_DWIN_PIG_HINT_FIRST,Ваш хід: киньте кістку — кнопкою або клацнувши банку.,"Your turn: throw the die, with the button or by clicking the can."
+STR_OZG_DWIN_PIG_HINT_MORE,Ще кидок — чи зупинитися й записати %1? Одиниця спалить усе за хід.,"Another throw, or stop and keep %1? A one burns the whole turn."
+STR_OZG_DWIN_PIG_ONE_TITLE,Одиниця,A one
+STR_OZG_DWIN_PIG_HINT_ONE,Одиниця: очки за хід згоріли.,A one: the turn's points are lost.
+STR_OZG_DWIN_PIG_HOLD_NONE,Зупинитися,Stop
+STR_OZG_DWIN_HR_HINT_OTHERS,Кидають інші: банка господаря ходить від одного до іншого.,The others throw: the host's can goes from one to the next.
+STR_OZG_DWIN_HR_HINT_MINE,Ваш кидок: кнопкою або клацнувши свою банку. Найбільша сума забирає банк.,Your throw: with the button or by clicking your can. The highest total takes the pot.
+STR_OZG_DWIN_HR_PER_THROW,Кісток у кидку,Dice a throw
+STR_OZG_DWIN_HR_COUNT_WHEN,"Скільки кісток кидати, господар обирає між колами.",How many dice to throw is the host's choice between games.
+STR_OZG_DWIN_PR_MY_BID,остання ставка ваша,the last bid is yours
+STR_OZG_DWIN_PR_MY_TURN,ваша ставка,your bid
+STR_OZG_DWIN_PR_UNDER,під вашою банкою — бачите лише ви,under your can: only you see them
+STR_OZG_DWIN_PR_SHAKING,Струшують банки,The cans are shaken
+STR_OZG_DWIN_PR_PALIFICO,паліфіко,palifico
+STR_OZG_BWIN_N_THROWS,%1 кидає…,%1 throws…
+STR_OZG_BWIN_N_THROWING,Кидаєте…,Throwing…

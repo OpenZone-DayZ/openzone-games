@@ -5,6 +5,12 @@
 // throw (its button, swapping a die before it); right the log, the discs borne off of
 // each side, sleight of hand, the draw and the resignation, the player himself.
 //
+// The throw (the canvas of 2026-11-27): a can of dice stands in the throw's panel beside
+// its words; it is shaken and tipped there, and the two dice fly out of it onto the board,
+// seen by both players. Swapping a die is the dice windows' own window, opened over the
+// board by the panel's button; a swap seen is a die seen flying into the can. The can, the
+// dice and that window are OZG_GameMenuCans.c's.
+//
 // The game counts the points 1 to 24 the way White does, White moving down to 1; the
 // canvas lays a point q = 24 - point out from the top right corner leftwards and back
 // along the bottom (Black sees the board turned half round). A move is picked a disc, then
@@ -30,11 +36,8 @@ modded class OZG_GameMenu
     protected int m_BNOffB;
     // The point picked to move from (1 .. 24, 25 the bar), -1 for none.
     protected int m_BNSel = -1;
-    // Swapping a die (§9.2): 0 shut, 1 choosing the die carried, 2 choosing the die it
-    // replaces; the key of the die carried.
-    protected int m_BNSwapStep;
-    protected string m_BNSwapKey = "";
-    protected ref array<string> m_BNSwapKeys;
+    // The log's lines the throw being played has not shown yet (they tell what fell).
+    protected int m_BNLogSeen = -1;
     // "Put back" at nardy picks the tray first: "w" or "b".
     protected string m_BNSlWho = "";
 
@@ -49,8 +52,6 @@ modded class OZG_GameMenu
     {
         if (!m_BNPts)
             m_BNPts = new array<int>();
-        if (!m_BNSwapKeys)
-            m_BNSwapKeys = new array<string>();
         m_BNPts.Clear();
         m_BNBarW = 0;
         m_BNBarB = 0;
@@ -203,11 +204,11 @@ modded class OZG_GameMenu
     {
         BNRead();
         if (!BWPlaying())
-        {
             m_BNSel = -1;
-            m_BNSwapStep = 0;
-        }
         BWPoolsBegin();
+        DTBegin();
+        m_DTBlocked = false;
+        BNThrowSeen();
         m_BNBadgesUsed = 0;
         BNPaintTitle();
         BNPaintPlate("OZG_BOpp", BWTopSeat(), false);
@@ -217,7 +218,10 @@ modded class OZG_GameMenu
         BNPaintOff();
         BNPaintActions();
         BNPaintField();
+        DTSwapKeep();
+        DTEnd();
         BWPoolsEnd();
+        DTPaintSwapDlg();
         if (m_BNBadges)
         {
             for (int b = m_BNBadgesUsed; b < m_BNBadges.Count(); b++)
@@ -397,7 +401,10 @@ modded class OZG_GameMenu
         }
         else if (BWPlaying() && myTurn)
         {
-            text = Tr1("STR_OZG_BWIN_N_MOVE", m_BPub.DiceLeft);
+            // the dice left to play, as the canvas lists them: "3, 1"
+            string diceLeft = m_BPub.DiceLeft;
+            diceLeft.Replace(" ", ", ");
+            text = Tr1("STR_OZG_BWIN_N_MOVE", diceLeft);
         }
         else if (BWPlaying())
         {
@@ -407,16 +414,30 @@ modded class OZG_GameMenu
             else
                 text = Tr1("STR_OZG_BWIN_N_THEIRS", SeatName(other));
         }
+        // while his own throw is still in the can, nothing is said of what fell
+        bool hidden = m_DTFx == "gather" || m_DTFx == "shake" || m_DTFx == "tip";
+        if (hidden && BWPlaying())
+        {
+            text = Tr1("STR_OZG_BWIN_N_THROWS", SeatName(m_DTThrower));
+            if (m_DTThrower == m_V.Mine)
+                text = Tr("STR_OZG_BWIN_N_THROWING");
+        }
         array<string> lines = new array<string>();
-        BWWrap(BWText("OZG_BThrowText0"), text, 306, 2, lines);
-        string t0 = "";
-        string t1 = "";
-        if (lines.Count() > 0)
-            t0 = lines[0];
-        if (lines.Count() > 1)
-            t1 = lines[1];
-        BWSetText("OZG_BThrowText0", t0);
-        BWSetText("OZG_BThrowText1", t1);
+        BWWrap(BWText("OZG_BThrowText0"), text, 208, 3, lines);
+        // the words beside the can, in the middle of its height
+        float textY = 44 + (101 - lines.Count() * 19) / 2;
+        for (int t = 0; t < 3; t++)
+        {
+            string line = "";
+            if (t < lines.Count())
+                line = lines[t];
+            string tn = "OZG_BThrowText" + t.ToString();
+            BWSetText(tn, line);
+            BWMove(BW(tn), 110, textY + t * 19);
+        }
+        bool busy = DTBusy();
+        if (busy)
+            canThrow = false;
         // the throw's button: gold when it may be pressed
         int bg = ARGB(255, 58, 44, 28);
         int fg = ARGB(255, 160, 143, 115);
@@ -427,100 +448,194 @@ modded class OZG_GameMenu
         }
         BWPaintNamed("OZG_BBtnThrowBoxBg", bg);
         BWInk("OZG_BBtnThrowText", fg);
-        // the swap: before one's own throw, while a die may still be swapped
-        bool swap = canThrow && m_V.BoardSleights >= 0 && OZG_Cfg.Get().Cheating == 1;
-        BWShow("OZG_BBtnSwap", swap);
-        int swapBg = ARGB(255, 45, 33, 23);
-        if (m_BNSwapStep > 0)
-            swapBg = ARGB(255, 201, 164, 92);
-        BWPaintNamed("OZG_BBtnSwapBoxBg", swapBg);
-        if (!swap)
-            m_BNSwapStep = 0;
-        BNPaintSwap();
-    }
-
-    // The swap's chooser: the dice this player carries, then which of the dice he is
-    // about to throw goes out.
-    protected void BNPaintSwap()
-    {
-        BWShow("OZG_BSwap", m_BNSwapStep > 0);
-        if (m_BNSwapStep <= 0)
-            return;
-        array<string> labels = new array<string>();
-        m_BNSwapKeys.Clear();
-        string hint = "";
-        if (m_BNSwapStep == 1)
+        // the can: the seat's that throws next, or that threw; shaken and tipped with a
+        // throw, empty while its dice lie on the board, ringed while a throw is due
+        int canSeat = -1;
+        if (m_BPub)
+            canSeat = m_BPub.Turn;
+        if (m_DTFx != "" && m_DTThrower >= 0)
+            canSeat = m_DTThrower;
+        if (canSeat < 0 && m_BPub)
+            canSeat = m_BPub.White;
+        m_BNCanSeat = canSeat;
+        // between games the board's can stands in the panel all the same
+        OZG_DTCan can = DTCanOf(DTCanId(canSeat));
+        if (can)
         {
-            hint = Tr("STR_OZG_BWIN_SWAP_WHICH");
-            array<EntityAI> dice = new array<EntityAI>();
-            BNCarriedDice(dice);
-            for (int i = 0; i < dice.Count() && labels.Count() < 4; i++)
+            array<string> looks = new array<string>();
+            looks.Insert(DTLookAt(canSeat, 0, false));
+            looks.Insert(DTLookAt(canSeat, 1, false));
+            string state = DTCanFx(canSeat);
+            if (state == "")
             {
-                m_BNSwapKeys.Insert(OZG_Keys.Of(dice[i]));
-                labels.Insert(Widget.TranslateString(dice[i].GetDisplayName()));
+                state = "full";
+                if (BNDiceOut())
+                    state = "empty";
             }
-            if (labels.Count() == 0)
-                hint = Tr("STR_OZG_BWIN_SWAP_NONE");
+            bool glow = canThrow || (m_DTFx != "" && m_DTFx != "linger");
+            DTCanSet(can, 28, 286, 1.1, state, 100, DTArmy(canSeat), looks, glow);
         }
-        else
+        // "Підмінити кістку": there while the server lets this player swap at all
+        bool swaps = DTSwapButton(12, 208, 306, BWPlaying());
+        float h = 210;
+        if (swaps)
+            h = 258;
+        Widget throwW = BW("OZG_BThrow");
+        if (throwW)
+            throwW.SetSize(330 * m_K, h * m_K);
+        Widget boxW = BW("OZG_BThrowBox");
+        if (boxW)
+            boxW.SetSize(330 * m_K, h * m_K);
+        Widget edge = BW("OZG_BThrowBoxEdge");
+        BWFit(edge, 330, h, 8);
+        BWPaint(edge, ARGB(255, 201, 164, 92));
+        BWFit(BW("OZG_BThrowBoxBg"), 328, h - 2, 7);
+    }
+
+    // The seat whose can stands in the throw's panel.
+    protected int m_BNCanSeat = -1;
+
+    // Do the dice of the throw lie on the board: the seat to move has thrown, or a throw
+    // is seen flying and lying (one with no step to make lies a moment, then goes).
+    protected bool BNDiceOut()
+    {
+        if (!m_BPub)
+            return false;
+        if (m_DTFx == "gather" || m_DTFx == "shake" || m_DTFx == "tip")
+            return false;
+        if (m_DTFx == "fly" || m_DTFx == "linger")
+            return true;
+        return m_BPub.Thrown == 1;
+    }
+
+    // A throw told by the view (the game's number of throws grew): the can is shaken and
+    // tipped, then the dice fly out. Nardy's view moves no disc with a throw, so it is
+    // shown at once -- but for what tells of the dice, which waits for them to fall.
+    protected void BNThrowSeen()
+    {
+        if (!m_BPub || !m_V)
         {
-            hint = Tr("STR_OZG_BWIN_SWAP_FOR");
-            for (int d = 0; d < 2; d++)
+            m_DTThrowsSeen = -1;
+            return;
+        }
+        string deal = m_V.PlaceId + "/" + m_V.GameId + "/" + m_V.DealNo.ToString();
+        bool same = deal == m_DTDealSeen && m_DTThrowsSeen >= 0;
+        int had = m_DTThrowsSeen;
+        m_DTDealSeen = deal;
+        m_DTThrowsSeen = m_BPub.Throws;
+        if (m_DTFx == "")
+            m_BNLogSeen = m_V.Log.Count();
+        if (!same || m_BPub.Throws <= had || m_BPub.ThrowSeat < 0)
+            return;
+        // the dice of the throw: the two of the seat that threw
+        m_DTThrower = m_BPub.ThrowSeat;
+        m_DTThrowAt.Clear();
+        m_DTThrowFaces.Clear();
+        array<int> thrown = new array<int>();
+        OZG_DiceText.Parse(m_BPub.Dice, thrown);
+        for (int i = 0; i < 2 && i < thrown.Count(); i++)
+        {
+            int place = i;
+            if (m_BPub.DiceAt && i < m_BPub.DiceAt.Count())
+                place = m_BPub.DiceAt[i];
+            int face = thrown[i];
+            m_DTThrowAt.Insert(place);
+            m_DTThrowFaces.Insert(face);
+        }
+        m_DTSwapOpen = false;
+        m_DTFx = "shake";
+        m_DTFxLeft = 0.62;
+        DTThrowSound(OZG_SoundIds.RATTLE);
+    }
+
+    override protected bool DTThrowLies()
+    {
+        if (m_Style != "board_nardy")
+            return super.DTThrowLies();
+        return m_BPub && m_BPub.Thrown == 1;
+    }
+
+    // Nardy's can stands in the throw's panel: the dice go home into its mouth.
+    override protected bool DTHomeOf(int seat, out float x, out float y)
+    {
+        if (m_Style != "board_nardy")
+            return super.DTHomeOf(seat, x, y);
+        x = 127;
+        y = 323;
+        return true;
+    }
+
+    override protected bool DTMyThrowNext()
+    {
+        if (m_Style != "board_nardy")
+            return super.DTMyThrowNext();
+        return BWPlaying() && m_BPub.Turn == m_V.Mine && BWButton(OZG_NardyConst.M_THROW);
+    }
+
+    // The log while a throw is still in the can: without the lines that tell what fell.
+    override protected void BWPaintLog()
+    {
+        bool hidden = m_DTFx == "gather" || m_DTFx == "shake" || m_DTFx == "tip";
+        if (m_Style != "board_nardy" || !hidden || !m_V || m_BNLogSeen < 0)
+        {
+            super.BWPaintLog();
+            return;
+        }
+        int fresh = m_V.Log.Count() - m_BNLogSeen;
+        if (fresh <= 0)
+            fresh = 1;
+        array<string> kept = new array<string>();
+        int n = m_V.Log.Count();
+        for (int i = 0; i < fresh && n > 0; i++)
+        {
+            n--;
+            kept.InsertAt(m_V.Log[n], 0);
+            m_V.Log.RemoveOrdered(n);
+        }
+        super.BWPaintLog();
+        for (int k = 0; k < kept.Count(); k++)
+            m_V.Log.Insert(kept[k]);
+    }
+
+    // A die swapped at nardy (the server's word): a die flies from the hand of the one who
+    // did it -- this player's own under the panel, the other's from his plate -- into the
+    // can, and the one taken out flies back.
+    override protected void DTSawPlay(OZG_WDiceSaw saw)
+    {
+        if (m_Style != "board_nardy")
+        {
+            super.DTSawPlay(saw);
+            return;
+        }
+        float ax = 300;
+        float ay = 190;
+        if (saw.SeatNo == m_V.Mine)
+        {
+            ax = 58;
+            ay = 470;
+        }
+        OZG_DTCan can = null;
+        if (m_DTCans)
+        {
+            string id = DTCanId(saw.SeatNo);
+            for (int i = 0; i < m_DTCans.Count(); i++)
             {
-                int n = d + 1;
-                m_BNSwapKeys.Insert(d.ToString());
-                labels.Insert(Tr1("STR_OZG_BWIN_SWAP_DIE", n.ToString()));
+                if (m_DTCans[i].m_Id == id && m_DTCans[i].m_Used)
+                    can = m_DTCans[i];
             }
         }
-        BWSetText("OZG_BSwapHint", hint);
-        for (int k = 0; k < 4; k++)
+        bool noticed = saw.Noticed == 1;
+        DTSwapPlay(saw.SeatNo, saw.InLook, saw.OutLook, noticed, ax, ay, 49, 276, can);
+        if (noticed)
         {
-            string name = "OZG_BSwapPick" + k.ToString();
-            bool shown = k < labels.Count();
-            BWShow(name, shown);
-            if (shown)
-                BWSetText(name + "Text", labels[k]);
-        }
-    }
-
-    // The dice this player carries (pockets, a can in his hands), not the place's.
-    override protected void BNCarriedDice(array<EntityAI> into)
-    {
-        into.Clear();
-        PlayerBase player = PlayerBase.Cast(GetGame().GetPlayer());
-        if (!player)
-            return;
-        array<EntityAI> items = new array<EntityAI>();
-        player.GetInventory().EnumerateInventory(InventoryTraversalType.PREORDER, items);
-        for (int i = 0; i < items.Count(); i++)
-        {
-            if (items[i] && items[i].IsInherited(OZG_Die_Base))
-                into.Insert(items[i]);
-        }
-    }
-
-    protected void BNSwapPick(int k)
-    {
-        if (k < 0 || k >= m_BNSwapKeys.Count())
-            return;
-        if (m_BNSwapStep == 1)
-        {
-            m_BNSwapKey = m_BNSwapKeys[k];
-            m_BNSwapStep = 2;
-            BoardWinPaint();
+            string who = Tr1("STR_OZG_SAY_DSWAP_SEEN", SeatName(saw.SeatNo));
+            DTToast(who, "", Tr("STR_OZG_DWIN_SWAP_SEEN_SUB"), true);
             return;
         }
-        OZG_WAsk ask = new OZG_WAsk();
-        ask.PlaceId = m_PlaceId;
-        ask.CardKey = m_BNSwapKey;
-        ask.SeatNo = m_BNSwapKeys[k].ToInt();
-        string json;
-        string err;
-        JsonFileLoader<OZG_WAsk>.MakeData(ask, json, err, false);
-        OZ_Rpc.ServiceRequest(OZG_Const.SERVICE, OZG_Const.OP_DSWAP, json);
-        m_BNSwapStep = 0;
-        m_BNSwapKey = "";
-        BoardWinPaint();
+        int placeNo = saw.Place + 1;
+        string what = DTDieNameAcc(saw.InLook);
+        string did = Tr2("STR_OZG_DWIN_SWAP_DID", what, placeNo.ToString());
+        DTToast(did, "", Tr("STR_OZG_DWIN_SWAP_DID_SUB"), false);
     }
 
     // The two trays: the other side's left, this player's right (the button to bear off).
@@ -760,36 +875,63 @@ modded class OZG_GameMenu
         b.Show(true);
     }
 
-    // The dice of the throw on the board's right half; those played dim.
+    // The dice of the throw: on the board's right half, those played dim -- or in the
+    // can, at its mouth, unseen. Each in its own look, by the seat that threw it and its
+    // place among that seat's two (a red one swapped in lies red on the board), with what
+    // this player knows of it.
     protected void BNPaintDice()
     {
         array<int> thrown = new array<int>();
         array<int> left = new array<int>();
         OZG_DiceText.Parse(m_BPub.Dice, thrown);
         OZG_DiceText.Parse(m_BPub.DiceLeft, left);
-        if (thrown.Count() == 0)
-            return;
-        string look = BWLookOf("Di");
-        if (look == "classic")
-            look = "white";
+        bool out2 = BNDiceOut() && thrown.Count() > 0;
         int used = 4 - left.Count();
         if (thrown.Count() < 2 || thrown[0] != thrown[1])
             used = thrown.Count() - left.Count();
-        for (int i = 0; i < 2 && i < thrown.Count(); i++)
+        for (int i = 0; i < 2; i++)
         {
+            int dieSeat = m_BNCanSeat;
+            int diePlace = i;
+            bool told = m_BPub.DiceSeats && m_BPub.DiceAt && i < m_BPub.DiceSeats.Count() && i < m_BPub.DiceAt.Count();
+            if (told && out2)
+            {
+                dieSeat = m_BPub.DiceSeats[i];
+                diePlace = m_BPub.DiceAt[i];
+            }
+            if (dieSeat < 0)
+                continue;
+            OZG_DTDie d = DTDieOf(DTDieId(dieSeat, diePlace));
+            if (!d)
+                continue;
+            d.m_MoveLen = 0.5;
+            bool lies = out2 && i < thrown.Count() && !DTHeld(dieSeat, diePlace);
+            if (!lies)
+            {
+                if (d.m_Fresh)
+                    DTDieFace(d, 0, DTLookAt(dieSeat, diePlace, false), 62, false);
+                DTDieGo(d, 127, 323, 62 * 0.3, 0, 0, 0);
+                continue;
+            }
             int v = thrown[i];
             bool spent;
             if (thrown.Count() >= 2 && thrown[0] == thrown[1])
                 spent = used >= (i + 1) * 2;
             else
                 spent = left.Find(v) < 0;
-            int alpha = 255;
+            // a throw that lies only to be seen (no step to make) is not dimmed
+            if (m_BPub.Thrown != 1)
+                spent = false;
+            float alpha = 1;
             if (spent)
-                alpha = 89;
-            float x = 920 + i * 78;
-            string nardyDie = "set:ozg_dice image:" + look + "_" + v.ToString();
-            BWTurnPic(BW_FIELD, "set:ozg_dice image:die_s", x - BN_X, 418 + 6 - BN_Y, 62, 70, ARGB(alpha, 255, 255, 255), 0);
-            BWTurnPic(BW_FIELD, nardyDie, x - BN_X, 418 - BN_Y, 62, 71, ARGB(alpha, 255, 255, 255), 0);
+                alpha = 0.38;
+            string look = DTLookAt(dieSeat, diePlace, true);
+            int mark = DTMarkAt(dieSeat, diePlace, true);
+            DTDieFace(d, v, look, 62, false);
+            DTDieMarked(d, mark, 0, false);
+            DTDieGo(d, 951 + i * 78, 449, 62, 0, alpha, 0);
+            if (d.m_Root)
+                d.m_Root.SetSort(71);
         }
     }
 
@@ -849,6 +991,9 @@ modded class OZG_GameMenu
     // The board's clicks and nardy's own buttons; false for what the board window takes.
     override protected bool BNClick(string n)
     {
+        // the swap's button and its window: while it is open nothing under it is pressed
+        if (DTClick(n))
+            return true;
         if (n == "OZG_BHit")
         {
             float x;
@@ -863,27 +1008,13 @@ modded class OZG_GameMenu
             BNPointClick(point);
             return true;
         }
-        if (n == "OZG_BBtnThrow")
+        if (n == "OZG_BBtnThrow" || n == "OZG_BCanHit")
         {
-            if (BWButton(OZG_NardyConst.M_THROW))
+            if (BWButton(OZG_NardyConst.M_THROW) && !DTBusy())
             {
-                m_BNSwapStep = 0;
+                m_DTSwapOpen = false;
                 Play(OZG_NardyConst.M_THROW);
             }
-            return true;
-        }
-        if (n == "OZG_BBtnSwap")
-        {
-            if (m_BNSwapStep > 0)
-                m_BNSwapStep = 0;
-            else
-                m_BNSwapStep = 1;
-            BoardWinPaint();
-            return true;
-        }
-        if (n.IndexOf("OZG_BSwapPick") == 0)
-        {
-            BNSwapPick(n.Substring(13, n.Length() - 13).ToInt());
             return true;
         }
         if (n == "OZG_BOffW")

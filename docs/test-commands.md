@@ -396,19 +396,54 @@ bots play; open the window with `OZG_ActionWatch` (within two metres):
     oz_games {"op":"ask","id":"<place>","who":"me","ask":"deal"}
     oz_games {"op":"bots","id":"<place>","n":"0","on":"1"}
 
-The swap panel of the five dice games has two rows: "З кишені", the dice you carry as pictures, each
-in its colour, the face it is loaded on up and in a grey disc when you know it; "Замість
-кістки", the dice you are about to throw, each in its colour with its place on it. Nothing
-is picked for you: click one in each row (a click again lets it go); the button comes alive
-once both are picked and a swap may be done (dice poker and high roll before the throw, pig
-in your turn, perudo into your can before the round's first bid). Every die on the felt
-shows its own colour: a red
-die swapped in among white ones shows red to everybody. Give yourself dice to carry with
-`give what=OZG_Die_Red` (or `OZG_Die`, the white one, `OZG_Die_Black`, `OZG_Die_Stalker`) and load one with `loaddie`.
-The row of the pocket holds any number of dice: seven a row, two rows in sight, the wheel
-for more. The die that goes out needs a free place in your pockets: with none the swap is
-refused and the note under the felt says so (give yourself dice until `give` answers 0 to
-see it; `world_move` of a card to the ground frees a place).
+**The dice tables** (the canvas's boards of 2026-11-27; `2026-11-27-dice-tables-record.md`). A can
+of dice stands at the seat that throws: each seat's own can on its own dice, the table's one can
+at the seat whose throw it is on the host's. A throw is played from the view that tells of it: the
+dice that lie go back into the can, the can is shaken and tipped, the dice fly out and tumble. The
+window shows the new view only when they fly, and a view that comes meanwhile waits its turn
+(three at most): bots that throw one after another are seen one after another. The window sounds
+the throw itself -- the client's script log has `sound rattle on window` with the shake and
+`sound land on window` with the flight -- and the place's `roll` is then not played on that
+client; with the window shut it is (`sound roll on place <id>`).
+
+The swap is a window over the table ("Підмінити кістку" in the action panel): step 1 the dice you
+carry, a row a die (its colour, the load you know in words and as bars; four rows in sight, the
+wheel for more), step 2 the dice you are about to throw, by their places; "Підкласти" comes alive
+once both are picked. It opens when a throw is your next move (perudo: in your turn before the
+round's first bid, and the die lies from the next round; nardy: before your throw). You see your
+own swap as a die hopping from your plate into the can and the one taken out hopping back. A
+player who noticed sees the same with an orange ring, the can's foot pulsing and a note, and from
+then an eye on that die while it lies in the can. Until it is thrown the die shows in the can's
+mouth as the die it replaced to everybody who did not see it go in; once thrown everybody sees it
+as it is. Every die on the felt shows its own colour. Give yourself dice to carry with
+`give what=OZG_Die_Red` (or `OZG_Die`, the white one, `OZG_Die_Black`, `OZG_Die_Stalker`) and load
+one with `loaddie`. The die that goes out needs a free place in your pockets: with none the swap
+is refused (`refused STR_OZG_SAY_DSWAP_NO_ROOM`) and the note says so (give yourself dice until
+`give` answers 0 to see it; `world_move` of a thing to the ground frees a place -- on the diag
+stand every `world_move` writes a vanilla NULL pointer of
+`DayZPlayerInventory.OnHandleStoredJunctureData` into the server's and the client's logs, and the
+verdicts of that boot fail on it).
+
+A loaded face noticed is said with the throw that showed it: the note waits for the dice to fly,
+and the die carries its badge from then. In perudo the dice are noticed when they are opened: the
+server's log (debug) has `a throw under the cans kept: <n> dice` at a round's throw and
+`the dice under the cans opened: <n> kept` with the `notice-load` lines at the showdown.
+
+A bot's swap and throw, to watch them (a bot needs jeans before it can carry a die or a can):
+
+    oz_games {"op":"bots","id":"<place>","n":"2","on":"0"}                             two bots that wait to be told
+    oz_games {"op":"give","who":"bot1","what":"Jeans_Blue"}
+    oz_games {"op":"give","who":"bot1","what":"OZG_Die_Red"}                           OZG_DiceCan_Classic | OZG_DiceCan_Stalker: a can of its own (own dice, perudo)
+    oz_games {"op":"dice","who":"bot1"}                                               its dice: key=face@weight
+    oz_games {"op":"loaddie","who":"bot1","key":"<key>","face":"6","step":"3","force":"1"}
+    oz_games {"op":"noticecfg","loaded":"100","swaps":"9","swapshow":"100"}            every load noticed, nine swaps a game, every swap shows (swapshow=0: none does); a restart puts the file's numbers back
+    oz_games {"op":"ask","id":"<place>","who":"bot1","ask":"dswap","seat":"0","key":"<key>"}       its die for the first die it throws
+    oz_games {"op":"ask","id":"<place>","who":"bot1","ask":"act","move":"throw","after":"1500"}    a move so many ms later: time to look (moves only, not dswap)
+    oz_games {"op":"ask","id":"<place>","who":"bot1","ask":"act","move":"dudo","after":"3000"}     perudo's showdown
+
+A game left in play through a restart: its window, opened before any move, reads the seats' dice
+again (the player's own can at his seat, "своя кістка", his dice in the swap's step 2); a seat
+whose player is not back yet stands with the host's can until he is.
 
 **Thousand**: throw, then click the dice on the felt that score (a one, a five, three of a
 kind, a straight): they rise with a gold outline, and "Відкласти обрані" comes alive when
@@ -450,7 +485,8 @@ A swap, on the player's throw: a die he carries for one of the dice he is about 
 (`seat` is its place among them, 0 first); one a throw, `DiceSwaps` (2) a game; it shows at
 `ChanceDiceSwap` (30%), and then every other seated player rolls `SpotPercent`. After a
 throw in which a loaded die showed its face, every other seated player notices it at
-`NoticeLoaded` (4) times the load's step (1 to 3) percent.
+`NoticeLoaded` (4) times the load's step (1 to 3) percent; perudo's dice, thrown under the cans,
+are noticed at the showdown.
 
     oz_games {"op":"dice","who":"me"}                                     the dice you carry: key=face@weight, and whether you know it
     oz_games {"op":"dice","id":"<place>"}                                 the dice of the set laid out, in their slots' order

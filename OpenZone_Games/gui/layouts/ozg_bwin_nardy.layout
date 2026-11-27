@@ -1410,7 +1410,7 @@ FrameWidgetClass OZG_BWinNardy {
    ignorepointer 1
    clipchildren 0
    position 16 242
-   size 330 196
+   size 330 258
    hexactpos 1
    vexactpos 1
    hexactsize 1
@@ -1692,8 +1692,8 @@ FrameWidgetClass OZG_BWinNardy {
     }
     TextWidgetClass OZG_BThrowText0 {
      ignorepointer 1
-     position 12 45
-     size 306 19
+     position 110 66
+     size 208 19
      hexactpos 1
      vexactpos 1
      hexactsize 1
@@ -1709,8 +1709,25 @@ FrameWidgetClass OZG_BWinNardy {
     }
     TextWidgetClass OZG_BThrowText1 {
      ignorepointer 1
-     position 12 64
-     size 306 19
+     position 110 85
+     size 208 19
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     color 0.902 0.847 0.737 1
+     text ""
+     font "gui/fonts/etelkatextpro22"
+     "exact text" 1
+     "exact text size" 17
+     "text halign" left
+     "text valign" center
+     priority 3
+    }
+    TextWidgetClass OZG_BThrowText2 {
+     ignorepointer 1
+     position 110 104
+     size 208 19
      hexactpos 1
      vexactpos 1
      hexactsize 1
@@ -1726,7 +1743,7 @@ FrameWidgetClass OZG_BWinNardy {
     }
     ButtonWidgetClass OZG_BBtnThrow {
      visible 1
-     position 12 92
+     position 12 154
      size 306 44
      hexactpos 1
      vexactpos 1
@@ -1881,19 +1898,31 @@ FrameWidgetClass OZG_BWinNardy {
       }
      }
     }
-    ButtonWidgetClass OZG_BBtnSwap {
+    ButtonWidgetClass OZG_BCanHit {
      visible 1
-     position 12 146
+     position 12 44
+     size 84 101
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     text ""
+     priority 7
+     style Empty
+    }
+    ButtonWidgetClass OZG_DSwapBtn {
+     visible 0
+     position 12 208
      size 306 38
      hexactpos 1
      vexactpos 1
      hexactsize 1
      vexactsize 1
      text ""
-     priority 6
+     priority 30
      style Empty
      {
-      FrameWidgetClass OZG_BBtnSwapBox {
+      FrameWidgetClass OZG_DSwapBtnBox {
        ignorepointer 1
        clipchildren 0
        position 0 0
@@ -1904,7 +1933,7 @@ FrameWidgetClass OZG_BWinNardy {
        vexactsize 1
        priority 0
        {
-        FrameWidgetClass OZG_BBtnSwapBoxEdge {
+        FrameWidgetClass OZG_DSwapBtnBoxEdge {
          ignorepointer 1
          clipchildren 0
          position 0 0
@@ -1915,9 +1944,9 @@ FrameWidgetClass OZG_BWinNardy {
          vexactsize 1
          priority 0
          {
-          ImageWidgetClass OZG_BBtnSwapBoxEdgeTL {
+          ImageWidgetClass OZG_DSwapBtnBoxEdgeTL {
            ignorepointer 1
-           color 0.420 0.322 0.200 1
+           color 0.239 0.176 0.114 1
            position 0 0
            size 4 4
            hexactpos 1
@@ -1931,9 +1960,9 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          ImageWidgetClass OZG_BBtnSwapBoxEdgeTR {
+          ImageWidgetClass OZG_DSwapBtnBoxEdgeTR {
            ignorepointer 1
-           color 0.420 0.322 0.200 1
+           color 0.239 0.176 0.114 1
            position 302 0
            size 4 4
            hexactpos 1
@@ -1947,9 +1976,9 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          ImageWidgetClass OZG_BBtnSwapBoxEdgeBL {
+          ImageWidgetClass OZG_DSwapBtnBoxEdgeBL {
            ignorepointer 1
-           color 0.420 0.322 0.200 1
+           color 0.239 0.176 0.114 1
            position 0 34
            size 4 4
            hexactpos 1
@@ -1963,9 +1992,9 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          ImageWidgetClass OZG_BBtnSwapBoxEdgeBR {
+          ImageWidgetClass OZG_DSwapBtnBoxEdgeBR {
            ignorepointer 1
-           color 0.420 0.322 0.200 1
+           color 0.239 0.176 0.114 1
            position 302 34
            size 4 4
            hexactpos 1
@@ -1979,7 +2008,7 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          PanelWidgetClass OZG_BBtnSwapBoxEdgeM {
+          PanelWidgetClass OZG_DSwapBtnBoxEdgeM {
            ignorepointer 1
            position 0 3
            size 306 32
@@ -1987,11 +2016,11 @@ FrameWidgetClass OZG_BWinNardy {
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.420 0.322 0.200 1
+           color 0.239 0.176 0.114 1
            style rover_sim_colorable
            priority 0
           }
-          PanelWidgetClass OZG_BBtnSwapBoxEdgeT {
+          PanelWidgetClass OZG_DSwapBtnBoxEdgeT {
            ignorepointer 1
            position 3 0
            size 300 5
@@ -1999,11 +2028,11 @@ FrameWidgetClass OZG_BWinNardy {
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.420 0.322 0.200 1
+           color 0.239 0.176 0.114 1
            style rover_sim_colorable
            priority 0
           }
-          PanelWidgetClass OZG_BBtnSwapBoxEdgeB {
+          PanelWidgetClass OZG_DSwapBtnBoxEdgeB {
            ignorepointer 1
            position 3 33
            size 300 5
@@ -2011,13 +2040,13 @@ FrameWidgetClass OZG_BWinNardy {
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.420 0.322 0.200 1
+           color 0.239 0.176 0.114 1
            style rover_sim_colorable
            priority 0
           }
          }
         }
-        FrameWidgetClass OZG_BBtnSwapBoxBg {
+        FrameWidgetClass OZG_DSwapBtnBoxBg {
          ignorepointer 1
          clipchildren 0
          position 1 1
@@ -2028,7 +2057,7 @@ FrameWidgetClass OZG_BWinNardy {
          vexactsize 1
          priority 1
          {
-          ImageWidgetClass OZG_BBtnSwapBoxBgTL {
+          ImageWidgetClass OZG_DSwapBtnBoxBgTL {
            ignorepointer 1
            color 0.176 0.129 0.090 1
            position 0 0
@@ -2044,7 +2073,7 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          ImageWidgetClass OZG_BBtnSwapBoxBgTR {
+          ImageWidgetClass OZG_DSwapBtnBoxBgTR {
            ignorepointer 1
            color 0.176 0.129 0.090 1
            position 301 0
@@ -2060,7 +2089,7 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          ImageWidgetClass OZG_BBtnSwapBoxBgBL {
+          ImageWidgetClass OZG_DSwapBtnBoxBgBL {
            ignorepointer 1
            color 0.176 0.129 0.090 1
            position 0 33
@@ -2076,7 +2105,7 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          ImageWidgetClass OZG_BBtnSwapBoxBgBR {
+          ImageWidgetClass OZG_DSwapBtnBoxBgBR {
            ignorepointer 1
            color 0.176 0.129 0.090 1
            position 301 33
@@ -2092,7 +2121,7 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          PanelWidgetClass OZG_BBtnSwapBoxBgM {
+          PanelWidgetClass OZG_DSwapBtnBoxBgM {
            ignorepointer 1
            position 0 2
            size 304 32
@@ -2104,7 +2133,7 @@ FrameWidgetClass OZG_BWinNardy {
            style rover_sim_colorable
            priority 0
           }
-          PanelWidgetClass OZG_BBtnSwapBoxBgT {
+          PanelWidgetClass OZG_DSwapBtnBoxBgT {
            ignorepointer 1
            position 2 0
            size 300 4
@@ -2116,7 +2145,7 @@ FrameWidgetClass OZG_BWinNardy {
            style rover_sim_colorable
            priority 0
           }
-          PanelWidgetClass OZG_BBtnSwapBoxBgB {
+          PanelWidgetClass OZG_DSwapBtnBoxBgB {
            ignorepointer 1
            position 2 32
            size 300 4
@@ -2132,334 +2161,521 @@ FrameWidgetClass OZG_BWinNardy {
         }
        }
       }
-      TextWidgetClass OZG_BBtnSwapText {
+      TextWidgetClass OZG_DSwapBtnText {
        ignorepointer 1
-       position 0 0
-       size 306 38
+       position 12 11
+       size 282 16
        hexactpos 1
        vexactpos 1
        hexactsize 1
        vexactsize 1
-       color 0.937 0.894 0.800 1
+       color 0.627 0.561 0.451 1
        text "#STR_OZG_BWIN_SWAP"
        font "gui/fonts/etelkatextpro22"
        "exact text" 1
        "exact text size" 15
-       "text halign" center
+       "text halign" left
        "text valign" center
-       priority 3
+       priority 2
+      }
+      TextWidgetClass OZG_DSwapBtnNote {
+       ignorepointer 1
+       position 12 11.5
+       size 282 15
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.722 0.647 0.522 1
+       text ""
+       font "gui/fonts/etelkatextpro22"
+       "exact text" 1
+       "exact text size" 14
+       "text halign" right
+       "text valign" center
+       priority 2
       }
      }
     }
    }
   }
-  FrameWidgetClass OZG_BSwap {
+  FrameWidgetClass OZG_DTable {
    ignorepointer 1
    clipchildren 0
-   position 16 448
-   size 330 110
+   position 0 0
+   size 1600 900
    hexactpos 1
    vexactpos 1
    hexactsize 1
    vexactsize 1
-   priority 12
+   priority 45
+  }
+  FrameWidgetClass OZG_DToast {
+   ignorepointer 1
+   clipchildren 0
+   position 622 30
+   size 356 60
+   hexactpos 1
+   vexactpos 1
+   hexactsize 1
+   vexactsize 1
+   priority 70
    visible 0
    {
-    FrameWidgetClass OZG_BSwapBox {
+    FrameWidgetClass OZG_DToastEdge {
      ignorepointer 1
      clipchildren 0
-     position 0 0
-     size 330 110
+     position -2 -2
+     size 360 64
      hexactpos 1
      vexactpos 1
      hexactsize 1
      vexactsize 1
      priority 0
      {
-      FrameWidgetClass OZG_BSwapBoxEdge {
+      ImageWidgetClass OZG_DToastEdgeTL {
        ignorepointer 1
-       clipchildren 0
+       color 0.420 0.322 0.200 1
        position 0 0
-       size 330 110
+       size 8 8
        hexactpos 1
        vexactpos 1
        hexactsize 1
        vexactsize 1
        priority 0
-       {
-        ImageWidgetClass OZG_BSwapBoxEdgeTL {
-         ignorepointer 1
-         color 0.420 0.322 0.200 1
-         position 0 0
-         size 6 6
-         hexactpos 1
-         vexactpos 1
-         hexactsize 1
-         vexactsize 1
-         priority 0
-         image0 "OpenZone_Games/gui/textures/ozg_rc_tl_ca.paa"
-         mode blend
-         "src alpha" 1
-         "stretch mode" stretch_w_h
-         "clamp mode" clamp
-        }
-        ImageWidgetClass OZG_BSwapBoxEdgeTR {
-         ignorepointer 1
-         color 0.420 0.322 0.200 1
-         position 324 0
-         size 6 6
-         hexactpos 1
-         vexactpos 1
-         hexactsize 1
-         vexactsize 1
-         priority 0
-         image0 "OpenZone_Games/gui/textures/ozg_rc_tr_ca.paa"
-         mode blend
-         "src alpha" 1
-         "stretch mode" stretch_w_h
-         "clamp mode" clamp
-        }
-        ImageWidgetClass OZG_BSwapBoxEdgeBL {
-         ignorepointer 1
-         color 0.420 0.322 0.200 1
-         position 0 104
-         size 6 6
-         hexactpos 1
-         vexactpos 1
-         hexactsize 1
-         vexactsize 1
-         priority 0
-         image0 "OpenZone_Games/gui/textures/ozg_rc_bl_ca.paa"
-         mode blend
-         "src alpha" 1
-         "stretch mode" stretch_w_h
-         "clamp mode" clamp
-        }
-        ImageWidgetClass OZG_BSwapBoxEdgeBR {
-         ignorepointer 1
-         color 0.420 0.322 0.200 1
-         position 324 104
-         size 6 6
-         hexactpos 1
-         vexactpos 1
-         hexactsize 1
-         vexactsize 1
-         priority 0
-         image0 "OpenZone_Games/gui/textures/ozg_rc_br_ca.paa"
-         mode blend
-         "src alpha" 1
-         "stretch mode" stretch_w_h
-         "clamp mode" clamp
-        }
-        PanelWidgetClass OZG_BSwapBoxEdgeM {
-         ignorepointer 1
-         position 0 5
-         size 330 100
-         hexactpos 1
-         vexactpos 1
-         hexactsize 1
-         vexactsize 1
-         color 0.420 0.322 0.200 1
-         style rover_sim_colorable
-         priority 0
-        }
-        PanelWidgetClass OZG_BSwapBoxEdgeT {
-         ignorepointer 1
-         position 5 0
-         size 320 7
-         hexactpos 1
-         vexactpos 1
-         hexactsize 1
-         vexactsize 1
-         color 0.420 0.322 0.200 1
-         style rover_sim_colorable
-         priority 0
-        }
-        PanelWidgetClass OZG_BSwapBoxEdgeB {
-         ignorepointer 1
-         position 5 103
-         size 320 7
-         hexactpos 1
-         vexactpos 1
-         hexactsize 1
-         vexactsize 1
-         color 0.420 0.322 0.200 1
-         style rover_sim_colorable
-         priority 0
-        }
-       }
+       image0 "OpenZone_Games/gui/textures/ozg_rc_tl_ca.paa"
+       mode blend
+       "src alpha" 1
+       "stretch mode" stretch_w_h
+       "clamp mode" clamp
       }
-      FrameWidgetClass OZG_BSwapBoxBg {
+      ImageWidgetClass OZG_DToastEdgeTR {
+       ignorepointer 1
+       color 0.420 0.322 0.200 1
+       position 352 0
+       size 8 8
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 0
+       image0 "OpenZone_Games/gui/textures/ozg_rc_tr_ca.paa"
+       mode blend
+       "src alpha" 1
+       "stretch mode" stretch_w_h
+       "clamp mode" clamp
+      }
+      ImageWidgetClass OZG_DToastEdgeBL {
+       ignorepointer 1
+       color 0.420 0.322 0.200 1
+       position 0 56
+       size 8 8
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 0
+       image0 "OpenZone_Games/gui/textures/ozg_rc_bl_ca.paa"
+       mode blend
+       "src alpha" 1
+       "stretch mode" stretch_w_h
+       "clamp mode" clamp
+      }
+      ImageWidgetClass OZG_DToastEdgeBR {
+       ignorepointer 1
+       color 0.420 0.322 0.200 1
+       position 352 56
+       size 8 8
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 0
+       image0 "OpenZone_Games/gui/textures/ozg_rc_br_ca.paa"
+       mode blend
+       "src alpha" 1
+       "stretch mode" stretch_w_h
+       "clamp mode" clamp
+      }
+      PanelWidgetClass OZG_DToastEdgeM {
+       ignorepointer 1
+       position 0 7
+       size 360 50
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.420 0.322 0.200 1
+       style rover_sim_colorable
+       priority 0
+      }
+      PanelWidgetClass OZG_DToastEdgeT {
+       ignorepointer 1
+       position 7 0
+       size 346 9
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.420 0.322 0.200 1
+       style rover_sim_colorable
+       priority 0
+      }
+      PanelWidgetClass OZG_DToastEdgeB {
+       ignorepointer 1
+       position 7 55
+       size 346 9
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.420 0.322 0.200 1
+       style rover_sim_colorable
+       priority 0
+      }
+     }
+    }
+    FrameWidgetClass OZG_DToastBg {
+     ignorepointer 1
+     clipchildren 0
+     position 0 0
+     size 356 60
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 1
+     {
+      ImageWidgetClass OZG_DToastBgTL {
+       ignorepointer 1
+       color 0.110 0.071 0.039 1
+       position 0 0
+       size 6 6
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 0
+       image0 "OpenZone_Games/gui/textures/ozg_rc_tl_ca.paa"
+       mode blend
+       "src alpha" 1
+       "stretch mode" stretch_w_h
+       "clamp mode" clamp
+      }
+      ImageWidgetClass OZG_DToastBgTR {
+       ignorepointer 1
+       color 0.110 0.071 0.039 1
+       position 350 0
+       size 6 6
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 0
+       image0 "OpenZone_Games/gui/textures/ozg_rc_tr_ca.paa"
+       mode blend
+       "src alpha" 1
+       "stretch mode" stretch_w_h
+       "clamp mode" clamp
+      }
+      ImageWidgetClass OZG_DToastBgBL {
+       ignorepointer 1
+       color 0.110 0.071 0.039 1
+       position 0 54
+       size 6 6
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 0
+       image0 "OpenZone_Games/gui/textures/ozg_rc_bl_ca.paa"
+       mode blend
+       "src alpha" 1
+       "stretch mode" stretch_w_h
+       "clamp mode" clamp
+      }
+      ImageWidgetClass OZG_DToastBgBR {
+       ignorepointer 1
+       color 0.110 0.071 0.039 1
+       position 350 54
+       size 6 6
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 0
+       image0 "OpenZone_Games/gui/textures/ozg_rc_br_ca.paa"
+       mode blend
+       "src alpha" 1
+       "stretch mode" stretch_w_h
+       "clamp mode" clamp
+      }
+      PanelWidgetClass OZG_DToastBgM {
+       ignorepointer 1
+       position 0 5
+       size 356 50
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.110 0.071 0.039 1
+       style rover_sim_colorable
+       priority 0
+      }
+      PanelWidgetClass OZG_DToastBgT {
+       ignorepointer 1
+       position 5 0
+       size 346 7
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.110 0.071 0.039 1
+       style rover_sim_colorable
+       priority 0
+      }
+      PanelWidgetClass OZG_DToastBgB {
+       ignorepointer 1
+       position 5 53
+       size 346 7
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.110 0.071 0.039 1
+       style rover_sim_colorable
+       priority 0
+      }
+     }
+    }
+    TextWidgetClass OZG_DToastCap {
+     ignorepointer 1
+     position 14 10
+     size 328 15
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     color 1.000 0.541 0.239 1
+     text ""
+     font "gui/fonts/MetronBook-Bold22"
+     "exact text" 1
+     "exact text size" 14
+     "text halign" center
+     "text valign" center
+     priority 3
+    }
+    TextWidgetClass OZG_DToastText0 {
+     ignorepointer 1
+     position 14 10
+     size 328 21
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     color 0.965 0.910 0.839 1
+     text ""
+     font "gui/fonts/etelkatextpro22"
+     "exact text" 1
+     "exact text size" 19
+     "text halign" center
+     "text valign" center
+     priority 3
+    }
+    TextWidgetClass OZG_DToastText1 {
+     ignorepointer 1
+     position 14 31
+     size 328 21
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     color 0.965 0.910 0.839 1
+     text ""
+     font "gui/fonts/etelkatextpro22"
+     "exact text" 1
+     "exact text size" 19
+     "text halign" center
+     "text valign" center
+     priority 3
+    }
+    TextWidgetClass OZG_DToastText2 {
+     ignorepointer 1
+     position 14 52
+     size 328 21
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     color 0.965 0.910 0.839 1
+     text ""
+     font "gui/fonts/etelkatextpro22"
+     "exact text" 1
+     "exact text size" 19
+     "text halign" center
+     "text valign" center
+     priority 3
+    }
+    TextWidgetClass OZG_DToastSub0 {
+     ignorepointer 1
+     position 14 40
+     size 328 16
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     color 0.722 0.647 0.522 1
+     text ""
+     font "gui/fonts/etelkatextpro22"
+     "exact text" 1
+     "exact text size" 14
+     "text halign" center
+     "text valign" center
+     priority 3
+    }
+    TextWidgetClass OZG_DToastSub1 {
+     ignorepointer 1
+     position 14 56
+     size 328 16
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     color 0.722 0.647 0.522 1
+     text ""
+     font "gui/fonts/etelkatextpro22"
+     "exact text" 1
+     "exact text size" 14
+     "text halign" center
+     "text valign" center
+     priority 3
+    }
+    TextWidgetClass OZG_DToastSub2 {
+     ignorepointer 1
+     position 14 72
+     size 328 16
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     color 0.722 0.647 0.522 1
+     text ""
+     font "gui/fonts/etelkatextpro22"
+     "exact text" 1
+     "exact text size" 14
+     "text halign" center
+     "text valign" center
+     priority 3
+    }
+    TextWidgetClass OZG_DToastSub3 {
+     ignorepointer 1
+     position 14 88
+     size 328 16
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     color 0.722 0.647 0.522 1
+     text ""
+     font "gui/fonts/etelkatextpro22"
+     "exact text" 1
+     "exact text size" 14
+     "text halign" center
+     "text valign" center
+     priority 3
+    }
+   }
+  }
+  FrameWidgetClass OZG_DSwapDlg {
+   ignorepointer 1
+   clipchildren 0
+   position 360 10
+   size 880 880
+   hexactpos 1
+   vexactpos 1
+   hexactsize 1
+   vexactsize 1
+   priority 85
+   visible 0
+   {
+    PanelWidgetClass OZG_DSwDim {
+     ignorepointer 1
+     position 0 0
+     size 880 880
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     color 0.031 0.02 0.012 0.83
+     style rover_sim_colorable
+     priority 0
+    }
+    ButtonWidgetClass OZG_DSwBack {
+     visible 1
+     position 0 0
+     size 880 880
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     text ""
+     priority 1
+     style Empty
+    }
+    FrameWidgetClass OZG_DSwPane {
+     ignorepointer 1
+     clipchildren 0
+     position 80 240
+     size 720 400
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     priority 2
+     {
+      ImageWidgetClass OZG_DSwShadow {
+       ignorepointer 1
+       color 0 0 0 0.65
+       position -65.45 -18.36
+       size 850.91 472.73
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 0
+       image0 "OpenZone_Games/gui/textures/ozg_bshadow_ca.paa"
+       mode blend
+       "src alpha" 1
+       "stretch mode" stretch_w_h
+       "clamp mode" clamp
+      }
+      FrameWidgetClass OZG_DSwBox {
        ignorepointer 1
        clipchildren 0
-       position 1 1
-       size 328 108
+       position 0 0
+       size 720 400
        hexactpos 1
        vexactpos 1
        hexactsize 1
        vexactsize 1
        priority 1
        {
-        ImageWidgetClass OZG_BSwapBoxBgTL {
-         ignorepointer 1
-         color 0.165 0.114 0.071 1
-         position 0 0
-         size 5 5
-         hexactpos 1
-         vexactpos 1
-         hexactsize 1
-         vexactsize 1
-         priority 0
-         image0 "OpenZone_Games/gui/textures/ozg_rc_tl_ca.paa"
-         mode blend
-         "src alpha" 1
-         "stretch mode" stretch_w_h
-         "clamp mode" clamp
-        }
-        ImageWidgetClass OZG_BSwapBoxBgTR {
-         ignorepointer 1
-         color 0.165 0.114 0.071 1
-         position 323 0
-         size 5 5
-         hexactpos 1
-         vexactpos 1
-         hexactsize 1
-         vexactsize 1
-         priority 0
-         image0 "OpenZone_Games/gui/textures/ozg_rc_tr_ca.paa"
-         mode blend
-         "src alpha" 1
-         "stretch mode" stretch_w_h
-         "clamp mode" clamp
-        }
-        ImageWidgetClass OZG_BSwapBoxBgBL {
-         ignorepointer 1
-         color 0.165 0.114 0.071 1
-         position 0 103
-         size 5 5
-         hexactpos 1
-         vexactpos 1
-         hexactsize 1
-         vexactsize 1
-         priority 0
-         image0 "OpenZone_Games/gui/textures/ozg_rc_bl_ca.paa"
-         mode blend
-         "src alpha" 1
-         "stretch mode" stretch_w_h
-         "clamp mode" clamp
-        }
-        ImageWidgetClass OZG_BSwapBoxBgBR {
-         ignorepointer 1
-         color 0.165 0.114 0.071 1
-         position 323 103
-         size 5 5
-         hexactpos 1
-         vexactpos 1
-         hexactsize 1
-         vexactsize 1
-         priority 0
-         image0 "OpenZone_Games/gui/textures/ozg_rc_br_ca.paa"
-         mode blend
-         "src alpha" 1
-         "stretch mode" stretch_w_h
-         "clamp mode" clamp
-        }
-        PanelWidgetClass OZG_BSwapBoxBgM {
-         ignorepointer 1
-         position 0 4
-         size 328 100
-         hexactpos 1
-         vexactpos 1
-         hexactsize 1
-         vexactsize 1
-         color 0.165 0.114 0.071 1
-         style rover_sim_colorable
-         priority 0
-        }
-        PanelWidgetClass OZG_BSwapBoxBgT {
-         ignorepointer 1
-         position 4 0
-         size 320 6
-         hexactpos 1
-         vexactpos 1
-         hexactsize 1
-         vexactsize 1
-         color 0.165 0.114 0.071 1
-         style rover_sim_colorable
-         priority 0
-        }
-        PanelWidgetClass OZG_BSwapBoxBgB {
-         ignorepointer 1
-         position 4 102
-         size 320 6
-         hexactpos 1
-         vexactpos 1
-         hexactsize 1
-         vexactsize 1
-         color 0.165 0.114 0.071 1
-         style rover_sim_colorable
-         priority 0
-        }
-       }
-      }
-     }
-    }
-    TextWidgetClass OZG_BSwapHint {
-     ignorepointer 1
-     position 12 8
-     size 306 18
-     hexactpos 1
-     vexactpos 1
-     hexactsize 1
-     vexactsize 1
-     color 0.902 0.847 0.737 1
-     text ""
-     font "gui/fonts/etelkatextpro22"
-     "exact text" 1
-     "exact text size" 15
-     "text halign" left
-     "text valign" center
-     priority 3
-    }
-    ButtonWidgetClass OZG_BSwapPick0 {
-     visible 0
-     position 12 32
-     size 149 34
-     hexactpos 1
-     vexactpos 1
-     hexactsize 1
-     vexactsize 1
-     text ""
-     priority 6
-     style Empty
-     {
-      FrameWidgetClass OZG_BSwapPick0Box {
-       ignorepointer 1
-       clipchildren 0
-       position 0 0
-       size 149 34
-       hexactpos 1
-       vexactpos 1
-       hexactsize 1
-       vexactsize 1
-       priority 0
-       {
-        FrameWidgetClass OZG_BSwapPick0BoxEdge {
+        FrameWidgetClass OZG_DSwBoxEdge {
          ignorepointer 1
          clipchildren 0
-         position 0 0
-         size 149 34
+         position -1 -1
+         size 722 402
          hexactpos 1
          vexactpos 1
          hexactsize 1
          vexactsize 1
          priority 0
          {
-          ImageWidgetClass OZG_BSwapPick0BoxEdgeTL {
+          ImageWidgetClass OZG_DSwBoxEdgeTL {
            ignorepointer 1
-           color 0.420 0.322 0.200 1
+           color 0.541 0.416 0.243 1
            position 0 0
-           size 4 4
+           size 9 9
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -2471,11 +2687,11 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          ImageWidgetClass OZG_BSwapPick0BoxEdgeTR {
+          ImageWidgetClass OZG_DSwBoxEdgeTR {
            ignorepointer 1
-           color 0.420 0.322 0.200 1
-           position 145 0
-           size 4 4
+           color 0.541 0.416 0.243 1
+           position 713 0
+           size 9 9
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -2487,11 +2703,11 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          ImageWidgetClass OZG_BSwapPick0BoxEdgeBL {
+          ImageWidgetClass OZG_DSwBoxEdgeBL {
            ignorepointer 1
-           color 0.420 0.322 0.200 1
-           position 0 30
-           size 4 4
+           color 0.541 0.416 0.243 1
+           position 0 393
+           size 9 9
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -2503,11 +2719,11 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          ImageWidgetClass OZG_BSwapPick0BoxEdgeBR {
+          ImageWidgetClass OZG_DSwBoxEdgeBR {
            ignorepointer 1
-           color 0.420 0.322 0.200 1
-           position 145 30
-           size 4 4
+           color 0.541 0.416 0.243 1
+           position 713 393
+           size 9 9
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -2519,60 +2735,60 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          PanelWidgetClass OZG_BSwapPick0BoxEdgeM {
+          PanelWidgetClass OZG_DSwBoxEdgeM {
            ignorepointer 1
-           position 0 3
-           size 149 28
+           position 0 8
+           size 722 386
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.420 0.322 0.200 1
+           color 0.541 0.416 0.243 1
            style rover_sim_colorable
            priority 0
           }
-          PanelWidgetClass OZG_BSwapPick0BoxEdgeT {
+          PanelWidgetClass OZG_DSwBoxEdgeT {
            ignorepointer 1
-           position 3 0
-           size 143 5
+           position 8 0
+           size 706 10
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.420 0.322 0.200 1
+           color 0.541 0.416 0.243 1
            style rover_sim_colorable
            priority 0
           }
-          PanelWidgetClass OZG_BSwapPick0BoxEdgeB {
+          PanelWidgetClass OZG_DSwBoxEdgeB {
            ignorepointer 1
-           position 3 29
-           size 143 5
+           position 8 392
+           size 706 10
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.420 0.322 0.200 1
+           color 0.541 0.416 0.243 1
            style rover_sim_colorable
            priority 0
           }
          }
         }
-        FrameWidgetClass OZG_BSwapPick0BoxBg {
+        FrameWidgetClass OZG_DSwBoxBg {
          ignorepointer 1
          clipchildren 0
-         position 1 1
-         size 147 32
+         position 0 0
+         size 720 400
          hexactpos 1
          vexactpos 1
          hexactsize 1
          vexactsize 1
          priority 1
          {
-          ImageWidgetClass OZG_BSwapPick0BoxBgTL {
+          ImageWidgetClass OZG_DSwBoxBgTL {
            ignorepointer 1
-           color 0.200 0.145 0.102 1
+           color 0.118 0.086 0.063 1
            position 0 0
-           size 3 3
+           size 8 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -2584,11 +2800,11 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          ImageWidgetClass OZG_BSwapPick0BoxBgTR {
+          ImageWidgetClass OZG_DSwBoxBgTR {
            ignorepointer 1
-           color 0.200 0.145 0.102 1
-           position 144 0
-           size 3 3
+           color 0.118 0.086 0.063 1
+           position 712 0
+           size 8 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -2600,11 +2816,11 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          ImageWidgetClass OZG_BSwapPick0BoxBgBL {
+          ImageWidgetClass OZG_DSwBoxBgBL {
            ignorepointer 1
-           color 0.200 0.145 0.102 1
-           position 0 29
-           size 3 3
+           color 0.118 0.086 0.063 1
+           position 0 392
+           size 8 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -2616,11 +2832,11 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          ImageWidgetClass OZG_BSwapPick0BoxBgBR {
+          ImageWidgetClass OZG_DSwBoxBgBR {
            ignorepointer 1
-           color 0.200 0.145 0.102 1
-           position 144 29
-           size 3 3
+           color 0.118 0.086 0.063 1
+           position 712 392
+           size 8 8
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -2632,39 +2848,39 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          PanelWidgetClass OZG_BSwapPick0BoxBgM {
+          PanelWidgetClass OZG_DSwBoxBgM {
            ignorepointer 1
-           position 0 2
-           size 147 28
+           position 0 7
+           size 720 386
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.200 0.145 0.102 1
+           color 0.118 0.086 0.063 1
            style rover_sim_colorable
            priority 0
           }
-          PanelWidgetClass OZG_BSwapPick0BoxBgT {
+          PanelWidgetClass OZG_DSwBoxBgT {
            ignorepointer 1
-           position 2 0
-           size 143 4
+           position 7 0
+           size 706 9
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.200 0.145 0.102 1
+           color 0.118 0.086 0.063 1
            style rover_sim_colorable
            priority 0
           }
-          PanelWidgetClass OZG_BSwapPick0BoxBgB {
+          PanelWidgetClass OZG_DSwBoxBgB {
            ignorepointer 1
-           position 2 28
-           size 143 4
+           position 7 391
+           size 706 9
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.200 0.145 0.102 1
+           color 0.118 0.086 0.063 1
            style rover_sim_colorable
            priority 0
           }
@@ -2672,334 +2888,287 @@ FrameWidgetClass OZG_BWinNardy {
         }
        }
       }
-      TextWidgetClass OZG_BSwapPick0Text {
+      TextWidgetClass OZG_DSwTitle {
        ignorepointer 1
-       position 0 0
-       size 149 34
+       position 18 16
+       size 300 30
        hexactpos 1
        vexactpos 1
        hexactsize 1
        vexactsize 1
        color 0.937 0.894 0.800 1
-       text ""
-       font "gui/fonts/etelkatextpro22"
+       text "#STR_OZG_DWIN_SWAP_TITLE"
+       font "gui/fonts/AmorSerifPro-Bold48"
        "exact text" 1
-       "exact text size" 15
-       "text halign" center
+       "exact text size" 25
+       "text halign" left
        "text valign" center
        priority 3
       }
-     }
-    }
-    ButtonWidgetClass OZG_BSwapPick1 {
-     visible 0
-     position 169 32
-     size 149 34
-     hexactpos 1
-     vexactpos 1
-     hexactsize 1
-     vexactsize 1
-     text ""
-     priority 6
-     style Empty
-     {
-      FrameWidgetClass OZG_BSwapPick1Box {
+      TextWidgetClass OZG_DSwCount {
        ignorepointer 1
-       clipchildren 0
-       position 0 0
-       size 149 34
+       position 200 23
+       size 400 16
        hexactpos 1
        vexactpos 1
        hexactsize 1
        vexactsize 1
-       priority 0
+       color 0.722 0.647 0.522 1
+       text ""
+       font "gui/fonts/etelkatextpro22"
+       "exact text" 1
+       "exact text size" 15
+       "text halign" left
+       "text valign" center
+       priority 3
+      }
+      ButtonWidgetClass OZG_DSwClose {
+       visible 1
+       position 670 16
+       size 32 30
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       text ""
+       priority 6
+       style Empty
        {
-        FrameWidgetClass OZG_BSwapPick1BoxEdge {
+        FrameWidgetClass OZG_DSwCloseBox {
          ignorepointer 1
          clipchildren 0
          position 0 0
-         size 149 34
+         size 32 30
          hexactpos 1
          vexactpos 1
          hexactsize 1
          vexactsize 1
          priority 0
          {
-          ImageWidgetClass OZG_BSwapPick1BoxEdgeTL {
+          FrameWidgetClass OZG_DSwCloseBoxBg {
            ignorepointer 1
-           color 0.420 0.322 0.200 1
+           clipchildren 0
            position 0 0
-           size 4 4
+           size 32 30
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
            priority 0
-           image0 "OpenZone_Games/gui/textures/ozg_rc_tl_ca.paa"
-           mode blend
-           "src alpha" 1
-           "stretch mode" stretch_w_h
-           "clamp mode" clamp
-          }
-          ImageWidgetClass OZG_BSwapPick1BoxEdgeTR {
-           ignorepointer 1
-           color 0.420 0.322 0.200 1
-           position 145 0
-           size 4 4
-           hexactpos 1
-           vexactpos 1
-           hexactsize 1
-           vexactsize 1
-           priority 0
-           image0 "OpenZone_Games/gui/textures/ozg_rc_tr_ca.paa"
-           mode blend
-           "src alpha" 1
-           "stretch mode" stretch_w_h
-           "clamp mode" clamp
-          }
-          ImageWidgetClass OZG_BSwapPick1BoxEdgeBL {
-           ignorepointer 1
-           color 0.420 0.322 0.200 1
-           position 0 30
-           size 4 4
-           hexactpos 1
-           vexactpos 1
-           hexactsize 1
-           vexactsize 1
-           priority 0
-           image0 "OpenZone_Games/gui/textures/ozg_rc_bl_ca.paa"
-           mode blend
-           "src alpha" 1
-           "stretch mode" stretch_w_h
-           "clamp mode" clamp
-          }
-          ImageWidgetClass OZG_BSwapPick1BoxEdgeBR {
-           ignorepointer 1
-           color 0.420 0.322 0.200 1
-           position 145 30
-           size 4 4
-           hexactpos 1
-           vexactpos 1
-           hexactsize 1
-           vexactsize 1
-           priority 0
-           image0 "OpenZone_Games/gui/textures/ozg_rc_br_ca.paa"
-           mode blend
-           "src alpha" 1
-           "stretch mode" stretch_w_h
-           "clamp mode" clamp
-          }
-          PanelWidgetClass OZG_BSwapPick1BoxEdgeM {
-           ignorepointer 1
-           position 0 3
-           size 149 28
-           hexactpos 1
-           vexactpos 1
-           hexactsize 1
-           vexactsize 1
-           color 0.420 0.322 0.200 1
-           style rover_sim_colorable
-           priority 0
-          }
-          PanelWidgetClass OZG_BSwapPick1BoxEdgeT {
-           ignorepointer 1
-           position 3 0
-           size 143 5
-           hexactpos 1
-           vexactpos 1
-           hexactsize 1
-           vexactsize 1
-           color 0.420 0.322 0.200 1
-           style rover_sim_colorable
-           priority 0
-          }
-          PanelWidgetClass OZG_BSwapPick1BoxEdgeB {
-           ignorepointer 1
-           position 3 29
-           size 143 5
-           hexactpos 1
-           vexactpos 1
-           hexactsize 1
-           vexactsize 1
-           color 0.420 0.322 0.200 1
-           style rover_sim_colorable
-           priority 0
+           {
+            ImageWidgetClass OZG_DSwCloseBoxBgTL {
+             ignorepointer 1
+             color 0.200 0.145 0.102 1
+             position 0 0
+             size 4 4
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             priority 0
+             image0 "OpenZone_Games/gui/textures/ozg_rc_tl_ca.paa"
+             mode blend
+             "src alpha" 1
+             "stretch mode" stretch_w_h
+             "clamp mode" clamp
+            }
+            ImageWidgetClass OZG_DSwCloseBoxBgTR {
+             ignorepointer 1
+             color 0.200 0.145 0.102 1
+             position 28 0
+             size 4 4
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             priority 0
+             image0 "OpenZone_Games/gui/textures/ozg_rc_tr_ca.paa"
+             mode blend
+             "src alpha" 1
+             "stretch mode" stretch_w_h
+             "clamp mode" clamp
+            }
+            ImageWidgetClass OZG_DSwCloseBoxBgBL {
+             ignorepointer 1
+             color 0.200 0.145 0.102 1
+             position 0 26
+             size 4 4
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             priority 0
+             image0 "OpenZone_Games/gui/textures/ozg_rc_bl_ca.paa"
+             mode blend
+             "src alpha" 1
+             "stretch mode" stretch_w_h
+             "clamp mode" clamp
+            }
+            ImageWidgetClass OZG_DSwCloseBoxBgBR {
+             ignorepointer 1
+             color 0.200 0.145 0.102 1
+             position 28 26
+             size 4 4
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             priority 0
+             image0 "OpenZone_Games/gui/textures/ozg_rc_br_ca.paa"
+             mode blend
+             "src alpha" 1
+             "stretch mode" stretch_w_h
+             "clamp mode" clamp
+            }
+            PanelWidgetClass OZG_DSwCloseBoxBgM {
+             ignorepointer 1
+             position 0 3
+             size 32 24
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             color 0.200 0.145 0.102 1
+             style rover_sim_colorable
+             priority 0
+            }
+            PanelWidgetClass OZG_DSwCloseBoxBgT {
+             ignorepointer 1
+             position 3 0
+             size 26 5
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             color 0.200 0.145 0.102 1
+             style rover_sim_colorable
+             priority 0
+            }
+            PanelWidgetClass OZG_DSwCloseBoxBgB {
+             ignorepointer 1
+             position 3 25
+             size 26 5
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             color 0.200 0.145 0.102 1
+             style rover_sim_colorable
+             priority 0
+            }
+           }
           }
          }
         }
-        FrameWidgetClass OZG_BSwapPick1BoxBg {
+        ImageWidgetClass OZG_DSwCloseX {
          ignorepointer 1
-         clipchildren 0
-         position 1 1
-         size 147 32
+         color 0.902 0.847 0.737 1
+         position 10 9
+         size 12 12
          hexactpos 1
          vexactpos 1
          hexactsize 1
          vexactsize 1
-         priority 1
-         {
-          ImageWidgetClass OZG_BSwapPick1BoxBgTL {
-           ignorepointer 1
-           color 0.200 0.145 0.102 1
-           position 0 0
-           size 3 3
-           hexactpos 1
-           vexactpos 1
-           hexactsize 1
-           vexactsize 1
-           priority 0
-           image0 "OpenZone_Games/gui/textures/ozg_rc_tl_ca.paa"
-           mode blend
-           "src alpha" 1
-           "stretch mode" stretch_w_h
-           "clamp mode" clamp
-          }
-          ImageWidgetClass OZG_BSwapPick1BoxBgTR {
-           ignorepointer 1
-           color 0.200 0.145 0.102 1
-           position 144 0
-           size 3 3
-           hexactpos 1
-           vexactpos 1
-           hexactsize 1
-           vexactsize 1
-           priority 0
-           image0 "OpenZone_Games/gui/textures/ozg_rc_tr_ca.paa"
-           mode blend
-           "src alpha" 1
-           "stretch mode" stretch_w_h
-           "clamp mode" clamp
-          }
-          ImageWidgetClass OZG_BSwapPick1BoxBgBL {
-           ignorepointer 1
-           color 0.200 0.145 0.102 1
-           position 0 29
-           size 3 3
-           hexactpos 1
-           vexactpos 1
-           hexactsize 1
-           vexactsize 1
-           priority 0
-           image0 "OpenZone_Games/gui/textures/ozg_rc_bl_ca.paa"
-           mode blend
-           "src alpha" 1
-           "stretch mode" stretch_w_h
-           "clamp mode" clamp
-          }
-          ImageWidgetClass OZG_BSwapPick1BoxBgBR {
-           ignorepointer 1
-           color 0.200 0.145 0.102 1
-           position 144 29
-           size 3 3
-           hexactpos 1
-           vexactpos 1
-           hexactsize 1
-           vexactsize 1
-           priority 0
-           image0 "OpenZone_Games/gui/textures/ozg_rc_br_ca.paa"
-           mode blend
-           "src alpha" 1
-           "stretch mode" stretch_w_h
-           "clamp mode" clamp
-          }
-          PanelWidgetClass OZG_BSwapPick1BoxBgM {
-           ignorepointer 1
-           position 0 2
-           size 147 28
-           hexactpos 1
-           vexactpos 1
-           hexactsize 1
-           vexactsize 1
-           color 0.200 0.145 0.102 1
-           style rover_sim_colorable
-           priority 0
-          }
-          PanelWidgetClass OZG_BSwapPick1BoxBgT {
-           ignorepointer 1
-           position 2 0
-           size 143 4
-           hexactpos 1
-           vexactpos 1
-           hexactsize 1
-           vexactsize 1
-           color 0.200 0.145 0.102 1
-           style rover_sim_colorable
-           priority 0
-          }
-          PanelWidgetClass OZG_BSwapPick1BoxBgB {
-           ignorepointer 1
-           position 2 28
-           size 143 4
-           hexactpos 1
-           vexactpos 1
-           hexactsize 1
-           vexactsize 1
-           color 0.200 0.145 0.102 1
-           style rover_sim_colorable
-           priority 0
-          }
-         }
+         priority 2
+         image0 "OpenZone_Games/gui/textures/ozg_icon_x_ca.paa"
+         mode blend
+         "src alpha" 1
+         "stretch mode" stretch_w_h
+         "clamp mode" clamp
         }
        }
       }
-      TextWidgetClass OZG_BSwapPick1Text {
+      FrameWidgetClass OZG_DSwStep1 {
        ignorepointer 1
-       position 0 0
-       size 149 34
+       clipchildren 0
+       position 18 60
+       size 22 22
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 3
+       {
+        ImageWidgetClass OZG_DSwStep1Bg {
+         ignorepointer 1
+         color 0.788 0.643 0.361 1
+         position 0 0
+         size 22 22
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 0
+         image0 "OpenZone_Games/gui/textures/ozg_disc_ca.paa"
+         mode blend
+         "src alpha" 1
+         "stretch mode" stretch_w_h
+         "clamp mode" clamp
+        }
+        TextWidgetClass OZG_DSwStep1Text {
+         ignorepointer 1
+         position 0 0
+         size 22 22
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         color 0.102 0.071 0.039 1
+         text "1"
+         font "gui/fonts/MetronBook-Bold22"
+         "exact text" 1
+         "exact text size" 15
+         "text halign" center
+         "text valign" center
+         priority 1
+        }
+       }
+      }
+      TextWidgetClass OZG_DSwLabel1 {
+       ignorepointer 1
+       position 48 62.5
+       size 354 17
        hexactpos 1
        vexactpos 1
        hexactsize 1
        vexactsize 1
        color 0.937 0.894 0.800 1
-       text ""
-       font "gui/fonts/etelkatextpro22"
+       text "#STR_OZG_DWIN_SWAP_STEP1"
+       font "gui/fonts/MetronBook-Bold28"
        "exact text" 1
-       "exact text size" 15
-       "text halign" center
+       "exact text size" 16
+       "text halign" left
        "text valign" center
        priority 3
       }
-     }
-    }
-    ButtonWidgetClass OZG_BSwapPick2 {
-     visible 0
-     position 12 70
-     size 149 34
-     hexactpos 1
-     vexactpos 1
-     hexactsize 1
-     vexactsize 1
-     text ""
-     priority 6
-     style Empty
-     {
-      FrameWidgetClass OZG_BSwapPick2Box {
+      FrameWidgetClass OZG_DSwNone {
        ignorepointer 1
        clipchildren 0
-       position 0 0
-       size 149 34
+       position 18 90
+       size 384 64
        hexactpos 1
        vexactpos 1
        hexactsize 1
        vexactsize 1
-       priority 0
+       priority 3
+       visible 0
        {
-        FrameWidgetClass OZG_BSwapPick2BoxEdge {
+        FrameWidgetClass OZG_DSwNoneBg {
          ignorepointer 1
          clipchildren 0
          position 0 0
-         size 149 34
+         size 384 64
          hexactpos 1
          vexactpos 1
          hexactsize 1
          vexactsize 1
          priority 0
          {
-          ImageWidgetClass OZG_BSwapPick2BoxEdgeTL {
+          ImageWidgetClass OZG_DSwNoneBgTL {
            ignorepointer 1
-           color 0.420 0.322 0.200 1
+           color 0.141 0.102 0.071 1
            position 0 0
-           size 4 4
+           size 6 6
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3011,11 +3180,11 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          ImageWidgetClass OZG_BSwapPick2BoxEdgeTR {
+          ImageWidgetClass OZG_DSwNoneBgTR {
            ignorepointer 1
-           color 0.420 0.322 0.200 1
-           position 145 0
-           size 4 4
+           color 0.141 0.102 0.071 1
+           position 378 0
+           size 6 6
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3027,11 +3196,11 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          ImageWidgetClass OZG_BSwapPick2BoxEdgeBL {
+          ImageWidgetClass OZG_DSwNoneBgBL {
            ignorepointer 1
-           color 0.420 0.322 0.200 1
-           position 0 30
-           size 4 4
+           color 0.141 0.102 0.071 1
+           position 0 58
+           size 6 6
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3043,11 +3212,11 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          ImageWidgetClass OZG_BSwapPick2BoxEdgeBR {
+          ImageWidgetClass OZG_DSwNoneBgBR {
            ignorepointer 1
-           color 0.420 0.322 0.200 1
-           position 145 30
-           size 4 4
+           color 0.141 0.102 0.071 1
+           position 378 58
+           size 6 6
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3059,217 +3228,196 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          PanelWidgetClass OZG_BSwapPick2BoxEdgeM {
+          PanelWidgetClass OZG_DSwNoneBgM {
            ignorepointer 1
-           position 0 3
-           size 149 28
+           position 0 5
+           size 384 54
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.420 0.322 0.200 1
+           color 0.141 0.102 0.071 1
            style rover_sim_colorable
            priority 0
           }
-          PanelWidgetClass OZG_BSwapPick2BoxEdgeT {
+          PanelWidgetClass OZG_DSwNoneBgT {
            ignorepointer 1
-           position 3 0
-           size 143 5
+           position 5 0
+           size 374 7
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.420 0.322 0.200 1
+           color 0.141 0.102 0.071 1
            style rover_sim_colorable
            priority 0
           }
-          PanelWidgetClass OZG_BSwapPick2BoxEdgeB {
+          PanelWidgetClass OZG_DSwNoneBgB {
            ignorepointer 1
-           position 3 29
-           size 143 5
+           position 5 57
+           size 374 7
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.420 0.322 0.200 1
+           color 0.141 0.102 0.071 1
            style rover_sim_colorable
            priority 0
           }
          }
         }
-        FrameWidgetClass OZG_BSwapPick2BoxBg {
+        TextWidgetClass OZG_DSwNone0 {
+         ignorepointer 1
+         position 14 14
+         size 356 18
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         color 0.722 0.647 0.522 1
+         text ""
+         font "gui/fonts/etelkatextpro22"
+         "exact text" 1
+         "exact text size" 15
+         "text halign" left
+         "text valign" center
+         priority 1
+        }
+        TextWidgetClass OZG_DSwNone1 {
+         ignorepointer 1
+         position 14 32
+         size 356 18
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         color 0.722 0.647 0.522 1
+         text ""
+         font "gui/fonts/etelkatextpro22"
+         "exact text" 1
+         "exact text size" 15
+         "text halign" left
+         "text valign" center
+         priority 1
+        }
+       }
+      }
+      ScrollWidgetClass OZG_DSwRows {
+       position 18 90
+       size 394 250
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.788 0.643 0.361 0.9
+       priority 5
+       clipchildren 1
+       "Scrollbar V" 1
+       style blank
+       {
+        FrameWidgetClass OZG_DSwRowsIn {
          ignorepointer 1
          clipchildren 0
-         position 1 1
-         size 147 32
+         position 0 0
+         size 384 250
          hexactpos 1
          vexactpos 1
          hexactsize 1
          vexactsize 1
          priority 1
-         {
-          ImageWidgetClass OZG_BSwapPick2BoxBgTL {
-           ignorepointer 1
-           color 0.200 0.145 0.102 1
-           position 0 0
-           size 3 3
-           hexactpos 1
-           vexactpos 1
-           hexactsize 1
-           vexactsize 1
-           priority 0
-           image0 "OpenZone_Games/gui/textures/ozg_rc_tl_ca.paa"
-           mode blend
-           "src alpha" 1
-           "stretch mode" stretch_w_h
-           "clamp mode" clamp
-          }
-          ImageWidgetClass OZG_BSwapPick2BoxBgTR {
-           ignorepointer 1
-           color 0.200 0.145 0.102 1
-           position 144 0
-           size 3 3
-           hexactpos 1
-           vexactpos 1
-           hexactsize 1
-           vexactsize 1
-           priority 0
-           image0 "OpenZone_Games/gui/textures/ozg_rc_tr_ca.paa"
-           mode blend
-           "src alpha" 1
-           "stretch mode" stretch_w_h
-           "clamp mode" clamp
-          }
-          ImageWidgetClass OZG_BSwapPick2BoxBgBL {
-           ignorepointer 1
-           color 0.200 0.145 0.102 1
-           position 0 29
-           size 3 3
-           hexactpos 1
-           vexactpos 1
-           hexactsize 1
-           vexactsize 1
-           priority 0
-           image0 "OpenZone_Games/gui/textures/ozg_rc_bl_ca.paa"
-           mode blend
-           "src alpha" 1
-           "stretch mode" stretch_w_h
-           "clamp mode" clamp
-          }
-          ImageWidgetClass OZG_BSwapPick2BoxBgBR {
-           ignorepointer 1
-           color 0.200 0.145 0.102 1
-           position 144 29
-           size 3 3
-           hexactpos 1
-           vexactpos 1
-           hexactsize 1
-           vexactsize 1
-           priority 0
-           image0 "OpenZone_Games/gui/textures/ozg_rc_br_ca.paa"
-           mode blend
-           "src alpha" 1
-           "stretch mode" stretch_w_h
-           "clamp mode" clamp
-          }
-          PanelWidgetClass OZG_BSwapPick2BoxBgM {
-           ignorepointer 1
-           position 0 2
-           size 147 28
-           hexactpos 1
-           vexactpos 1
-           hexactsize 1
-           vexactsize 1
-           color 0.200 0.145 0.102 1
-           style rover_sim_colorable
-           priority 0
-          }
-          PanelWidgetClass OZG_BSwapPick2BoxBgT {
-           ignorepointer 1
-           position 2 0
-           size 143 4
-           hexactpos 1
-           vexactpos 1
-           hexactsize 1
-           vexactsize 1
-           color 0.200 0.145 0.102 1
-           style rover_sim_colorable
-           priority 0
-          }
-          PanelWidgetClass OZG_BSwapPick2BoxBgB {
-           ignorepointer 1
-           position 2 28
-           size 143 4
-           hexactpos 1
-           vexactpos 1
-           hexactsize 1
-           vexactsize 1
-           color 0.200 0.145 0.102 1
-           style rover_sim_colorable
-           priority 0
-          }
-         }
         }
        }
       }
-      TextWidgetClass OZG_BSwapPick2Text {
+      FrameWidgetClass OZG_DSwStep2 {
        ignorepointer 1
-       position 0 0
-       size 149 34
+       clipchildren 0
+       position 420 60
+       size 22 22
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 3
+       {
+        ImageWidgetClass OZG_DSwStep2Bg {
+         ignorepointer 1
+         color 0.788 0.643 0.361 1
+         position 0 0
+         size 22 22
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 0
+         image0 "OpenZone_Games/gui/textures/ozg_disc_ca.paa"
+         mode blend
+         "src alpha" 1
+         "stretch mode" stretch_w_h
+         "clamp mode" clamp
+        }
+        TextWidgetClass OZG_DSwStep2Text {
+         ignorepointer 1
+         position 0 0
+         size 22 22
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         color 0.102 0.071 0.039 1
+         text "2"
+         font "gui/fonts/MetronBook-Bold22"
+         "exact text" 1
+         "exact text size" 15
+         "text halign" center
+         "text valign" center
+         priority 1
+        }
+       }
+      }
+      TextWidgetClass OZG_DSwLabel2 {
+       ignorepointer 1
+       position 450 62.5
+       size 252 17
        hexactpos 1
        vexactpos 1
        hexactsize 1
        vexactsize 1
        color 0.937 0.894 0.800 1
-       text ""
-       font "gui/fonts/etelkatextpro22"
+       text "#STR_OZG_DWIN_SWAP_STEP2"
+       font "gui/fonts/MetronBook-Bold28"
        "exact text" 1
-       "exact text size" 15
-       "text halign" center
+       "exact text size" 16
+       "text halign" left
        "text valign" center
        priority 3
       }
-     }
-    }
-    ButtonWidgetClass OZG_BSwapPick3 {
-     visible 0
-     position 169 70
-     size 149 34
-     hexactpos 1
-     vexactpos 1
-     hexactsize 1
-     vexactsize 1
-     text ""
-     priority 6
-     style Empty
-     {
-      FrameWidgetClass OZG_BSwapPick3Box {
+      FrameWidgetClass OZG_DSwCan {
        ignorepointer 1
        clipchildren 0
-       position 0 0
-       size 149 34
+       position 420 90
+       size 282 86
        hexactpos 1
        vexactpos 1
        hexactsize 1
        vexactsize 1
-       priority 0
+       priority 3
        {
-        FrameWidgetClass OZG_BSwapPick3BoxEdge {
+        FrameWidgetClass OZG_DSwCanBg {
          ignorepointer 1
          clipchildren 0
          position 0 0
-         size 149 34
+         size 282 86
          hexactpos 1
          vexactpos 1
          hexactsize 1
          vexactsize 1
          priority 0
          {
-          ImageWidgetClass OZG_BSwapPick3BoxEdgeTL {
+          ImageWidgetClass OZG_DSwCanBgTL {
            ignorepointer 1
-           color 0.420 0.322 0.200 1
+           color 0.141 0.102 0.071 1
            position 0 0
-           size 4 4
+           size 6 6
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3281,11 +3429,11 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          ImageWidgetClass OZG_BSwapPick3BoxEdgeTR {
+          ImageWidgetClass OZG_DSwCanBgTR {
            ignorepointer 1
-           color 0.420 0.322 0.200 1
-           position 145 0
-           size 4 4
+           color 0.141 0.102 0.071 1
+           position 276 0
+           size 6 6
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3297,11 +3445,11 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          ImageWidgetClass OZG_BSwapPick3BoxEdgeBL {
+          ImageWidgetClass OZG_DSwCanBgBL {
            ignorepointer 1
-           color 0.420 0.322 0.200 1
-           position 0 30
-           size 4 4
+           color 0.141 0.102 0.071 1
+           position 0 80
+           size 6 6
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3313,11 +3461,11 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          ImageWidgetClass OZG_BSwapPick3BoxEdgeBR {
+          ImageWidgetClass OZG_DSwCanBgBR {
            ignorepointer 1
-           color 0.420 0.322 0.200 1
-           position 145 30
-           size 4 4
+           color 0.141 0.102 0.071 1
+           position 276 80
+           size 6 6
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3329,60 +3477,302 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          PanelWidgetClass OZG_BSwapPick3BoxEdgeM {
+          PanelWidgetClass OZG_DSwCanBgM {
            ignorepointer 1
-           position 0 3
-           size 149 28
+           position 0 5
+           size 282 76
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.420 0.322 0.200 1
+           color 0.141 0.102 0.071 1
            style rover_sim_colorable
            priority 0
           }
-          PanelWidgetClass OZG_BSwapPick3BoxEdgeT {
+          PanelWidgetClass OZG_DSwCanBgT {
            ignorepointer 1
-           position 3 0
-           size 143 5
+           position 5 0
+           size 272 7
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.420 0.322 0.200 1
+           color 0.141 0.102 0.071 1
            style rover_sim_colorable
            priority 0
           }
-          PanelWidgetClass OZG_BSwapPick3BoxEdgeB {
+          PanelWidgetClass OZG_DSwCanBgB {
            ignorepointer 1
-           position 3 29
-           size 143 5
+           position 5 79
+           size 272 7
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.420 0.322 0.200 1
+           color 0.141 0.102 0.071 1
            style rover_sim_colorable
            priority 0
           }
          }
         }
-        FrameWidgetClass OZG_BSwapPick3BoxBg {
+        FrameWidgetClass OZG_DSwCanDice {
          ignorepointer 1
          clipchildren 0
-         position 1 1
-         size 147 32
+         position 0 0
+         size 282 86
          hexactpos 1
          vexactpos 1
          hexactsize 1
          vexactsize 1
          priority 1
+        }
+       }
+      }
+      TextWidgetClass OZG_DSwCanNum0 {
+       ignorepointer 1
+       position 430 150
+       size 46 16
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.902 0.847 0.737 1
+       text ""
+       font "gui/fonts/MetronBook-Bold22"
+       "exact text" 1
+       "exact text size" 15
+       "text halign" center
+       "text valign" center
+       priority 6
+       visible 0
+      }
+      ButtonWidgetClass OZG_DSwCanHit0 {
+       visible 0
+       position 430 100
+       size 46 68
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       text ""
+       priority 7
+       style Empty
+      }
+      TextWidgetClass OZG_DSwCanNum1 {
+       ignorepointer 1
+       position 484 150
+       size 46 16
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.902 0.847 0.737 1
+       text ""
+       font "gui/fonts/MetronBook-Bold22"
+       "exact text" 1
+       "exact text size" 15
+       "text halign" center
+       "text valign" center
+       priority 6
+       visible 0
+      }
+      ButtonWidgetClass OZG_DSwCanHit1 {
+       visible 0
+       position 484 100
+       size 46 68
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       text ""
+       priority 7
+       style Empty
+      }
+      TextWidgetClass OZG_DSwCanNum2 {
+       ignorepointer 1
+       position 538 150
+       size 46 16
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.902 0.847 0.737 1
+       text ""
+       font "gui/fonts/MetronBook-Bold22"
+       "exact text" 1
+       "exact text size" 15
+       "text halign" center
+       "text valign" center
+       priority 6
+       visible 0
+      }
+      ButtonWidgetClass OZG_DSwCanHit2 {
+       visible 0
+       position 538 100
+       size 46 68
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       text ""
+       priority 7
+       style Empty
+      }
+      TextWidgetClass OZG_DSwCanNum3 {
+       ignorepointer 1
+       position 592 150
+       size 46 16
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.902 0.847 0.737 1
+       text ""
+       font "gui/fonts/MetronBook-Bold22"
+       "exact text" 1
+       "exact text size" 15
+       "text halign" center
+       "text valign" center
+       priority 6
+       visible 0
+      }
+      ButtonWidgetClass OZG_DSwCanHit3 {
+       visible 0
+       position 592 100
+       size 46 68
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       text ""
+       priority 7
+       style Empty
+      }
+      TextWidgetClass OZG_DSwCanNum4 {
+       ignorepointer 1
+       position 646 150
+       size 46 16
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.902 0.847 0.737 1
+       text ""
+       font "gui/fonts/MetronBook-Bold22"
+       "exact text" 1
+       "exact text size" 15
+       "text halign" center
+       "text valign" center
+       priority 6
+       visible 0
+      }
+      ButtonWidgetClass OZG_DSwCanHit4 {
+       visible 0
+       position 646 100
+       size 46 68
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       text ""
+       priority 7
+       style Empty
+      }
+      TextWidgetClass OZG_DSwNote0 {
+       ignorepointer 1
+       position 420 184
+       size 282 17
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.722 0.647 0.522 1
+       text ""
+       font "gui/fonts/etelkatextpro22"
+       "exact text" 1
+       "exact text size" 14
+       "text halign" left
+       "text valign" center
+       priority 3
+      }
+      TextWidgetClass OZG_DSwNote1 {
+       ignorepointer 1
+       position 420 201
+       size 282 17
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.722 0.647 0.522 1
+       text ""
+       font "gui/fonts/etelkatextpro22"
+       "exact text" 1
+       "exact text size" 14
+       "text halign" left
+       "text valign" center
+       priority 3
+      }
+      TextWidgetClass OZG_DSwNote2 {
+       ignorepointer 1
+       position 420 218
+       size 282 17
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.722 0.647 0.522 1
+       text ""
+       font "gui/fonts/etelkatextpro22"
+       "exact text" 1
+       "exact text size" 14
+       "text halign" left
+       "text valign" center
+       priority 3
+      }
+      TextWidgetClass OZG_DSwNote3 {
+       ignorepointer 1
+       position 420 235
+       size 282 17
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.722 0.647 0.522 1
+       text ""
+       font "gui/fonts/etelkatextpro22"
+       "exact text" 1
+       "exact text size" 14
+       "text halign" left
+       "text valign" center
+       priority 3
+      }
+      FrameWidgetClass OZG_DSwLegend {
+       ignorepointer 1
+       clipchildren 0
+       position 18 300
+       size 684 36
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       priority 3
+       {
+        FrameWidgetClass OZG_DSwLegendBg {
+         ignorepointer 1
+         clipchildren 0
+         position 0 0
+         size 684 36
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 0
          {
-          ImageWidgetClass OZG_BSwapPick3BoxBgTL {
+          ImageWidgetClass OZG_DSwLegendBgTL {
            ignorepointer 1
-           color 0.200 0.145 0.102 1
+           color 0.141 0.102 0.071 1
            position 0 0
-           size 3 3
+           size 6 6
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3394,11 +3784,11 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          ImageWidgetClass OZG_BSwapPick3BoxBgTR {
+          ImageWidgetClass OZG_DSwLegendBgTR {
            ignorepointer 1
-           color 0.200 0.145 0.102 1
-           position 144 0
-           size 3 3
+           color 0.141 0.102 0.071 1
+           position 678 0
+           size 6 6
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3410,11 +3800,11 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          ImageWidgetClass OZG_BSwapPick3BoxBgBL {
+          ImageWidgetClass OZG_DSwLegendBgBL {
            ignorepointer 1
-           color 0.200 0.145 0.102 1
-           position 0 29
-           size 3 3
+           color 0.141 0.102 0.071 1
+           position 0 30
+           size 6 6
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3426,11 +3816,11 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          ImageWidgetClass OZG_BSwapPick3BoxBgBR {
+          ImageWidgetClass OZG_DSwLegendBgBR {
            ignorepointer 1
-           color 0.200 0.145 0.102 1
-           position 144 29
-           size 3 3
+           color 0.141 0.102 0.071 1
+           position 678 30
+           size 6 6
            hexactpos 1
            vexactpos 1
            hexactsize 1
@@ -3442,62 +3832,622 @@ FrameWidgetClass OZG_BWinNardy {
            "stretch mode" stretch_w_h
            "clamp mode" clamp
           }
-          PanelWidgetClass OZG_BSwapPick3BoxBgM {
+          PanelWidgetClass OZG_DSwLegendBgM {
            ignorepointer 1
-           position 0 2
-           size 147 28
+           position 0 5
+           size 684 26
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.200 0.145 0.102 1
+           color 0.141 0.102 0.071 1
            style rover_sim_colorable
            priority 0
           }
-          PanelWidgetClass OZG_BSwapPick3BoxBgT {
+          PanelWidgetClass OZG_DSwLegendBgT {
            ignorepointer 1
-           position 2 0
-           size 143 4
+           position 5 0
+           size 674 7
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.200 0.145 0.102 1
+           color 0.141 0.102 0.071 1
            style rover_sim_colorable
            priority 0
           }
-          PanelWidgetClass OZG_BSwapPick3BoxBgB {
+          PanelWidgetClass OZG_DSwLegendBgB {
            ignorepointer 1
-           position 2 28
-           size 143 4
+           position 5 29
+           size 674 7
            hexactpos 1
            vexactpos 1
            hexactsize 1
            vexactsize 1
-           color 0.200 0.145 0.102 1
+           color 0.141 0.102 0.071 1
            style rover_sim_colorable
            priority 0
           }
          }
         }
+        TextWidgetClass OZG_DSwLegendLabel {
+         ignorepointer 1
+         position 12 10.5
+         size 420 15
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         color 0.722 0.647 0.522 1
+         text "#STR_OZG_DWIN_SWAP_LEGEND"
+         font "gui/fonts/etelkatextpro22"
+         "exact text" 1
+         "exact text size" 14
+         "text halign" left
+         "text valign" center
+         priority 1
+        }
+        ImageWidgetClass OZG_DSwLegendBars0 {
+         ignorepointer 1
+         color 1 1 1 1
+         position 300 12
+         size 14.25 12
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 1
+         image0 "OpenZone_Games/gui/textures/ozg_sbars_1_ca.paa"
+         mode blend
+         "src alpha" 1
+         "stretch mode" stretch_w_h
+         "clamp mode" clamp
+        }
+        TextWidgetClass OZG_DSwLegendText0 {
+         ignorepointer 1
+         position 320 10.5
+         size 160 15
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         color 0.902 0.847 0.737 1
+         text ""
+         font "gui/fonts/etelkatextpro22"
+         "exact text" 1
+         "exact text size" 14
+         "text halign" left
+         "text valign" center
+         priority 1
+        }
+        ImageWidgetClass OZG_DSwLegendBars1 {
+         ignorepointer 1
+         color 1 1 1 1
+         position 410 12
+         size 14.25 12
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 1
+         image0 "OpenZone_Games/gui/textures/ozg_sbars_2_ca.paa"
+         mode blend
+         "src alpha" 1
+         "stretch mode" stretch_w_h
+         "clamp mode" clamp
+        }
+        TextWidgetClass OZG_DSwLegendText1 {
+         ignorepointer 1
+         position 430 10.5
+         size 160 15
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         color 0.902 0.847 0.737 1
+         text ""
+         font "gui/fonts/etelkatextpro22"
+         "exact text" 1
+         "exact text size" 14
+         "text halign" left
+         "text valign" center
+         priority 1
+        }
+        ImageWidgetClass OZG_DSwLegendBars2 {
+         ignorepointer 1
+         color 1 1 1 1
+         position 520 12
+         size 14.25 12
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 1
+         image0 "OpenZone_Games/gui/textures/ozg_sbars_3_ca.paa"
+         mode blend
+         "src alpha" 1
+         "stretch mode" stretch_w_h
+         "clamp mode" clamp
+        }
+        TextWidgetClass OZG_DSwLegendText2 {
+         ignorepointer 1
+         position 540 10.5
+         size 160 15
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         color 0.902 0.847 0.737 1
+         text ""
+         font "gui/fonts/etelkatextpro22"
+         "exact text" 1
+         "exact text size" 14
+         "text halign" left
+         "text valign" center
+         priority 1
+        }
        }
       }
-      TextWidgetClass OZG_BSwapPick3Text {
+      TextWidgetClass OZG_DSwSum0 {
        ignorepointer 1
-       position 0 0
-       size 149 34
+       position 18 350
+       size 520 19
        hexactpos 1
        vexactpos 1
        hexactsize 1
        vexactsize 1
-       color 0.937 0.894 0.800 1
+       color 0.722 0.647 0.522 1
        text ""
        font "gui/fonts/etelkatextpro22"
        "exact text" 1
-       "exact text size" 15
-       "text halign" center
+       "exact text size" 17
+       "text halign" left
        "text valign" center
        priority 3
+      }
+      TextWidgetClass OZG_DSwSum1 {
+       ignorepointer 1
+       position 18 369
+       size 520 19
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       color 0.722 0.647 0.522 1
+       text ""
+       font "gui/fonts/etelkatextpro22"
+       "exact text" 1
+       "exact text size" 17
+       "text halign" left
+       "text valign" center
+       priority 3
+      }
+      ButtonWidgetClass OZG_DSwCancel {
+       visible 1
+       position 460 340
+       size 110 42
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       text ""
+       priority 6
+       style Empty
+       {
+        FrameWidgetClass OZG_DSwCancelBox {
+         ignorepointer 1
+         clipchildren 0
+         position 0 0
+         size 110 42
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 0
+         {
+          FrameWidgetClass OZG_DSwCancelBoxEdge {
+           ignorepointer 1
+           clipchildren 0
+           position 0 0
+           size 110 42
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           {
+            ImageWidgetClass OZG_DSwCancelBoxEdgeTL {
+             ignorepointer 1
+             color 0.420 0.322 0.200 1
+             position 0 0
+             size 4 4
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             priority 0
+             image0 "OpenZone_Games/gui/textures/ozg_rc_tl_ca.paa"
+             mode blend
+             "src alpha" 1
+             "stretch mode" stretch_w_h
+             "clamp mode" clamp
+            }
+            ImageWidgetClass OZG_DSwCancelBoxEdgeTR {
+             ignorepointer 1
+             color 0.420 0.322 0.200 1
+             position 106 0
+             size 4 4
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             priority 0
+             image0 "OpenZone_Games/gui/textures/ozg_rc_tr_ca.paa"
+             mode blend
+             "src alpha" 1
+             "stretch mode" stretch_w_h
+             "clamp mode" clamp
+            }
+            ImageWidgetClass OZG_DSwCancelBoxEdgeBL {
+             ignorepointer 1
+             color 0.420 0.322 0.200 1
+             position 0 38
+             size 4 4
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             priority 0
+             image0 "OpenZone_Games/gui/textures/ozg_rc_bl_ca.paa"
+             mode blend
+             "src alpha" 1
+             "stretch mode" stretch_w_h
+             "clamp mode" clamp
+            }
+            ImageWidgetClass OZG_DSwCancelBoxEdgeBR {
+             ignorepointer 1
+             color 0.420 0.322 0.200 1
+             position 106 38
+             size 4 4
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             priority 0
+             image0 "OpenZone_Games/gui/textures/ozg_rc_br_ca.paa"
+             mode blend
+             "src alpha" 1
+             "stretch mode" stretch_w_h
+             "clamp mode" clamp
+            }
+            PanelWidgetClass OZG_DSwCancelBoxEdgeM {
+             ignorepointer 1
+             position 0 3
+             size 110 36
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             color 0.420 0.322 0.200 1
+             style rover_sim_colorable
+             priority 0
+            }
+            PanelWidgetClass OZG_DSwCancelBoxEdgeT {
+             ignorepointer 1
+             position 3 0
+             size 104 5
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             color 0.420 0.322 0.200 1
+             style rover_sim_colorable
+             priority 0
+            }
+            PanelWidgetClass OZG_DSwCancelBoxEdgeB {
+             ignorepointer 1
+             position 3 37
+             size 104 5
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             color 0.420 0.322 0.200 1
+             style rover_sim_colorable
+             priority 0
+            }
+           }
+          }
+          FrameWidgetClass OZG_DSwCancelBoxBg {
+           ignorepointer 1
+           clipchildren 0
+           position 1 1
+           size 108 40
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 1
+           {
+            ImageWidgetClass OZG_DSwCancelBoxBgTL {
+             ignorepointer 1
+             color 0.176 0.129 0.090 1
+             position 0 0
+             size 3 3
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             priority 0
+             image0 "OpenZone_Games/gui/textures/ozg_rc_tl_ca.paa"
+             mode blend
+             "src alpha" 1
+             "stretch mode" stretch_w_h
+             "clamp mode" clamp
+            }
+            ImageWidgetClass OZG_DSwCancelBoxBgTR {
+             ignorepointer 1
+             color 0.176 0.129 0.090 1
+             position 105 0
+             size 3 3
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             priority 0
+             image0 "OpenZone_Games/gui/textures/ozg_rc_tr_ca.paa"
+             mode blend
+             "src alpha" 1
+             "stretch mode" stretch_w_h
+             "clamp mode" clamp
+            }
+            ImageWidgetClass OZG_DSwCancelBoxBgBL {
+             ignorepointer 1
+             color 0.176 0.129 0.090 1
+             position 0 37
+             size 3 3
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             priority 0
+             image0 "OpenZone_Games/gui/textures/ozg_rc_bl_ca.paa"
+             mode blend
+             "src alpha" 1
+             "stretch mode" stretch_w_h
+             "clamp mode" clamp
+            }
+            ImageWidgetClass OZG_DSwCancelBoxBgBR {
+             ignorepointer 1
+             color 0.176 0.129 0.090 1
+             position 105 37
+             size 3 3
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             priority 0
+             image0 "OpenZone_Games/gui/textures/ozg_rc_br_ca.paa"
+             mode blend
+             "src alpha" 1
+             "stretch mode" stretch_w_h
+             "clamp mode" clamp
+            }
+            PanelWidgetClass OZG_DSwCancelBoxBgM {
+             ignorepointer 1
+             position 0 2
+             size 108 36
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             color 0.176 0.129 0.090 1
+             style rover_sim_colorable
+             priority 0
+            }
+            PanelWidgetClass OZG_DSwCancelBoxBgT {
+             ignorepointer 1
+             position 2 0
+             size 104 4
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             color 0.176 0.129 0.090 1
+             style rover_sim_colorable
+             priority 0
+            }
+            PanelWidgetClass OZG_DSwCancelBoxBgB {
+             ignorepointer 1
+             position 2 36
+             size 104 4
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             color 0.176 0.129 0.090 1
+             style rover_sim_colorable
+             priority 0
+            }
+           }
+          }
+         }
+        }
+        TextWidgetClass OZG_DSwCancelText {
+         ignorepointer 1
+         position 0 0
+         size 110 42
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         color 0.937 0.894 0.800 1
+         text "#STR_OZG_BWIN_CANCEL"
+         font "gui/fonts/etelkatextpro22"
+         "exact text" 1
+         "exact text size" 17
+         "text halign" center
+         "text valign" center
+         priority 3
+        }
+       }
+      }
+      ButtonWidgetClass OZG_DSwGo {
+       visible 1
+       position 582 340
+       size 120 42
+       hexactpos 1
+       vexactpos 1
+       hexactsize 1
+       vexactsize 1
+       text ""
+       priority 6
+       style Empty
+       {
+        FrameWidgetClass OZG_DSwGoBox {
+         ignorepointer 1
+         clipchildren 0
+         position 0 0
+         size 120 42
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         priority 0
+         {
+          FrameWidgetClass OZG_DSwGoBoxBg {
+           ignorepointer 1
+           clipchildren 0
+           position 0 0
+           size 120 42
+           hexactpos 1
+           vexactpos 1
+           hexactsize 1
+           vexactsize 1
+           priority 0
+           {
+            ImageWidgetClass OZG_DSwGoBoxBgTL {
+             ignorepointer 1
+             color 0.200 0.145 0.102 1
+             position 0 0
+             size 4 4
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             priority 0
+             image0 "OpenZone_Games/gui/textures/ozg_rc_tl_ca.paa"
+             mode blend
+             "src alpha" 1
+             "stretch mode" stretch_w_h
+             "clamp mode" clamp
+            }
+            ImageWidgetClass OZG_DSwGoBoxBgTR {
+             ignorepointer 1
+             color 0.200 0.145 0.102 1
+             position 116 0
+             size 4 4
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             priority 0
+             image0 "OpenZone_Games/gui/textures/ozg_rc_tr_ca.paa"
+             mode blend
+             "src alpha" 1
+             "stretch mode" stretch_w_h
+             "clamp mode" clamp
+            }
+            ImageWidgetClass OZG_DSwGoBoxBgBL {
+             ignorepointer 1
+             color 0.200 0.145 0.102 1
+             position 0 38
+             size 4 4
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             priority 0
+             image0 "OpenZone_Games/gui/textures/ozg_rc_bl_ca.paa"
+             mode blend
+             "src alpha" 1
+             "stretch mode" stretch_w_h
+             "clamp mode" clamp
+            }
+            ImageWidgetClass OZG_DSwGoBoxBgBR {
+             ignorepointer 1
+             color 0.200 0.145 0.102 1
+             position 116 38
+             size 4 4
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             priority 0
+             image0 "OpenZone_Games/gui/textures/ozg_rc_br_ca.paa"
+             mode blend
+             "src alpha" 1
+             "stretch mode" stretch_w_h
+             "clamp mode" clamp
+            }
+            PanelWidgetClass OZG_DSwGoBoxBgM {
+             ignorepointer 1
+             position 0 3
+             size 120 36
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             color 0.200 0.145 0.102 1
+             style rover_sim_colorable
+             priority 0
+            }
+            PanelWidgetClass OZG_DSwGoBoxBgT {
+             ignorepointer 1
+             position 3 0
+             size 114 5
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             color 0.200 0.145 0.102 1
+             style rover_sim_colorable
+             priority 0
+            }
+            PanelWidgetClass OZG_DSwGoBoxBgB {
+             ignorepointer 1
+             position 3 37
+             size 114 5
+             hexactpos 1
+             vexactpos 1
+             hexactsize 1
+             vexactsize 1
+             color 0.200 0.145 0.102 1
+             style rover_sim_colorable
+             priority 0
+            }
+           }
+          }
+         }
+        }
+        TextWidgetClass OZG_DSwGoText {
+         ignorepointer 1
+         position 0 0
+         size 120 42
+         hexactpos 1
+         vexactpos 1
+         hexactsize 1
+         vexactsize 1
+         color 0.627 0.561 0.451 1
+         text "#STR_OZG_DWIN_SWAP_GO"
+         font "gui/fonts/MetronBook-Bold28"
+         "exact text" 1
+         "exact text size" 17
+         "text halign" center
+         "text valign" center
+         priority 3
+        }
+       }
       }
      }
     }

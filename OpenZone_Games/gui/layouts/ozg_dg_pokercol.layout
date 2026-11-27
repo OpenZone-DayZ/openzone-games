@@ -750,179 +750,19 @@ FrameWidgetClass OZG_DGC_poker {
      "text valign" center
      priority 2
     }
-   }
-  }
-  FrameWidgetClass OZG_DPHands {
-   ignorepointer 1
-   clipchildren 0
-   position 12 693
-   size 360 69
-   hexactpos 1
-   vexactpos 1
-   hexactsize 1
-   vexactsize 1
-   priority 6
-   {
-    FrameWidgetClass OZG_DPHandsBg {
+    TextWidgetClass OZG_DPRHint2 {
      ignorepointer 1
-     clipchildren 0
-     position 0 0
-     size 360 69
+     position 12 81.5
+     size 336 18
      hexactpos 1
      vexactpos 1
      hexactsize 1
      vexactsize 1
-     priority 0
-     {
-      ImageWidgetClass OZG_DPHandsBgTL {
-       ignorepointer 1
-       color 0.133 0.098 0.067 1
-       position 0 0
-       size 6 6
-       hexactpos 1
-       vexactpos 1
-       hexactsize 1
-       vexactsize 1
-       priority 0
-       image0 "OpenZone_Games/gui/textures/ozg_rc_tl_ca.paa"
-       mode blend
-       "src alpha" 1
-       "stretch mode" stretch_w_h
-       "clamp mode" clamp
-      }
-      ImageWidgetClass OZG_DPHandsBgTR {
-       ignorepointer 1
-       color 0.133 0.098 0.067 1
-       position 354 0
-       size 6 6
-       hexactpos 1
-       vexactpos 1
-       hexactsize 1
-       vexactsize 1
-       priority 0
-       image0 "OpenZone_Games/gui/textures/ozg_rc_tr_ca.paa"
-       mode blend
-       "src alpha" 1
-       "stretch mode" stretch_w_h
-       "clamp mode" clamp
-      }
-      ImageWidgetClass OZG_DPHandsBgBL {
-       ignorepointer 1
-       color 0.133 0.098 0.067 1
-       position 0 63
-       size 6 6
-       hexactpos 1
-       vexactpos 1
-       hexactsize 1
-       vexactsize 1
-       priority 0
-       image0 "OpenZone_Games/gui/textures/ozg_rc_bl_ca.paa"
-       mode blend
-       "src alpha" 1
-       "stretch mode" stretch_w_h
-       "clamp mode" clamp
-      }
-      ImageWidgetClass OZG_DPHandsBgBR {
-       ignorepointer 1
-       color 0.133 0.098 0.067 1
-       position 354 63
-       size 6 6
-       hexactpos 1
-       vexactpos 1
-       hexactsize 1
-       vexactsize 1
-       priority 0
-       image0 "OpenZone_Games/gui/textures/ozg_rc_br_ca.paa"
-       mode blend
-       "src alpha" 1
-       "stretch mode" stretch_w_h
-       "clamp mode" clamp
-      }
-      PanelWidgetClass OZG_DPHandsBgM {
-       ignorepointer 1
-       position 0 5
-       size 360 59
-       hexactpos 1
-       vexactpos 1
-       hexactsize 1
-       vexactsize 1
-       color 0.133 0.098 0.067 1
-       style rover_sim_colorable
-       priority 0
-      }
-      PanelWidgetClass OZG_DPHandsBgT {
-       ignorepointer 1
-       position 5 0
-       size 350 7
-       hexactpos 1
-       vexactpos 1
-       hexactsize 1
-       vexactsize 1
-       color 0.133 0.098 0.067 1
-       style rover_sim_colorable
-       priority 0
-      }
-      PanelWidgetClass OZG_DPHandsBgB {
-       ignorepointer 1
-       position 5 62
-       size 350 7
-       hexactpos 1
-       vexactpos 1
-       hexactsize 1
-       vexactsize 1
-       color 0.133 0.098 0.067 1
-       style rover_sim_colorable
-       priority 0
-      }
-     }
-    }
-    TextWidgetClass OZG_DPHandsTitle {
-     ignorepointer 1
-     position 12 10
-     size 336 14
-     hexactpos 1
-     vexactpos 1
-     hexactsize 1
-     vexactsize 1
-     color 0.788 0.643 0.361 1
+     color 0.902 0.847 0.737 1
      text ""
      font "gui/fonts/etelkatextpro22"
      "exact text" 1
-     "exact text size" 13
-     "text halign" left
-     "text valign" center
-     priority 2
-    }
-    TextWidgetClass OZG_DPHandsText0 {
-     ignorepointer 1
-     position 12 27
-     size 336 16
-     hexactpos 1
-     vexactpos 1
-     hexactsize 1
-     vexactsize 1
-     color 0.722 0.647 0.522 1
-     text ""
-     font "gui/fonts/etelkatextpro22"
-     "exact text" 1
-     "exact text size" 14
-     "text halign" left
-     "text valign" center
-     priority 2
-    }
-    TextWidgetClass OZG_DPHandsText1 {
-     ignorepointer 1
-     position 12 43
-     size 336 16
-     hexactpos 1
-     vexactpos 1
-     hexactsize 1
-     vexactsize 1
-     color 0.722 0.647 0.522 1
-     text ""
-     font "gui/fonts/etelkatextpro22"
-     "exact text" 1
-     "exact text size" 14
+     "exact text size" 17
      "text halign" left
      "text valign" center
      priority 2

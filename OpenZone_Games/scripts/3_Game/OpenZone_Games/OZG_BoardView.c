@@ -32,10 +32,19 @@ class OZG_BPublic extends OZG_GPublic
     string Points;
     string Dice;
     string DiceLeft;
+    // Nardy: the seat that threw each die of Dice and the die's place among the dice that
+    // seat throws, from 0 -- the window draws each die in its own look.
+    ref array<int> DiceSeats;
+    ref array<int> DiceAt;
+    // Nardy: 1 while the seat to move has thrown and its dice lie on the board; 0 once the
+    // turn passed -- the dice are back in the can, whatever Dice still says of the last throw.
+    int Thrown;
 
     void OZG_BPublic()
     {
         History = new array<string>();
+        DiceSeats = new array<int>();
+        DiceAt = new array<int>();
         Turn = -1;
         White = -1;
         Black = -1;

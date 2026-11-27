@@ -74,6 +74,21 @@ class OZG_Perudo extends OZG_DiceGame
         return true;
     }
 
+    // The dice lie under the cans until somebody says "I do not believe".
+    protected bool m_Opened;
+
+    override bool ThrowsHidden()
+    {
+        return true;
+    }
+
+    override bool TakeShown()
+    {
+        bool was = m_Opened;
+        m_Opened = false;
+        return was;
+    }
+
     // A seat throws the dice it has left: the first of its can.
     override int DiceThrown(int seat)
     {
@@ -251,6 +266,7 @@ class OZG_Perudo extends OZG_DiceGame
     // "I do not believe" from the seat of index `doubter`.
     protected void PeShow(int doubter)
     {
+        m_Opened = true;
         int actual = 0;
         string all = "";
         for (int i = 0; i < m_Seats.Count(); i++)
@@ -412,7 +428,7 @@ class OZG_Perudo extends OZG_DiceGame
                 key = "STR_OZG_PERUDO_TURN_PALIFICO";
             v.Status = OZG_Words.W1(key, OZG_Words.SeatArg(DgCurrent()));
         }
-        return DgPublicText(v);
+        return DgPublicOut(v);
     }
 
     override string SeatView(int seat)

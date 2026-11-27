@@ -45,12 +45,18 @@ class OZG_Thousand extends OZG_DiceGame
     protected int m_Left = 5;
     protected ref array<int> m_Throw;
     protected ref array<int> m_Aside;
+    // Beside m_Aside: the place of each die put aside among the seat's five.
+    protected ref array<int> m_AsideSlots;
     protected int m_Phase;
     // Which of the seat's five dice (their places among them) are thrown next,
     // and which fell in the last throw: the dice left on the table are the ones
     // thrown again, so a loaded die weighs on its own throws only.
     protected ref array<int> m_Slots;
     protected ref array<int> m_ThrowSlots;
+    // The dice of the last throw that were not put aside: they lie on the felt as they
+    // fell until they are thrown again (their faces, their places among the seat's five).
+    protected ref array<int> m_Lie;
+    protected ref array<int> m_LieSlots;
     protected int m_Entry = 50;
     protected bool m_Pits = true;
     protected bool m_Barrel = true;
@@ -65,8 +71,11 @@ class OZG_Thousand extends OZG_DiceGame
         m_Entered = new array<int>();
         m_Throw = new array<int>();
         m_Aside = new array<int>();
+        m_AsideSlots = new array<int>();
         m_Slots = new array<int>();
         m_ThrowSlots = new array<int>();
+        m_Lie = new array<int>();
+        m_LieSlots = new array<int>();
     }
 
     override string GameId()
@@ -152,9 +161,12 @@ class OZG_Thousand extends OZG_DiceGame
         m_Left = 5;
         m_Throw.Clear();
         m_Aside.Clear();
+        m_AsideSlots.Clear();
         m_Phase = 0;
         ThAllSlots();
         m_ThrowSlots.Clear();
+        m_Lie.Clear();
+        m_LieSlots.Clear();
     }
 
     protected void ThAllSlots()
@@ -168,6 +180,25 @@ class OZG_Thousand extends OZG_DiceGame
     {
         ThNewTurn();
         m_Turn = DgNextIndex(m_Turn);
+    }
+
+    // The seat in turn throws the dice left on the table (all five at its turn's start and
+    // once all five were put aside); any other seat throws all five when its turn comes.
+    override void DiceThrownAt(int seat, array<int> into)
+    {
+        into.Clear();
+        int i;
+        if (!m_Over && seat == DgCurrent() && m_Slots.Count() > 0)
+        {
+            for (i = 0; i < m_Slots.Count(); i++)
+            {
+                int slot = m_Slots[i];
+                into.Insert(slot);
+            }
+            return;
+        }
+        for (i = 0; i < 5; i++)
+            into.Insert(i);
     }
 
     // The points of dice put aside together; -1 when one of them scores
@@ -325,6 +356,15 @@ class OZG_Thousand extends OZG_DiceGame
         {
             if (m_Slots.Count() == 0)
                 ThAllSlots();
+            // all five were put aside: they are picked up and thrown again, none lies
+            // aside then (the turn's points stay)
+            if (m_Slots.Count() >= 5)
+            {
+                m_Aside.Clear();
+                m_AsideSlots.Clear();
+            }
+            m_Lie.Clear();
+            m_LieSlots.Clear();
             DgRollSlots(seat, m_Slots, m_Throw);
             m_ThrowSlots.Copy(m_Slots);
             array<string> sets = new array<string>();
@@ -353,17 +393,36 @@ class OZG_Thousand extends OZG_DiceGame
                 return true;
             }
             m_TurnPoints = m_TurnPoints + points;
-            for (int k = 0; k < values.Count(); k++)
-                m_Aside.Insert(values[k]);
-            // The dice left on the table are thrown next; all five put aside,
-            // all five again.
             array<int> taken = new array<int>();
             ThPositions(move, taken);
+            for (int k = 0; k < values.Count(); k++)
+            {
+                int value = values[k];
+                m_Aside.Insert(value);
+                // which of the seat's five it is: put aside in its own colour
+                int asideSlot = -1;
+                if (k < taken.Count())
+                {
+                    int pos = taken[k];
+                    if (pos >= 0 && pos < m_ThrowSlots.Count())
+                        asideSlot = m_ThrowSlots[pos];
+                }
+                m_AsideSlots.Insert(asideSlot);
+            }
+            // The dice left on the table are thrown next; all five put aside,
+            // all five again.
             array<int> rest = new array<int>();
+            m_Lie.Clear();
+            m_LieSlots.Clear();
             for (int r = 0; r < m_ThrowSlots.Count(); r++)
             {
-                if (taken.Find(r) < 0)
-                    rest.Insert(m_ThrowSlots[r]);
+                if (taken.Find(r) >= 0)
+                    continue;
+                int restSlot = m_ThrowSlots[r];
+                int restFace = m_Throw[r];
+                rest.Insert(restSlot);
+                m_Lie.Insert(restFace);
+                m_LieSlots.Insert(restSlot);
             }
             m_Slots.Copy(rest);
             if (m_Slots.Count() == 0)
@@ -484,16 +543,35 @@ class OZG_Thousand extends OZG_DiceGame
             string key = "STR_OZG_THOUSAND_SEAT";
             if (OnBarrel(i))
                 key = "STR_OZG_THOUSAND_SEAT_BARREL";
-            string line = OZG_Words.W2(key, m_Total[i].ToString(), m_Bolts[i].ToString());
+            // the total, the bolts in a row, the tries on the barrel (the window's plate)
+            string totalText = m_Total[i].ToString();
+            string boltsText = m_Bolts[i].ToString();
+            string triesText = m_BarrelTries[i].ToString();
+            string line = OZG_Words.W3(key, totalText, boltsText, triesText);
             OZG_GSeat g = DgPlate(m_Seats[i], "", line);
             if (m_Gone.Find(i) >= 0)
                 g.Out = 1;
             v.SeatList.Insert(g);
         }
-        v.Zones.Insert(DgZone("throw", OZG_Words.W0("STR_OZG_THOUSAND_THROW"), m_Throw));
+        // whose dice lie on the table: the seat in turn's (the winner's once it is over)
+        int thrower = -1;
+        if (m_Turn >= 0 && m_Turn < m_Seats.Count())
+            thrower = m_Seats[m_Turn];
+        OZG_GZone thrown = DgZone("throw", OZG_Words.W0("STR_OZG_THOUSAND_THROW"), m_Throw);
+        thrown.DiceSeat = thrower;
+        thrown.DicePlaces.Copy(m_ThrowSlots);
+        v.Zones.Insert(thrown);
         // the canvas: the dice put aside drawn as dice, the turn's points in a box of
         // their own
-        v.Zones.Insert(DgZone("aside", OZG_Words.W0("STR_OZG_THOUSAND_ASIDE"), m_Aside));
+        OZG_GZone aside = DgZone("aside", OZG_Words.W0("STR_OZG_THOUSAND_ASIDE"), m_Aside);
+        aside.DiceSeat = thrower;
+        aside.DicePlaces.Copy(m_AsideSlots);
+        v.Zones.Insert(aside);
+        // the rest of the last throw, lying where it fell until it is thrown again
+        OZG_GZone lie = DgZone("lie", "", m_Lie);
+        lie.DiceSeat = thrower;
+        lie.DicePlaces.Copy(m_LieSlots);
+        v.Zones.Insert(lie);
         OZG_GZone turn = new OZG_GZone();
         turn.Id = "turn";
         turn.Label = OZG_Words.W0("STR_OZG_THOUSAND_TURN");
@@ -510,7 +588,7 @@ class OZG_Thousand extends OZG_DiceGame
             v.Awaited.Insert(DgCurrent());
             v.Status = OZG_Words.W1("STR_OZG_DICE_TURN", OZG_Words.SeatArg(DgCurrent()));
         }
-        return DgPublicText(v);
+        return DgPublicOut(v);
     }
 
     override string SeatView(int seat)

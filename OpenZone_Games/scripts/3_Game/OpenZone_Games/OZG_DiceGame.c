@@ -44,11 +44,18 @@ class OZG_DiceGame extends OZG_Game
     // The dice each seat threw last (by seat), for its plate (the canvas's "останній
     // кидок"): begun anew with a seat's first die of a move.
     protected ref map<int, ref array<int>> m_LastOf;
+    // Beside m_LastOf: the place of each of those dice among the dice the seat throws.
+    protected ref map<int, ref array<int>> m_LastAt;
     protected ref array<int> m_RolledThisMove;
+    // The throws the game has seen (a seat's dice of one move are one throw) and the seat
+    // that threw last: the windows play a throw when the number grows (OZG_GPublic.Throws).
+    protected int m_ThrowNo;
+    protected int m_ThrowSeat = -1;
 
     void OZG_DiceGame()
     {
         m_LastOf = new map<int, ref array<int>>();
+        m_LastAt = new map<int, ref array<int>>();
         m_RolledThisMove = new array<int>();
         m_Seats = new array<int>();
         m_Cups = new OZG_DiceCups();
@@ -234,12 +241,19 @@ class OZG_DiceGame extends OZG_Game
         if (m_RolledThisMove.Find(seat) < 0)
         {
             m_RolledThisMove.Insert(seat);
+            m_ThrowNo++;
+            m_ThrowSeat = seat;
             array<int> fresh = new array<int>();
             m_LastOf.Set(seat, fresh);
+            array<int> freshAt = new array<int>();
+            m_LastAt.Set(seat, freshAt);
         }
         array<int> last;
         if (m_LastOf.Find(seat, last) && last)
             last.Insert(v);
+        array<int> lastAt;
+        if (m_LastAt.Find(seat, lastAt) && lastAt)
+            lastAt.Insert(index);
         return v;
     }
 
@@ -575,6 +589,14 @@ class OZG_DiceGame extends OZG_Game
         into.Insert(move);
     }
 
+    // The view's text, the throws' number and who threw last put into it.
+    protected string DgPublicOut(OZG_GPublic v)
+    {
+        v.Throws = m_ThrowNo;
+        v.ThrowSeat = m_ThrowSeat;
+        return DgPublicText(v);
+    }
+
     static string DgPublicText(OZG_GPublic v)
     {
         string text;
@@ -602,8 +624,18 @@ class OZG_DiceGame extends OZG_Game
         array<int> last;
         if (DgShowsLast() && m_LastOf.Find(seat, last) && last)
         {
+            array<int> lastAt;
+            m_LastAt.Find(seat, lastAt);
             for (int i = 0; i < last.Count(); i++)
-                g.Faces.Insert(last[i].ToString());
+            {
+                int face = last[i];
+                g.Faces.Insert(face.ToString());
+                if (lastAt && i < lastAt.Count())
+                {
+                    int at = lastAt[i];
+                    g.FacePlaces.Insert(at);
+                }
+            }
         }
         return g;
     }

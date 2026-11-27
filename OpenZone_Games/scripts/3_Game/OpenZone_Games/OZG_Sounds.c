@@ -18,16 +18,52 @@ class OZG_Sounds
     static const int SLOTS = 3;
     static const int ID_ROOM = 32;
 
-    // The last throw of dice heard on this client: on which thing, and when (mission
-    // time, ms). A board's window tumbles its dice with it (boards and dice design §15).
-    static Object s_RollOn;
-    static int s_RollAt;
     static const int COUNT_UNIT = 32768;
     static const int COUNT_ROOM = 65536;
+
+    // A window that plays a thing's throws itself, in its own time. The dice tables'
+    // window shows a throw a moment after the server made it (the dice gathered, the can
+    // shaken and tipped) and sounds it with what it shows: the can rattles as it is shaken,
+    // the dice land as they fly out, the game is over when its last throw has been seen.
+    // So on that client the thing's lots leave out the throw (and the game over, when the
+    // window asks) and leave them here for the window. The window says so every frame
+    // (TakeOn): one gone without a word takes nothing more than TAKE_MS after.
+    static const int TAKE_MS = 1000;
+    static Object s_TakenOn;
+    static bool s_TakenOver;
+    static int s_TakenAt;
+    static ref array<int> s_Taken;
 
     protected static ref array<string> s_Names;
     protected static ref array<string> s_Sets;
     protected static ref array<int> s_Lengths;
+
+    // The window of `thing` plays its throws itself (`over`: the game over's sound too).
+    static void TakeOn(Object thing, bool over)
+    {
+        if (!s_Taken)
+            s_Taken = new array<int>();
+        int now = GetGame().GetTime();
+        // another thing's, or left by a window long gone: none of it is played now
+        if (thing != s_TakenOn || now - s_TakenAt > TAKE_MS)
+            s_Taken.Clear();
+        s_TakenOn = thing;
+        s_TakenOver = over;
+        s_TakenAt = now;
+    }
+
+    // Is this sound of a lot of `thing` the window's to play?
+    static bool Takes(Object thing, int id)
+    {
+        if (!thing || thing != s_TakenOn || !s_Taken)
+            return false;
+        int age = GetGame().GetTime() - s_TakenAt;
+        if (age < 0 || age > TAKE_MS)
+            return false;
+        if (id == OZG_SoundIds.ROLL)
+            return true;
+        return id == OZG_SoundIds.OVER && s_TakenOver;
+    }
 
     protected static void LoadList()
     {
@@ -311,13 +347,22 @@ class OZG_SoundPulse
         m_Heard = count;
         if (ids.Count() == 0)
             return;
-        if (ids.Find(OZG_SoundIds.ROLL) >= 0)
+        // what a window on this client plays itself is left to it (OZG_Sounds.TakeOn)
+        array<int> plays = new array<int>();
+        for (int i = 0; i < ids.Count(); i++)
         {
-            OZG_Sounds.s_RollOn = thing;
-            OZG_Sounds.s_RollAt = GetGame().GetTime();
+            int id = ids[i];
+            if (OZG_Sounds.Takes(thing, id))
+            {
+                OZG_Sounds.s_Taken.Insert(id);
+                continue;
+            }
+            plays.Insert(id);
         }
+        if (plays.Count() == 0)
+            return;
         if (!m_Run)
             m_Run = new OZG_SoundRun(thing, why);
-        m_Run.AddLot(ids);
+        m_Run.AddLot(plays);
     }
 }
