@@ -11,7 +11,8 @@ English):
 - "Don't forget to test everything on the stand in the end."
 
 The stand: NHChernobyl, diag 1.30 (`E:\dayzmod\testserver\games-nh`), the client in the
-"Russian" slot (the Ukrainian texts) at 1920 x 1080. Nothing is pushed or published.
+"Russian" slot (the Ukrainian texts) at 1920 x 1080. Nothing was pushed or published
+that day; both were done on 2026-11-27 (`2026-11-27-dice-tables-record.md`, "Published").
 
 ## What is built
 

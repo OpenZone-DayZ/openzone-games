@@ -17,7 +17,8 @@ verdict whose only reasons are SFP's `Credits.json` warnings is clean.
 ## What is built
 
 Commits `1dec815` (phase 1), `57a923d` (phase 2 and nardy), `47f522a` (dice), and the
-commit of phase 5 that carries this record. Nothing is pushed or published.
+commit of phase 5 that carries this record. Nothing was pushed or published that day;
+both were done on 2026-11-27 (`2026-11-27-dice-tables-record.md`, "Published").
 
 - **Phase 1, the board and chess.** A place holds a set (`ozgSetKind` cards / board / dice,
   `ozgPlace` the place's class); `OZG_Board_Classic` holds its 64 pieces in slots of their

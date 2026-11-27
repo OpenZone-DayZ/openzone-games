@@ -19,7 +19,7 @@ English):
 
 The stand: NHChernobyl, diag 1.30 (`E:\dayzmod\testserver\games-nh`), the client in the
 "Russian" slot (the Ukrainian texts) and in English, at 1920 x 1080 and at 3840 x 1600.
-Nothing is pushed or published.
+Pushed and published the same day, on the owner's word: "Published", the last section.
 
 ## What is built
 
@@ -247,4 +247,23 @@ tool, no line of the mod in the trace. The verdicts above are of a boot without 
   he is; on "by wish" dice such a seat is read as the host's and stays so for that game.
 - A view dropped by the queue (more than three waiting) plays no throw and so no sound of
   it.
-- Not pushed, not published.
+
+## Published
+
+The owner, 2026-11-27, after the report: "push and publish".
+
+- **GitHub**: `a8cbbc2..c6f21bc`, the 31 commits made since 2026-11-26 -- the boards, the
+  dice, cheating with them, their windows and what this record tells.
+- **OpenZone Games** 3845773524, from the `dayz` MCP: the build of `c6f21bc` (23 676 353
+  bytes, 20 s), version 0.3; a change note in English and Ukrainian; six pictures added to
+  the strip (chess, long nardy and dice poker, English and Ukrainian -- fourteen now); the
+  new page (`packaging/OpenZone_Games.workshop.bbcode`, 7647 bytes: the boards, the dice,
+  cheating with them). Before the upload: the pbo's 462 entries against `c6f21bc`, every
+  one the same; the signature against the key; a boot of that build judged good on the
+  server and on the client.
+- **OpenZone Games for VPP Admin Tools** 3845883015 was not uploaded again: its sources
+  have not changed since its upload of 2026-11-25 (the folder built now has the item's
+  182 242 bytes), and the stand loads it beside the new games.
+
+The public API read the games' page back equal to the file (updated 2026-11-27 12:22:38Z);
+the item's page shows the fourteen pictures and Required items CF and OpenZone Core.
