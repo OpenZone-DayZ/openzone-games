@@ -417,7 +417,8 @@ then an eye on that die while it lies in the can. Until it is thrown the die sho
 mouth as the die it replaced to everybody who did not see it go in; once thrown everybody sees it
 as it is. Every die on the felt shows its own colour. Give yourself dice to carry with
 `give what=OZG_Die_Red` (or `OZG_Die`, the white one, `OZG_Die_Black`, `OZG_Die_Stalker`) and load
-one with `loaddie`. The die that goes out needs a free place in your pockets: with none the swap
+one with `loaddie`. A swap into your own can works wherever the can lies (a pocket, a backpack).
+The die that goes out needs a free place in your pockets: with none the swap
 is refused (`refused STR_OZG_SAY_DSWAP_NO_ROOM`) and the note says so (give yourself dice until
 `give` answers 0 to see it; `world_move` of a thing to the ground frees a place -- on the diag
 stand every `world_move` writes a vanilla NULL pointer of

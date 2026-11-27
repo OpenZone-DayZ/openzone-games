@@ -807,16 +807,34 @@ class OZG_DiceCheat
         InventoryLocation pocket = new InventoryLocation;
         if (!player.GetInventory().FindFreeLocationFor(goingOut, FindInventoryLocationType.ANY_CARGO, pocket))
             return false;
-        if (!SyncMove(goingOut, pocket))
-            return false;
-        InventoryLocation into = new InventoryLocation;
-        into.SetAttachment(holder, comingIn, slot);
-        if (SyncMove(comingIn, into))
-            return true;
-        InventoryLocation back = new InventoryLocation;
-        back.SetAttachment(holder, goingOut, slot);
-        SyncMove(goingOut, back);
-        return false;
+        // The slot is filled by the session's own hand (OZG_Deck_Base.OZG_HandIn). A can in
+        // a pocket refuses every attachment by itself -- an item lying in cargo does
+        // (ItemBase.CanReceiveAttachment) -- so on a player's own dice the die that came
+        // in was refused, the die taken out could not go back either, the can was left a
+        // die short and the swap answered "no room" (the stand, 2026-11-27).
+        OZG_Deck_Base box = OZG_Deck_Base.Cast(holder);
+        if (box)
+            box.OZG_HandIn(true);
+        bool swapped = false;
+        if (SyncMove(goingOut, pocket))
+        {
+            InventoryLocation into = new InventoryLocation;
+            into.SetAttachment(holder, comingIn, slot);
+            if (SyncMove(comingIn, into))
+            {
+                swapped = true;
+            }
+            else
+            {
+                InventoryLocation back = new InventoryLocation;
+                back.SetAttachment(holder, goingOut, slot);
+                if (!SyncMove(goingOut, back))
+                    OZG_Log.Error("dice swap: the die taken out of " + holder.GetType() + " could not be put back");
+            }
+        }
+        if (box)
+            box.OZG_HandIn(false);
+        return swapped;
     }
 
     // The synchronous server move the card sleights make (OZG_DeckRead).

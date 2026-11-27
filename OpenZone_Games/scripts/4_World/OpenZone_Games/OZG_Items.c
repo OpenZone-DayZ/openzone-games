@@ -362,11 +362,24 @@ class OZG_Deck_Base extends ItemBase
         return OZG_Slots() - GetInventory().AttachmentCount();
     }
 
+    // Server: the session's own hand is putting a thing into a slot of this set, wherever
+    // the set lies (a die swapped into a player's own can: OZG_DiceCheat.Exchange). By
+    // itself a set carried in a pocket takes nothing: an item that lies in cargo refuses
+    // every attachment (ItemBase.CanReceiveAttachment: its children are not accessible).
+    protected bool m_OZG_HandIn;
+
+    void OZG_HandIn(bool on)
+    {
+        m_OZG_HandIn = on;
+    }
+
     // A deck takes cards and nothing else; a board, its pieces (OZG_Takes).
     override bool CanReceiveAttachment(EntityAI attachment, int slotId)
     {
         if (!attachment || !OZG_Takes(attachment))
             return false;
+        if (m_OZG_HandIn)
+            return true;
         return super.CanReceiveAttachment(attachment, slotId);
     }
 

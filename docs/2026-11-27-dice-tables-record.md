@@ -223,6 +223,20 @@ tool, no line of the mod in the trace. The verdicts above are of a boot without 
   rows out of sight are hidden now (dayz-modding gui-layouts.md §40).
 - After a restart the table did not know whose dice were thrown until the first move
   (above).
+- **A swap into a player's own can took a die out of it and put nothing back** (found the
+  same day, while the pictures for the Workshop page were taken: a deal of dice poker on
+  own dice was refused, the can held four dice). The swap moves the die out into a pocket
+  and the new one into the slot; a can that lies in a pocket or a backpack refused the
+  slot to both -- an item in cargo takes no attachment (`ItemBase.CanReceiveAttachment`),
+  though one leaves it -- so the swap answered "no room" and the can stayed a die short,
+  once an attempt. It had been there since the swap was built (2026-11-26): every swap
+  checked till then went into the can of the place, which lies in no cargo. The can now
+  lets the session's own hand fill its slot for the length of the exchange
+  (`OZG_Deck_Base.OZG_HandIn`, `OZG_DiceCheat.Exchange`), and an exchange that cannot put
+  the first die back says so as an error in the server's log. Checked: two swaps into a
+  can in a backpack (a red die in, then out again for a white one, the can's count
+  unchanged, the can's mouth showing each), one by a bot into the can of the place
+  (dayz-modding items-and-processing.md, "The slot's holder lying in cargo").
 
 ## Open
 
