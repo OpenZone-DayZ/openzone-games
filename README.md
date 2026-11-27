@@ -1,20 +1,24 @@
 # OpenZone Games
 
-Table games for DayZ in the OpenZone family of mods. A player lays a deck out on a surface
-of their choosing: a table, a counter, the floor. The mod works out where others can sit
-or stand around it, and the game is played in a window while the characters sit at it. The
-games: durak (podkidnoy and perevodnoy), and since 2026-11-25 ochko, Texas hold'em,
-preferans and bridge. Class prefix `OZG_`; runs with `OpenZone_Core` alone; with VPP
+Table games for DayZ in the OpenZone family of mods. A player lays a deck, a board or a can
+of dice out on a surface of their choosing: a table, a counter, the floor. The mod works out
+where others can sit or stand around it, and the game is played in a window while the
+characters sit at it. The games: durak (podkidnoy and perevodnoy), and since 2026-11-25
+ochko, Texas hold'em, preferans and bridge; since 2026-11-27 chess, draughts, giveaway,
+corners and long and short nardy on a board, and thousand, dice poker, pig, high roll and
+perudo with dice. Class prefix `OZG_`; runs with `OpenZone_Core` alone; with VPP
 Admin Tools its settings are a module of the series' admin window
 (`OpenZone_Games_VPP`).
 
-> **The stalkers' deck and table use pictures from the S.T.A.L.K.E.R. games.** They are
+> **The stalkers' deck and table and the stalker set of chess and draughts use pictures
+> and models from the S.T.A.L.K.E.R. games.** They are
 > created and fully owned by GSC Game World and are not covered by this mod's licence.
 > OpenZone Games is a fan-made mod, not official, with no affiliation with GSC Game World.
 > The original games: <https://store.steampowered.com/franchise/stalker>. Details in
 > [NOTICE](NOTICE).
 >
-> **Сталкерська колода і сталкерський стіл містять зображення з ігор S.T.A.L.K.E.R.** Їх
+> **Сталкерська колода, сталкерський стіл і сталкерський набір шахів та шашок містять
+> зображення й моделі з ігор S.T.A.L.K.E.R.** Їх
 > створила і повністю ними володіє GSC Game World; ліцензія моду на них не поширюється.
 > OpenZone Games -- фанатський неофіційний мод, не пов'язаний із GSC Game World.
 > Оригінальні ігри: <https://store.steampowered.com/franchise/stalker>. Подробиці в
@@ -64,7 +68,8 @@ The Workshop items: [OpenZone Games](https://steamcommunity.com/sharedfiles/file
 - **Sounds and flights**: a game is heard by everybody near it, players, watchers and
   passers-by: the deck put down and gathered up, the shuffle, the deal's quick run,
   the trump turned up, a card laid and a card laid over it, the table taken or swept
-  to the discards, cards drawn. Every sound is the mod's own, made by a script from
+  to the discards, cards drawn; a piece set down, taken or crowned, check, dice thrown, a
+  game over. Every sound is the mod's own, made by a script from
   numbers. In the window the cards fly: from the stock into the hands at a deal and a
   draw, from a hand onto the table, from the table to the discards or into the taker's
   hand.
@@ -87,10 +92,44 @@ The Workshop items: [OpenZone Games](https://steamcommunity.com/sharedfiles/file
   accounted for after every move, and all four were played in the window, in English and
   in Ukrainian
   ([docs/2026-11-25-stakes-and-games-record.md](docs/2026-11-25-stakes-and-games-record.md)).
-- **Stakes** (ochko and hold'em): no money is touched. The host writes how many chips a
+- **Stakes** (ochko and hold'em; of the dice games, dice poker and high roll): no money is
+  touched. The host writes how many chips a
   player brings in, lets in those who ask to sit and gives rebuys; when the game is folded
   or the deck gathered, a paper (the game's own note) says who brought in what and who had
   what at the end. Settling up is the players' own business.
+- **Boards** (2026-11-26): a "3 in 1" board is a container of its pieces as a deck is of its
+  cards -- the chess set and the discs, each in a slot of its own -- in two looks: the
+  classic set, and the stalkers' one, stalkers against mutants, with the trilogy's faces on
+  its discs. Laid out, it plays chess (the FIDE laws, no clock), draughts, giveaway and
+  corners, and on its other side, which the place turns up when nardy is chosen, long and
+  short nardy. A game is dealt from the pieces the board really holds and refused with what
+  is missing. The board takes most of the window; a click on a piece lights its moves; a
+  draw is offered and accepted, a game resigned. Chess agrees with the published move
+  counts (perft), and every board game was played by script, thousands of moves with every
+  piece accounted for.
+- **Dice** (2026-11-26; the tables 2026-11-27): a can of five dice lays out as a dice
+  table. Thousand with its house rules, dice poker by The Witcher's rules for chips, pig,
+  high roll for chips, perudo with palifico. Whose dice is the host's choice: those of the
+  can laid out, each player's own can, or by wish; perudo is played on own dice only. In
+  the window a can stands at the seat that throws; everybody sees it shaken and tipped and
+  the dice fly out and tumble, and throws made one after another are shown one after
+  another. The dice come in three colours and with the stalkers' sign, and a die keeps its
+  look wherever it lies.
+- **Cheating at a board and with dice**: at a board a player may, once in so many minutes
+  (`BoardSleightMinutes`), move a piece, swap two, put a taken one back or take one off;
+  whoever watches the board then sees it at once, and one who was away sees nothing. The
+  card sharp's kit loads a die on a face at one of three weights (`LoadWeights`: the face
+  comes up 30, 50 or 70 times of a hundred); a die held can be studied closely; a loaded
+  die that shows its face may be noticed by the others (`NoticeLoaded`), who from then see
+  a badge on it. A player may swap a die he carries for one he is about to throw
+  (`DiceSwaps` a game), in a window of its own: he sees his die hop into the can, and so
+  does each player who noticed (`ChanceDiceSwap`), who keeps an eye on that die. Until it
+  is thrown a die slipped in looks, to those who did not see, like the one it replaced; in
+  perudo, where the dice lie under the cans, a loaded face is noticed when the dice are
+  opened. The server's log keeps every one of these with the player's id.
+- **The kit's window**: "Open the kit" on the kit in the hands lists the cards and dice
+  the player carries, where they are (his pockets, a deck, a can): pick a card to mark it,
+  a die to load it on a face and a weight; the kit works a moment and a use is spent.
 - **A seat** is kept for a player who walks off; whoever leaves in mid-game discards his
   cards or leaves the seat with them for another to play on. The host's role passes on.
 - **Everything survives a restart**: the place, the seats, the hands, whose move it is.
@@ -113,6 +152,17 @@ The table's sounds and the cards in the air:
 The four later games, the stakes and the admin pages: the design
 [docs/2026-11-25-stakes-and-games-design.md](docs/2026-11-25-stakes-and-games-design.md)
 and the record [docs/2026-11-25-stakes-and-games-record.md](docs/2026-11-25-stakes-and-games-record.md).
+The boards and the dice: the design
+[docs/2026-11-26-boards-and-dice-design.md](docs/2026-11-26-boards-and-dice-design.md) and
+the records of its rules
+([docs/2026-11-26-boards-and-dice-record.md](docs/2026-11-26-boards-and-dice-record.md)),
+of its windows
+([docs/2026-11-26-board-window-record.md](docs/2026-11-26-board-window-record.md)) and of
+the dice tables
+([docs/2026-11-27-dice-tables-record.md](docs/2026-11-27-dice-tables-record.md)). Two
+things of that design are not built: the pieces and the dice shown in the world on the
+thing laid out (they are seen in the window), and the five settings of the boards and dice
+as boxes of VPP's module (they are in the file and in the core's admin window).
 
 ## What is where
 
@@ -123,9 +173,9 @@ and the record [docs/2026-11-25-stakes-and-games-record.md](docs/2026-11-25-stak
 | `ui/` | how the VPP pages are converted from the series' mockup (`ui/css2layout.json`, the converter's reports); the boards themselves live in `docs/specs/2026-11-12-openzone-vpp-mockup` beside the repositories |
 | `OpenZone_Games_Bridge/` | stand tool, server only: the `oz_games` verb, bots, the `!ozg` chat commands, `stage` (a table set out to be looked at), `gfuzz` and the known hands and scores |
 | `TableGamesProbe/`, `TableGamesProbe_Bridge/` | stand tool of the first measurements ([docs/probe.md](docs/probe.md)) |
-| `tools/` | `make_cards.py` (the two decks' art), `make_marks.py` (the marks on the cards: a sign on a back, a reader's pencil, a speck on a face), `make_sounds.py` (the table's sounds, made from numbers), `make_card_items.py` (the card items, their slots and names), `make_table.py` (the window's tables, frames, plates, shadows; `steel.py` is the trade screen's steel), `build_fonts.py` (the window's own fonts), `make_layouts.py` (the window), `stringtable.py`, `analyze.py` |
+| `tools/` | `make_cards.py` (the two decks' art), `make_marks.py` (the marks on the cards: a sign on a back, a reader's pencil, a speck on a face), `make_sounds.py` (the table's sounds, made from numbers), `make_card_items.py` (the card items, their slots and names), `make_table.py` (the window's tables, frames, plates, shadows; `steel.py` is the trade screen's steel), `build_fonts.py` (the window's own fonts), `make_layouts.py` (the window), `make_board_items.py` (the boards', pieces' and dice's items), `make_board_art.py` (their pictures), `make_board_win.py` and `make_dice_win.py` (the boards', the dice tables' and the kit's windows, with their textures), `stringtable.py`, `analyze.py` |
 | `art/` | sources of the cards, of the tables (`art/table`) and the fonts (Oswald, PT Mono; SIL Open Font License; their list in `art/fonts/fonts.json`); how the sounds are made (`art/sounds/SOURCES.md`) |
-| `models/` | sources of the five models and how they are built ([models/README.md](models/README.md)) |
+| `models/` | sources of the models and how they are built ([models/README.md](models/README.md)) |
 | `docs/` | plans, records, measurements, an example for a server's economy |
 | `packaging/`, `package.ps1`, `keys/` | what a published `@OpenZone_Games` (and `@OpenZone_Games_VPP`) holds besides its pbo (below) |
 
@@ -165,10 +215,16 @@ how soon and how fast a player begins to notice marks he does not read (`NoticeG
 `NoticeStep`, `NoticeMax`); how many sleights a deal (`SleightsPerDeal`), the chance each
 kind shows (`CaughtSlip`, `CaughtReplace`, `CaughtThrow`, `CaughtDeckIn`, `CaughtDeckOut`,
 `CaughtPick`), the chance a player sees one that showed (`SpotPercent`) and how many cards
-a dealer may deal himself (`DealerPicks`). `Cheating` 0 stops every sleight too.
+a dealer may deal himself (`DealerPicks`); for the boards and the dice, how many minutes
+lie between a player's sleights on a board (`BoardSleightMinutes`), how often a loaded die
+shows its face at each of the three weights (`LoadWeights`), how readily a loaded face is
+noticed (`NoticeLoaded`), how many dice a player may swap in a game (`DiceSwaps`) and the
+chance a swap shows (`ChanceDiceSwap`) -- these five in the file and the core's window,
+not yet among the module's forms. `Cheating` 0 stops every sleight too.
 
-The decks and the cards are not in any loot table: [docs/examples](docs/examples) has
-the lines for `types.xml`, with a nominal of 0 for an admin to raise.
+The decks, the boards, the cans and what they hold are not in any loot table:
+[docs/examples](docs/examples) has the lines for `types.xml`, with a nominal of 0 for an
+admin to raise.
 
 ## Українською
 
@@ -230,6 +286,34 @@ OpenZone), колоду тримають у долоні, одну карту �
 зіграні у вікні, англійською та українською. З VPP Admin Tools налаштування ігор — це модуль «Ігри» в
 адмінському вікні серії (`OpenZone_Games_VPP`): які ігри є, стіл і місця, час, шулерство,
 пози; збережене одразу доходить до гравців у грі.
+
+З 2026-11-27 є дошки й кості. Дошка «3 в 1» — вмістище своїх фігур і шашок, як колода —
+своїх карт; два набори: класичний і сталкерський, сталкери проти мутантів, з обличчями
+трилогії на шашках. На ній грають у шахи (за правилами ФІДЕ, без годинника), шашки,
+піддавки й кутки, а на звороті, який місце перевертає, коли обрано нарди, — у довгі й
+короткі нарди. Грають тими фігурами, які на дошці справді є; дошка займає майже все вікно,
+клік по фігурі підсвічує її ходи. Банка з п'ятьма кістками розкладається як стіл для
+костей: тисяча, свиня, перудо, а на фішки — покер на кістках і «Хто більше». Чиї кості —
+вирішує господар: банки на столі, кожен своєї банки або за бажанням; у перудо — лише
+свої. У вікні банка стоїть біля місця того, хто кидає: усі бачать, як її струшують і
+перехиляють і як кості вилітають та перекочуються; кидки, зроблені один за одним, так і
+показуються один за одним. Кості трьох кольорів і зі сталкерським знаком.
+
+Шахраювати можна й тут. За дошкою гравець раз на кілька хвилин (`BoardSleightMinutes`) може
+переставити фігуру, поміняти дві місцями, повернути зняту або зняти одну; хто саме дивиться
+на дошку, побачить це одразу, а хто відійшов — ні. Шулерський набір заряджає кістку на
+грань з однією з трьох ваг (`LoadWeights`: грань випадає 30, 50 або 70 разів зі ста);
+кістку в руках можна детально роздивитися; заряджену кістку, що лягла своєю гранню, інші
+можуть помітити (`NoticeLoaded`) і відтоді бачать на ній позначку. Свою кістку можна
+підкласти замість тієї, яку зараз кидатимеш (`DiceSwaps` на гру), в окремому вікні: гравець
+бачить, як його кістка летить у банку, і так само це бачить кожен, хто помітив
+(`ChanceDiceSwap`), і далі тримає цю кістку на оці. Доки підкладену кістку не кинули, для
+тих, хто не бачив, вона виглядає як та, яку замінила; у перудо, де кості лежать під
+банками, заряджену грань помічають, коли кості відкривають. Вікно набору («Відкрити
+набір» на наборі в руках) показує всі карти й кості, які гравець несе: карту можна
+позначити, кістку — зарядити на грань і вагу. З того задуму не зроблено двох речей: фігур
+і костей у світі на розкладці (їх видно у вікні) і п'яти налаштувань дошок та костей у
+модулі VPP (вони є у файлі та в адмін-вікні ядра).
 
 Моди в Steam Workshop з 2026-11-25: [OpenZone Games](https://steamcommunity.com/sharedfiles/filedetails/?id=3845773524) і
 [OpenZone Games для VPP Admin Tools](https://steamcommunity.com/sharedfiles/filedetails/?id=3845883015).
