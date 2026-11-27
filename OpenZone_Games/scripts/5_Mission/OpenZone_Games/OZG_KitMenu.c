@@ -46,6 +46,8 @@ class OZG_KitMenu : UIScriptedMenu
     protected ref OZG_WKit m_Kit;
     // the thing picked (its key), the face and the weight chosen for a die
     protected string m_Pick = "";
+    // taken once the window opens: the faces its unloaded dice lie on (OZG_Keys.FaceOf)
+    protected int m_FaceSalt;
     protected int m_Face = 6;
     protected int m_Step = 2;
     // the kit at work: time gone (below 0: idle), and what it asks when done
@@ -180,6 +182,7 @@ class OZG_KitMenu : UIScriptedMenu
         if (!layoutRoot)
             return null;
         m_Win = MakeLayout(LAYOUT_WIN, layoutRoot, "OZG_KWin");
+        m_FaceSalt = Math.RandomInt(0, 100000);
         return layoutRoot;
     }
 
@@ -511,15 +514,7 @@ class OZG_KitMenu : UIScriptedMenu
     // A count and its noun in the plural it takes (Ukrainian: 1, 2-4, 5 and up).
     protected string Counted(string key, int n)
     {
-        int ten = n % 10;
-        int hundred = n % 100;
-        string form = "5";
-        bool teens = hundred >= 12 && hundred <= 14;
-        if (ten == 1 && hundred != 11)
-            form = "1";
-        else if (ten >= 2 && ten <= 4 && !teens)
-            form = "2";
-        string s = Tr(key + form);
+        string s = Tr(key + OZG_Text.CountForm(n));
         s.Replace("%1", n.ToString());
         return s;
     }
@@ -786,20 +781,13 @@ class OZG_KitMenu : UIScriptedMenu
     }
 
     // A die's face up in the window: the one it is loaded on when he knows it, else one
-    // its key gives (the same each time it is drawn).
+    // of six by its key and the number this window took when it opened (a die is never
+    // drawn blank; the same face while the window is open).
     protected int FaceUp(OZG_WKitThing th)
     {
         if (th.LoadFace > 0)
             return th.LoadFace;
-        int sum = 0;
-        string key = th.Key;
-        int n = key.Length();
-        for (int i = 0; i < n; i++)
-        {
-            string ch = key.Substring(i, 1);
-            sum = sum + ch.ToAscii();
-        }
-        return 1 + sum % 6;
+        return OZG_Keys.FaceOf(th.Key, m_FaceSalt);
     }
 
     protected string DieLook(OZG_WKitThing th)

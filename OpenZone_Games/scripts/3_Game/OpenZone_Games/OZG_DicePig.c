@@ -259,6 +259,14 @@ class OZG_HighRoll extends OZG_DiceGame
         return m_Count;
     }
 
+    override int DiceNeededWith(map<string, string> options)
+    {
+        int count = OptionOf(options, OZG_HighRollConst.OPT_DICE, "2").ToInt();
+        if (count < 1 || count > 3)
+            count = 2;
+        return count;
+    }
+
     override bool UsesStakes()
     {
         return true;

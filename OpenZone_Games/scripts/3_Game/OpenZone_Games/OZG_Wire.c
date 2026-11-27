@@ -103,6 +103,34 @@ class OZG_Keys
             return null;
         return GetGame().GetObjectByNetworkId(low.ToInt(), high.ToInt());
     }
+
+    // The face a die is drawn on where nothing says which (a list of dice to choose from:
+    // a die is never drawn as a blank square). One of six by the die's key and `salt`, a
+    // number the window takes once when it opens: the face stays while the window is open
+    // and is another the next time. Dice whose keys are neighbours get faces that have
+    // nothing to do with each other (a plain sum of the key's bytes gave 1, 2, 3, 4, 5).
+    static int FaceOf(string key, int salt)
+    {
+        int h = salt % 1000003;
+        if (h < 0)
+            h = -h;
+        int n = key.Length();
+        for (int i = 0; i < n; i++)
+        {
+            string ch = key.Substring(i, 1);
+            int code = ch.ToAscii();
+            h = (h * 131 + code * 7919) % 1000003;
+            if (h < 0)
+                h = -h;
+        }
+        int low = h % 1009;
+        int high = h / 1009 + 7;
+        int mixed = low * high;
+        low = mixed % 997;
+        high = mixed / 997 + 3;
+        mixed = low * high + h % 13;
+        return 1 + mixed % 6;
+    }
 }
 
 // A card of the deck the dealer reads, told to him before a deal (card
@@ -318,12 +346,38 @@ class OZG_WView
     // The can each seat throws from ("<seat>=classic", "<seat>=stalker"): its own, or the
     // one of the set laid out.
     ref array<string> SeatCanLooks;
+    // The window "Банка й кості" (design §8; the canvas's board): how many dice the game
+    // throws; 1 when this player may choose his can now (before a deal) and 1 when he may
+    // choose his dice now (before a deal, or before his own throw). The cans he may throw
+    // from: a key each ("host": the one laid out; else the can's item), its look, 1 for
+    // the one chosen or in play. Their dice, in the slots' order: whose can (its place in
+    // the list), the die's key, its look as he may see it, what he knows of it (a mark as
+    // in SeatDiceMarks) and 1 for a die of his throw.
+    int    PickNeed;
+    int    PickCanNow;
+    int    PickDiceNow;
+    ref array<string> PickCanKeys;
+    ref array<string> PickCanLooks;
+    ref array<int> PickCanOn;
+    ref array<int> PickDieCan;
+    ref array<string> PickDieKeys;
+    ref array<string> PickDieLooks;
+    ref array<int> PickDieMarks;
+    ref array<int> PickDieOn;
 
     void OZG_WView()
     {
         SeatDiceMarks = new array<string>();
         ThrownDiceMarks = new array<string>();
         SeatCanLooks = new array<string>();
+        PickCanKeys = new array<string>();
+        PickCanLooks = new array<string>();
+        PickCanOn = new array<int>();
+        PickDieCan = new array<int>();
+        PickDieKeys = new array<string>();
+        PickDieLooks = new array<string>();
+        PickDieMarks = new array<int>();
+        PickDieOn = new array<int>();
         Looking = new array<int>();
         PocketDice = new array<string>();
         PocketLooks = new array<string>();
@@ -385,6 +439,20 @@ class OZG_WShake
 class OZG_Text
 {
     static const string CUT = "\n";
+
+    // Which form of a counted word goes with `n`, as the string keys end: "1" (1 кістка,
+    // 21 ...), "2" (2 to 4 кістки, 22 ...) or "5" (5 кісток, 11 to 14, 0 ...).
+    static string CountForm(int n)
+    {
+        int ten = n % 10;
+        int hundred = n % 100;
+        bool teens = hundred >= 11 && hundred <= 14;
+        if (ten == 1 && !teens)
+            return "1";
+        if (ten >= 2 && ten <= 4 && !teens)
+            return "2";
+        return "5";
+    }
 
     static string Join3(string a, string b, string c)
     {

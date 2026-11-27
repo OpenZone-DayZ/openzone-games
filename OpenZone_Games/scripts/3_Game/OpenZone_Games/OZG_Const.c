@@ -165,6 +165,9 @@ class OZG_Const
     // seen (told to whoever has the window open).
     static const string OP_BSLEIGHT = "bsleight";
     static const string OP_DSWAP = "dswap";
+    // The can a player throws from and the dice of it he throws, chosen in the open
+    // (boards and dice design §8; the window "Банка й кості").
+    static const string OP_DPICK = "dpick";
     // The card sharp's kit's window (boards and dice design §10): what this player
     // carries and knows; a card marked, a die loaded from it.
     static const string OP_KIT_VIEW = "kitview";
@@ -204,6 +207,12 @@ class OZG_Const
     static const string SAY_DSWAP_NO_DIE = "STR_OZG_SAY_DSWAP_NO_DIE";
     static const string SAY_DSWAP_NO_ROOM = "STR_OZG_SAY_DSWAP_NO_ROOM";
     static const string SAY_DSWAP_SEEN = "STR_OZG_SAY_DSWAP_SEEN";
+    static const string SAY_DPICK = "STR_OZG_SAY_DPICK";
+    static const string SAY_DPICK_ONE = "STR_OZG_SAY_DPICK_ONE";
+    static const string SAY_DPICK_NOT_NOW = "STR_OZG_SAY_DPICK_NOT_NOW";
+    static const string SAY_DPICK_CAN = "STR_OZG_SAY_DPICK_CAN";
+    static const string SAY_DPICK_FEW = "STR_OZG_SAY_DPICK_FEW";
+    static const string SAY_DPICK_COUNT = "STR_OZG_SAY_DPICK_COUNT";
     static const string SAY_LOAD_NOTICED = "STR_OZG_SAY_LOAD_NOTICED";
     static const string SAY_LOAD_OPENED = "STR_OZG_SAY_LOAD_OPENED";
     static const string SAY_LOAD_DONE = "STR_OZG_SAY_LOAD_DONE";

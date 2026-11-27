@@ -430,6 +430,24 @@ stand every `world_move` writes a vanilla NULL pointer of
 `DayZPlayerInventory.OnHandleStoredJunctureData` into the server's and the client's logs, and the
 verdicts of that boot fail on it).
 
+**The can and the dice you throw** (design §8.1): "Банка й кості" above the swap's button, and
+in the table's panel between games. Step 1 is the cans you may throw from -- your own that hold
+enough dice, by wish the one laid out too --, step 2 the dice of the can chosen, as many as the
+game throws ringed gold. The can before the deal, the dice before the deal and before each throw
+of your own; nothing of it is a sleight. To see it: carry two cans (`give what=OZG_DiceCan_Stalker`
+beside a classic one; `dice who=me keep=3` deletes loose dice when the pockets are full), choose
+pig, high roll (`opt count` 1 to 3) or nardy, `opt dice` `wish`.
+
+    oz_games {"op":"dice","who":"me","cans":"1"}                          your cans: key, lasting id, dice
+    oz_games {"op":"ask","id":"<place>","who":"me","ask":"dpick","key":"<can key>","move":"<die>,<die>"}   before a deal: the can and the dice
+    oz_games {"op":"ask","id":"<place>","who":"me","ask":"dpick","key":"host","move":""}                   the one laid out, its first dice
+    oz_games {"op":"ask","id":"<place>","who":"me","ask":"dpick","key":"","move":"<die>"}                  in a game, before your throw: the dice alone
+
+The server's debug log has `dice: seat <n> throws <keys> of <can>` at each deal and `dice-pick:`
+at each choice; refusals are `STR_OZG_SAY_DPICK_NOT_NOW` (not your throw), `_CAN` (another can in
+a game, or one the game's dice do not allow), `_FEW`, `_COUNT`. A choice outlives a restart: stop
+the server in mid-game, start it, open the window and read the `dice:` lines.
+
 A loaded face noticed is said with the throw that showed it: the note waits for the dice to fly,
 and the die carries its badge from then. In perudo the dice are noticed when they are opened: the
 server's log (debug) has `a throw under the cans kept: <n> dice` at a round's throw and

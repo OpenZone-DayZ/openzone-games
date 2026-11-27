@@ -598,7 +598,7 @@ STR_OZG_VPP_F_DICESWAPS,підмін гравцеві за гру,swaps per play
 STR_OZG_VPP_F_C_DSWAP,"шанс попастися на підміні, %","chance a swap is seen, %"
 STR_OZG_VPP_F_BOARDSLEIGHT,"між хитрощами на дошці, хв","between sleights on a board, min"
 STR_OZG_VPP_LOADS_LINE,"За кидок на свою грань, %: трохи %1, добре %2, важко %3.","Per throw on its face, %: a little %1, well %2, heavily %3."
-STR_OZG_VPP_LOADS_OFF,Заряджених костей не помічають: шанс завжди 0 %.,Loaded dice are never noticed: the chance is always 0 %.
+STR_OZG_VPP_LOADS_OFF,Заряджених кісток не помічають: шанс завжди 0 %.,Loaded dice are never noticed: the chance is always 0 %.
 STR_OZG_VPP_DSWAP_NOTE,Як і з картами: коли підміну видно — кожен інший за столом кидає свій «помічає».,"As with cards: when a swap shows, every other player at the table rolls his own ""spots it""."
 STR_OZG_VPP_BOARDS_NOTE,"Хитрість на дошці одразу бачить кожен, хто дивиться на дошку: шансів тут немає.",A sleight on a board is seen at once by whoever watches the board: no chances here.
 STR_OZG_VPP_ZERO_NOWAIT,0 — без перерви,0: no wait
@@ -779,6 +779,12 @@ STR_OZG_SAY_DSWAP_NOT_NOW,Підмінити кістку можна лише п
 STR_OZG_SAY_DSWAP_ONE,Одна підміна на кидок,One swap a throw
 STR_OZG_SAY_DSWAP_NO_DIE,Немає такої кістки,No such die
 STR_OZG_SAY_DSWAP_SEEN,%1 підмінив кістку!,%1 swapped a die!
+STR_OZG_SAY_DPICK,%1 бере з банки інші кості,%1 takes other dice out of the can
+STR_OZG_SAY_DPICK_ONE,%1 бере з банки іншу кістку,%1 takes another die out of the can
+STR_OZG_SAY_DPICK_NOT_NOW,Кості обирають перед своїм кидком,Dice are chosen before your own throw
+STR_OZG_SAY_DPICK_CAN,Банку обирають до роздачі,The can is chosen before the deal
+STR_OZG_SAY_DPICK_FEW,У цій банці замало кісток для цієї гри,This can holds too few dice for this game
+STR_OZG_SAY_DPICK_COUNT,"Оберіть стільки кісток, скільки кидає гра",Pick as many dice as the game throws
 STR_OZG_SAY_LOAD_NOTICED,Якась кістка надто часто дає %1,A die comes up %1 too often
 STR_OZG_SAY_LOAD_OPENED,"Кістка вже заряджена: %1, %2","The die is loaded already: %1, %2"
 STR_OZG_SAY_LOAD_DONE,"Кістку заряджено: %1, %2","The die is loaded: %1, %2"
@@ -1165,6 +1171,32 @@ STR_OZG_DWIN_SWAP_SEEN_SUB_UNDER,"Ви бачили, яка кістка піш�
 STR_OZG_DWIN_SWAP_DID,Ви підклали %1 кістку замість кістки %2.,You slipped in %1 die for die %2.
 STR_OZG_DWIN_SWAP_DID_SUB,Чи помітив хтось — ви не дізнаєтесь.,"Whether anyone noticed, you will not learn."
 STR_OZG_DWIN_SWAP_DID_SUB_UNDER,Вона ляже з наступного кола. Чи помітив хтось — ви не дізнаєтесь.,"It lies from the next round. Whether anyone noticed, you will not learn."
+STR_OZG_DWIN_PICK,Банка й кості,Can and dice
+STR_OZG_DWIN_PICK_NOTE_HOST,господаря · %1 з %2,host's · %1 of %2
+STR_OZG_DWIN_PICK_NOTE_OWN,своя · %1 з %2,own · %1 of %2
+STR_OZG_DWIN_PICK_OPEN,відкрито: усі бачать вашу банку й кості на столі,in the open: everyone sees your can and dice on the table
+STR_OZG_DWIN_PICK_STEP1,З якої банки кидати,Which can to throw from
+STR_OZG_DWIN_PICK_STEP2_ONE,Якою кісткою,Which die
+STR_OZG_DWIN_PICK_STEP2,Якими кістками — %1,Which dice: %1
+STR_OZG_DWIN_PICK_CAN_TIN,Ваша бляшанка,Your tin can
+STR_OZG_DWIN_PICK_CAN_ARMY,Ваша армійська банка,Your army can
+STR_OZG_DWIN_PICK_CAN_HOST,Банка господаря,The host's can
+STR_OZG_DWIN_PICK_CAN_BOARD,Кості дошки,The board's dice
+STR_OZG_DWIN_PICK_FEW,%1 — для цієї гри замало,%1 — too few for this game
+STR_OZG_DWIN_PICK_TABLES,%1 · кості столу,%1 · the table's dice
+STR_OZG_DWIN_PICK_IN_PLAY,у грі,in play
+STR_OZG_DWIN_PICK_CAN_NOTE,Банку обирають до роздачі; у грі вона стоїть біля вашого місця.,A can is chosen before the deal; in the game it stands at your seat.
+STR_OZG_DWIN_PICK_CAN_NOTE_LOCK,Банку обирають до роздачі: гра вже йде з цією.,A can is chosen before the deal: the game is on with this one.
+STR_OZG_DWIN_PICK_CAN_NOTE_ONE,Іншої банки з кістками у вас немає.,You have no other can with dice.
+STR_OZG_DWIN_PICK_MINE,кидаю,throw
+STR_OZG_DWIN_PICK_NOTE_ONE,"Клацніть кістку, якою кидатимете. Змінити її можна перед кожним своїм кидком.",Click the die you will throw. You may change it before each throw of yours.
+STR_OZG_DWIN_PICK_NOTE_MANY,"Клацніть кістку, щоб узяти її в кидок або прибрати з нього. Змінити кості можна перед кожним своїм кидком.",Click a die to take it into your throw or out of it. You may change the dice before each throw of yours.
+STR_OZG_DWIN_PICK_NOTE_EXACT,"У цій банці рівно стільки кісток, скільки кидає гра.",This can holds exactly as many dice as the game throws.
+STR_OZG_DWIN_PICK_SUM,%1: кидаєте %2 з %3.,%1: you throw %2 of %3.
+STR_OZG_DWIN_PICK_SUM_ALL,%1: кидаєте всі її кості.,%1: you throw all its dice.
+STR_OZG_DWIN_PICK_MORE_ONE,Оберіть ще одну кістку.,Choose one more die.
+STR_OZG_DWIN_PICK_MORE,Оберіть ще %1.,Choose %1 more.
+STR_OZG_DWIN_PICK_GO,Готово,Done
 STR_OZG_DWIN_TAG_THROWS,кидає…,throwing…
 STR_OZG_DWIN_TAG_YOURS,ваш хід,your turn
 STR_OZG_DWIN_ONE_HOST,кістка господаря,the host's die

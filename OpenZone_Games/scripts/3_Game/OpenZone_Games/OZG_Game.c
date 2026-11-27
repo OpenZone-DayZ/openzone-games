@@ -81,6 +81,13 @@ class OZG_Game
         return 0;
     }
 
+    // The same, asked before Begin has read the options: a game whose count of dice is
+    // an option reads it from them (high roll's one to three).
+    int DiceNeededWith(map<string, string> options)
+    {
+        return DiceNeeded();
+    }
+
     // How many of its dice a seat throws now: all of them, but for a game that takes
     // dice away (perudo). The first so many of the seat's dice are the ones thrown.
     int DiceThrown(int seat)

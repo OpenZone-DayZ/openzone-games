@@ -110,8 +110,11 @@ The Workshop items: [OpenZone Games](https://steamcommunity.com/sharedfiles/file
 - **Dice** (2026-11-26; the tables 2026-11-27): a can of five dice lays out as a dice
   table. Thousand with its house rules, dice poker by The Witcher's rules for chips, pig,
   high roll for chips, perudo with palifico. Whose dice is the host's choice: those of the
-  can laid out, each player's own can, or by wish; perudo is played on own dice only. In
-  the window a can stands at the seat that throws; everybody sees it shaken and tipped and
+  can laid out, each player's own can, or by wish; perudo is played on own dice only.
+  Within that each player chooses for himself, in the open and in a window of its own
+  ("Банка й кості"), the can he throws from (before the deal) and which of its dice (before
+  each throw of his own): pig throws one of a can's five, high roll one to three, nardy
+  two. In the window a can stands at the seat that throws; everybody sees it shaken and tipped and
   the dice fly out and tumble, and throws made one after another are shown one after
   another. The dice come in three colours and with the stalkers' sign, and a die keeps its
   look wherever it lies.
@@ -297,7 +300,9 @@ OpenZone), колоду тримають у долоні, одну карту �
 клік по фігурі підсвічує її ходи. Банка з п'ятьма кістками розкладається як стіл для
 костей: тисяча, свиня, перудо, а на фішки — покер на кістках і «Хто більше». Чиї кості —
 вирішує господар: банки на столі, кожен своєї банки або за бажанням; у перудо — лише
-свої. У вікні банка стоїть біля місця того, хто кидає: усі бачать, як її струшують і
+свої. А з якої банки кидати (до роздачі) і якими її кістками (перед кожним своїм кидком),
+гравець обирає сам, відкрито, у вікні «Банка й кості»: свиня кидає одну кістку з п'яти,
+«Хто більше» — від однієї до трьох, нарди — дві. У вікні банка стоїть біля місця того, хто кидає: усі бачать, як її струшують і
 перехиляють і як кості вилітають та перекочуються; кидки, зроблені один за одним, так і
 показуються один за одним. Кості трьох кольорів і зі сталкерським знаком.
 

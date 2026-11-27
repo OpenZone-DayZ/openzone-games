@@ -45,7 +45,8 @@ class OZG_BoardOps
 
     // dice who=<id|me>: the dice a player carries -- each one's key, its load
     // (face at weight), whether he knows it, and where it lies: "[can <key>]" in a slot
-    // of a can he carries, "[loose]" in his pockets.
+    // of a can he carries, "[loose]" in his pockets. cans=1: his cans instead. keep=<n>:
+    // the loose dice he carries beyond the first n are deleted (room for a can).
     static bool OpDice(map<string, string> args, out string detail)
     {
         // id=<place>: the dice of the set laid out there, in their slots' order.
@@ -76,8 +77,49 @@ class OZG_BoardOps
             detail = "dice: nobody is '" + uid + "'";
             return false;
         }
+        // cans=1: the cans he carries instead -- each one's key, its lasting id (what a
+        // choice of a can is kept by) and how many dice it holds
+        if (OZG_VerbOps.Arg(args, "cans", "0") == "1")
+        {
+            array<EntityAI> cans = new array<EntityAI>();
+            OZG_DiceRead.OwnCans(p, cans);
+            detail = "cans of " + uid + ":";
+            for (int c = 0; c < cans.Count(); c++)
+            {
+                EntityAI can = cans[c];
+                int canDice = OZG_DiceRead.CountIn(can);
+                detail = detail + " " + OZG_Keys.Of(can) + " id=" + OZG_DiceRead.CanId(can);
+                detail = detail + " dice=" + canDice.ToString();
+            }
+            if (cans.Count() == 0)
+                detail = detail + " none";
+            return true;
+        }
         array<EntityAI> items = new array<EntityAI>();
         p.GetInventory().EnumerateInventory(InventoryTraversalType.PREORDER, items);
+        string keepText = OZG_VerbOps.Arg(args, "keep", "");
+        if (keepText != "")
+        {
+            int keep = keepText.ToInt();
+            int loose = 0;
+            int gone = 0;
+            for (int k = 0; k < items.Count(); k++)
+            {
+                OZG_Die_Base carried = OZG_Die_Base.Cast(items[k]);
+                if (!carried)
+                    continue;
+                EntityAI lies2 = carried.GetHierarchyParent();
+                if (lies2 && lies2.IsKindOf("OZG_DiceCan_Base"))
+                    continue;
+                loose++;
+                if (loose <= keep)
+                    continue;
+                GetGame().ObjectDelete(carried);
+                gone++;
+            }
+            detail = "dice of " + uid + ": " + gone.ToString() + " loose dice deleted, " + keep.ToString() + " kept at most";
+            return true;
+        }
         detail = "dice of " + uid + ":";
         int n = 0;
         for (int i = 0; i < items.Count(); i++)

@@ -7,7 +7,8 @@ The window is the design canvas's boards "Тисяча", "Покер на кіс
 and "Перудо" as redone on 2026-11-27, and their parts "Кістка", "Банка", "Вікно підміни
 кістки": the felt tray with the players' plates round it, a can of dice at the seat that
 throws, the dice flying out of it onto the felt; right the score, what this player may do,
-the swap's button, the log; over the tray the swap's own window. Every place is the
+the buttons of the can and dice and of the swap, the log; over the tray the window of the
+can and the dice ("Вікно «Банка й кості»") and the swap's own. Every place is the
 canvas's, in its px (the layout's units, 1600 x 900), from the tray's corner (52, 86 of the
 window) or from the right column's (1164, 86).
 
@@ -400,6 +401,108 @@ def inherit(node):
     return (kind, name, attrs, [inherit(c) for c in kids] if kids else kids)
 
 
+# ---------------------------------------------------------------- the can and the dice
+
+def pick_button(x, y, w=336):
+    """"Банка й кості" and what he throws now -- whose can, how many of its dice (the
+    canvas: as the swap's button and above it); it opens the window of the can and the
+    dice. The script places it in whichever panel holds it."""
+    return button("OZG_DPickBtn", x, y, w, 38, 30, [
+        box("OZG_DPickBtnBox", 0, 0, w, 38, 4, BTN, "#3d2d1d", prio=0),
+        text("OZG_DPickBtnText", 12, 11, w - 24, 16, 13, "s", FAINT, 2, "left", "#STR_OZG_DWIN_PICK"),
+        text("OZG_DPickBtnNote", 12, 11.5, w - 24, 15, 12, "s", MUTED, 2, "right")], visible=0)
+
+
+PICK_W = 720
+PICK_COL2 = 366       # the second step's column: 18 + 330 + 18
+
+
+def pick_dialog(x, y, w, h):
+    """The window of the can and the dice (the canvas's "Вікно «Банка й кості»"), the same
+    in every dice game and at nardy: over a dim of what it covers (`x`, `y`, `w`, `h` of
+    the window), a box 720 wide with two steps side by side -- the cans he may throw from
+    (a row a can, 330 x 66: its picture with its dice in its mouth, whose it is, how many
+    dice it holds; the one in play carries a chip while a game is on) and the dice of the
+    can chosen (46 each, the ones of his throw ringed gold with "кидаю" under them) --, a
+    note under each, what he throws, "Скасувати" and "Готово".
+
+    None of it is a sleight: no chance, nothing to notice. The script lays a row a can
+    (ozg_dprow.layout; three in sight, the rest scroll), the dice (ozg_ddie.layout), sizes
+    the box to what it holds and centres it."""
+    k = [soft_shadow("OZG_DPkShadow", 0, 0, PICK_W, 416, 18, 0.65, 0),
+         box("OZG_DPkBox", 0, 0, PICK_W, 416, 8, DIALOG, DIALOG_EDGE, outside=True, prio=1),
+         text("OZG_DPkTitle", 18, 16, 300, 30, 22, "p", INK, 3, "left", "#STR_OZG_DWIN_PICK"),
+         text("OZG_DPkCount", 200, 23, 460, 16, 13, "s", MUTED, 3, "left", "#STR_OZG_DWIN_PICK_OPEN"),
+         button("OZG_DPkClose", PICK_W - 50, 16, 32, 30, 6, [
+             box("OZG_DPkCloseBox", 0, 0, 32, 30, 4, "#33251a", prio=0),
+             image("OZG_DPkCloseX", exact(10, 9, 12, 12), 2, "ozg_icon_x_ca", rgb(LOG_INK))]),
+         # step 1: the cans
+         step_disc("OZG_DPkStep1", 18, 60, "1"),
+         text("OZG_DPkLabel1", 48, 62.5, 300, 17, 14, "b", INK, 3, "left", "#STR_OZG_DWIN_PICK_STEP1"),
+         ("ScrollWidgetClass", "OZG_DPkRows",
+          exact(18, 90, 340, 210) + [("color", rgb(GOLD, 0.9)), ("priority", 5), ("clipchildren", 1),
+                                     ("Scrollbar V", 1), ("style", "blank")],
+          [("FrameWidgetClass", "OZG_DPkRowsIn",
+            [("ignorepointer", 1), ("clipchildren", 0)] + exact(0, 0, 330, 210) + [("priority", 1)], None)]),
+         # step 2: the dice of the can chosen
+         step_disc("OZG_DPkStep2", PICK_COL2, 60, "2"),
+         text("OZG_DPkLabel2", PICK_COL2 + 30, 62.5, 306, 17, 14, "b", INK, 3),
+         frame("OZG_DPkCan", exact(PICK_COL2, 90, 336, 91), 3, [
+             shape("OZG_DPkCanBg", 0, 0, 336, 91, 6, rgb("#241a12"), 0),
+             frame("OZG_DPkCanDice", exact(0, 0, 336, 91), 1)])]
+    for i in range(5):
+        # a die's place: 54 wide, the die 46 in its middle, 7 under it the word of 14
+        dx = PICK_COL2 + 10 + i * 64
+        k.append(text("OZG_DPkWord%d" % i, dx - 8, 157, 70, 14, 11, "b", "#e7c27a", 6, "center",
+                      "#STR_OZG_DWIN_PICK_MINE", [("visible", 0)]))
+        k.append(button("OZG_DPkHit%d" % i, dx, 100, 54, 75, 7, None, visible=0))
+    for i in range(3):
+        k.append(text("OZG_DPkCanNote%d" % i, 18, 308 + i * 17, 330, 17, 12, "s", MUTED, 3))
+    for i in range(4):
+        k.append(text("OZG_DPkNote%d" % i, PICK_COL2, 189 + i * 17, 336, 17, 12, "s", MUTED, 3))
+    # what he throws, and the two buttons
+    k += [text("OZG_DPkSum0", 18, 367.5, 420, 19, 14, "s", MUTED, 3),
+          text("OZG_DPkSum1", 18, 386.5, 420, 19, 14, "s", MUTED, 3),
+          btn("OZG_DPkCancel", 460, 356, 110, 42, 4, BTN, BTN_EDGE, "#STR_OZG_BWIN_CANCEL", 14, "s", INK, prio=6),
+          btn("OZG_DPkGo", 582, 356, 120, 42, 4, SL_BTN, None, "#STR_OZG_DWIN_PICK_GO", 15, "b", FAINT, prio=6)]
+    # the dim and the pane: as the swap's window
+    d = [panel("OZG_DPkDim", exact(0, 0, w, h), "0.031 0.02 0.012 0.83", 0),
+         button("OZG_DPkBack", 0, 0, w, h, 1, None),
+         frame("OZG_DPkPane", exact((w - PICK_W) / 2.0, (h - 416) / 2.0, PICK_W, 416), 2, k)]
+    return frame("OZG_DPickDlg", exact(x, y, w, h), 85, d, [("visible", 0)])
+
+
+def pick_row():
+    """A can he may throw from, a row of that window (the canvas: 330 x 66, a ring of one --
+    gold when it is the one chosen; half seen when it may not be taken): the can drawn 0.6
+    times with its dice in its mouth, whose can it is, how many dice it holds; right the
+    chip "у грі" of the can a game is on with.
+
+    The can's picture is the table's (ozg_dcan.layout's parts: its body 92 units square
+    with the can's box 8 in, the dice of its mouth at 6, 0, 64 x 32 of the box, its shadow
+    at -8, 64, 96 x 40), its box at 9, 5 of the row. All of it lies in one frame the script
+    gives an alpha."""
+    n = "OZG_DPRow"
+    s = 0.6
+    cx, cy = 9, 5
+    kids = [box(n + "Box", 0, 0, 330, 66, 6, "#2a1d12", "#4a3726", prio=0),
+            image(n + "CanSh", exact(cx - 8 * s, cy + 64 * s, 96 * s, 40 * s), 1, "ozg_can_shadow_ca"),
+            image(n + "Can", exact(cx - 8 * s, cy, 92 * s, 92 * s), 2, None)]
+    for i in range(7):
+        kids.append(image(n + "In%d" % i, exact(cx + 6 * s, cy, 64 * s, 32 * s), 3, "ozg_can_in%d_ca" % i,
+                          extra=[("visible", 0)]))
+    kids += [text(n + "Title", 65, 15.5, 250, 17, 14, "b", INK, 4),
+             text(n + "Sub", 65, 35.5, 250, 15, 12, "s", MUTED, 4),
+             frame(n + "Chip", exact(260, 22, 57, 22), 4, [
+                 # the canvas: rgba(201, 164, 92, .16) over the row chosen (#3a2c1c)
+                 shape(n + "ChipBg", 0, 0, 57, 22, 11, rgb("#513f26"), 0),
+                 text(n + "ChipText", 0, 0, 57, 22, 12, "b", "#e7c27a", 1, "center", "#STR_OZG_DWIN_PICK_IN_PLAY")],
+                   [("visible", 0)])]
+    whole = inherit(frame(n + "All", exact(0, 0, 330, 66), 1, kids))
+    attrs = exact(0, 0, 330, 66) + [("text", '""'), ("priority", 6), ("style", "Empty"), ("clipchildren", 1)]
+    return block("ButtonWidgetClass", n, attrs, [whole])
+
+
 def pic(name, prio, texture=None, color="1 1 1 1"):
     """A picture the script places and sizes in pixels."""
     return inherit(image(name, exact(0, 0, 10, 10), prio, texture, color))
@@ -507,8 +610,10 @@ def window_dice():
         lg.append(text("OZG_DLog%d" % i, 12, 28 + i * 21, 336, 17, 13, "s", LOG_INK, 2, "left", "", [("visible", 0)]))
     col.append(frame("OZG_DLog", exact(12, 497, 360, 265), 5, lg, clip=1))
     col.append(swap_button(24, 400))
+    col.append(pick_button(24, 352))
     k.append(frame("OZG_DCol", exact(1164, 86, 384, 774), 6, col))
     k.append(swap_dialog(52, 86, 1100, 774))
+    k.append(pick_dialog(52, 86, 1100, 774))
     k += dialogs(menu_y=70)
     attrs = [("ignorepointer", 1), ("clipchildren", 0), ("position", "0 0"), ("size", "1600 900"),
              ("halign", "center_ref"), ("valign", "center_ref"),
@@ -827,6 +932,7 @@ def write_layouts():
     write("ozg_ddie.layout", die_actor())
     write("ozg_dcan.layout", can_actor())
     write("ozg_dsrow.layout", swap_row())
+    write("ozg_dprow.layout", pick_row())
     for name, body in dice_game_faces():
         write(name, body)
 

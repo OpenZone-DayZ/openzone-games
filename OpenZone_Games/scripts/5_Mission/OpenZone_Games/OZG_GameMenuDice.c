@@ -126,6 +126,7 @@ modded class OZG_GameMenu
         DTEnd();
         BWPoolsEnd();
         DTPaintSwapDlg();
+        DTPaintPickDlg();
         BWPaintDialogs();
     }
 
@@ -354,7 +355,8 @@ modded class OZG_GameMenu
 
     // Between games: what the table offers -- begin (the host), the host's role taken, the
     // pose, leaving the seat, folding the can -- as buttons of the window's own panel, two a
-    // row, under the score (`m_DWScoreH` high).
+    // row, under the score (`m_DWScoreH` high); under them "Банка й кості" for a player with
+    // a can or dice to choose before the deal.
     protected void DWPaintActions()
     {
         float top = 12 + m_DWScoreH + 10;
@@ -397,6 +399,11 @@ modded class OZG_GameMenu
             BWShow("OZG_DAct" + used.ToString(), false);
             used++;
         }
+        // "Банка й кості" (the column's own button, laid into the panel): 38 high, the
+        // panel's 12 under it
+        bool picks = DTPickButton(24, top + y, 336, true);
+        if (picks)
+            y = y + 46;
         float h = y + 4;
         if (h < 100)
             h = 100;
@@ -634,6 +641,7 @@ modded class OZG_GameMenu
             return;
         m_DWPicked.Clear();
         m_DTSwapOpen = false;
+        m_DTPickOpen = false;
         Play(move);
         BoardWinPaint();
     }

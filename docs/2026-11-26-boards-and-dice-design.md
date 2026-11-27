@@ -105,6 +105,12 @@ Date: 2026-11-25/26. The owner's words, in this order (chat, Russian; here in En
     and half seen, and the figurine, smaller, stands within it, on its foot.
 37. (2026-11-26) "That is it, go on: the mockups, and then move them into the game. Work by
     yourself." "Do everything in this session."
+38. (2026-11-27, on the swap's list leaving out every die of the can in play) "Yes, but then
+    the player needs a choice of which die of the can to throw." And: "Also, if a player
+    has several cans, can he choose which can to enter the game with?"
+39. (2026-11-27, on the mockup of that choice, its dice drawn as empty squares) "Do not draw
+    the dice as empty squares while choosing, take a face by chance." "That remark is for
+    every window."
 
 What the words leave open is decided below and named in §14.
 
@@ -116,7 +122,9 @@ What the words leave open is decided below and named in §14.
 - **The can of dice**: one item holding five dice, laid out like a deck, for five dice
   games: thousand, dice poker, pig, high roll and perudo.
 - **One die** for everything: a die from a can goes into a board's slot and back.
-- **Whose dice** (§8): in every dice game the host chooses own dice, the host's, or by wish.
+- **Whose dice** (§8): in every dice game the host chooses own dice, the host's, or by wish;
+  within that each player chooses, in the open, the can he throws from and which of its
+  dice.
 - **Swapping a die** (§9) is a sleight like the card sleights, with **loaded dice** (§10)
   made by the card sharp's kit, as its description has promised since 2026-11-25.
 - **The game in the world** (§12): the position on the board and the dice on the table, as
@@ -355,6 +363,36 @@ A choice of the host in every dice game (and nardy, §5.7):
 The server throws: it reads the dice the throw is made with, the actual items, and a
 loaded one weighs on its face (§10).
 
+### 8.1 The can and the dice a player throws (2026-11-27)
+
+A can holds five dice and a game may throw fewer (pig one, high roll one to three, nardy
+two); a player may carry several cans. Which can he throws from and which of its dice is
+his own choice (the owner's words 38), made in the window "Банка й кості" -- the button of
+that name stands above "Підмінити кістку", in the table's panel between games too.
+
+- **In the open.** The table sees the can at his seat and the dice on the felt, so this is
+  no sleight: no chance, nothing to notice, no limit, and it works with cheating switched
+  off. Swapping a die (§9.2) stays the hidden way to bring a die in.
+- **The can, before the deal.** His own cans that hold enough dice for the game; by wish
+  also the one laid out; on the host's dice only that one. In a game the can is the one in
+  play and is not changed.
+- **The dice, before the deal and before each throw of his own.** As many as the game
+  throws, of the can he throws from -- the host's shared can too: each who throws from it
+  chooses for himself. A game of one die: a click takes that die. More: a click takes a
+  die into the throw or out of it.
+- **Kept.** A choice is kept with the place, a player's id beside the can (the one laid
+  out, or his can's lasting id -- its key changes at every reconnect) and the slots of the
+  dice. A deal and a restart take it; a choice whose can he no longer carries, or whose die
+  no longer lies in its slot, falls back to the first can of his that holds enough and to
+  its first dice.
+- **Told.** Dice changed in a game are a line of the journal ("... бере з банки інші
+  кості"); the server's debug log has `dice: seat <n> throws <keys> of <can>` at each deal
+  and `dice-pick:` at each choice.
+- **No die is drawn blank** (the owner's words 39): where a window shows a die and nothing
+  says its face -- the dice of that window, the dice of the swap's window, the two dice of
+  a swap in flight, the dice in the kit's window -- it lies on a face taken by chance, the
+  same while the window is open. A load he knows is still the badge, not the face.
+
 ## 9. Sleights
 
 ### 9.1 On the board
@@ -481,6 +519,10 @@ Each built and checked on the stand by itself, in English and Ukrainian.
 - The kit's window: three weights of a load, 30, 50 and 70%, the heavier noticed sooner;
   one use of the kit whatever is chosen; opening what somebody else did spends nothing.
 - Whose dice and swaps in nardy too (§5.7).
+- The choice of the can and the dice (§8.1, 2026-11-27): open, unlimited, the can fixed
+  for the game, the dice his to change before each of his throws; each player chooses for
+  himself from the host's shared can; a die of another can he carries is still a die he
+  may slip in.
 
 Decided while building (2026-11-26, `2026-11-26-boards-and-dice-record.md`):
 

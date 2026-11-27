@@ -84,12 +84,15 @@ modded class OZG_Session
         // whose dice each seat throws, the can they lie in and what may be swapped.
         bool acts = op == OZG_Const.OP_ACT || op == OZG_Const.OP_DSWAP;
         bool looks = op == OZG_Const.OP_OPEN || op == OZG_Const.OP_WATCH;
-        if (acts || looks)
+        bool picks = op == OZG_Const.OP_DPICK;
+        if (acts || looks || picks)
             DiceAgain();
         if (op == OZG_Const.OP_BSLEIGHT)
             return BoardSleightAsk(player, uid, ask);
         if (op == OZG_Const.OP_DSWAP)
             return DiceSwapAsk(player, uid, ask);
+        if (picks)
+            return DicePickAsk(player, uid, ask);
         return super.Ask(player, op, ask);
     }
 
@@ -122,6 +125,7 @@ modded class OZG_Session
         DiceLooksHead(v, uid);
         DiceMarksHead(v, uid);
         DiceSwapHead(v, uid, seat, dealt);
+        DicePickHead(v, uid, seat);
         v.BoardSleights = 0;
         v.BoardWait = 0;
         OZG_Settings cfg = OZG_Cfg.Get();
@@ -478,6 +482,298 @@ modded class OZG_Session
             v.MyDicePlaces.Insert(place);
             v.MyDiceLoads.Insert(ownFace);
             v.MyDiceSteps.Insert(ownStep);
+        }
+    }
+
+    // ---- the can and the dice chosen (§8; the window "Банка й кості") ----------
+
+    // The game the place is set to, and its options: the one in play, or the sample of
+    // the one chosen (asked before a deal). Null for none.
+    protected OZG_Game PickGame(map<string, string> options)
+    {
+        options.Clear();
+        for (int i = 0; i < m_R.OptIds.Count() && i < m_R.OptVals.Count(); i++)
+        {
+            string optId = m_R.OptIds[i];
+            string optVal = m_R.OptVals[i];
+            options.Set(optId, optVal);
+        }
+        if (m_R.St == OZG_Const.ST_PLAYING && m_Game)
+            return m_Game;
+        return OZG_Games.Sample(m_R.GameId);
+    }
+
+    // The holder an ask names: the one laid out, or a can this player carries. Null: none
+    // such.
+    protected EntityAI PickHolderNamed(PlayerBase player, string key, EntityAI hostCan)
+    {
+        if (key == "")
+            return null;
+        if (key == OZG_DiceConst.PICK_HOST)
+            return hostCan;
+        EntityAI can = EntityAI.Cast(OZG_Keys.Find(key));
+        if (!can || !can.IsKindOf("OZG_DiceCan_Base"))
+            return null;
+        if (can.GetHierarchyRootPlayer() != player)
+            return null;
+        return can;
+    }
+
+    // ask.CardKey: the can -- "" the one he has (in play, or chosen), "host" the one laid
+    // out, else the key of a can he carries; ask.Move: the keys of the dice of it he
+    // throws, "," between ("" the first so many). Before a deal the can and the dice; in
+    // a game the dice alone, before his own throw. None of it is a sleight: the table
+    // sees the can at his seat and the dice on the felt, and nothing is rolled.
+    protected string DicePickAsk(PlayerBase player, string uid, OZG_WAsk ask)
+    {
+        int mine = SeatOf(uid);
+        if (mine < 0 || !player)
+            return OZG_Const.SAY_NOT_SEATED;
+        map<string, string> options = new map<string, string>();
+        OZG_Game game = PickGame(options);
+        if (!game)
+            return OZG_Const.SAY_SLEIGHT_NOT_GAME;
+        int need = game.DiceNeededWith(options);
+        if (need <= 0)
+            return OZG_Const.SAY_SLEIGHT_NOT_GAME;
+        string whose = game.DiceMode(options);
+        EntityAI hostCan = HostHolder();
+        bool playing = m_R.St == OZG_Const.ST_PLAYING;
+        EntityAI holder = null;
+        if (playing)
+        {
+            if (m_R.Dealt.Find(mine) < 0)
+                return OZG_Const.NO_SEAT;
+            if (!Present(player))
+                return OZG_Const.SAY_TOO_FAR;
+            if (!m_Game.ThrowsNext(mine))
+                return OZG_Const.SAY_DPICK_NOT_NOW;
+            array<EntityAI> nowDice;
+            if (!m_SeatDice || !m_SeatDice.Find(mine, nowDice) || !nowDice || nowDice.Count() == 0)
+                return OZG_Const.SAY_DSWAP_NO_DIE;
+            EntityAI firstDie = nowDice[0];
+            if (!firstDie)
+                return OZG_Const.SAY_DSWAP_NO_DIE;
+            holder = firstDie.GetHierarchyParent();
+            // the can is chosen before the deal
+            if (ask.CardKey != "")
+            {
+                EntityAI asked = PickHolderNamed(player, ask.CardKey, hostCan);
+                if (asked != holder)
+                    return OZG_Const.SAY_DPICK_CAN;
+            }
+        }
+        else
+        {
+            if (ask.CardKey == "")
+                holder = SeatHolder(player, uid, whose, need, hostCan);
+            else
+                holder = PickHolderNamed(player, ask.CardKey, hostCan);
+            if (!holder)
+                return OZG_Const.SAY_DSWAP_NO_DIE;
+            bool hosts = holder == hostCan;
+            if (hosts && whose == OZG_DiceConst.WHOSE_OWN)
+                return OZG_Const.SAY_DPICK_CAN;
+            if (!hosts && whose == OZG_DiceConst.WHOSE_HOST)
+                return OZG_Const.SAY_DPICK_CAN;
+        }
+        if (!holder)
+            return OZG_Const.SAY_DSWAP_NO_DIE;
+        array<EntityAI> bySlot = new array<EntityAI>();
+        OZG_DiceRead.BySlot(holder, bySlot);
+        int have = 0;
+        int k;
+        for (k = 0; k < bySlot.Count(); k++)
+        {
+            if (bySlot[k])
+                have++;
+        }
+        if (have < need)
+            return OZG_Const.SAY_DPICK_FEW;
+        // the dice named, by their slots
+        array<int> slots = new array<int>();
+        if (ask.Move == "")
+        {
+            for (k = 0; k < bySlot.Count() && slots.Count() < need; k++)
+            {
+                if (bySlot[k])
+                    slots.Insert(k);
+            }
+        }
+        else
+        {
+            array<string> keys = new array<string>();
+            ask.Move.Split(",", keys);
+            for (int q = 0; q < keys.Count(); q++)
+            {
+                string dieKey = keys[q];
+                EntityAI named = EntityAI.Cast(OZG_Keys.Find(dieKey));
+                int at = -1;
+                if (named)
+                    at = bySlot.Find(named);
+                if (at < 0 || slots.Find(at) >= 0)
+                    return OZG_Const.SAY_DSWAP_NO_DIE;
+                slots.Insert(at);
+            }
+        }
+        if (slots.Count() != need)
+            return OZG_Const.SAY_DPICK_COUNT;
+        slots.Sort();
+        string slotsText = "";
+        array<EntityAI> dice = new array<EntityAI>();
+        for (int s = 0; s < slots.Count(); s++)
+        {
+            int slotNo = slots[s];
+            if (s > 0)
+                slotsText = slotsText + ",";
+            slotsText = slotsText + slotNo.ToString();
+            EntityAI taken = bySlot[slotNo];
+            dice.Insert(taken);
+        }
+        string canId = HolderId(holder, hostCan);
+        PickSet(uid, canId, slotsText);
+        if (playing)
+        {
+            // the dice of his throw from now on, their loads handed to the game again; the
+            // table is told when they are other dice than before
+            array<EntityAI> was;
+            bool same = false;
+            if (m_SeatDice.Find(mine, was) && was && was.Count() == dice.Count())
+            {
+                same = true;
+                for (int w = 0; w < dice.Count(); w++)
+                {
+                    if (was[w] != dice[w])
+                        same = false;
+                }
+            }
+            if (!same)
+            {
+                m_SeatDice.Set(mine, dice);
+                array<int> faces = new array<int>();
+                array<int> weights = new array<int>();
+                OZG_DiceRead.Loads(dice, faces, weights);
+                m_Game.TakeDice(mine, faces, weights);
+                string seatWord = OZG_Words.SeatArg(mine);
+                string sayKey = OZG_Const.SAY_DPICK;
+                if (need == 1)
+                    sayKey = OZG_Const.SAY_DPICK_ONE;
+                AddLog("say " + OZG_Words.W1(sayKey, seatWord));
+                string pickedKeys = DiceKeysText(dice);
+                string pickedLine = "dice-pick: " + uid + " seat " + mine.ToString() + " throws " + pickedKeys;
+                OZG_Log.Dbg(pickedLine + " (slots " + slotsText + ") of " + canId + ", place " + m_R.PlaceId);
+            }
+        }
+        else
+        {
+            string willKeys = DiceKeysText(dice);
+            string willLine = "dice-pick: " + uid + " will throw " + willKeys;
+            OZG_Log.Dbg(willLine + " (slots " + slotsText + ") of " + canId + ", place " + m_R.PlaceId);
+        }
+        Changed();
+        return "";
+    }
+
+    // The window "Банка й кості" for this player: the cans he may throw from and their
+    // dice, which are his now, and whether he may choose (OZG_WView.Pick*). His own
+    // first, then the one laid out where the game lets him throw from it. A die slipped in and not thrown
+    // since looks to him as in the can's mouth: like the one it took the place of, unless
+    // he knows.
+    protected void DicePickHead(OZG_WView v, string uid, int seat)
+    {
+        if (seat < 0 || uid == "")
+            return;
+        map<string, string> options = new map<string, string>();
+        OZG_Game game = PickGame(options);
+        if (!game)
+            return;
+        int need = game.DiceNeededWith(options);
+        if (need <= 0)
+            return;
+        PlayerBase player = OZG_Sessions.PlayerOf(uid);
+        if (!player)
+            return;
+        bool playing = m_R.St == OZG_Const.ST_PLAYING;
+        if (playing && m_R.Dealt.Find(seat) < 0)
+            return;
+        string whose = game.DiceMode(options);
+        EntityAI hostCan = HostHolder();
+        // the can he throws from, and the dice of it that are his
+        EntityAI inPlay = null;
+        array<EntityAI> mineDice = new array<EntityAI>();
+        if (playing)
+        {
+            array<EntityAI> nowDice;
+            if (m_SeatDice && m_SeatDice.Find(seat, nowDice) && nowDice && nowDice.Count() > 0)
+            {
+                mineDice.Copy(nowDice);
+                EntityAI firstDie = nowDice[0];
+                if (firstDie)
+                    inPlay = firstDie.GetHierarchyParent();
+            }
+        }
+        else
+        {
+            inPlay = SeatHolder(player, uid, whose, need, hostCan);
+            SeatDicePicked(uid, inPlay, hostCan, need, mineDice);
+        }
+        v.PickNeed = need;
+        if (!playing)
+        {
+            v.PickCanNow = 1;
+            v.PickDiceNow = 1;
+        }
+        else if (m_Game.ThrowsNext(seat))
+        {
+            v.PickDiceNow = 1;
+        }
+        array<EntityAI> cans = new array<EntityAI>();
+        if (whose != OZG_DiceConst.WHOSE_HOST)
+        {
+            array<EntityAI> ownCans = new array<EntityAI>();
+            OZG_DiceRead.OwnCans(player, ownCans);
+            for (int o = 0; o < ownCans.Count(); o++)
+            {
+                EntityAI ownCan = ownCans[o];
+                cans.Insert(ownCan);
+            }
+        }
+        if (hostCan && whose != OZG_DiceConst.WHOSE_OWN)
+            cans.Insert(hostCan);
+        for (int c = 0; c < cans.Count(); c++)
+        {
+            EntityAI can = cans[c];
+            string canKey = OZG_Keys.Of(can);
+            if (can == hostCan)
+                canKey = OZG_DiceConst.PICK_HOST;
+            int canOn = 0;
+            if (can == inPlay)
+                canOn = 1;
+            v.PickCanKeys.Insert(canKey);
+            v.PickCanLooks.Insert(OZG_BoardRead.LookOf(can.GetType()));
+            v.PickCanOn.Insert(canOn);
+            array<EntityAI> bySlot = new array<EntityAI>();
+            OZG_DiceRead.BySlot(can, bySlot);
+            for (int d = 0; d < bySlot.Count(); d++)
+            {
+                EntityAI die = bySlot[d];
+                if (!die)
+                    continue;
+                string dieKey = OZG_Keys.Of(die);
+                string look = OZG_BoardRead.DieLookOf(die.GetType());
+                string stoodFor;
+                if (m_SlipLooks.Find(dieKey, stoodFor) && !SlipKnown(dieKey, uid))
+                    look = stoodFor;
+                int dieOn = 0;
+                if (canOn == 1 && mineDice.Find(die) >= 0)
+                    dieOn = 1;
+                int mark = DieMark(die, uid);
+                v.PickDieCan.Insert(c);
+                v.PickDieKeys.Insert(dieKey);
+                v.PickDieLooks.Insert(look);
+                v.PickDieMarks.Insert(mark);
+                v.PickDieOn.Insert(dieOn);
+            }
         }
     }
 

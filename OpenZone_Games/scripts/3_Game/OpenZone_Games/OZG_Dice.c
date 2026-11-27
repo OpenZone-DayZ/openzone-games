@@ -14,6 +14,10 @@ class OZG_DiceConst
     static const string WHOSE_WISH = "wish";
     static const string NO_DICE = "STR_OZG_DICE_NONE";
     static const string OPT_STAKE = "stake";
+    // A player's choice of a can, as it is kept and told: the one laid out, or none made
+    // (a list of the session's file holds no empty text).
+    static const string PICK_HOST = "host";
+    static const string PICK_NONE = "-";
 }
 
 class OZG_DiceCup

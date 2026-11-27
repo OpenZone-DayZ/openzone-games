@@ -222,6 +222,7 @@ modded class OZG_GameMenu
         DTEnd();
         BWPoolsEnd();
         DTPaintSwapDlg();
+        DTPaintPickDlg();
         if (m_BNBadges)
         {
             for (int b = m_BNBadgesUsed; b < m_BNBadges.Count(); b++)
@@ -378,7 +379,8 @@ modded class OZG_GameMenu
         return "set:ozg_discs_top image:top_classic_" + side;
     }
 
-    // The throw: whose dice, what to do now, the throw's button, the swap's.
+    // The throw: whose dice, what to do now, the throw's button, the can and dice's, the
+    // swap's.
     protected void BNPaintThrow()
     {
         // whose dice are thrown: the board's (the host's), each his own, by wish
@@ -475,11 +477,16 @@ modded class OZG_GameMenu
             bool glow = canThrow || (m_DTFx != "" && m_DTFx != "linger");
             DTCanSet(can, 28, 286, 1.1, state, 100, DTArmy(canSeat), looks, glow);
         }
-        // "Підмінити кістку": there while the server lets this player swap at all
-        bool swaps = DTSwapButton(12, 208, 306, BWPlaying());
+        // "Банка й кості" (a can or dice to choose, between games too) and under it
+        // "Підмінити кістку" (while the server lets this player swap at all): 38 high
+        // each, 10 apart, the panel's 12 under the last
         float h = 210;
+        bool picks = DTPickButton(12, h - 2, 306, true);
+        if (picks)
+            h = h + 48;
+        bool swaps = DTSwapButton(12, h - 2, 306, BWPlaying());
         if (swaps)
-            h = 258;
+            h = h + 48;
         Widget throwW = BW("OZG_BThrow");
         if (throwW)
             throwW.SetSize(330 * m_K, h * m_K);
@@ -543,6 +550,7 @@ modded class OZG_GameMenu
             m_DTThrowFaces.Insert(face);
         }
         m_DTSwapOpen = false;
+        m_DTPickOpen = false;
         m_DTFx = "shake";
         m_DTFxLeft = 0.62;
         DTThrowSound(OZG_SoundIds.RATTLE);
@@ -1013,6 +1021,7 @@ modded class OZG_GameMenu
             if (BWButton(OZG_NardyConst.M_THROW) && !DTBusy())
             {
                 m_DTSwapOpen = false;
+                m_DTPickOpen = false;
                 Play(OZG_NardyConst.M_THROW);
             }
             return true;

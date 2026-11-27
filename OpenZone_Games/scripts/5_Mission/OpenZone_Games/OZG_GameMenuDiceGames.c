@@ -1179,15 +1179,20 @@ modded class OZG_GameMenu
         m_DWCanMove = move;
     }
 
-    // The swap's button in the panel that lies at `panelY` of the column, `h` down it
-    // (what the panel holds ends 10 above); the panel's height with the button (38 and
-    // 12 under it) or without (its bottom's 12).
+    // The buttons of the can and dice and of the swap in the panel that lies at `panelY`
+    // of the column, `h` down it (what the panel holds ends 10 above), one under the other
+    // 10 apart, each there while it has something to offer; the panel's height with them
+    // (38 each and 12 under the last) or without (its bottom's 12).
     protected float DGSwapRow(float panelY, float h, bool live)
     {
-        bool shown = DTSwapButton(24, panelY + h, 336, live);
-        if (shown)
-            return h + 50;
-        return h + 2;
+        float y = h;
+        bool picks = DTPickButton(24, panelY + y, 336, live);
+        if (picks)
+            y = y + 48;
+        bool swaps = DTSwapButton(24, panelY + y, 336, live);
+        if (swaps)
+            y = y + 48;
+        return y + 2;
     }
 
     // ------------------------------------------------------------ thousand

@@ -326,3 +326,75 @@ window said "лишилось 3 з 5" and "важко, 8 з 10", a chess window 
 
 Not pushed, not published: the games' pbo and the glue's have both changed since the
 upload of `c6f21bc`.
+
+## The can and the dice chosen (the same day, later)
+
+The owner's words 38 and 39 of the design: a player chooses which die of the can he throws
+and which can he enters the game with; and no die is drawn as an empty square, in any
+window. Design §8.1.
+
+**The canvas** (versions 29 and 30): the board "Вікно «Банка й кості»" (`DPick.dc.html`),
+its button on the board "Свиня", a note; the part "Кістка" takes a face by chance where
+none is told.
+
+**The server.** `OZG_Session.DiceFor` asks `SeatHolder` for the can a seat throws from (the
+one its player chose while he carries it with dice enough, else the first of his that
+holds enough, else -- by wish -- the one laid out) and `SeatDicePicked` for the dice (the
+slots he chose while each still holds a die, else the first so many). The choice is three
+lists of the session's record, `PickUids`, `PickCans`, `PickDice`: a can is named by
+`EntityAI.GetPersistentID` (`OZG_DiceRead.CanId`), which a restart and a reconnect leave as
+it is, where the network id the windows use as a key changes. The ask is `dpick`
+(`OZG_SessionCheat.DicePickAsk`): `CardKey` the can ("" the one he has, "host", or a can's
+key), `Move` the keys of the dice; before a deal the can and the dice, in a game the dice
+alone and only when `ThrowsNext(seat)`. The view tells each player his own lists
+(`OZG_WView.Pick*`, `DicePickHead`): the cans he may throw from, his own first, with their
+looks and dice, which is on, whether he may choose now.
+
+`OZG_Game.DiceNeededWith(options)`: `DiceFor` runs before `Begin` reads the options, so
+high roll of one or three dice was handed two; a game whose count is an option now says
+it from the options.
+
+**The window** (`OZG_GameMenuCans.c`, the layouts by `tools/make_dice_win.py`:
+`pick_button`, `pick_dialog`, `pick_row` -> `ozg_dprow.layout`): the button in every dice
+game's panel above the swap's (`DGSwapRow`), in the table's panel between games
+(`DWPaintActions`) and in nardy's throw panel; the window over the tray, or over nardy's
+board. Three cans in sight, the rest scroll, and a window just opened scrolls to the can
+chosen. It asks the server for a fresh view when it opens: a can picked up since the last
+view is there. The swap's window and this one share their foot and their box
+(`DTDlgFoot`, `DTDlgFit`) and the hiding of rows out of the scroll's sight (`DTRowsCull`).
+Between games this player's own seat shows what his choice says: his can, of its kind,
+with his dice in its mouth, and "своя кістка" on his plate (`DTPickOwnNow`).
+
+**Faces.** `OZG_Keys.FaceOf(key, salt)`: one of six by the die's key and a number a window
+takes when it opens. A plain sum of the key's bytes gave dice whose ids are neighbours the
+faces 1, 2, 3, 4, 5 in a row; the function ends in two multiplications of the remainder by
+the quotient, after which neighbours share a face about one time in six. The two dice of a
+swap fly on faces taken for that flight.
+
+**The stand** (NHChernobyl, diag 1.30; the Ukrainian texts at 1920 x 1080, the English at
+3840 x 1600):
+
+- pig by wish, three cans carried (a tin of two dice, a tin of five, an army can of five)
+  and the one laid out: four rows, the fourth reached by the scroll; the tin of five and
+  its fourth die chosen -> `dice-pick: ... will throw 213.0 (slots 3)`, the button says
+  "своя · 1 з 5";
+- in the game, before the throw: the can in play carries "у грі", the others are half
+  seen, another die chosen -> `dice-pick: ... seat 2 throws ...`, the journal's line;
+- the server stopped and started in mid-game: `dice: seat 2 throws 210.0 of
+  1776014090....` -- the die chosen before the restart, in the can of the same lasting id
+  under a new key;
+- the die chosen loaded on six at 70% (`loaddie force=1`), eight throws: 6 6 6 3 6 6 6 6;
+- high roll of three on the host's dice: slots 1, 2 and 4 of the can laid out chosen; a
+  deal by wish from the army can: `dice: seat 2 throws 311.0,312.0,313.0`, the two bots
+  `189.0,190.0,191.0 of host`;
+- a can of two dice at high roll of three: "2 кістки — для цієї гри замало", half seen;
+- not this player's throw: the button is dim and says "Кості обирають перед своїм кидком.";
+- nardy by wish: the button in the throw's panel, the window over the board, two of a
+  can's five chosen -> `dice: seat 0 throws 211.0,213.0`; the one laid out is "Кості
+  дошки";
+- the swap's window, the kit's window: every die on a face;
+- three boots, the server's verdict and the client's `pass` at each.
+
+**Left as it is**: the captions in bold of 14 px (the steps' labels, a row's name) show
+faint specks under their Latin letters at 3840 x 1600 -- in the swap's window as well, so
+since 2026-11-26; at 1920 x 1080 and in the Ukrainian texts they do not show.

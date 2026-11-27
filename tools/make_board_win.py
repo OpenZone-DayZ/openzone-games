@@ -528,14 +528,17 @@ def window_nardy():
           # shaken and tipped there, and the two dice fly out of it onto the board. The
           # script lays the can itself (ozg_dcan.layout) over this button, which throws.
           dice.throw_can(12, 44),
-          # "Підмінити кістку" and the swaps left: it opens the dice windows' swap window
-          # over the board
-          dice.swap_button(12, 208, 306)]
+          # "Банка й кості" (the can he throws from and which of its dice) and, under it,
+          # "Підмінити кістку" with the swaps left: each opens the dice windows' own window
+          # over the board; the script lays them one under the other and sizes the panel
+          dice.pick_button(12, 208, 306),
+          dice.swap_button(12, 256, 306)]
     k.append(frame("OZG_BThrow", exact(16, 242, 330, 258), 10, th))
     # the cans, the dice and the die of a swap fly over the whole window
     k.append(frame("OZG_DTable", exact(0, 0, 1600, 900), 45))
     k.append(dice.toast(622, 30))
     k.append(dice.swap_dialog(360, 10, 880, 880))
+    k.append(dice.pick_dialog(360, 10, 880, 880))
     for i, (x, y) in enumerate(((16, 824), (184, 824), (16, 860), (184, 860))):
         k.append(btn("OZG_BHost%d" % i, x, y, 162, 30, 4, BTN, BTN_EDGE, "", 12, "s", INK, prio=20, visible=0))
 

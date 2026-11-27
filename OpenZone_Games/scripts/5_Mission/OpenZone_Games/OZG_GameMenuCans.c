@@ -1,8 +1,10 @@
 // The dice tables' cans and dice (boards and dice design §7, §9.2): the design canvas's
-// boards of 2026-11-27 and their parts "Банка", "Кістка" and "Вікно підміни кістки". A can
-// of dice stands at the seat that throws; a throw is the can shaken and tipped and the dice
-// flying out of it onto the felt, seen by everybody at the table; a die swapped is a die
-// seen flying into the can -- by the one who does it, and by each who noticed.
+// boards of 2026-11-27 and their parts "Банка", "Кістка", "Вікно підміни кістки" and "Вікно
+// «Банка й кості»". A can of dice stands at the seat that throws; a throw is the can shaken
+// and tipped and the dice flying out of it onto the felt, seen by everybody at the table; a
+// die swapped is a die seen flying into the can -- by the one who does it, and by each who
+// noticed. Which can a player throws from and which of its dice is his own choice, made in
+// the open (design §8): a button and a window of its own.
 //
 // What moves is a widget of its own, kept from one paint to the next: a die (ozg_ddie.layout:
 // a frame that turns whole, the die in it with its ring, its shadow and what this player
@@ -168,6 +170,7 @@ modded class OZG_GameMenu
     protected static const string DT_DIE = "OpenZone_Games/gui/layouts/ozg_ddie.layout";
     protected static const string DT_CAN = "OpenZone_Games/gui/layouts/ozg_dcan.layout";
     protected static const string DT_ROW = "OpenZone_Games/gui/layouts/ozg_dsrow.layout";
+    protected static const string DT_PROW = "OpenZone_Games/gui/layouts/ozg_dprow.layout";
     // a die's tumble as it falls (the canvas's ozgTumble: 0.55 s)
     protected static const float DT_TUMBLE = 0.55;
     // a can: its turn, its way to another seat, its shake, a swap seen
@@ -244,6 +247,24 @@ modded class OZG_GameMenu
     protected ref array<Widget> m_DTSwapRows;
     protected ref array<ref OZG_DTDie> m_DTSwapDice;
     protected bool m_DTSwapUnder;
+    // the faces the two dice of a swap fly on (a die is never drawn blank)
+    protected int m_DTSwapFaceIn = 1;
+    protected int m_DTSwapFaceOut = 1;
+    // a number taken each time a window that lists dice opens: the faces its dice lie on
+    // (OZG_Keys.FaceOf) -- the same while it is open, others the next time
+    protected int m_DTFaceSalt;
+
+    // ---- the window of the can and the dice: open, the can chosen in it (its key of the
+    // view's pick lists), the dice of it chosen (their keys), the dice it shows now (their
+    // keys, in their order), its rows and its dice
+    protected bool m_DTPickOpen;
+    // just opened: its list is scrolled to the can chosen
+    protected bool m_DTPickReveal;
+    protected string m_DTPickCan = "";
+    protected ref array<string> m_DTPickKeys;
+    protected ref array<string> m_DTPickShown;
+    protected ref array<Widget> m_DTPickRows;
+    protected ref array<ref OZG_DTDie> m_DTPickDice;
     // the table shows something a swap may not be made over (a showdown, the cans shaken)
     protected bool m_DTBlocked;
     // whose dice the variant chosen says, read once a paint (between games)
@@ -275,6 +296,10 @@ modded class OZG_GameMenu
         m_DTSwapPlaces = new array<int>();
         m_DTSwapRows = new array<Widget>();
         m_DTSwapDice = new array<ref OZG_DTDie>();
+        m_DTPickKeys = new array<string>();
+        m_DTPickShown = new array<string>();
+        m_DTPickRows = new array<Widget>();
+        m_DTPickDice = new array<ref OZG_DTDie>();
         m_DTQueueV = new array<ref OZG_WView>();
         m_DTQueuePub = new array<ref OZG_GPublic>();
         m_DTQueueOwn = new array<ref OZG_GPrivate>();
@@ -292,6 +317,12 @@ modded class OZG_GameMenu
         m_DTCans.Clear();
         m_DTSwapRows.Clear();
         m_DTSwapDice.Clear();
+        m_DTPickRows.Clear();
+        m_DTPickDice.Clear();
+        m_DTPickKeys.Clear();
+        m_DTPickShown.Clear();
+        m_DTPickOpen = false;
+        m_DTPickCan = "";
         m_DTFx = "";
         m_DTFxLeft = 0;
         m_DTThrower = -1;
@@ -1275,6 +1306,13 @@ modded class OZG_GameMenu
     {
         string look = "";
         array<string> parts = new array<string>();
+        // between games this player's own dice are the ones he would throw
+        if (m_V && !thrown && seat == m_V.Mine && m_V.St != OZG_Const.ST_PLAYING)
+        {
+            look = DTPickLookAt(place);
+            if (look != "")
+                return look;
+        }
         if (m_V && thrown)
         {
             DTLineOf(m_V.ThrownDiceLooks, seat, parts);
@@ -1342,8 +1380,49 @@ modded class OZG_GameMenu
                 return true;
             if (m_DTWhose == OZG_DiceConst.WHOSE_HOST)
                 return false;
+            // by wish this player's own seat stands as his choice has it
+            if (seat == m_V.Mine)
+            {
+                int picks = DTPickOwnNow();
+                if (picks >= 0)
+                    return picks == 1;
+            }
         }
         return m_V.OwnDiceSeats.Find(seat) >= 0;
+    }
+
+    // Between games: would this player throw from a can of his own, as the view's pick
+    // lists have it (the can he chose, or the one a deal would take; nobody else's choice
+    // is told to him)? 1 yes, 0 the one laid out, -1 the view does not say.
+    protected int DTPickOwnNow()
+    {
+        if (!m_V || m_V.Mine < 0 || m_V.PickNeed <= 0 || m_V.PickCanNow != 1)
+            return -1;
+        int inPlay = m_V.PickCanOn.Find(1);
+        if (inPlay < 0 || inPlay >= m_V.PickCanKeys.Count())
+            return -1;
+        string key = m_V.PickCanKeys[inPlay];
+        if (key == OZG_DiceConst.PICK_HOST)
+            return 0;
+        return 1;
+    }
+
+    // Between games: the look of the die at `place` among the dice this player would throw
+    // (the pick lists); "" when the view does not say.
+    protected string DTPickLookAt(int place)
+    {
+        if (!m_V || m_V.PickCanNow != 1 || place < 0)
+            return "";
+        int n = 0;
+        for (int i = 0; i < m_V.PickDieOn.Count() && i < m_V.PickDieLooks.Count(); i++)
+        {
+            if (m_V.PickDieOn[i] != 1)
+                continue;
+            if (n == place)
+                return m_V.PickDieLooks[i];
+            n++;
+        }
+        return "";
     }
 
     // Whose dice the variant chosen says: OZG_DiceConst.WHOSE_*.
@@ -1372,6 +1451,13 @@ modded class OZG_GameMenu
     protected bool DTArmy(int seat)
     {
         string look = "";
+        // between games this player's own can is the one he would throw from
+        if (m_V && seat == m_V.Mine && m_V.St != OZG_Const.ST_PLAYING && DTPickOwnNow() == 1)
+        {
+            int inPlay = m_V.PickCanOn.Find(1);
+            if (inPlay >= 0 && inPlay < m_V.PickCanLooks.Count())
+                return m_V.PickCanLooks[inPlay] == "stalker";
+        }
         if (m_V)
         {
             array<string> parts = new array<string>();
@@ -1664,6 +1750,7 @@ modded class OZG_GameMenu
             m_DTHostWant = -1;
         }
         m_DTSwapOpen = false;
+        m_DTPickOpen = false;
         m_DTFx = "gather";
         m_DTFxLeft = 0;
         if (lies)
@@ -1829,6 +1916,8 @@ modded class OZG_GameMenu
             DTSwapTick(dt);
         if (m_DTSwapOpen)
             DTSwapRowsCull();
+        if (m_DTPickOpen && m_V)
+            DTRowsCull("OZG_DPkRows", m_DTPickRows, m_V.PickCanKeys.Count(), 3, 72, 66);
         DTApplyAll();
         if (m_DTToastLeft > 0)
         {
@@ -2077,6 +2166,9 @@ modded class OZG_GameMenu
         m_DTSwapAY = ay;
         m_DTSwapBX = bx;
         m_DTSwapBY = by;
+        // a face each, taken by chance for this flight: a die is never drawn blank
+        m_DTSwapFaceIn = Math.RandomIntInclusive(1, 6);
+        m_DTSwapFaceOut = Math.RandomIntInclusive(1, 6);
         if (noticed)
             DTCanPulse(can);
         m_DTSwapSung = false;
@@ -2129,7 +2221,7 @@ modded class OZG_GameMenu
         {
             goes.m_Used = true;
             goes.m_Fresh = true;
-            DTDieFace(goes, 0, m_DTSwapIn, 34, false);
+            DTDieFace(goes, m_DTSwapFaceIn, m_DTSwapIn, 34, false);
             DTDieMarks(goes, ring, 0, 0, false, false);
             float ix = DTMix(m_DTSwapAX, m_DTSwapBX, p) + 17;
             float iy = DTMix(m_DTSwapAY, m_DTSwapBY, p) + 17 + ty;
@@ -2141,7 +2233,7 @@ modded class OZG_GameMenu
         {
             comes.m_Used = true;
             comes.m_Fresh = true;
-            DTDieFace(comes, 0, m_DTSwapOut, 34, false);
+            DTDieFace(comes, m_DTSwapFaceOut, m_DTSwapOut, 34, false);
             DTDieMarks(comes, 0, 0, 0, false, false);
             float ox = DTMix(m_DTSwapBX, m_DTSwapAX, p) + 17;
             float oy = DTMix(m_DTSwapBY, m_DTSwapAY, p) + 17 + ty;
@@ -2262,6 +2354,8 @@ modded class OZG_GameMenu
         if (DTSwapNow())
         {
             m_DTSwapOpen = true;
+            m_DTPickOpen = false;
+            m_DTFaceSalt = Math.RandomInt(0, 100000);
             m_DTSwapPick = "";
             m_DTSwapTarget = -1;
             OZG_Sounds.PlayLocal("click", OZG_Place.OZG_ById(m_PlaceId));
@@ -2301,25 +2395,32 @@ modded class OZG_GameMenu
     {
         if (!m_V || !m_DTSwapRows)
             return;
-        ScrollWidget scroll = ScrollWidget.Cast(BW("OZG_DSwRows"));
-        if (!scroll)
+        DTRowsCull("OZG_DSwRows", m_DTSwapRows, m_V.PocketDice.Count(), 4, 64, 58);
+    }
+
+    // The same for any list of this file's windows: `count` rows a `step` apart, each
+    // `rowH` high, `inSight` of them in the scroll's sight.
+    protected void DTRowsCull(string scrollName, array<Widget> rows, int count, int inSight, float step, float rowH)
+    {
+        ScrollWidget scroll = ScrollWidget.Cast(BW(scrollName));
+        if (!scroll || !rows)
             return;
-        int pockets = m_V.PocketDice.Count();
-        int rowsSeen = pockets;
-        if (rowsSeen > 4)
-            rowsSeen = 4;
-        float sightH = (rowsSeen * 64 - 6) * m_K;
-        float most = (pockets * 64 - 6) * m_K - sightH;
+        int rowsSeen = count;
+        if (rowsSeen > inSight)
+            rowsSeen = inSight;
+        float gap = step - rowH;
+        float sightH = (rowsSeen * step - gap) * m_K;
+        float most = (count * step - gap) * m_K - sightH;
         if (most < 0)
             most = 0;
         float at = scroll.GetVScrollPos01() * most;
-        for (int i = 0; i < m_DTSwapRows.Count() && i < pockets; i++)
+        for (int i = 0; i < rows.Count() && i < count; i++)
         {
-            Widget row = m_DTSwapRows[i];
+            Widget row = rows[i];
             if (!row)
                 continue;
-            float top = i * 64 * m_K;
-            float bottom = top + 58 * m_K;
+            float top = i * step * m_K;
+            float bottom = top + rowH * m_K;
             bool seen = bottom > at && top < at + sightH;
             if (row.IsVisible() != seen)
                 row.Show(seen);
@@ -2427,10 +2528,17 @@ modded class OZG_GameMenu
             }
             BWPaint(row.FindAnyWidget("OZG_DSRowBoxEdge"), ring);
             BWPaint(row.FindAnyWidget("OZG_DSRowBoxBg"), fill);
+            // the loaded face up when he knows it; else a face of its own (never blank)
+            int faceUp = loadFace;
+            if (faceUp <= 0)
+            {
+                string pocketKey = m_V.PocketDice[i];
+                faceUp = OZG_Keys.FaceOf(pocketKey, m_DTFaceSalt);
+            }
             ImageWidget pic = ImageWidget.Cast(row.FindAnyWidget("OZG_DSRowPic"));
             if (pic)
             {
-                pic.LoadImageFile(0, "set:ozg_dice image:" + look + "_" + loadFace.ToString());
+                pic.LoadImageFile(0, "set:ozg_dice image:" + look + "_" + faceUp.ToString());
                 pic.SetImage(0);
             }
             ImageWidget sh = ImageWidget.Cast(row.FindAnyWidget("OZG_DSRowSh"));
@@ -2568,7 +2676,8 @@ modded class OZG_GameMenu
                 canRing = ARGB(255, 231, 194, 122);
                 numInk = ARGB(255, 231, 194, 122);
             }
-            DTDieFace(cd, 0, canLook, 42, false);
+            int restFace = OZG_Keys.FaceOf("can" + place.ToString(), m_DTFaceSalt);
+            DTDieFace(cd, restFace, canLook, 42, false);
             DTDieMarked(cd, mark, canRing, false);
             cd.m_Fresh = true;
             DTDieGoIn(cd, 10 + i * 54 + 23, 12 + 21, 42, 0, 1, 0);
@@ -2656,21 +2765,29 @@ modded class OZG_GameMenu
             summary = Tr2("STR_OZG_DWIN_SWAP_SUM_DO", what, targetText);
         }
         float bottomY = legendY + 36 + 14;
-        TextWidget cancelT = BWText("OZG_DSwCancelText");
-        TextWidget goT = BWText("OZG_DSwGoText");
+        BWSetText("OZG_DSwGoText", Tr("STR_OZG_DWIN_SWAP_GO"));
+        DTDlgFoot("OZG_DSw", bottomY, summary, ready);
+        // ---- the box round it all, in the middle of what it covers
+        DTDlgFit(dlg, "OZG_DSw", bottomY + 42 + 18);
+    }
+
+    // The foot of a window of this file (`p`: its widgets' prefix): what will be done -- two
+    // lines at most, bright when it can be --, right its two buttons, each as wide as its
+    // words: cancel plain, go gold when `ready`.
+    protected void DTDlgFoot(string p, float bottomY, string summary, bool ready)
+    {
+        TextWidget cancelT = BWText(p + "CancelText");
+        TextWidget goT = BWText(p + "GoText");
         float cancelW = 110;
         float goW = 120;
         if (cancelT)
             cancelW = BWTextW(cancelT) + 36;
         if (goT)
-        {
-            goT.SetText(Tr("STR_OZG_DWIN_SWAP_GO"));
             goW = BWTextW(goT) + 44;
-        }
         float goX = 720 - 18 - goW;
         float cancelX = goX - 12 - cancelW;
-        DTButtonAt("OZG_DSwGo", goX, bottomY, goW, 42);
-        DTButtonAt("OZG_DSwCancel", cancelX, bottomY, cancelW, 42);
+        DTButtonAt(p + "Go", goX, bottomY, goW, 42);
+        DTButtonAt(p + "Cancel", cancelX, bottomY, cancelW, 42);
         int goFill = ARGB(255, 51, 37, 26);
         int goInk = ARGB(255, 160, 143, 115);
         if (ready)
@@ -2678,33 +2795,36 @@ modded class OZG_GameMenu
             goFill = ARGB(255, 201, 164, 92);
             goInk = ARGB(255, 26, 18, 10);
         }
-        BWPaintNamed("OZG_DSwGoBoxBg", goFill);
-        BWInk("OZG_DSwGoText", goInk);
+        BWPaintNamed(p + "GoBoxBg", goFill);
+        BWInk(p + "GoText", goInk);
         array<string> sums = new array<string>();
-        BWWrap(BWText("OZG_DSwSum0"), summary, cancelX - 18 - 12, 2, sums);
+        BWWrap(BWText(p + "Sum0"), summary, cancelX - 18 - 12, 2, sums);
         string s0 = "";
         string s1 = "";
         if (sums.Count() > 0)
             s0 = sums[0];
         if (sums.Count() > 1)
             s1 = sums[1];
-        BWSetText("OZG_DSwSum0", s0);
-        BWSetText("OZG_DSwSum1", s1);
+        BWSetText(p + "Sum0", s0);
+        BWSetText(p + "Sum1", s1);
         int sumInk = ARGB(255, 184, 165, 133);
         if (ready)
             sumInk = ARGB(255, 239, 228, 204);
-        BWInk("OZG_DSwSum0", sumInk);
-        BWInk("OZG_DSwSum1", sumInk);
+        BWInk(p + "Sum0", sumInk);
+        BWInk(p + "Sum1", sumInk);
         float sumY = bottomY + 11.5;
         if (sums.Count() > 1)
             sumY = bottomY + 2;
-        BWMove(BW("OZG_DSwSum0"), 18, sumY);
-        BWMove(BW("OZG_DSwSum1"), 18, sumY + 19);
+        BWMove(BW(p + "Sum0"), 18, sumY);
+        BWMove(BW(p + "Sum1"), 18, sumY + 19);
+    }
 
-        // ---- the box round it all, in the middle of what it covers
-        float boxH = bottomY + 42 + 18;
-        Widget pane = BW("OZG_DSwPane");
-        if (pane)
+    // A window's box (720 wide) sized to what it holds, `boxH` high, and laid in the middle
+    // of what its dim covers; its shadow with it.
+    protected void DTDlgFit(Widget dlg, string p, float boxH)
+    {
+        Widget pane = BW(p + "Pane");
+        if (pane && dlg)
         {
             float dw;
             float dh;
@@ -2714,14 +2834,13 @@ modded class OZG_GameMenu
             pane.SetPos(Math.Round(px * m_K), Math.Round(py * m_K));
             pane.SetSize(720 * m_K, boxH * m_K);
         }
-        Widget boxW = BW("OZG_DSwBox");
+        Widget boxW = BW(p + "Box");
         if (boxW)
             boxW.SetSize(720 * m_K, boxH * m_K);
-        Widget edge = BW("OZG_DSwBoxEdge");
-        BWFit(edge, 722, boxH + 2, 9);
-        BWFit(BW("OZG_DSwBoxBg"), 720, boxH, 8);
+        BWFit(BW(p + "BoxEdge"), 722, boxH + 2, 9);
+        BWFit(BW(p + "BoxBg"), 720, boxH, 8);
         // its shadow: the board's shadow picture, whose box is 880 of its 1040, 18 lower
-        Widget shadow = BW("OZG_DSwShadow");
+        Widget shadow = BW(p + "Shadow");
         if (shadow)
         {
             float m = 80.0 / 880;
@@ -2782,6 +2901,639 @@ modded class OZG_GameMenu
         BoardWinPaint();
     }
 
+    // ------------------------------------------------------------ the can and the dice
+
+    // The choice of the can a player throws from and of the dice of it he throws (design
+    // §8; the canvas's "Вікно «Банка й кості»"). The view lists the cans he may throw from
+    // and their dice (OZG_WView.Pick*): the one laid out where the game lets him, then the
+    // cans he carries. He chooses in the open -- the table sees the can at his seat and the
+    // dice on the felt --, so nothing here is a sleight: no chance, nothing to notice, as
+    // often as he likes. The can before a deal; the dice before a deal and, in a game,
+    // before each throw of his own.
+
+    // The dice a can of the pick lists holds.
+    protected int DTPickCount(int can)
+    {
+        if (!m_V || can < 0)
+            return 0;
+        int n = 0;
+        for (int i = 0; i < m_V.PickDieCan.Count(); i++)
+        {
+            if (m_V.PickDieCan[i] == can)
+                n++;
+        }
+        return n;
+    }
+
+    // Has this player anything to choose at the game shown: the can he throws from holds
+    // more dice than the game throws, or -- before a deal -- there is another can to take.
+    protected bool DTPickAny()
+    {
+        if (!m_V || m_V.Mine < 0 || m_V.PickNeed <= 0)
+            return false;
+        int inPlay = m_V.PickCanOn.Find(1);
+        if (inPlay < 0)
+            return false;
+        if (DTPickCount(inPlay) > m_V.PickNeed)
+            return true;
+        return m_V.PickCanNow == 1 && m_V.PickCanKeys.Count() > 1;
+    }
+
+    // May he choose now: the server says so -- a can before the deal, dice before his own
+    // throw --, and no throw is being played.
+    protected bool DTPickNow()
+    {
+        if (!m_V || DTBusy())
+            return false;
+        return m_V.PickCanNow == 1 || m_V.PickDiceNow == 1;
+    }
+
+    // "Банка й кості" at x, y of the column (or of nardy's throw panel), `w` wide: shown
+    // while this player has a can or dice to choose at the game shown; its ring bright when
+    // he may choose now, gold while its window is open; whose can he throws from and how
+    // many of its dice. False when it is not shown.
+    protected bool DTPickButton(float x, float y, float w, bool live)
+    {
+        Widget b = BW("OZG_DPickBtn");
+        if (!b)
+            return false;
+        bool shown = live && DTPickAny();
+        b.Show(shown);
+        if (!shown)
+        {
+            m_DTPickOpen = false;
+            return false;
+        }
+        b.SetPos(x * m_K, y * m_K);
+        bool can = DTPickNow();
+        if (!can)
+            m_DTPickOpen = false;
+        int fill = ARGB(255, 45, 33, 23);
+        int ring = ARGB(255, 61, 45, 29);
+        int ink = ARGB(255, 160, 143, 115);
+        int note = ARGB(255, 184, 165, 133);
+        if (can)
+        {
+            ring = ARGB(255, 107, 82, 51);
+            ink = ARGB(255, 239, 228, 204);
+        }
+        if (m_DTPickOpen)
+        {
+            fill = ARGB(255, 201, 164, 92);
+            ink = ARGB(255, 26, 18, 10);
+            note = ARGB(255, 26, 18, 10);
+        }
+        BWPaintNamed("OZG_DPickBtnBoxBg", fill);
+        BWPaintNamed("OZG_DPickBtnBoxEdge", ring);
+        BWInk("OZG_DPickBtnText", ink);
+        BWInk("OZG_DPickBtnNote", note);
+        int inPlay = m_V.PickCanOn.Find(1);
+        string noteKey = "STR_OZG_DWIN_PICK_NOTE_OWN";
+        if (inPlay >= 0 && inPlay < m_V.PickCanKeys.Count())
+        {
+            string canKey = m_V.PickCanKeys[inPlay];
+            if (canKey == OZG_DiceConst.PICK_HOST)
+                noteKey = "STR_OZG_DWIN_PICK_NOTE_HOST";
+        }
+        string needText = m_V.PickNeed.ToString();
+        string haveText = DTPickCount(inPlay).ToString();
+        BWSetText("OZG_DPickBtnNote", Tr2(noteKey, needText, haveText));
+        return true;
+    }
+
+    // The button pressed: its window opened or shut; when he may not choose now, why. A
+    // window just opened asks the server again: a can picked up since the last view is
+    // there to choose.
+    protected void DTPickToggle()
+    {
+        if (m_DTPickOpen)
+        {
+            m_DTPickOpen = false;
+            BoardWinPaint();
+            return;
+        }
+        if (DTPickNow())
+        {
+            m_DTPickOpen = true;
+            m_DTPickReveal = true;
+            m_DTSwapOpen = false;
+            m_DTFaceSalt = Math.RandomInt(0, 100000);
+            m_DTPickCan = "";
+            int inPlay = m_V.PickCanOn.Find(1);
+            if (inPlay >= 0 && inPlay < m_V.PickCanKeys.Count())
+                m_DTPickCan = m_V.PickCanKeys[inPlay];
+            DTPickDefault();
+            OZG_Sounds.PlayLocal("click", OZG_Place.OZG_ById(m_PlaceId));
+            Send(OZG_Const.OP_OPEN, "", -1, "", "", "", 0);
+            BoardWinPaint();
+            return;
+        }
+        if (!DTBusy())
+            DTToast(Tr("STR_OZG_SAY_DPICK_NOT_NOW") + ".", "", "", false);
+    }
+
+    // The dice of the can chosen in the window that are his as the server has it; when it
+    // has none of that can, the first so many.
+    protected void DTPickDefault()
+    {
+        m_DTPickKeys.Clear();
+        if (!m_V)
+            return;
+        int can = m_V.PickCanKeys.Find(m_DTPickCan);
+        if (can < 0)
+            return;
+        array<string> firsts = new array<string>();
+        for (int i = 0; i < m_V.PickDieCan.Count() && i < m_V.PickDieKeys.Count(); i++)
+        {
+            if (m_V.PickDieCan[i] != can)
+                continue;
+            string key = m_V.PickDieKeys[i];
+            if (firsts.Count() < m_V.PickNeed)
+                firsts.Insert(key);
+            if (i < m_V.PickDieOn.Count() && m_V.PickDieOn[i] == 1)
+                m_DTPickKeys.Insert(key);
+        }
+        if (m_DTPickKeys.Count() != m_V.PickNeed)
+            m_DTPickKeys.Copy(firsts);
+    }
+
+    // Whose can a can of the pick lists is, in words: the one laid out (at nardy the
+    // board's dice), or his own by its kind.
+    protected string DTPickCanTitle(int can)
+    {
+        if (!m_V || can < 0 || can >= m_V.PickCanKeys.Count())
+            return "";
+        string key = m_V.PickCanKeys[can];
+        if (key == OZG_DiceConst.PICK_HOST)
+        {
+            if (m_Style == "board_nardy")
+                return Tr("STR_OZG_DWIN_PICK_CAN_BOARD");
+            return Tr("STR_OZG_DWIN_PICK_CAN_HOST");
+        }
+        string look = "";
+        if (can < m_V.PickCanLooks.Count())
+            look = m_V.PickCanLooks[can];
+        if (look == "stalker")
+            return Tr("STR_OZG_DWIN_PICK_CAN_ARMY");
+        return Tr("STR_OZG_DWIN_PICK_CAN_TIN");
+    }
+
+    // A count and its noun in the form it takes ("1 кістка", "3 кістки", "5 кісток").
+    protected string DTCounted(string key, int n)
+    {
+        string s = Tr(key + OZG_Text.CountForm(n));
+        s.Replace("%1", n.ToString());
+        return s;
+    }
+
+    // The window (the canvas's "Вікно «Банка й кості»"): the cans this player may throw
+    // from, a row each; the dice of the can chosen with what he knows of each, the ones of
+    // his throw ringed gold; a note under each list; what he throws; the buttons. In a game
+    // the can is the one in play and only the dice are his to choose.
+    protected void DTPaintPickDlg()
+    {
+        Widget dlg = BW("OZG_DPickDlg");
+        if (!dlg)
+            return;
+        if (m_DTPickOpen)
+        {
+            bool still = DTPickAny() && DTPickNow();
+            if (!still)
+                m_DTPickOpen = false;
+        }
+        dlg.Show(m_DTPickOpen);
+        if (!m_DTPickOpen)
+            return;
+        int i;
+        int need = m_V.PickNeed;
+        bool fixedCan = m_V.PickCanNow != 1;
+        int cans = m_V.PickCanKeys.Count();
+        // the can chosen here: still one of them, and in a game the one in play
+        int inPlay = m_V.PickCanOn.Find(1);
+        int at = m_V.PickCanKeys.Find(m_DTPickCan);
+        bool lost = at < 0;
+        if (fixedCan && at != inPlay)
+            lost = true;
+        if (lost)
+        {
+            at = inPlay;
+            m_DTPickCan = "";
+            if (at >= 0 && at < cans)
+                m_DTPickCan = m_V.PickCanKeys[at];
+            DTPickDefault();
+        }
+        // its dice as the lists have them; a die chosen that it no longer holds is not
+        array<int> diceAt = new array<int>();
+        m_DTPickShown.Clear();
+        for (i = 0; i < m_V.PickDieCan.Count() && i < m_V.PickDieKeys.Count(); i++)
+        {
+            if (m_V.PickDieCan[i] != at)
+                continue;
+            string shownKey = m_V.PickDieKeys[i];
+            diceAt.Insert(i);
+            m_DTPickShown.Insert(shownKey);
+        }
+        for (i = m_DTPickKeys.Count() - 1; i >= 0; i--)
+        {
+            string hadKey = m_DTPickKeys[i];
+            bool gone = m_DTPickShown.Find(hadKey) < 0;
+            if (gone || i >= need)
+                m_DTPickKeys.RemoveOrdered(i);
+        }
+        TextWidget title = BWText("OZG_DPkTitle");
+        float tw = 0;
+        if (title)
+            tw = BWTextW(title);
+        BWMove(BW("OZG_DPkCount"), 18 + tw + 12, 23);
+
+        // ---- step 1: the cans, three in sight
+        Widget inside = BW("OZG_DPkRowsIn");
+        while (inside && m_DTPickRows.Count() < cans)
+        {
+            Widget made = MakeLayout(DT_PROW, inside, "OZG_DPRow");
+            if (!made)
+                break;
+            int madeNo = m_DTPickRows.Count();
+            made.SetName("OZG_DPRow" + madeNo.ToString());
+            m_DTPickRows.Insert(made);
+        }
+        for (i = 0; i < m_DTPickRows.Count(); i++)
+        {
+            Widget row = m_DTPickRows[i];
+            if (!row)
+                continue;
+            bool there = i < cans;
+            row.Show(there);
+            if (!there)
+                continue;
+            row.SetPos(0, i * 72 * m_K);
+            DTPickRowPaint(row, i, i == at, fixedCan);
+        }
+        int rowsSeen = cans;
+        if (rowsSeen > 3)
+            rowsSeen = 3;
+        float rowsH = rowsSeen * 72 - 6;
+        if (rowsH < 0)
+            rowsH = 0;
+        float insideH = cans * 72 - 6;
+        if (insideH < rowsH)
+            insideH = rowsH;
+        ScrollWidget scroll = ScrollWidget.Cast(BW("OZG_DPkRows"));
+        if (scroll)
+            scroll.SetSize(340 * m_K, rowsH * m_K);
+        if (inside)
+        {
+            inside.SetSize(330 * m_K, insideH * m_K);
+            inside.Update();
+        }
+        if (scroll)
+        {
+            scroll.Update();
+            float most = (insideH - rowsH) * m_K;
+            if (most < 0)
+                most = 0;
+            if (scroll.GetVScrollPos() > most)
+                scroll.VScrollToPos(most);
+            // just opened with more cans than are in sight: the one chosen is in sight
+            if (m_DTPickReveal && at >= 0)
+            {
+                float sightH = rowsH * m_K;
+                float rowTop = at * 72 * m_K;
+                float rowEnd = rowTop + 66 * m_K;
+                float scrollAt = scroll.GetVScrollPos();
+                if (rowEnd > scrollAt + sightH)
+                    scrollAt = rowEnd - sightH;
+                if (rowTop < scrollAt)
+                    scrollAt = rowTop;
+                scroll.VScrollToPos(scrollAt);
+            }
+        }
+        m_DTPickReveal = false;
+        DTRowsCull("OZG_DPkRows", m_DTPickRows, cans, 3, 72, 66);
+        string canNote = Tr("STR_OZG_DWIN_PICK_CAN_NOTE_ONE");
+        if (fixedCan)
+            canNote = Tr("STR_OZG_DWIN_PICK_CAN_NOTE_LOCK");
+        else if (cans > 1)
+            canNote = Tr("STR_OZG_DWIN_PICK_CAN_NOTE");
+        array<string> canNotes = new array<string>();
+        BWWrap(BWText("OZG_DPkCanNote0"), canNote, 330, 3, canNotes);
+        for (i = 0; i < 3; i++)
+        {
+            string canNoteName = "OZG_DPkCanNote" + i.ToString();
+            string canLine = "";
+            if (i < canNotes.Count())
+                canLine = canNotes[i];
+            BWSetText(canNoteName, canLine);
+            BWMove(BW(canNoteName), 18, 90 + rowsH + 8 + i * 17);
+        }
+        float leftH = rowsH + 8 + canNotes.Count() * 17;
+
+        // ---- step 2: the dice of the can chosen, each on a face of its own
+        string diceTitle = Tr("STR_OZG_DWIN_PICK_STEP2_ONE");
+        if (need > 1)
+            diceTitle = Tr1("STR_OZG_DWIN_PICK_STEP2", need.ToString());
+        BWSetText("OZG_DPkLabel2", diceTitle);
+        Widget diceBox = BW("OZG_DPkCanDice");
+        int shown = diceAt.Count();
+        for (i = 0; i < 5; i++)
+        {
+            string ti = i.ToString();
+            bool has = i < shown;
+            string dieKey = "";
+            if (has)
+                dieKey = m_DTPickShown[i];
+            bool picked = has && m_DTPickKeys.Find(dieKey) >= 0;
+            BWShow("OZG_DPkHit" + ti, has);
+            BWShow("OZG_DPkWord" + ti, picked);
+            OZG_DTDie cd = null;
+            if (i < m_DTPickDice.Count())
+                cd = m_DTPickDice[i];
+            if (!cd && diceBox)
+            {
+                cd = DTDieMake("#pick" + ti, diceBox);
+                if (cd)
+                    m_DTPickDice.Insert(cd);
+            }
+            if (!cd)
+                continue;
+            cd.m_Used = has;
+            if (!has)
+                continue;
+            int listAt = diceAt[i];
+            string look = "white";
+            if (listAt < m_V.PickDieLooks.Count() && m_V.PickDieLooks[listAt] != "")
+                look = m_V.PickDieLooks[listAt];
+            int mark = 0;
+            if (listAt < m_V.PickDieMarks.Count())
+                mark = m_V.PickDieMarks[listAt];
+            int dieRing = 0;
+            if (picked)
+                dieRing = ARGB(255, 231, 194, 122);
+            int face = OZG_Keys.FaceOf(dieKey, m_DTFaceSalt);
+            DTDieFace(cd, face, look, 46, false);
+            DTDieMarked(cd, mark, dieRing, false);
+            cd.m_Fresh = true;
+            DTDieGoIn(cd, 37 + i * 64, 37, 46, 0, 1, 0);
+        }
+        for (i = 0; i < m_DTPickDice.Count(); i++)
+            DTDieApply(m_DTPickDice[i]);
+        string diceNote = Tr("STR_OZG_DWIN_PICK_NOTE_ONE");
+        if (need > 1)
+            diceNote = Tr("STR_OZG_DWIN_PICK_NOTE_MANY");
+        if (shown == need)
+            diceNote = Tr("STR_OZG_DWIN_PICK_NOTE_EXACT");
+        array<string> notes = new array<string>();
+        BWWrap(BWText("OZG_DPkNote0"), diceNote, 336, 4, notes);
+        for (i = 0; i < 4; i++)
+        {
+            string noteLine = "";
+            if (i < notes.Count())
+                noteLine = notes[i];
+            BWSetText("OZG_DPkNote" + i.ToString(), noteLine);
+        }
+        float rightH = 91 + 8 + notes.Count() * 17;
+        float colsH = leftH;
+        if (rightH > colsH)
+            colsH = rightH;
+
+        // ---- what he throws, and the buttons
+        int chosen = m_DTPickKeys.Count();
+        bool ready = at >= 0 && chosen == need;
+        string canName = DTPickCanTitle(at);
+        string summary = Tr("STR_OZG_DWIN_PICK_SUM");
+        summary.Replace("%1", canName);
+        summary.Replace("%2", need.ToString());
+        summary.Replace("%3", shown.ToString());
+        if (shown == need)
+            summary = Tr1("STR_OZG_DWIN_PICK_SUM_ALL", canName);
+        if (!ready)
+        {
+            int more = need - chosen;
+            summary = Tr("STR_OZG_DWIN_PICK_MORE_ONE");
+            if (more != 1)
+                summary = Tr1("STR_OZG_DWIN_PICK_MORE", DTCounted("STR_OZG_KWIN_DICE_", more));
+        }
+        float bottomY = 90 + colsH + 14;
+        DTDlgFoot("OZG_DPk", bottomY, summary, ready);
+        // ---- the box round it all, in the middle of what it covers
+        DTDlgFit(dlg, "OZG_DPk", bottomY + 42 + 18);
+    }
+
+    // A row of that window, the can `can` of the pick lists: the can drawn with its dice
+    // in its mouth, whose it is, how many dice it holds (too few for the game: said so,
+    // and the row half seen), ringed gold when it is the one chosen (`on`); while a game is
+    // on (`fixedCan`) the can in play carries the chip and the others are half seen.
+    protected void DTPickRowPaint(Widget row, int can, bool on, bool fixedCan)
+    {
+        int need = m_V.PickNeed;
+        string canKey = m_V.PickCanKeys[can];
+        string canLook = "";
+        if (can < m_V.PickCanLooks.Count())
+            canLook = m_V.PickCanLooks[can];
+        bool hosts = canKey == OZG_DiceConst.PICK_HOST;
+        bool army = canLook == "stalker";
+        array<string> looks = new array<string>();
+        int i;
+        for (i = 0; i < m_V.PickDieCan.Count() && i < m_V.PickDieLooks.Count(); i++)
+        {
+            if (m_V.PickDieCan[i] != can)
+                continue;
+            string dieLook = m_V.PickDieLooks[i];
+            looks.Insert(dieLook);
+        }
+        int held = looks.Count();
+        bool few = held < need;
+        bool shut = few;
+        if (fixedCan && !on)
+            shut = true;
+        int ring = ARGB(255, 74, 55, 38);
+        int fill = ARGB(255, 42, 29, 18);
+        if (on)
+        {
+            ring = ARGB(255, 231, 194, 122);
+            fill = ARGB(255, 58, 44, 28);
+        }
+        BWPaint(row.FindAnyWidget("OZG_DPRowBoxEdge"), ring);
+        BWPaint(row.FindAnyWidget("OZG_DPRowBoxBg"), fill);
+        Widget whole = row.FindAnyWidget("OZG_DPRowAll");
+        if (whole)
+        {
+            float seen = 1;
+            if (shut)
+                seen = 0.5;
+            whole.SetAlpha(seen);
+        }
+        ImageWidget body = ImageWidget.Cast(row.FindAnyWidget("OZG_DPRowCan"));
+        if (body)
+        {
+            string tex = "ozg_can_tin_open_ca.paa";
+            if (army)
+                tex = "ozg_can_army_open_ca.paa";
+            body.LoadImageFile(0, BW_TEX + tex);
+            body.SetImage(0);
+        }
+        for (i = 0; i < 7; i++)
+        {
+            ImageWidget lying = ImageWidget.Cast(row.FindAnyWidget("OZG_DPRowIn" + i.ToString()));
+            if (!lying)
+                continue;
+            lying.Show(i < held);
+            if (i < held)
+            {
+                string lyingLook = looks[i];
+                lying.SetColor(DTLookColour(lyingLook));
+            }
+        }
+        TextWidget name = TextWidget.Cast(row.FindAnyWidget("OZG_DPRowTitle"));
+        if (name)
+            name.SetText(DTPickCanTitle(can));
+        string sub = DTCounted("STR_OZG_KWIN_DICE_", held);
+        int subInk = ARGB(255, 184, 165, 133);
+        if (few)
+        {
+            sub = Tr1("STR_OZG_DWIN_PICK_FEW", sub);
+            subInk = ARGB(255, 201, 138, 106);
+        }
+        else if (hosts)
+        {
+            sub = Tr1("STR_OZG_DWIN_PICK_TABLES", sub);
+        }
+        TextWidget subW = TextWidget.Cast(row.FindAnyWidget("OZG_DPRowSub"));
+        if (subW)
+        {
+            subW.SetText(sub);
+            subW.SetColor(subInk);
+        }
+        // the chip of the can a game is on with, as wide as its words
+        Widget chip = row.FindAnyWidget("OZG_DPRowChip");
+        if (!chip)
+            return;
+        bool chipOn = fixedCan && on;
+        chip.Show(chipOn);
+        if (!chipOn)
+            return;
+        TextWidget chipText = TextWidget.Cast(row.FindAnyWidget("OZG_DPRowChipText"));
+        float cw = 57;
+        if (chipText)
+            cw = BWTextW(chipText) + 16;
+        chip.SetPos((330 - 13 - cw) * m_K, 22 * m_K);
+        chip.SetSize(cw * m_K, 22 * m_K);
+        BWFit(row.FindAnyWidget("OZG_DPRowChipBg"), cw, 22, 11);
+        if (chipText)
+            chipText.SetSize(cw * m_K, 22 * m_K);
+    }
+
+    // A can's row pressed: that can chosen, with the dice of it that are his by the
+    // server's word, else its first so many. Not in a game (the can is chosen before the
+    // deal), and not a can with too few dice for the game.
+    protected void DTPickCanClick(int can)
+    {
+        if (!m_V || m_V.PickCanNow != 1 || can < 0 || can >= m_V.PickCanKeys.Count())
+            return;
+        string key = m_V.PickCanKeys[can];
+        if (key == m_DTPickCan || DTPickCount(can) < m_V.PickNeed)
+            return;
+        m_DTPickCan = key;
+        DTPickDefault();
+        OZG_Sounds.PlayLocal("click", OZG_Place.OZG_ById(m_PlaceId));
+        BoardWinPaint();
+    }
+
+    // A die pressed. One die a throw: that die is the one. More: a die of the throw goes
+    // out of it, another comes into it while there is room.
+    protected void DTPickDieClick(string key)
+    {
+        if (!m_V || key == "")
+            return;
+        int need = m_V.PickNeed;
+        int had = m_DTPickKeys.Find(key);
+        if (need == 1)
+        {
+            if (had >= 0)
+                return;
+            m_DTPickKeys.Clear();
+            m_DTPickKeys.Insert(key);
+        }
+        else if (had >= 0)
+        {
+            m_DTPickKeys.RemoveOrdered(had);
+        }
+        else if (m_DTPickKeys.Count() < need)
+        {
+            m_DTPickKeys.Insert(key);
+        }
+        else
+        {
+            return;
+        }
+        OZG_Sounds.PlayLocal("click", OZG_Place.OZG_ById(m_PlaceId));
+        BoardWinPaint();
+    }
+
+    // The choice asked of the server (OZG_Const.OP_DPICK): the can -- named before a deal
+    // only, in a game it is the one in play -- and the keys of the dice of it he throws.
+    protected void DTPickSend()
+    {
+        if (!m_V || !DTPickNow() || m_DTPickKeys.Count() != m_V.PickNeed)
+            return;
+        OZG_WAsk ask = new OZG_WAsk();
+        ask.PlaceId = m_PlaceId;
+        ask.CardKey = "";
+        if (m_V.PickCanNow == 1)
+            ask.CardKey = m_DTPickCan;
+        string keys = "";
+        for (int i = 0; i < m_DTPickKeys.Count(); i++)
+        {
+            string key = m_DTPickKeys[i];
+            if (i > 0)
+                keys = keys + ",";
+            keys = keys + key;
+        }
+        ask.Move = keys;
+        string json;
+        string err;
+        JsonFileLoader<OZG_WAsk>.MakeData(ask, json, err, false);
+        OZ_Rpc.ServiceRequest(OZG_Const.SERVICE, OZG_Const.OP_DPICK, json);
+        m_DTPickOpen = false;
+        OZG_Sounds.PlayLocal("click", OZG_Place.OZG_ById(m_PlaceId));
+        BoardWinPaint();
+    }
+
+    // The clicks of that window while it is open: nothing under it is pressed.
+    protected bool DTPickClick(string n)
+    {
+        if (n == "OZG_DPkClose" || n == "OZG_DPkCancel")
+        {
+            m_DTPickOpen = false;
+            BoardWinPaint();
+            return true;
+        }
+        if (n == "OZG_DPkGo")
+        {
+            DTPickSend();
+            return true;
+        }
+        if (n.IndexOf("OZG_DPRow") == 0 && n.Length() > 9)
+        {
+            string rowText = n.Substring(9, n.Length() - 9);
+            int r = rowText.ToInt();
+            if (rowText == r.ToString())
+                DTPickCanClick(r);
+            return true;
+        }
+        if (n.IndexOf("OZG_DPkHit") == 0 && n.Length() == 11)
+        {
+            int t = n.Substring(10, 1).ToInt();
+            if (t >= 0 && t < m_DTPickShown.Count())
+            {
+                string dieKey = m_DTPickShown[t];
+                DTPickDieClick(dieKey);
+            }
+            return true;
+        }
+        return true;
+    }
+
     override void Update(float timeslice)
     {
         super.Update(timeslice);
@@ -2791,8 +3543,8 @@ modded class OZG_GameMenu
             DTTick(timeslice);
     }
 
-    // The clicks of the swap's button and of its window. While the window is open nothing
-    // under it is pressed.
+    // The clicks of the two buttons -- the swap's, the can and dice's -- and of their
+    // windows. While a window is open nothing under it is pressed.
     protected bool DTClick(string n)
     {
         if (n == "OZG_DSwapBtn")
@@ -2800,6 +3552,13 @@ modded class OZG_GameMenu
             DTSwapToggle();
             return true;
         }
+        if (n == "OZG_DPickBtn")
+        {
+            DTPickToggle();
+            return true;
+        }
+        if (m_DTPickOpen)
+            return DTPickClick(n);
         if (!m_DTSwapOpen)
             return false;
         if (n == "OZG_DSwClose" || n == "OZG_DSwCancel")

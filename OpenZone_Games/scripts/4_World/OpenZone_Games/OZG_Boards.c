@@ -274,28 +274,79 @@ class OZG_DiceRead
         }
     }
 
-    // A can the player carries holding `need` dice or more: its first `need`.
-    static bool OwnCan(PlayerBase player, int need, array<EntityAI> into)
+    // The die in each die slot of a board or a can, in the slots' order: null for an
+    // empty slot. A die keeps its slot while it lies there, a die slipped in takes the
+    // slot of the one it replaced, and the order outlives a restart: a place in this list
+    // is how a die of a can is named in the session's file.
+    static void BySlot(EntityAI holder, array<EntityAI> into)
+    {
+        into.Clear();
+        if (!holder)
+            return;
+        TStringArray slots = new TStringArray;
+        GetGame().ConfigGetTextArray("CfgVehicles " + holder.GetType() + " attachments", slots);
+        for (int i = 0; i < slots.Count(); i++)
+        {
+            if (slots[i].IndexOf("Die") < 0)
+                continue;
+            int id = InventorySlots.GetSlotIdFromString(slots[i]);
+            EntityAI a = holder.GetInventory().FindAttachment(id);
+            EntityAI die = null;
+            if (a && a.IsKindOf("OZG_Die_Base"))
+                die = a;
+            into.Insert(die);
+        }
+    }
+
+    // How many dice a board or a can holds.
+    static int CountIn(EntityAI holder)
+    {
+        array<EntityAI> bySlot = new array<EntityAI>();
+        BySlot(holder, bySlot);
+        int n = 0;
+        for (int i = 0; i < bySlot.Count(); i++)
+        {
+            if (bySlot[i])
+                n++;
+        }
+        return n;
+    }
+
+    // Every can of dice a player carries, in the order his things are gone through; the
+    // one in his hands too.
+    static void OwnCans(PlayerBase player, array<EntityAI> into)
     {
         into.Clear();
         if (!player)
-            return false;
+            return;
         array<EntityAI> items = new array<EntityAI>();
         player.GetInventory().EnumerateInventory(InventoryTraversalType.PREORDER, items);
+        EntityAI held = player.GetHumanInventory().GetEntityInHands();
+        if (held && items.Find(held) < 0)
+            items.Insert(held);
         for (int i = 0; i < items.Count(); i++)
         {
             EntityAI can = items[i];
-            if (!can || !can.IsKindOf("OZG_DiceCan_Base"))
-                continue;
-            array<EntityAI> dice = new array<EntityAI>();
-            OfThing(can, dice);
-            if (dice.Count() < need)
-                continue;
-            for (int k = 0; k < need; k++)
-                into.Insert(dice[k]);
-            return true;
+            if (can && can.IsKindOf("OZG_DiceCan_Base"))
+                into.Insert(can);
         }
-        return false;
+    }
+
+    // A can's lasting name, the same after a restart: its persistent id.
+    static string CanId(EntityAI can)
+    {
+        if (!can)
+            return "";
+        int b1;
+        int b2;
+        int b3;
+        int b4;
+        can.GetPersistentID(b1, b2, b3, b4);
+        string id = b1.ToString();
+        id = id + "." + b2.ToString();
+        id = id + "." + b3.ToString();
+        id = id + "." + b4.ToString();
+        return id;
     }
 
     // The loads of dice: the face (0 for none) and the weight of each.
